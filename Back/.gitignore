@@ -1,0 +1,73 @@
+﻿## Ignore para projetos .NET
+## Fonte: GitHub gitignore templates + ajustes comuns
+
+# Compilados do Visual Studio
+bin/
+obj/
+[Bb]uild/
+[Ll]ogs/
+*.log
+
+# Arquivos do Rider e VSCode
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Arquivos do sistema
+*.DS_Store
+*.AppleDouble
+*.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Arquivos de backup
+*~
+*.bak
+*.tmp
+
+# Arquivos de pacotes
+packages/
+*.nupkg
+*.snupkg
+*.nuspec
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Arquivos de publicação
+publish/
+wwwroot/
+
+# User secrets
+secrets.json
+*.dotCover
+
+# Cache do NuGet
+.nuget/
+**/project.assets.json
+**/project.nuget.cache
+
+# Arquivos de Testes e Cobertura
+TestResults/
+*.coverage
+*.coveragexml
+*.vspx
+*.vspscc
+*.vssscc
+*.vsmdi
+
+# Diretórios do Visual Studio
+.vs/
+Generated\ Files/
+
+# Configurações locais
+appsettings.*.json
+*.db
+
+# Docker
+**/docker-compose.override.yml
