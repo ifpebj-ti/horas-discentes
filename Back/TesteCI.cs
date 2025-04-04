@@ -1,1 +1,10 @@
-"//arquivo de teste para CI do backend" 
+namespace TesteCI
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            System.Console.WriteLine("CI funcionando!");
+        }
+    }
+}
