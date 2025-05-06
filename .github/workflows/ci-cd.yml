@@ -26,7 +26,7 @@ jobs:
 
       - name: Executar ESLint
         working-directory: ./front
-        run: npm run lint 
+        run: npm run lint # Assumindo que você tem um script "lint" no package.json do frontend
 
       - name: Configurar .NET
         uses: actions/setup-dotnet@v3
@@ -48,6 +48,9 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
+      - name: Listar conteúdo da pasta front
+        run: ls -al ./front
+
       - name: Login no GitHub Container Registry (GHCR)
         uses: docker/login-action@v2
         with:
@@ -60,8 +63,6 @@ jobs:
         with:
           context: ./front
           file: ./front/Dockerfile
-          cache-from: ""
-          cache-to: ""
           push: false # Apenas build por enquanto
           tags: ghcr.io/${{ github.repository }}/horas-discentes-frontend:${{ github.sha }}
 
