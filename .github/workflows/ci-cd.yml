@@ -61,9 +61,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Preparar contexto de build do Backend
-        run: |
-          mkdir -p ./Back
-          cp -r ./Back/Back.csproj ./Back/
+        run: mkdir -p ./Back
 
       - name: Build da imagem Docker do Frontend
         uses: docker/build-push-action@v5
