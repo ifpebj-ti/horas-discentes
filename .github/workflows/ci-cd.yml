@@ -2,9 +2,9 @@ name: CI/CD - Lint, Build, Scan e Push Docker Images
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "**" ]  # Roda em qualquer branch
   pull_request:
-    branches: [ "main" ]
+    branches: [ "**" ]  # Roda em qualquer PR
 
 jobs:
   lint:
@@ -65,7 +65,7 @@ jobs:
         with:
           context: ./front
           file: ./front/Dockerfile
-          push: false # Apenas build por enquanto
+          push: false
           tags: ghcr.io/${{ github.repository }}/horas-discentes-frontend:${{ github.sha }}
           cache-from: ""
           cache-to: ""
@@ -75,12 +75,10 @@ jobs:
         with:
           context: ./Back
           file: ./Back/Dockerfile
-          push: false # Apenas build por enquanto
+          push: false
           tags: ghcr.io/${{ github.repository }}/horas-discentes-backend:${{ github.sha }}
           cache-from: ""
           cache-to: ""
-          add:
-            - Back.csproj:.
 
   scan:
     needs: build
