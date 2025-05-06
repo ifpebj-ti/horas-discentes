@@ -75,17 +75,6 @@ A documentação do projeto está disponível na nossa [📖 Wiki](https://githu
 
 ---
 
-## ⚙️ DevSecOps e CI
-
-Este repositório já conta com:
-
-- ✅ GitHub Actions configurado para verificação automática de segurança (`npm audit`)
-- ✅ Gatilho de execução em `push` e `pull_request` para a branch `main`
-- ✅ Organização com GitHub Flow
-- ✅ Wiki estruturada por contexto
-
----
-
 ## 📄 Licença
 
 Este é um projeto acadêmico, desenvolvido sem fins lucrativos para a disciplina de Engenharia de Software no IFPE - Campus Belo Jardim.
