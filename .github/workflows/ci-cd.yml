@@ -59,6 +59,7 @@ jobs:
           context: ./front
           file: ./front/Dockerfile
           push: false
+          load: true               
           tags: horas-discentes-frontend:local
 
       - name: Build da imagem Docker do Backend (local)
@@ -67,6 +68,7 @@ jobs:
           context: ./Back
           file: ./Back/Dockerfile
           push: false
+          load: true              
           tags: horas-discentes-backend:local
 
   scan:
