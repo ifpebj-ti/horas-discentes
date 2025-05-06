@@ -48,15 +48,15 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Listar conteúdo da pasta front
-        run: ls -al ./front
-
       - name: Login no GitHub Container Registry (GHCR)
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Listar conteúdo do contexto de build do Frontend
+        run: ls -al ./front
 
       - name: Build da imagem Docker do Frontend
         uses: docker/build-push-action@v5
