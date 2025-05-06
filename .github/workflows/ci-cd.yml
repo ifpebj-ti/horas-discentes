@@ -1,0 +1,123 @@
+name: CI/CD - Lint, Build, Scan e Push Docker Images
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+          cache-dependency-path: 'front/package-lock.json'
+
+      - name: Instalar dependências do Frontend
+        working-directory: ./front
+        run: npm install
+
+      - name: Executar ESLint
+        working-directory: ./front
+        run: npm run lint 
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Formatar código .NET
+        working-directory: ./Back
+        run: dotnet format --verify-no-changes
+
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    outputs:
+      frontend_image: ghcr.io/${{ github.repository }}/horas-discentes-frontend:${{ github.sha }}
+      backend_image: ghcr.io/${{ github.repository }}/horas-discentes-backend:${{ github.sha }}
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Login no GitHub Container Registry (GHCR)
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build da imagem Docker do Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./front
+          file: ./front/Dockerfile
+          push: false # Apenas build por enquanto
+          tags: ghcr.io/${{ github.repository }}/horas-discentes-frontend:${{ github.sha }}
+
+      - name: Build da imagem Docker do Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Back
+          file: ./Back/Dockerfile
+          push: false # Apenas build por enquanto
+          tags: ghcr.io/${{ github.repository }}/horas-discentes-backend:${{ github.sha }}
+
+  scan:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates gnupg lsb-release
+          wget -qO- https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/trivy.gpg
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install -y trivy
+
+      - name: Scan da imagem Docker do Frontend com Trivy
+        run: trivy image --severity CRITICAL --exit-code 1 ${{ needs.build.outputs.frontend_image }}
+
+      - name: Scan da imagem Docker do Backend com Trivy
+        run: trivy image --severity CRITICAL --exit-code 1 ${{ needs.build.outputs.backend_image }}
+
+  push:
+    needs: scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Login no GitHub Container Registry (GHCR)
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push da imagem Docker do Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./front
+          file: ./front/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/horas-discentes-frontend:latest, ${{ needs.build.outputs.frontend_image }}
+
+      - name: Push da imagem Docker do Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Back
+          file: ./Back/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/horas-discentes-backend:latest, ${{ needs.build.outputs.backend_image }}
