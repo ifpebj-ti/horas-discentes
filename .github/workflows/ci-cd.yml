@@ -60,8 +60,10 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Listar conteúdo da pasta Back
-        run: ls -al ./Back
+      - name: Preparar contexto de build do Backend
+        run: |
+          mkdir -p ./Back
+          cp -r ./Back/Back.csproj ./Back/
 
       - name: Build da imagem Docker do Frontend
         uses: docker/build-push-action@v5
