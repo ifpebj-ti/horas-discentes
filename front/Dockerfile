@@ -2,10 +2,13 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-RUN echo "Conteúdo da raiz de /app antes da cópia do public:"
+# Vamos listar a raiz para ver se 'public' está em outro lugar
+RUN echo "Conteúdo da raiz (/) antes da cópia do public:"
+RUN ls -al /
+RUN echo "Conteúdo de /app antes da cópia do public:"
 RUN ls -al /app
-RUN echo "Conteúdo da pasta public (se existir):"
-RUN ls -al public
+RUN echo "Conteúdo da pasta public (se existir) em /app:"
+RUN ls -al /app/public
 COPY public ./public
 RUN npm run build
 FROM node:18-alpine AS production
