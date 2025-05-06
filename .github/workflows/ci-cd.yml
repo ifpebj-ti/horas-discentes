@@ -50,6 +50,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Docker Buildx com driver docker
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
+
       - name: Garantir que a pasta public exista no contexto de build
         run: mkdir -p ./front/public
 
@@ -59,7 +64,7 @@ jobs:
           context: ./front
           file: ./front/Dockerfile
           push: false
-          load: true               
+          load: true
           tags: horas-discentes-frontend:local
 
       - name: Build da imagem Docker do Backend (local)
@@ -68,7 +73,7 @@ jobs:
           context: ./Back
           file: ./Back/Dockerfile
           push: false
-          load: true              
+          load: true
           tags: horas-discentes-backend:local
 
   scan:
