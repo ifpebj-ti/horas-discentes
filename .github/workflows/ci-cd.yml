@@ -27,6 +27,7 @@ jobs:
       - name: Executar ESLint
         working-directory: ./front
         run: npm run lint 
+
       - name: Configurar .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -34,7 +35,7 @@ jobs:
 
       - name: Formatar código .NET
         working-directory: ./Back
-        run: dotnet format --verify-no-changes
+        run: dotnet format Back/Back.sln --verify-no-changes
 
   build:
     needs: lint
