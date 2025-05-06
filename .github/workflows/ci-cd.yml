@@ -60,6 +60,8 @@ jobs:
         with:
           context: ./front
           file: ./front/Dockerfile
+          cache-from: ""
+          cache-to: ""
           push: false # Apenas build por enquanto
           tags: ghcr.io/${{ github.repository }}/horas-discentes-frontend:${{ github.sha }}
 
