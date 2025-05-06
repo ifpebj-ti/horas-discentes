@@ -50,6 +50,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Garantir que a pasta public exista no contexto de build
+        run: mkdir -p ./front/public
+
       - name: Login no GitHub Container Registry (GHCR)
         uses: docker/login-action@v2
         with:
