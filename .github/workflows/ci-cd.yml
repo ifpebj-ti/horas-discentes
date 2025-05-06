@@ -67,6 +67,8 @@ jobs:
           file: ./front/Dockerfile
           push: false # Apenas build por enquanto
           tags: ghcr.io/${{ github.repository }}/horas-discentes-frontend:${{ github.sha }}
+          cache-from: ""
+          cache-to: ""
 
       - name: Build da imagem Docker do Backend
         uses: docker/build-push-action@v5
@@ -75,6 +77,8 @@ jobs:
           file: ./Back/Dockerfile
           push: false # Apenas build por enquanto
           tags: ghcr.io/${{ github.repository }}/horas-discentes-backend:${{ github.sha }}
+          cache-from: ""
+          cache-to: ""
 
   scan:
     needs: build
