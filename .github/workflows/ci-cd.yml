@@ -60,9 +60,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Preparar contexto de build do Backend
-        run: mkdir -p ./Back
-
       - name: Build da imagem Docker do Frontend
         uses: docker/build-push-action@v5
         with:
@@ -82,6 +79,8 @@ jobs:
           tags: ghcr.io/${{ github.repository }}/horas-discentes-backend:${{ github.sha }}
           cache-from: ""
           cache-to: ""
+          add:
+            - Back.csproj:.
 
   scan:
     needs: build
