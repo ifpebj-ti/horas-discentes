@@ -2,7 +2,10 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
+RUN echo "Conteúdo da raiz de /app antes da cópia do public:"
+RUN ls -al /app
+RUN echo "Conteúdo da pasta public (se existir):"
+RUN ls -al public
 COPY public ./public
 RUN npm run build
 FROM node:18-alpine AS production
