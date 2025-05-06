@@ -13,7 +13,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
+
+
 
 // Testar conexão com o banco
 using (var scope = app.Services.CreateScope())
@@ -33,6 +46,7 @@ using (var scope = app.Services.CreateScope())
         Environment.Exit(1); // Finaliza o app com erro
     }
 }
+app.UseCors("AllowAll");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -11,7 +11,7 @@ export default function Home() {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const response = await axios.get('http://backend:5000/status');
+        const response = await axios.get('http://localhost:5000/status');
         setBackendStatus(response.data);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
