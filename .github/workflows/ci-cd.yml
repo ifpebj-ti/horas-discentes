@@ -1,10 +1,10 @@
-name: CI/CD - Lint, Build, Scan e Push Docker Images
+name: CI/CD - Lint, Build, Scan (sem push para GHCR)
 
 on:
   push:
-    branches: [ "**" ]  # Roda em qualquer branch
+    branches: [ "**" ]
   pull_request:
-    branches: [ "**" ]  # Roda em qualquer PR
+    branches: [ "**" ]
 
 jobs:
   lint:
@@ -26,7 +26,7 @@ jobs:
 
       - name: Executar ESLint
         working-directory: ./front
-        run: npm run lint # Assumindo que você tem um script "lint" no package.json do frontend
+        run: npm run lint
 
       - name: Configurar .NET
         uses: actions/setup-dotnet@v3
@@ -41,8 +41,8 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     outputs:
-      frontend_image: ghcr.io/${{ github.repository }}/horas-discentes-frontend:${{ github.sha }}
-      backend_image: ghcr.io/${{ github.repository }}/horas-discentes-backend:${{ github.sha }}
+      frontend_tag: horas-discentes-frontend:local
+      backend_tag: horas-discentes-backend:local
 
     steps:
       - name: Checkout do código
@@ -53,32 +53,21 @@ jobs:
       - name: Garantir que a pasta public exista no contexto de build
         run: mkdir -p ./front/public
 
-      - name: Login no GitHub Container Registry (GHCR)
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build da imagem Docker do Frontend
+      - name: Build da imagem Docker do Frontend (local)
         uses: docker/build-push-action@v5
         with:
           context: ./front
           file: ./front/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository }}/horas-discentes-frontend:${{ github.sha }}
-          cache-from: ""
-          cache-to: ""
+          push: false
+          tags: horas-discentes-frontend:local
 
-      - name: Build da imagem Docker do Backend
+      - name: Build da imagem Docker do Backend (local)
         uses: docker/build-push-action@v5
         with:
           context: ./Back
           file: ./Back/Dockerfile
           push: false
-          tags: ghcr.io/${{ github.repository }}/horas-discentes-backend:${{ github.sha }}
-          cache-from: ""
-          cache-to: ""
+          tags: horas-discentes-backend:local
 
   scan:
     needs: build
@@ -96,38 +85,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
 
-      - name: Scan da imagem Docker do Frontend com Trivy
-        run: trivy image --severity CRITICAL --exit-code 1 ${{ needs.build.outputs.frontend_image }}
+      - name: Scan da imagem Docker do Frontend (local)
+        run: trivy image --severity CRITICAL --exit-code 1 horas-discentes-frontend:local
 
-      - name: Scan da imagem Docker do Backend com Trivy
-        run: trivy image --severity CRITICAL --exit-code 1 ${{ needs.build.outputs.backend_image }}
-
-  push:
-    needs: scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Login no GitHub Container Registry (GHCR)
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push da imagem Docker do Frontend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./front
-          file: ./front/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository }}/horas-discentes-frontend:latest, ${{ needs.build.outputs.frontend_image }}
-
-      - name: Push da imagem Docker do Backend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./Back
-          file: ./Back/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository }}/horas-discentes-backend:latest, ${{ needs.build.outputs.backend_image }}
+      - name: Scan da imagem Docker do Backend (local)
+        run: trivy image --severity CRITICAL --exit-code 1 horas-discentes-backend:local
