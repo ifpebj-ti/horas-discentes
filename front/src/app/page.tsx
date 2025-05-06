@@ -1,6 +1,27 @@
+'use client';
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
+
+import axios from 'axios';
 
 export default function Home() {
+  const [backendStatus, setBackendStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await axios.get('http://backend:5000/status');
+        setBackendStatus(response.data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        setError(err.message || 'Erro ao conectar ao backend');
+      }
+    };
+
+    fetchStatus();
+  }, []);
+
   return (
     <div>
       <Head>
@@ -34,6 +55,7 @@ export default function Home() {
             Esta página confirma que o container Next.js está servindo a
             aplicação com sucesso.
           </p>
+
           <div
             style={{
               backgroundColor: '#e0e0e0',
@@ -60,9 +82,11 @@ export default function Home() {
                 </code>
               </li>
               <li>
-                Status:{' '}
-                <span style={{ color: 'green', fontWeight: 'bold' }}>
-                  Operacional
+                Status do Back-end:{' '}
+                <span
+                  style={{ color: error ? 'red' : 'green', fontWeight: 'bold' }}
+                >
+                  {error ? `Erro - ${error}` : backendStatus}
                 </span>
               </li>
             </ul>
