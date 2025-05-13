@@ -1,0 +1,36 @@
+name: Backend CI (.NET)
+
+on:
+  push:
+    paths:
+      - '**.cs'
+      - '**.csproj'
+      - '**.sln'
+  pull_request:
+    paths:
+      - '**.cs'
+      - '**.csproj'
+      - '**.sln'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Clonar repositório
+        uses: actions/checkout@v3
+
+      - name: 📥 Instalar o SDK do .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 🛠️ Restaurar dependências
+        run: dotnet restore Back/Back.sln
+
+      - name: 🏗️ Compilar a aplicação
+        run: dotnet build Back/Back.sln --no-restore
+
+      - name: ✅ Rodar testes (se tiver)
+        run: dotnet test Back/Back.sln --no-build
+        continue-on-error: true
