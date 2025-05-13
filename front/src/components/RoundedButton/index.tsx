@@ -1,19 +1,19 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 type RoundedButtonProps = {
   text: string;
   icon?: ReactNode;
-  textColor?: string;     // ex: "text-white"
-  bgColor?: string;       // ex: "bg-blue-700"
+  textColor?: string; // ex: "text-white"
+  bgColor?: string; // ex: "bg-blue-700"
   onClick?: () => void;
 };
 
 export const RoundedButton = ({
   text,
   icon,
-  textColor = "text-white",
-  bgColor = "bg-blue-700",
-  onClick,
+  textColor = 'text-white',
+  bgColor = 'bg-blue-700',
+  onClick
 }: RoundedButtonProps) => {
   return (
     <button
