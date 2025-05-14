@@ -6,6 +6,7 @@ type RoundedButtonProps = {
   textColor?: string; // ex: "text-white"
   bgColor?: string; // ex: "bg-blue-700"
   onClick?: () => void;
+  type?: 'button' | 'submit';
 };
 
 export const RoundedButton = ({
@@ -13,12 +14,14 @@ export const RoundedButton = ({
   icon,
   textColor = 'text-white',
   bgColor = 'bg-blue-700',
-  onClick
+  onClick,
+  type = 'button'
 }: RoundedButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center gap-2 px-8 py-3 rounded-full ${bgColor} ${textColor} font-medium transition hover:opacity-90`}
+      type={type}
+      className={`flex items-center justify-center gap-2 px-8 py-3 rounded-full ${bgColor} ${textColor} font-medium transition hover:opacity-90 w-full`}
     >
       {icon && <span className="w-5 h-5">{icon}</span>}
       <span>{text}</span>
