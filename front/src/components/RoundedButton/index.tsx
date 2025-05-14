@@ -21,7 +21,7 @@ export const RoundedButton = ({
     <button
       onClick={onClick}
       type={type}
-      className={`flex items-center justify-center gap-2 px-8 py-3 rounded-full ${bgColor} ${textColor} font-medium transition hover:opacity-90 w-full`}
+      className={`flex items-center justify-center gap-2 px-8 py-3 rounded-full ${bgColor} ${textColor} font-medium transition hover:opacity-90 w-full cursor-pointer`}
     >
       {icon && <span className="w-5 h-5">{icon}</span>}
       <span>{text}</span>
