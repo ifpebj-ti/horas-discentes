@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaBars } from 'react-icons/fa';
-import Menu from '@components/Menu';
+import Menu from '@/components/Menu';
 
 const useAuth = () => ({
   user: {
@@ -26,7 +26,7 @@ const Header: React.FC = () => {
         <div className='flex flex-col'>
           {/* Logo */}
           <Link href="/">
-            <Image src="/img/logo.svg" alt="Logo IFPE" width={112} height={40} />
+            <Image src="/img/logo.svg" alt="Logo IFPE" width={130} height={60} />
           </Link>
 
           {/* Botão de menu + Início */}

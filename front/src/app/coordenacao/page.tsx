@@ -3,12 +3,14 @@ import BreadCrumb from '@/components/BreadCrumb';
 import { FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa6';
 import { useRouter } from 'next/navigation';
 import { DashboardCard } from '@/components/DashboardCard';
+import Header from '@/components/Header';
 
 export default function InicioPage() {
   const router = useRouter();
 
   return (
     <div className="min-h-screen bg-white">
+      <Header />
       <main className="p-6 max-w-5xl mx-auto">
         <BreadCrumb />
 
