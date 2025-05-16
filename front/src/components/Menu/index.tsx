@@ -1,9 +1,11 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   FaChartBar, FaFileAlt, FaUserGraduate, FaUsers,
-  FaEnvelope, FaBuilding, FaCog, FaHome, FaSignOutAlt
+  FaEnvelope, FaBuilding, FaCog, FaHome, FaSignOutAlt, FaClipboard
 } from 'react-icons/fa';
 
 type Props = {
@@ -40,45 +42,57 @@ const IconText = ({ icon: Icon, text }: { icon: React.ElementType; text: string 
 );
 
 const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
-  const isCoordinator = user?.role === 'coordinator';
+  const role = user?.role;
 
   return (
     <nav className="absolute w-full bg-white shadow-md z-30">
       <div className="flex flex-col">
-        {isCoordinator && (
+
+        {/* MENU DO COORDENADOR */}
+        {role === 'coordenador' && (
           <>
-            <CustomNavLink href="/coordinator" onClick={closeMenu}>
-              <IconText icon={FaChartBar} text="Dashboard" />
+            <CustomNavLink href="/coordenacao" onClick={closeMenu}>
+              <IconText icon={FaHome} text="Início" />
             </CustomNavLink>
-            <CustomNavLink href="/coordinator/certificates" onClick={closeMenu}>
+            <CustomNavLink href="/coordenacao/certificados" onClick={closeMenu}>
               <IconText icon={FaFileAlt} text="Validação de Certificados" />
             </CustomNavLink>
-            <CustomNavLink href="/coordinator/classes" onClick={closeMenu}>
+            <CustomNavLink href="/coordenacao/turmas" onClick={closeMenu}>
               <IconText icon={FaUserGraduate} text="Turmas" />
             </CustomNavLink>
-            <CustomNavLink href="/coordinator/students" onClick={closeMenu}>
+            <CustomNavLink href="/coordenacao/alunos" onClick={closeMenu}>
               <IconText icon={FaUsers} text="Alunos" />
             </CustomNavLink>
-            <CustomNavLink href="/coordinator/secretary" onClick={closeMenu}>
+            <CustomNavLink href="/coordenacao/secretaria" onClick={closeMenu}>
               <IconText icon={FaEnvelope} text="Secretaria" />
             </CustomNavLink>
-            <CustomNavLink href="/coordinator/campus" onClick={closeMenu}>
+            <CustomNavLink href="/coordenacao/campus" onClick={closeMenu}>
               <IconText icon={FaBuilding} text="Campus" />
             </CustomNavLink>
-            <CustomNavLink href="/coordinator/settings" onClick={closeMenu}>
+            <CustomNavLink href="/coordenacao/configuracoes" onClick={closeMenu}>
               <IconText icon={FaCog} text="Configurações" />
             </CustomNavLink>
           </>
         )}
-        <CustomNavLink href="/" onClick={closeMenu}>
-          <IconText icon={FaHome} text="Início" />
-        </CustomNavLink>
-        <CustomNavLink href="/certificates" onClick={closeMenu}>
-          <IconText icon={FaFileAlt} text="Certificados" />
-        </CustomNavLink>
+
+        {/* MENU DO ALUNO */}
+        {role === 'aluno' && (
+          <>
+            <CustomNavLink href="/" onClick={closeMenu}>
+              <IconText icon={FaHome} text="Início" />
+            </CustomNavLink>
+            <CustomNavLink href="/aluno/meus-certificados" onClick={closeMenu}>
+              <IconText icon={FaFileAlt} text="Meus Certificados" />
+            </CustomNavLink>
+            <CustomNavLink href="/aluno/enviar" onClick={closeMenu}>
+              <IconText icon={FaClipboard} text="Enviar Novo" />
+            </CustomNavLink>
+          </>
+        )}
+
         <button
           onClick={closeMenu}
-          className="flex items-center px-4 py-2 text-sm hover:bg-gray-100"
+          className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
         >
           <FaSignOutAlt className="mr-2 text-blue-600" />
           <span className="text-black">Sair</span>

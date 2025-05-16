@@ -1,38 +1,65 @@
 'use client';
+
+import { usePathname } from 'next/navigation';
 import BreadCrumb from '@/components/BreadCrumb';
 import { FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa6';
-import { useRouter } from 'next/navigation';
+import { FaHome } from 'react-icons/fa';
 import { DashboardCard } from '@/components/DashboardCard';
 import Header from '@/components/Header';
+import { useRouter } from 'next/navigation';
 
 export default function InicioPage() {
+  const pathname = usePathname();
   const router = useRouter();
+
+  const getTitleFromPath = (path: string): string => {
+    const lastSegment = path.split('/').filter(Boolean).pop() ?? '';
+
+    if (lastSegment === 'coordenacao') return 'Coordenação';
+    if (lastSegment === 'certificados') return 'Validação de Certificados';
+    if (lastSegment === 'turmas') return 'Turmas';
+    if (lastSegment === 'alunos') return 'Alunos';
+    if (lastSegment === 'secretaria') return 'Secretaria';
+    if (lastSegment === 'campus') return 'Campus';
+    if (lastSegment === 'configuracoes') return 'Configurações';
+    return 'Início';
+  };
+
+  const breadcrumbTitle = getTitleFromPath(pathname);
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
-      <main className="p-6 max-w-5xl mx-auto">
-        <BreadCrumb />
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <DashboardCard
-            icon={<FaUsers className="text-blue-600 text-3xl" />}
-            label="Alunos"
-            notificationCount={5}
-            onClick={() => router.push('/inicio/alunos')}
+      <header className="shadow-md bg-gray-100 z-20 relative">
+        <Header menuTitle={breadcrumbTitle} />
+      </header>
+      <main>
+        <div className="p-6 max-w-5xl mx-auto mt-4 z-10 relative">
+          <BreadCrumb
+            breadcrumbInicio="coordenacao"
+            breadcrumbTitle={breadcrumbTitle}
+            breadcrumbIcon={<FaHome />}
           />
 
-          <DashboardCard
-            icon={<FaGraduationCap className="text-blue-600 text-3xl" />}
-            label="Cursos"
-            onClick={() => router.push('/inicio/cursos')}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <DashboardCard
+              icon={<FaUsers className="text-blue-600 text-3xl" />}
+              label="Alunos"
+              notificationCount={5}
+              onClick={() => router.push('/inicio/alunos')}
+            />
 
-          <DashboardCard
-            icon={<FaIdCard className="text-blue-600 text-3xl" />}
-            label="Certificados"
-            onClick={() => router.push('/inicio/certificados')}
-          />
+            <DashboardCard
+              icon={<FaGraduationCap className="text-blue-600 text-3xl" />}
+              label="Cursos"
+              onClick={() => router.push('/inicio/cursos')}
+            />
+
+            <DashboardCard
+              icon={<FaIdCard className="text-blue-600 text-3xl" />}
+              label="Certificados"
+              onClick={() => router.push('/inicio/certificados')}
+            />
+          </div>
         </div>
       </main>
     </div>

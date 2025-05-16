@@ -1,21 +1,25 @@
-'use client';
-
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaBars } from 'react-icons/fa';
 import Menu from '@/components/Menu';
 
-const useAuth = () => ({
-  user: {
-    name: 'Usuário',
-    email: 'usuario@ifpe.edu.br',
-    role: 'coordinator'
-  }
-});
+export interface User {
+  name: string;
+  email: string;
+  role: string;
+}
 
-const Header: React.FC = () => {
-  const { user } = useAuth();
+interface HeaderProps {
+  menuTitle: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ menuTitle }) => {
+  const user: User = {
+    name: 'Fulano',
+    email: 'fulano@ifpe.edu.br',
+    role: 'coordenador'
+  };
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen(prev => !prev);
   const closeMenu = () => setMenuOpen(false);
@@ -23,36 +27,32 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white border-b shadow-sm relative z-20">
       <div className="flex items-center justify-between px-4 py-2">
-        <div className='flex flex-col'>
-          {/* Logo */}
+        <div className="flex flex-col">
           <Link href="/">
             <Image src="/img/logo.svg" alt="Logo IFPE" width={130} height={60} />
           </Link>
 
-          {/* Botão de menu + Início */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2 px-2">
             <button onClick={toggleMenu} aria-label="Abrir menu" className="text-blue-600">
               <FaBars size={20} />
             </button>
-            <span className="text-gray-700 text-sm font-medium">Início</span>
+            <span className="text-gray-700 text-sm font-bold tracking-wide">
+              {menuTitle}
+            </span>
           </div>
         </div>
 
-        {/* Botão Sair */}
-        {user && (
-          <button
-            onClick={() => {
-              // lógica de logout
-              closeMenu();
-            }}
-            className="text-blue-600 text-sm font-medium"
-          >
-            Sair
-          </button>
-        )}
+        <Link
+          href="/"
+          onClick={() => {
+            closeMenu();
+          }}
+          className="text-blue-600 text-sm font-medium"
+        >
+          Sair
+        </Link>
       </div>
 
-      {/* Menu responsivo */}
       {menuOpen && <Menu user={user} closeMenu={closeMenu} />}
     </header>
   );
