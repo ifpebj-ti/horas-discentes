@@ -18,7 +18,7 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
       onClick={onClick}
       className="relative bg-gradient-to-br from-white to-gray-50 shadow-2xl rounded-2xl p-6 flex flex-col
       items-center justify-center w-full h-32 hover:shadow-[0_8px_30px_rgba(0,0,0,0.2)] hover:scale-[1.02] transition-all
-      duration-300 ease-in-out border border-gray-200"
+      duration-300 ease-in-out border border-gray-200 cursor-pointer"
     >
       {/* Notificação no canto superior direito */}
       {notificationCount !== undefined && notificationCount > 0 && (

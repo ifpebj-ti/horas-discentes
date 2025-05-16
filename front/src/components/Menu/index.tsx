@@ -78,7 +78,7 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
         {/* MENU DO ALUNO */}
         {role === 'aluno' && (
           <>
-            <CustomNavLink href="/" onClick={closeMenu}>
+            <CustomNavLink href="/aluno" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />
             </CustomNavLink>
             <CustomNavLink href="/aluno/meus-certificados" onClick={closeMenu}>

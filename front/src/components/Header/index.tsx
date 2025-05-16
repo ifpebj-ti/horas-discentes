@@ -3,23 +3,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaBars } from 'react-icons/fa';
 import Menu from '@/components/Menu';
-
-export interface User {
-  name: string;
-  email: string;
-  role: string;
-}
+import { User } from 'next-auth';
 
 interface HeaderProps {
   menuTitle: string;
+  user: User
 }
 
-const Header: React.FC<HeaderProps> = ({ menuTitle }) => {
-  const user: User = {
-    name: 'Fulano',
-    email: 'fulano@ifpe.edu.br',
-    role: 'coordenador'
-  };
+const Header: React.FC<HeaderProps> = ({ menuTitle, user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen(prev => !prev);
   const closeMenu = () => setMenuOpen(false);
@@ -53,7 +44,12 @@ const Header: React.FC<HeaderProps> = ({ menuTitle }) => {
         </Link>
       </div>
 
-      {menuOpen && <Menu user={user} closeMenu={closeMenu} />}
+      {menuOpen && (
+        <Menu
+          user={{ name: user.name ?? '', role: (user as any).role ?? '' }}
+          closeMenu={closeMenu}
+        />
+      )}
     </header>
   );
 };

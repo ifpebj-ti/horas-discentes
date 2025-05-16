@@ -1,16 +1,29 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import BreadCrumb from '@/components/BreadCrumb';
 import { FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa6';
 import { FaHome } from 'react-icons/fa';
 import { DashboardCard } from '@/components/DashboardCard';
 import Header from '@/components/Header';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
-export default function InicioPage() {
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export default function Coordenacao() {
   const pathname = usePathname();
   const router = useRouter();
+  const user: User = {
+    id: '1',
+    name: 'Admin',
+    email: 'Admin@example.com',
+    role: 'Coordenador',
+  };
+
 
   const getTitleFromPath = (path: string): string => {
     const lastSegment = path.split('/').filter(Boolean).pop() ?? '';
@@ -30,7 +43,7 @@ export default function InicioPage() {
   return (
     <div className="min-h-screen bg-white">
       <header className="shadow-md bg-gray-100 z-20 relative">
-        <Header menuTitle={breadcrumbTitle} />
+        <Header menuTitle={breadcrumbTitle} user={user} />
       </header>
       <main>
         <div className="p-6 max-w-5xl mx-auto mt-4 z-10 relative">
@@ -45,19 +58,19 @@ export default function InicioPage() {
               icon={<FaUsers className="text-blue-600 text-3xl" />}
               label="Alunos"
               notificationCount={5}
-              onClick={() => router.push('/inicio/alunos')}
+              onClick={() => router.push('/coordenacao/alunos')}
             />
 
             <DashboardCard
               icon={<FaGraduationCap className="text-blue-600 text-3xl" />}
               label="Cursos"
-              onClick={() => router.push('/inicio/cursos')}
+              onClick={() => router.push('/coordenacao/cursos')}
             />
 
             <DashboardCard
               icon={<FaIdCard className="text-blue-600 text-3xl" />}
               label="Certificados"
-              onClick={() => router.push('/inicio/certificados')}
+              onClick={() => router.push('/coordenacao/certificados')}
             />
           </div>
         </div>
