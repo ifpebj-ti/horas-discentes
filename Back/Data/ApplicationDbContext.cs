@@ -1,11 +1,12 @@
-﻿namespace Back.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Back.Models;
 
-public class ApplicationDbContext : DbContext
+namespace Back.Data
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+        public DbSet<Usuario> Usuarios { get; set; }
     }
-    // DbSets para suas entidades
-    // public DbSet<Entidade> Entidades { get; set; }
 }

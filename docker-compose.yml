@@ -1,50 +1,49 @@
 version: '3.8'
+
 services:
   frontend:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
     image: horas-discentes_frontend:latest  
     ports:
-      - "3000:3000"
+      - "${PORT_MACHINE_FRONTEND}:3000"
     environment:
-      NEXT_PUBLIC_BACKEND_URL: "http://backend:5000"
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_URL}
     depends_on:
       - backend
-      - db
     networks:
-      - app-network
+      - rede-front
+    restart: unless-stopped
+
   backend:
-    build:
-      context: .
-      dockerfile: ./Back/Dockerfile
     image: horas-discentes_backend:latest   
     ports:
-      - "5000:5000"
+      - "${PORT_MACHINE_BACKEND}:5000"
     environment:
-      DATABASE_URL: "postgresql://horas_discentes_user:senha_segura@db:5432/horas_discentes_db"
-      ASPNETCORE_URLS: http://+:5000
+      - DATABASE_URL=${DATABASE_URL}
+      - ASPNETCORE_URLS=http://+:5000
     depends_on:
       - db
     networks:
-      - app-network
-  db:
-    build:
-      context: ./db
-      dockerfile: Dockerfile
-    image: horas-discentes_db:latest        
+      - rede-front
+      - rede-back
+    restart: unless-stopped
+
+  db: 
+    image: postgres:15
     ports:
-      - "5432:5432"
+      - "${PORT_MACHINE_DB}:5432"
     environment:
-      POSTGRES_USER: horas_discentes_user
-      POSTGRES_PASSWORD: senha_segura
-      POSTGRES_DB: horas_discentes_db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - app-network
+      - rede-back
+    restart: unless-stopped
+
 networks:
-  app-network:
-    driver: bridge
+  rede-front:
+  rede-back:
+
 volumes:
   db_data:
