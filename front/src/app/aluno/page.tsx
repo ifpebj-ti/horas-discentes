@@ -44,17 +44,7 @@ export default function Aluno() {
             breadcrumbIcon={<FaHome />}
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <ProgressoGeral
-              categorias={[
-                { nome: 'Atividades Complementares', horas: 10, total: 20 },
-                { nome: 'Cursos', horas: 5, total: 10 },
-                { nome: 'Eventos', horas: 2, total: 5 },
-              ]}
-              totalHoras={17}
-              totalNecessarias={35}
-            />
-          </div>
+          
         </div>
       </main>
     </div>
