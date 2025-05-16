@@ -65,7 +65,7 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
     <nav className="absolute w-full bg-white shadow-md z-30">
       <div className="flex flex-col">
         {/* MENU DO COORDENADOR */}
-        {role === 'coordenador' && (
+        {(role === 'coordenador' || role === 'admin') && (
           <>
             <CustomNavLink href="/coordenacao" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />

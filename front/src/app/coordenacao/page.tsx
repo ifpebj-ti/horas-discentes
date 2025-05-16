@@ -20,9 +20,9 @@ export default function Coordenacao() {
   const router = useRouter();
   const user: User = {
     id: '1',
-    name: 'Coordenador',
+    name: 'Maria',
     email: 'coordenador@example.com',
-    role: 'Coordenador'
+    role: 'coordenador'
   };
 
   const getTitleFromPath = (path: string): string => {

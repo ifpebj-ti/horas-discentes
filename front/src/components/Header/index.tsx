@@ -56,7 +56,10 @@ const Header: React.FC<HeaderProps> = ({ menuTitle, user, role }) => {
 
       {menuOpen && (
         <Menu
-          user={{ name: user ?? '', role: role ?? '' }}
+          user={{
+            name: user,
+            role
+          }}
           closeMenu={closeMenu}
         />
       )}
