@@ -22,8 +22,10 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
     >
       {/* Notificação no canto superior direito */}
       {notificationCount !== undefined && notificationCount > 0 && (
-        <span className="absolute top-2 right-2 bg-[#0072E3] text-white text-xs w-5 h-5 rounded-full flex
-        items-center justify-center shadow-lg z-10">
+        <span
+          className="absolute top-2 right-2 bg-[#0072E3] text-white text-xs w-5 h-5 rounded-full flex
+        items-center justify-center shadow-lg z-10"
+        >
           {notificationCount}
         </span>
       )}

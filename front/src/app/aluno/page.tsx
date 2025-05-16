@@ -1,11 +1,9 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import BreadCrumb from '@/components/BreadCrumb';
 import { FaHome } from 'react-icons/fa';
-import Header from '@/components/Header';
-import ProgressoGeral from '@/components/ProgressoGeral';
-import ResumoAluno from '@/components/ResumoAluno';
 
+import BreadCrumb from '@/components/BreadCrumb';
+import Header from '@/components/Header';
 export interface User {
   id: string;
   name: string;
@@ -19,7 +17,7 @@ export default function Aluno() {
     id: '1',
     name: 'Silva',
     email: 'silva@example.com',
-    role: 'aluno',
+    role: 'aluno'
   };
 
   const getTitleFromPath = (path: string): string => {
@@ -28,13 +26,13 @@ export default function Aluno() {
     if (lastSegment === 'aluno') return 'Aluno';
     if (lastSegment === 'certificados') return 'Visualizar Certificados';
     return 'Início';
-  }
+  };
   const breadcrumbTitle = getTitleFromPath(pathname);
 
   return (
     <div className="min-h-screen bg-white">
       <header className="shadow-md bg-gray-100 z-20 relative">
-        <Header menuTitle={breadcrumbTitle} user={user} />
+        <Header menuTitle={breadcrumbTitle} user={user.name} role={user.role} />
       </header>
       <main>
         <div className="p-6 max-w-5xl mx-auto mt-4 z-10 relative">
@@ -43,8 +41,6 @@ export default function Aluno() {
             breadcrumbTitle="Aluno"
             breadcrumbIcon={<FaHome />}
           />
-
-          
         </div>
       </main>
     </div>

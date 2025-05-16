@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
+
 import Menu from '@/components/Menu';
-import { User } from 'next-auth';
 
 interface HeaderProps {
   menuTitle: string;
-  user: User
+  user: string;
+  role: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ menuTitle, user }) => {
+const Header: React.FC<HeaderProps> = ({ menuTitle, user, role }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const toggleMenu = () => setMenuOpen(prev => !prev);
+  const toggleMenu = () => setMenuOpen((prev) => !prev);
   const closeMenu = () => setMenuOpen(false);
 
   return (
@@ -20,11 +21,20 @@ const Header: React.FC<HeaderProps> = ({ menuTitle, user }) => {
       <div className="flex items-center justify-between px-4 py-2">
         <div className="flex flex-col">
           <Link href="/">
-            <Image src="/img/logo.svg" alt="Logo IFPE" width={130} height={60} />
+            <Image
+              src="/img/logo.svg"
+              alt="Logo IFPE"
+              width={130}
+              height={60}
+            />
           </Link>
 
           <div className="flex items-center gap-2 mt-2 px-2">
-            <button onClick={toggleMenu} aria-label="Abrir menu" className="text-blue-600">
+            <button
+              onClick={toggleMenu}
+              aria-label="Abrir menu"
+              className="text-blue-600"
+            >
               <FaBars size={20} />
             </button>
             <span className="text-gray-700 text-sm font-bold tracking-wide">
@@ -46,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({ menuTitle, user }) => {
 
       {menuOpen && (
         <Menu
-          user={{ name: user.name ?? '', role: (user as any).role ?? '' }}
+          user={{ name: user ?? '', role: role ?? '' }}
           closeMenu={closeMenu}
         />
       )}

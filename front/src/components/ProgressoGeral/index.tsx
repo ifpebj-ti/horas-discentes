@@ -16,7 +16,7 @@ interface ProgressoGeralProps {
 export default function ProgressoGeral({
   categorias,
   totalHoras,
-  totalNecessarias,
+  totalNecessarias
 }: ProgressoGeralProps) {
   return (
     <div className="bg-white rounded-xl shadow p-6 col-span-2">

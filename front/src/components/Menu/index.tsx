@@ -1,11 +1,18 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import React from 'react';
 import {
-  FaChartBar, FaFileAlt, FaUserGraduate, FaUsers,
-  FaEnvelope, FaBuilding, FaCog, FaHome, FaSignOutAlt, FaClipboard
+  FaFileAlt,
+  FaUserGraduate,
+  FaUsers,
+  FaEnvelope,
+  FaBuilding,
+  FaCog,
+  FaHome,
+  FaSignOutAlt,
+  FaClipboard
 } from 'react-icons/fa';
 
 type Props = {
@@ -16,7 +23,7 @@ type Props = {
 const CustomNavLink = ({
   href,
   children,
-  onClick,
+  onClick
 }: {
   href: string;
   children: React.ReactNode;
@@ -28,13 +35,23 @@ const CustomNavLink = ({
     'flex items-center px-4 py-2 text-sm hover:bg-gray-100 transition-colors';
   const activeClass = isActive ? 'bg-gray-200 font-semibold' : '';
   return (
-    <Link href={href} onClick={onClick} className={`${baseClass} ${activeClass}`}>
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`${baseClass} ${activeClass}`}
+    >
       {children}
     </Link>
   );
 };
 
-const IconText = ({ icon: Icon, text }: { icon: React.ElementType; text: string }) => (
+const IconText = ({
+  icon: Icon,
+  text
+}: {
+  icon: React.ElementType;
+  text: string;
+}) => (
   <>
     <Icon className="mr-2 text-blue-600" />
     <span className="text-black">{text}</span>
@@ -47,7 +64,6 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
   return (
     <nav className="absolute w-full bg-white shadow-md z-30">
       <div className="flex flex-col">
-
         {/* MENU DO COORDENADOR */}
         {role === 'coordenador' && (
           <>
@@ -69,7 +85,10 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
             <CustomNavLink href="/coordenacao/campus" onClick={closeMenu}>
               <IconText icon={FaBuilding} text="Campus" />
             </CustomNavLink>
-            <CustomNavLink href="/coordenacao/configuracoes" onClick={closeMenu}>
+            <CustomNavLink
+              href="/coordenacao/configuracoes"
+              onClick={closeMenu}
+            >
               <IconText icon={FaCog} text="Configurações" />
             </CustomNavLink>
           </>

@@ -1,11 +1,12 @@
 'use client';
 
-import BreadCrumb from '@/components/BreadCrumb';
-import { FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa6';
+import { useRouter, usePathname } from 'next/navigation';
 import { FaHome } from 'react-icons/fa';
+import { FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa6';
+
+import BreadCrumb from '@/components/BreadCrumb';
 import { DashboardCard } from '@/components/DashboardCard';
 import Header from '@/components/Header';
-import { useRouter, usePathname } from 'next/navigation';
 
 export interface User {
   id: string;
@@ -19,11 +20,10 @@ export default function Coordenacao() {
   const router = useRouter();
   const user: User = {
     id: '1',
-    name: 'Admin',
-    email: 'Admin@example.com',
-    role: 'Coordenador',
+    name: 'Coordenador',
+    email: 'coordenador@example.com',
+    role: 'Coordenador'
   };
-
 
   const getTitleFromPath = (path: string): string => {
     const lastSegment = path.split('/').filter(Boolean).pop() ?? '';
@@ -43,7 +43,7 @@ export default function Coordenacao() {
   return (
     <div className="min-h-screen bg-white">
       <header className="shadow-md bg-gray-100 z-20 relative">
-        <Header menuTitle={breadcrumbTitle} user={user} />
+        <Header menuTitle={breadcrumbTitle} user={user.name} role={user.role} />
       </header>
       <main>
         <div className="p-6 max-w-5xl mx-auto mt-4 z-10 relative">
