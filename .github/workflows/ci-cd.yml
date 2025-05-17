@@ -59,7 +59,7 @@ jobs:
 
       - name: Scan frontend image for critical vulnerabilities
         run: |
-          docker scout cves --only-severity=critical --exit-code-on-vuln=1 horas-discentes-frontend:latest
+          docker scout cves --only-severity=critical --exit-code horas-discentes-frontend:latest
           docker scout quickview horas-discentes-frontend:latest
 
       - name: Push Docker image
@@ -107,7 +107,7 @@ jobs:
 
       - name: Scan backend image for critical vulnerabilities
         run: |
-          docker scout cves --only-severity=critical --exit-code-on-vuln=1 horas-discentes-backend:latest
+          docker scout cves --only-severity=critical --exit-code horas-discentes-backend:latest
           docker scout quickview horas-discentes-backend:latest
 
       - name: Push Docker image
