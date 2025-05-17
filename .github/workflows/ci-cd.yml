@@ -124,8 +124,8 @@ jobs:
 
       - name: Scan backend image for critical vulnerabilities
         run: |
-          docker scout cves --only-severity=critical --ignore-base horas-discentes-backend:latest
-          docker scout quickview horas-discentes-backend:latest
+           docker scout cves --only-severity=critical --ignore-base horas-discentes-backend:latest
+           docker scout quickview horas-discentes-backend:latest
 
       - name: Push Docker image to GitHub Container Registry
         run: |
