@@ -82,7 +82,7 @@ jobs:
       security-events: write
     defaults:
       run:
-        working-directory: .
+        working-directory: .  
 
     steps:
       - name: Checkout repository
@@ -97,7 +97,7 @@ jobs:
         run: dotnet restore Back/Back.csproj
 
       - name: Run unit tests
-        run: dotnet test ../Back.Tests/Back.Tests.csproj --no-build --verbosity normal  # Caminho corrigido
+        run: dotnet test Back.Tests/Back.Tests.csproj --no-build --verbosity normal  # Caminho ajustado
 
       - name: Docker login to GitHub Container Registry
         uses: docker/login-action@v2
