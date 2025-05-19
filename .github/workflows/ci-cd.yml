@@ -82,7 +82,7 @@ jobs:
       security-events: write
     defaults:
       run:
-        working-directory: .  
+        working-directory: .
 
     steps:
       - name: Checkout repository
@@ -97,7 +97,7 @@ jobs:
         run: dotnet restore Back/Back.csproj
 
       - name: Run unit tests
-        run: dotnet test Back.Tests/Back.Tests.csproj --no-build --verbosity normal  # Caminho ajustado
+        run: dotnet test Back.Tests/Back.Tests.csproj --no-build --verbosity normal
 
       - name: Docker login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -114,7 +114,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t horas-discentes-backend:latest -f ../Back/Dockerfile ..
+          docker build -t horas-discentes-backend:latest -f Back/Dockerfile .  # Caminho corrigido para Dockerfile
 
       - name: Install Docker Scout
         run: |
