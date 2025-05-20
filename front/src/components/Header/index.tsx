@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ menuTitle, user, role }) => {
         <div className="flex flex-col">
           <Link href="/">
             <Image
-              src="/img/logo.svg"
+              src="/img/logo.png"
               alt="Logo IFPE"
               width={130}
               height={60}
