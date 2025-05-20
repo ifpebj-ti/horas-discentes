@@ -35,7 +35,7 @@ export default function Aluno() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
       {/* HEADER -------------------------------------------------------------- */}
-      <Header menuTitle={pageTitle()} user="Silva" role="aluno" />
+      {/* <Header menuTitle={pageTitle()} user="Silva" role="aluno" /> */}
 
       {/* MAIN ---------------------------------------------------------------- */}
       <main className="flex-1">
