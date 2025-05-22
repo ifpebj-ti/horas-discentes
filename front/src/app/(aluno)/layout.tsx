@@ -22,7 +22,9 @@ const getTitleFromPath = (path: string): string => {
   switch (lastSegment) {
     case 'aluno':
       return 'Aluno';
-    case 'certificados':
+    case 'novo':
+      return 'Novo Certificado';
+    case 'certificado':
       return 'Visualizar Certificados';
     default:
       return 'Início';
@@ -34,7 +36,7 @@ export default function AlunoLayout({ children }: LayoutProps) {
   const menuTitle = getTitleFromPath(pathname);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-black">
       <header className="shadow-md bg-gray-100 z-20 relative">
         <Header menuTitle={menuTitle} user={user.name} role={user.role} />
       </header>

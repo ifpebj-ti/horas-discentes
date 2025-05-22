@@ -1,37 +1,45 @@
 'use client';
 
 import Link from 'next/link';
+import { ReactNode } from 'react';
+import { FaChevronRight } from 'react-icons/fa';
 
-interface BreadcrumbProps {
-  breadcrumbTitle: string;
-  breadcrumbInicio: string;
-  breadcrumbIcon: React.ReactNode;
-  href?: string;
+interface BreadcrumbItem {
+  icon: ReactNode;
+  label: string;
+  href: string;
 }
 
-export default function Breadcrumb({
-  breadcrumbTitle,
-  href,
-  breadcrumbIcon,
-  breadcrumbInicio
-}: BreadcrumbProps) {
+interface BreadCrumbProps {
+  items: BreadcrumbItem[];
+}
+
+export default function BreadCrumb({ items }: BreadCrumbProps) {
   return (
-    <nav className="text-sm text-gray-600 mb-6 flex items-center flex-wrap">
-      <Link
-        href={breadcrumbInicio}
-        className="text-blue-600 hover:underline flex items-center space-x-1"
-      >
-        {breadcrumbIcon}
-      </Link>
-      <span className="flex items-center space-x-1">
-        <span className="mx-1 text-gray-400">›</span>
-        <Link
-          href={href || '#'}
-          className="text-blue-600 hover:underline capitalize"
-        >
-          {breadcrumbTitle}
-        </Link>
-      </span>
+    <nav className="flex" aria-label="Breadcrumb">
+      <ol className="flex items-center space-x-2">
+        {items.map((item, index) => (
+          <li key={item.href} className="flex items-center">
+            {index > 0 && (
+              <FaChevronRight className="flex-shrink-0 h-4 w-4 text-gray-400 mx-2" />
+            )}
+
+            <Link
+              href={item.href}
+              className={`flex items-center gap-2 text-sm font-medium ${index === items.length - 1
+                ? 'text-gray-700 cursor-default'
+                : 'text-[#0F4AA9] hover:text-[#0D3F8E] transition-colors'
+                }`}
+            >
+              <span className={`${index === items.length - 1 ? 'text-gray-500' : 'text-[#0F4AA9]'
+                }`}>
+                {item.icon}
+              </span>
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ol>
     </nav>
   );
 }

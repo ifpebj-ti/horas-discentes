@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaArrowLeft, FaUpload } from 'react-icons/fa';
+import { FaArrowLeft, FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
 import Header from '@/components/Header';
 import BreadCrumb from '@/components/BreadCrumb';
 
@@ -75,9 +75,23 @@ export default function NovoCertificado() {
           </div>
 
           <BreadCrumb
-            breadcrumbInicio="aluno"
-            breadcrumbTitle="Novo Certificado"
-            breadcrumbIcon={<FaUpload />}
+            items={[
+              {
+                icon: <FaHome className="text-base" />,
+                label: 'Início',
+                href: '/aluno'
+              },
+              {
+                icon: <FaFileAlt className="text-base" />,
+                label: 'Certificados',
+                href: '/aluno/certificado'
+              },
+              {
+                icon: <FaUpload className="text-base" />,
+                label: 'Novo Certificado',
+                href: '/aluno/certificado/novo'
+              }
+            ]}
           />
 
           <form onSubmit={handleSubmit} className="space-y-8">

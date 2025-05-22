@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaPlusCircle, FaSearch } from 'react-icons/fa';
+import { FaHome, FaPlusCircle, FaSearch, FaFileAlt } from 'react-icons/fa';
 import Header from '@/components/Header';
 import BreadCrumb from '@/components/BreadCrumb';
 import { CATEGORY_INFO } from '@/types';
@@ -57,6 +57,19 @@ const MOCK_CERTIFICATES: Certificate[] = [
     title: 'Monitoria em Programação',
     date: '2024-03-05'
   },
+];
+
+const breadcrumbItems = [
+  {
+    icon: <FaHome className="text-base" />,
+    label: 'Início',
+    href: '/aluno'
+  },
+  {
+    icon: <FaFileAlt className="text-base" />,
+    label: 'Certificados',
+    href: '/aluno/certificado'
+  }
 ];
 
 export default function Certificados() {
@@ -138,7 +151,6 @@ export default function Certificados() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
-      {/* MAIN ---------------------------------------------------------------- */}
       <main className="flex-1 w-full">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
           <div className="flex flex-col gap-4 mb-6">
@@ -154,16 +166,14 @@ export default function Certificados() {
 
               <Link
                 href="/aluno/certificado/novo"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0F4AA9] px-4 py-2 text-sm font-medium text-white shadow hover:bg-[#0D3F8E] transition-colors w-full sm:w-auto"
               >
-                <RoundedButton text="Novo Certificado" icon={<FaPlusCircle />} />
+                <FaPlusCircle className="text-base" />
+                Novo Certificado
               </Link>
             </div>
 
-            <BreadCrumb
-              breadcrumbInicio="aluno"
-              breadcrumbTitle="Certificados"
-              breadcrumbIcon={<FaSearch />}
-            />
+            <BreadCrumb items={breadcrumbItems} />
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 border border-gray-200">

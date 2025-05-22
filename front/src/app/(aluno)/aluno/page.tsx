@@ -1,13 +1,12 @@
 'use client';
-import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { FaHome, FaPlusCircle } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
-import Header from '@/components/Header';
 import ProgressSummary from '@/components/Student/ProgressSummary';
 import StatsSummary from '@/components/Student/StatsSummary';
 import { SOFTWARE_ENGINEERING_REQUIREMENTS, CATEGORY_INFO } from '@/types';
 import { RoundedButton } from '@/components/RoundedButton';
+import ProgressoGeral from '@/components/ProgressoGeral';
 
 const MOCK_CERTIFICATES = [
   { id: '1', status: 'aprovado', hours: 10, category: 'extension' },
@@ -17,7 +16,6 @@ const MOCK_CERTIFICATES = [
 ];
 
 export default function Aluno() {
-  const pathname = usePathname();
   const certificates = MOCK_CERTIFICATES;
 
   const total = certificates.length;
@@ -25,27 +23,37 @@ export default function Aluno() {
   const pending = certificates.filter(c => c.status === 'pendente').length;
   const rejected = certificates.filter(c => c.status === 'rejeitado').length;
 
-  const pageTitle = () => {
-    const last = pathname.split('/').filter(Boolean).pop();
-    if (last === 'aluno') return 'Aluno';
-    if (last === 'certificados') return 'Visualizar Certificados';
-    return 'Início';
-  };
+  // Filtrar apenas certificados aprovados
+  const approvedCertificates = certificates.filter(c => c.status === 'aprovado');
+
+  // Mapear categorias para ProgressoGeral
+  const categorias = SOFTWARE_ENGINEERING_REQUIREMENTS.categories.map(cat => ({
+    nome: cat.label,
+    horas: approvedCertificates
+      .filter(c => c.category === cat.category)
+      .reduce((acc, c) => acc + c.hours, 0),
+    total: cat.maxHours,
+    categoriaKey: cat.category // chave para montar o link
+  }));
+
+
+  // total de horas aprovadas somadas
+  const totalHoras = categorias.reduce((acc, cat) => acc + cat.horas, 0);
+
+  // total horas exigidas no curso
+  const totalNecessarias = SOFTWARE_ENGINEERING_REQUIREMENTS.totalHoursRequired;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
-      {/* HEADER -------------------------------------------------------------- */}
-      {/* <Header menuTitle={pageTitle()} user="Silva" role="aluno" /> */}
-
+    <div className="min-h-screen flex flex-col">
       {/* MAIN ---------------------------------------------------------------- */}
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-2xl font-bold sm:text-3xl mb-1">
-                Olá, João!
+                Olá, Aluno!
               </h1>
-              <p className="text-gray-600 text-sm">
+              <p className="text-sm">
                 Bem-vindo ao Horas Discentes. Acompanhe suas atividades complementares.
               </p>
             </div>
@@ -58,9 +66,13 @@ export default function Aluno() {
           </div>
 
           <BreadCrumb
-            breadcrumbInicio="aluno"
-            breadcrumbTitle="Aluno"
-            breadcrumbIcon={<FaHome />}
+            items={[
+              {
+                icon: <FaHome className="text-base" />,
+                label: 'Início',
+                href: '/aluno'
+              }
+            ]}
           />
 
           <div
@@ -68,9 +80,11 @@ export default function Aluno() {
           >
             {/* COLUNA PRINCIPAL ------------------------------------------------ */}
             <section className="space-y-8">
-              <ProgressSummary
-                certificates={certificates}
-                courseRequirement={SOFTWARE_ENGINEERING_REQUIREMENTS}
+              {/* Progresso Geral ---------------------------------------------- */}
+              <ProgressoGeral
+                categorias={categorias}
+                totalHoras={totalHoras}
+                totalNecessarias={totalNecessarias}
               />
 
               {/* Certificados recentes ------------------------------------- */}
@@ -110,7 +124,7 @@ export default function Aluno() {
             </section>
 
             {/* COLUNA LATERAL -------------------------------------------------- */}
-            <aside className="space-y-8">
+            {/* <aside className="space-y-8">
               <StatsSummary
                 total={total}
                 approved={approved}
@@ -130,17 +144,17 @@ export default function Aluno() {
                     'Como saber se meu certificado foi aprovado?',
                   ].map(q => (
                     <li key={q}>
-                      <a
-                        href="#"
-                        className="text-[#0F4AA9] hover:underline transition-colors"
+                      <button
+                        type="button"
+                        className="text-[#0F4AA9] hover:underline transition-colors bg-transparent border-none p-0 cursor-pointer"
                       >
                         {q}
-                      </a>
+                      </button>
                     </li>
                   ))}
                 </ul>
               </div>
-            </aside>
+            </aside> */}
           </div>
         </div>
       </main>
