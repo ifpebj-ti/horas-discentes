@@ -16,7 +16,10 @@ import {
 } from 'react-icons/fa';
 
 type Props = {
-  user: { name: string; role: string };
+  user: {
+    name: string;
+    role: string;
+  };
   closeMenu: () => void;
 };
 

@@ -1,23 +1,26 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaHome, FaPlusCircle, FaSearch, FaFileAlt } from 'react-icons/fa';
-import Header from '@/components/Header';
 import BreadCrumb from '@/components/BreadCrumb';
 import { CATEGORY_INFO } from '@/types';
 import { RoundedButton } from '@/components/RoundedButton';
 import VerCertificado from '@/components/VerCertificado/VerCertificado';
+import { CertificadosContext } from '../../layout'; // ajuste o caminho se necessário
 
-interface Certificate {
+interface Certificado {
   id: string;
   title: string;
   institution: string;
   description: string;
-  hours: number;
-  date: string;
-  category: string;
-  status: 'aprovado' | 'rejeitado' | 'pendente';
+  cargaHoraria: number;
+  local: string;
+  periodoInicio: string;
+  periodoFim: string;
+  status: string;
+  tipo: string;
+  categoriaKey: string;
 }
 
 const STATUS_OPTIONS = [
@@ -30,44 +33,12 @@ const STATUS_OPTIONS = [
 const CATEGORY_OPTIONS = [
   { value: 'all', label: 'Todas as categorias' },
   { value: 'Ensino', label: 'Ensino' },
+  { value: 'Estagio', label: 'Estagio' },
+  { value: 'Eventos', label: 'Eventos' },
   { value: 'Pesquisa', label: 'Pesquisa' },
-  { value: 'Extensão', label: 'Extensão' },
-  { value: 'Gestão', label: 'Gestão' },
-  { value: 'Monitoria', label: 'Monitoria' },
-  { value: 'Iniciação Científica', label: 'Iniciação Científica' },
-];
-
-const MOCK_CERTIFICATES: Certificate[] = [
-  {
-    id: '1',
-    title: 'Monitoria em Programação',
-    description: 'Atuação como monitor na disciplina de Programação',
-    institution: 'IFPE - Campus Belo Jardim',
-    hours: 30,
-    date: '2023-07-19',
-    category: 'Monitoria',
-    status: 'rejeitado'
-  },
-  {
-    id: '2',
-    title: 'Curso de React',
-    description: 'Curso online de React com duração de 40 horas',
-    institution: 'Udemy',
-    hours: 40,
-    date: '2023-06-08',
-    category: 'Ensino',
-    status: 'pendente'
-  },
-  {
-    id: '3',
-    title: 'Semana de Engenharia de Software',
-    description: 'Participação na semana de Engenharia de Software do IFPE',
-    institution: 'IFPE - Campus Belo Jardim',
-    hours: 20,
-    date: '2023-05-14',
-    category: 'Extensão',
-    status: 'aprovado'
-  }
+  { value: 'Extensao', label: 'Extensao' },
+  { value: 'Curso', label: 'Curso' },
+  { value: 'Voluntariado', label: 'Voluntariado' }
 ];
 
 const breadcrumbItems = [
@@ -89,7 +60,7 @@ export default function Certificados() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [certificates] = useState<Certificate[]>(MOCK_CERTIFICATES);
+  const certificados = useContext(CertificadosContext) as Certificado[];
 
   useEffect(() => {
     const category = searchParams.get('category');
@@ -134,13 +105,13 @@ export default function Certificados() {
     updateFilters(selectedStatus, category);
   };
 
-  const filteredCertificates = certificates.filter(cert => {
+  const filteredCertificates = certificados.filter(cert => {
     const matchesSearch = cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cert.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cert.institution.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = selectedStatus === 'all' || cert.status === selectedStatus;
-    const matchesCategory = selectedCategory === 'all' || cert.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || cert.categoriaKey === selectedCategory;
 
     return matchesSearch && matchesStatus && matchesCategory;
   });
@@ -243,7 +214,17 @@ export default function Certificados() {
                 filteredCertificates.map((cert) => (
                   <VerCertificado
                     key={cert.id}
-                    certificate={cert}
+                    certificate={{
+                      id: cert.id,
+                      title: cert.title,
+                      institution: cert.local,
+                      description: cert.description,
+                      hours: cert.cargaHoraria,
+                      date: cert.periodoInicio,
+                      dateEnd: cert.periodoFim,
+                      category: cert.categoriaKey,
+                      status: cert.status,
+                    }}
                   />
                 ))
               ) : (
@@ -255,10 +236,6 @@ export default function Certificados() {
           </div>
         </div>
       </main>
-
-      <footer className="bg-white border-t py-4 text-center text-xs text-gray-500">
-        © 2024 Sua Empresa. Todos os direitos reservados.
-      </footer>
     </div>
   );
 }

@@ -16,15 +16,22 @@ interface ProgressoGeralProps {
   readonly totalHoras: number;
   readonly totalNecessarias: number;
   readonly title?: string;
+  readonly subTitle?: string;
+  readonly categoriaKey?: string;
+  readonly onCategoriaClick?: (categoriaKey: string) => void;
 }
 
 export default function ProgressoGeral({
   categorias,
   totalHoras,
   totalNecessarias,
-  title = "Progresso Geral"
+  title,
+  subTitle,
+  categoriaKey,
+  onCategoriaClick
 }: ProgressoGeralProps) {
   const [expanded, setExpanded] = useState(false);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
 
   return (
     <div className="bg-white rounded-xl shadow p-6">
@@ -36,7 +43,7 @@ export default function ProgressoGeral({
         onClick={() => setExpanded(!expanded)}
       >
         <span className="text-sm font-medium text-gray-700">
-          {title}
+          {subTitle}
         </span>
         <div className="flex items-center">
           <span className="text-sm font-medium text-gray-900 mr-2">
@@ -67,16 +74,21 @@ export default function ProgressoGeral({
           {categorias.map((cat) => {
             const percentagem = (cat.horas / cat.total) * 100;
             const isCapped = cat.horas > cat.total;
+            const isSelected = categoriaKey === cat.categoriaKey;
             return (
-              <div key={cat.categoriaKey} className="pl-4 space-y-1">
+              <div
+                key={`${cat.categoriaKey}-${cat.nome}`}
+                className={`pl-4 space-y-1 ${isSelected ? 'bg-blue-50 rounded' : ''}`}
+              >
                 <div className="flex items-center justify-between">
                   <Link
-                    href={`/aluno/certificado?category=${encodeURIComponent(cat.nome)}`}
+                    href={`/aluno/certificado?category=${encodeURIComponent(cat.categoriaKey)}`}
                     className={`
                       text-sm
                       ${cat.horas > 0
                         ? 'text-blue-600 font-semibold hover:text-blue-700'
                         : 'text-gray-500 hover:text-blue-600'}
+                      ${isSelected ? 'underline' : ''}
                     `}
                   >
                     {cat.nome}

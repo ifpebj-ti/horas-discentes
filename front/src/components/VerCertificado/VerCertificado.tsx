@@ -9,8 +9,9 @@ interface Certificate {
     description: string;
     hours: number;
     date: string;
+    dateEnd: string;
     category: string;
-    status: 'aprovado' | 'rejeitado' | 'pendente';
+    status: string;
 }
 
 interface VerCertificadoProps {
@@ -62,7 +63,7 @@ export default function VerCertificado({ certificate }: VerCertificadoProps) {
 
                     <div className="flex items-center gap-2 text-gray-600">
                         <FaCalendarAlt className="text-blue-600" />
-                        <span>{formatDate(certificate.date)}</span>
+                        <span>{formatDate(certificate.date)} - {formatDate(certificate.dateEnd)}</span>
                     </div>
                 </div>
 
@@ -81,4 +82,4 @@ export default function VerCertificado({ certificate }: VerCertificadoProps) {
             </div>
         </div>
     );
-} 
+}

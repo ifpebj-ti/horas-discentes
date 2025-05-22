@@ -107,10 +107,6 @@ export default function NovoCertificado() {
           />
         </div>
       </main>
-
-      <footer className="bg-white border-t py-4 text-center text-xs text-gray-500">
-        © 2024 Sua Empresa. Todos os direitos reservados.
-      </footer>
     </div>
   );
 }

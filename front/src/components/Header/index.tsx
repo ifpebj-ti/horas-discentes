@@ -7,11 +7,13 @@ import Menu from '@/components/Menu';
 
 interface HeaderProps {
   menuTitle: string;
-  user: string;
-  role: string;
+  user: {
+    name: string;
+    role: string;
+  };
 }
 
-const Header: React.FC<HeaderProps> = ({ menuTitle, user, role }) => {
+const Header: React.FC<HeaderProps> = ({ menuTitle, user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen((prev) => !prev);
   const closeMenu = () => setMenuOpen(false);
@@ -57,8 +59,8 @@ const Header: React.FC<HeaderProps> = ({ menuTitle, user, role }) => {
       {menuOpen && (
         <Menu
           user={{
-            name: user,
-            role
+            name: user.name,
+            role: user.role
           }}
           closeMenu={closeMenu}
         />

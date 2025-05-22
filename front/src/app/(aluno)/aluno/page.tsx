@@ -2,208 +2,326 @@
 import Link from 'next/link';
 import { FaHome, FaPlusCircle } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
-import ProgressSummary from '@/components/Student/ProgressSummary';
 import StatsSummary from '@/components/Student/StatsSummary';
-import { SOFTWARE_ENGINEERING_REQUIREMENTS, CATEGORY_INFO } from '@/types';
 import { RoundedButton } from '@/components/RoundedButton';
 import ProgressoGeral from '@/components/ProgressoGeral';
 import VerCertificado from '@/components/VerCertificado/VerCertificado';
+import { MOCK_CERTIFICATES } from '../layout';
+import { useState } from 'react';
 
-interface Certificate {
+interface User {
   id: string;
+  name: string;
+  email: string;
+  role: string;
+  isNewPPC: boolean;
+}
+interface Certificado {
+  id: string | number;
+  grupo: string;
+  categoria: string;
+  categoriaKey: string;
   title: string;
-  institution: string;
   description: string;
-  hours: number;
-  date: string;
-  category: string;
+  cargaHoraria: number;
+  local: string;
+  periodo: string;
   status: 'aprovado' | 'rejeitado' | 'pendente';
-  tipo: 'complementar' | 'extensao';
+  tipo: string;
 }
 
-const MOCK_CERTIFICATES: Certificate[] = [
-  {
-    id: '1',
-    title: 'Monitoria em Programação',
-    description: 'Atuação como monitor na disciplina de Programação',
-    institution: 'IFPE - Campus Belo Jardim',
-    hours: 30,
-    date: '2023-07-19',
-    category: 'Monitoria',
-    status: 'rejeitado',
-    tipo: 'complementar'
-  },
-  {
-    id: '2',
-    title: 'Curso de React',
-    description: 'Curso online de React com duração de 40 horas',
-    institution: 'Udemy',
-    hours: 40,
-    date: '2023-06-08',
-    category: 'Cursos Complementares',
-    status: 'pendente',
-    tipo: 'complementar'
-  },
-  {
-    id: '3',
-    title: 'Semana de Engenharia de Software',
-    description: 'Participação na semana de Engenharia de Software do IFPE',
-    institution: 'IFPE - Campus Belo Jardim',
-    hours: 20,
-    date: '2023-05-14',
-    category: 'Atividades Acadêmicas',
-    status: 'aprovado',
-    tipo: 'complementar'
-  }
-];
+const MOCK_USER: User = {
+  id: '1',
+  name: 'Silva',
+  email: 'silva@example.com',
+  role: 'aluno',
+  // Mudando o valor para true/false para simular o novo PPC
+  isNewPPC: true
+};
 
 export default function Aluno() {
-  const certificates = MOCK_CERTIFICATES;
+  const Certificados = MOCK_CERTIFICATES;
+  const user = MOCK_USER;
 
-  const total = certificates.length;
-  const approved = certificates.filter(c => c.status === 'aprovado').length;
-  const pending = certificates.filter(c => c.status === 'pendente').length;
-  const rejected = certificates.filter(c => c.status === 'rejeitado').length;
+  const total = Certificados.length;
+  const approved = Certificados.filter(c => c.status === 'aprovado').length;
+  const pending = Certificados.filter(c => c.status === 'pendente').length;
+  const rejected = Certificados.filter(c => c.status === 'rejeitado').length;
 
   // Filtrar apenas certificados aprovados
-  const approvedCertificates = certificates.filter(c => c.status === 'aprovado');
+  const certificadosAprovados = Certificados.filter(c => c.status === 'aprovado');
 
   // Separar certificados aprovados por tipo
-  const compCertificates = approvedCertificates.filter(c => c.tipo === 'complementar');
-  const extCertificates = approvedCertificates.filter(c => c.tipo === 'extensao');
+  const compCertificados = certificadosAprovados.filter(c => c.tipo === 'complementar');
+  const extCertificados = certificadosAprovados.filter(c => c.tipo === 'extensao');
 
   // Categorias de Atividades Complementares (baseado na tabela)
   const categoriasComplementares = [
+    // Grupo I
     {
+      grupo: 'I',
       nome: 'Disciplinas cursadas em outros cursos de graduação',
-      horas: compCertificates.filter(c => c.category === 'Disciplinas cursadas em outros cursos de graduação').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'I' &&
+          c.categoria === 'Categoria 1'
+        )
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 60,
-      categoriaKey: 'disciplinas_outros_cursos',
-      grupo: 'I'
+      categoriaKey: 'Ensino'
     },
     {
+      grupo: 'I',
       nome: 'Monitoria',
-      horas: compCertificates.filter(c => c.category === 'Monitoria').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'I' &&
+          c.categoria === 'Categoria 2'
+        )
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 80,
-      categoriaKey: 'monitoria',
-      grupo: 'I'
+      categoriaKey: 'Ensino'
     },
     {
+      grupo: 'I',
       nome: 'Cursos de idiomas realizados durante o curso, comunicação e expressão e informática',
-      horas: compCertificates.filter(c => c.category === 'Cursos de idiomas realizados durante o curso, comunicação e expressão e informática').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'I' &&
+          c.categoria === 'Categoria 3'
+        )
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 80,
-      categoriaKey: 'cursos_idiomas_informatica',
-      grupo: 'I'
+      categoriaKey: 'Ensino'
     },
     {
-      nome: 'Cursos extras realizados durante o curso',
-      horas: compCertificates.filter(c => c.category === 'Cursos extras realizados durante o curso').reduce((acc, c) => acc + c.hours, 0),
+      grupo: 'I',
+      nome: 'Participação do programa institucional de bolsas de iniciação à docência',
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'I' &&
+          c.categoria === 'Categoria 4'
+        )
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 40,
-      categoriaKey: 'cursos_extras',
-      grupo: 'I'
+      categoriaKey: 'Ensino'
     },
+    // Grupo II
     {
+      grupo: 'II',
       nome: 'Visita técnica em área afim ao curso e supervisionada pela instituição, mediante apresentação de relatório.',
-      horas: compCertificates.filter(c => c.category === 'Visita técnica em área afim ao curso e supervisionada pela instituição, mediante apresentação de relatório.').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'II' &&
+          c.categoria === 'Categoria 5')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 80,
-      categoriaKey: 'visita_tecnica',
-      grupo: 'II'
+      categoriaKey: 'Estagio'
     },
     {
+      grupo: 'II',
       nome: 'Estágio Profissional não obrigatório',
-      horas: compCertificates.filter(c => c.category === 'Estágio Profissional não obrigatório').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'II' &&
+          c.categoria === 'Categoria 6')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 60,
-      categoriaKey: 'estagio_nao_obrigatorio',
-      grupo: 'II'
+      categoriaKey: 'Estagio'
     },
+
+    // Grupo III
     {
+      grupo: 'III',
       nome: 'Participação como ouvinte, participante, palestrante, instrutor, apresentador, expositor ou mediador em eventos científicos, seminários, atividades culturais, esportivas, políticas e sociais, sessões técnicas, exposições, jornadas acadêmicas e científicas, palestras, seminários, congressos, conferências ou similares',
-      horas: compCertificates.filter(c => c.category === 'Participação como ouvinte, participante, palestrante, instrutor, apresentador, expositor ou mediador em eventos científicos, seminários, atividades culturais, esportivas, políticas e sociais, sessões técnicas, exposições, jornadas acadêmicas e científicas, palestras, seminários, congressos, conferências ou similares').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'III' &&
+          c.categoria === 'Categoria 7')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 80,
-      categoriaKey: 'participacao_eventos',
-      grupo: 'III'
+      categoriaKey: 'Eventos'
+    },
+
+    // Grupo IV
+    {
+      grupo: 'IV',
+      nome: 'Participação em projetos de pesquisa',
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'IV' &&
+          c.categoria === 'Categoria 8')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
+      total: 80,
+      categoriaKey: 'Pesquisa'
     },
     {
-      nome: 'Participação em pesquisa',
-      horas: compCertificates.filter(c => c.category === 'Participação em pesquisa').reduce((acc, c) => acc + c.hours, 0),
-      total: 80,
-      categoriaKey: 'participacao_pesquisa',
-      grupo: 'IV'
-    },
-    {
+      grupo: 'IV',
       nome: 'Publicações de textos acadêmicos',
-      horas: compCertificates.filter(c => c.category === 'Publicações de textos acadêmicos').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'IV' &&
+          c.categoria === 'Categoria 9')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 40,
-      categoriaKey: 'publicacoes_academicas',
-      grupo: 'IV'
+      categoriaKey: 'Pesquisa'
     },
     {
+      grupo: 'IV',
       nome: 'Grupos de estudos com produção intelectual',
-      horas: compCertificates.filter(c => c.category === 'Grupos de estudos com produção intelectual').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'IV' &&
+          c.categoria === 'Categoria 10')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 20,
-      categoriaKey: 'grupos_estudos',
-      grupo: 'IV'
+      categoriaKey: 'Pesquisa'
     },
     {
+      grupo: 'IV',
       nome: 'Trabalhos desenvolvidos sob orientação de docente apresentados em eventos acadêmicos',
-      horas: compCertificates.filter(c => c.category === 'Trabalhos desenvolvidos sob orientação de docente apresentados em eventos acadêmicos').reduce((acc, c) => acc + c.hours, 0),
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'IV' &&
+          c.categoria === 'Categoria 11')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 40,
-      categoriaKey: 'trabalhos_orientacao',
-      grupo: 'IV'
+      categoriaKey: 'Pesquisa'
+    },
+    {
+      grupo: 'V',
+      nome: 'Participação em projetos de extensão',
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'V' &&
+          c.categoria === 'Categoria 12')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
+      total: 80,
+      categoriaKey: 'Curso'
+    },
+    {
+      grupo: 'V',
+      nome: 'Participar na organização, coordenação ou realização de cursos em eventos científicos',
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'V' &&
+          c.categoria === 'Categoria 13')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
+      total: 40,
+      categoriaKey: 'Curso'
+    },
+    {
+      grupo: 'V',
+      nome: 'Trabalhar na organização de material informativo da Instituição',
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'V' &&
+          c.categoria === 'Categoria 14')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
+      total: 20,
+      categoriaKey: 'Curso'
+    },
+    {
+      grupo: 'V',
+      nome: 'Trabalhar na organização ou participação em campanhas de voluntariado ou programas de ação social',
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'V' &&
+          c.categoria === 'Categoria 15')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
+      total: 20,
+      categoriaKey: 'Curso'
+    },
+    {
+      grupo: 'VI',
+      nome: 'Participação, como voluntário, em atividades compatíveis com os objetivos do curso realizadas em instituições filantrópicas e da sociedade civil organizada do terceiro setor',
+      horas: compCertificados
+        .filter(c =>
+          c.grupo === 'VI' &&
+          c.categoria === 'Categoria 16')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
+      total: 20,
+      categoriaKey: 'Voluntariado'
     }
   ];
 
   // Categorias de Atividades de Extensão (baseado na tabela)
   const categoriasExtensao = [
     {
+      grupo: 'Extensao',
       nome: 'Participação como Bolsista, voluntário ou colaborador, em Projetos/Programas de Extensão coordenado por servidor do IFPE',
-      horas: extCertificates.filter(c => c.category === 'Participação como Bolsista, voluntário ou colaborador, em Projetos/Programas de Extensão coordenado por servidor do IFPE').reduce((acc, c) => acc + c.hours, 0),
+      horas: extCertificados
+        .filter(c =>
+          c.grupo === 'Extensao' &&
+          c.categoria === 'Categoria 1' 
+        )
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 160,
-      categoriaKey: 'bolsista_extensao',
-      grupo: 'Extensão'
+      categoriaKey: 'Extensao'
     },
     {
+      grupo: 'Extensao',
       nome: 'Participação em Eventos voltados ao público externo como Palestrante, Instrutor, Apresentador, Expositor ou Mediador de Cursos/Palestras/Workshops/Mesas Redondas/Oficinas',
-      horas: extCertificates.filter(c => c.category === 'Participação em Eventos voltados ao público externo como Palestrante, Instrutor, Apresentador, Expositor ou Mediador de Cursos/Palestras/Workshops/Mesas Redondas/Oficinas').reduce((acc, c) => acc + c.hours, 0),
+      horas: extCertificados
+        .filter(c =>
+          c.grupo === 'Extensao' &&
+          c.categoria === 'Categoria 2'
+        )
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 80,
-      categoriaKey: 'eventos_publico_externo',
-      grupo: 'Extensão'
+      categoriaKey: 'Extensao'
     },
     {
+      grupo: 'Extensao',
       nome: 'Participação da Comissão Organizadora ou como Monitor em Eventos para exibição pública de conhecimento ou produto (Cultural, Acadêmico, Científico ou Tecnológico) desenvolvido no IFPE',
-      horas: extCertificates.filter(c => c.category === 'Participação da Comissão Organizadora ou como Monitor em Eventos para exibição pública de conhecimento ou produto (Cultural, Acadêmico, Científico ou Tecnológico) desenvolvido no IFPE').reduce((acc, c) => acc + c.hours, 0),
+      horas: extCertificados
+        .filter(c =>
+          c.grupo === 'Extensao' &&
+          c.categoria === 'Categoria 3'
+        )
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 80,
-      categoriaKey: 'comissao_organizadora',
-      grupo: 'Extensão'
+      categoriaKey: 'Extensao'
     },
-    {
-      nome: 'Prestação de serviços de caráter extensionista',
-      horas: extCertificates.filter(c => c.category === 'Prestação de serviços de caráter extensionista').reduce((acc, c) => acc + c.hours, 0),
+    {	
+      grupo: 'Extensao',
+      nome: 'Prestaçaõ de serviços de caráter extensionista. Prestação de serviços como voluntário/a, bolsista ou colaborador/a, para o desenvolvimento de produtos e/ou processos voltados á resolução de problemas identificados interna ou externamente ao IFPE',
+      horas: extCertificados
+        .filter(c =>
+          c.grupo === 'Extensao' &&
+          c.categoria === 'Categoria 4'
+        )
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 160,
-      categoriaKey: 'servicos_extensionistas',
-      grupo: 'Extensão'
+      categoriaKey: 'Extensao'
     },
     {
+      grupo: 'Extensao',
       nome: 'Atividades desenvolvidas por meio dos Núcleos Institucionais de Extensão',
-      horas: extCertificates.filter(c => c.category === 'Atividades desenvolvidas por meio dos Núcleos Institucionais de Extensão').reduce((acc, c) => acc + c.hours, 0),
+      horas: extCertificados
+        .filter(c =>
+          c.grupo === 'Extensao' &&
+          c.categoria === 'Categoria 5')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 80,
-      categoriaKey: 'nucleos_extensao',
-      grupo: 'Extensão'
+      categoriaKey: 'Extensao'
     },
     {
+      grupo: 'Extensao',
       nome: 'Atividades de empreendedorismo, como membro de empresa júnior ou como voluntário/a ou bolsista de incubadoras de empresas ou projetos, prestando assessoria e consultoria',
-      horas: extCertificates.filter(c => c.category === 'Atividades de empreendedorismo, como membro de empresa júnior ou como voluntário/a ou bolsista de incubadoras de empresas ou projetos, prestando assessoria e consultoria').reduce((acc, c) => acc + c.hours, 0),
+      horas: extCertificados
+        .filter(c =>
+          c.grupo === 'Extensao' &&
+          c.categoria === 'Categoria 6')
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: 160,
-      categoriaKey: 'empreendedorismo',
-      grupo: 'Extensão'
+      categoriaKey: 'Extensao'
     }
   ];
 
-  // total de horas aprovadas somadas
-  const totalHoras = approvedCertificates.reduce((acc, cert) => acc + cert.hours, 0);
+  const [categoriaKeySelecionada, setCategoriaKeySelecionada] = useState<string | undefined>(undefined);
 
-  // total horas exigidas no curso
-  const totalNecessarias = 280;
+  const matchesCategory = (cert: Certificado) => categoriaKeySelecionada === 'all' || cert.categoriaKey === categoriaKeySelecionada;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -213,10 +331,10 @@ export default function Aluno() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-2xl font-bold sm:text-3xl mb-1">
-                Olá, Aluno!
+                {user.name}, bem-vindo(a) de volta!
               </h1>
               <p className="text-sm">
-                Bem-vindo ao Horas Discentes. Acompanhe suas atividades complementares.
+                Bem-vindo ao Horas Discentes. Acompanhe seu progresso aqui.
               </p>
             </div>
 
@@ -244,16 +362,27 @@ export default function Aluno() {
             <section className="space-y-8">
               {/* Progresso Geral - Atividades Complementares */}
               <ProgressoGeral
+                title="Atividades Complementares"
+                subTitle="Progressão Geral - Atividades Complementares"
                 categorias={categoriasComplementares}
                 totalHoras={categoriasComplementares.reduce((acc, cat) => acc + cat.horas, 0)}
                 totalNecessarias={280}
+                categoriaKey={categoriaKeySelecionada}
+                onCategoriaClick={setCategoriaKeySelecionada}
               />
               {/* Progresso Geral - Atividades de Extensão */}
-              <ProgressoGeral
-                categorias={categoriasExtensao}
-                totalHoras={categoriasExtensao.reduce((acc, cat) => acc + cat.horas, 0)}
-                totalNecessarias={320}
-              />
+              {/* Renderiza Progresso Geral - Atividades de Extensão somente se isNewPPC for true */}
+              {user.isNewPPC && (
+                <ProgressoGeral
+                  title="Atividades de Extensão"
+                  subTitle="Progressão Geral - Atividades de Extensão"
+                  categorias={categoriasExtensao}
+                  totalHoras={categoriasExtensao.reduce((acc, cat) => acc + cat.horas, 0)}
+                  totalNecessarias={320}
+                  categoriaKey={categoriaKeySelecionada}
+                  onCategoriaClick={setCategoriaKeySelecionada}
+                />
+              )}
 
               {/* Certificados recentes ------------------------------------- */}
               <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
@@ -267,10 +396,23 @@ export default function Aluno() {
                   </Link>
                 </div>
 
-                {certificates.length ? (
+                {Certificados.length ? (
                   <div className="space-y-4">
-                    {certificates.slice(0, 3).map(cert => (
-                      <VerCertificado key={cert.id} certificate={cert} />
+                    {Certificados.slice(0, 3).map(cert => (
+                      <VerCertificado
+                        key={cert.id}
+                        certificate={{
+                          id: String(cert.id),
+                          title: cert.title,
+                          institution: cert.local,
+                          description: cert.description,
+                          hours: cert.cargaHoraria,
+                          date: cert.periodoInicio,
+                          dateEnd: cert.periodoFim,
+                          category: cert.categoriaKey,
+                          status: cert.status,
+                        }}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -304,12 +446,18 @@ export default function Aluno() {
                     'Como saber se meu certificado foi aprovado?',
                   ].map(q => (
                     <li key={q}>
-                      <button
-                        type="button"
-                        className="text-[#0F4AA9] hover:underline transition-colors bg-transparent border-none p-0 cursor-pointer"
+                      <Link
+                        key={q}
+                        href={`/aluno/certificado?category=${encodeURIComponent(q.split(' ')[0])}`}
+                        className={`
+                          text-sm
+                          ${categoriaKeySelecionada === q.split(' ')[0]
+                            ? 'text-blue-600 font-semibold hover:text-blue-700'
+                            : 'text-gray-500 hover:text-blue-600'}
+                        `}
                       >
                         {q}
-                      </button>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -318,11 +466,6 @@ export default function Aluno() {
           </div>
         </div>
       </main>
-
-      {/* FOOTER -------------------------------------------------------------- */}
-      <footer className="bg-white border-t py-4 text-center text-xs text-gray-500">
-        © 2024 Sua Empresa. Todos os direitos reservados.
-      </footer>
     </div>
   );
 }
