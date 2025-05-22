@@ -7,56 +7,67 @@ import Header from '@/components/Header';
 import BreadCrumb from '@/components/BreadCrumb';
 import { CATEGORY_INFO } from '@/types';
 import { RoundedButton } from '@/components/RoundedButton';
+import VerCertificado from '@/components/VerCertificado/VerCertificado';
 
 interface Certificate {
   id: string;
-  status: 'approved' | 'pending' | 'rejected';
-  hours: number;
-  category: string;
   title: string;
+  institution: string;
+  description: string;
+  hours: number;
   date: string;
+  category: string;
+  status: 'aprovado' | 'rejeitado' | 'pendente';
 }
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'Todos os status' },
-  { value: 'approved', label: 'Aprovado' },
-  { value: 'pending', label: 'Pendente' },
-  { value: 'rejected', label: 'Rejeitado' },
+  { value: 'aprovado', label: 'Aprovado' },
+  { value: 'pendente', label: 'Pendente' },
+  { value: 'rejeitado', label: 'Rejeitado' },
 ];
 
 const CATEGORY_OPTIONS = [
   { value: 'all', label: 'Todas as categorias' },
-  ...Object.entries(CATEGORY_INFO).map(([value, { label }]) => ({
-    value,
-    label,
-  })),
+  { value: 'Ensino', label: 'Ensino' },
+  { value: 'Pesquisa', label: 'Pesquisa' },
+  { value: 'Extensão', label: 'Extensão' },
+  { value: 'Gestão', label: 'Gestão' },
+  { value: 'Monitoria', label: 'Monitoria' },
+  { value: 'Iniciação Científica', label: 'Iniciação Científica' },
 ];
 
 const MOCK_CERTIFICATES: Certificate[] = [
   {
     id: '1',
-    status: 'approved',
-    hours: 10,
-    category: 'extension',
-    title: 'Workshop de Desenvolvimento Web',
-    date: '2024-03-15'
+    title: 'Monitoria em Programação',
+    description: 'Atuação como monitor na disciplina de Programação',
+    institution: 'IFPE - Campus Belo Jardim',
+    hours: 30,
+    date: '2023-07-19',
+    category: 'Monitoria',
+    status: 'rejeitado'
   },
   {
     id: '2',
-    status: 'pending',
-    hours: 5,
-    category: 'research',
-    title: 'Semana Acadêmica de Computação',
-    date: '2024-03-10'
+    title: 'Curso de React',
+    description: 'Curso online de React com duração de 40 horas',
+    institution: 'Udemy',
+    hours: 40,
+    date: '2023-06-08',
+    category: 'Ensino',
+    status: 'pendente'
   },
   {
     id: '3',
-    status: 'approved',
-    hours: 8,
-    category: 'academic',
-    title: 'Monitoria em Programação',
-    date: '2024-03-05'
-  },
+    title: 'Semana de Engenharia de Software',
+    description: 'Participação na semana de Engenharia de Software do IFPE',
+    institution: 'IFPE - Campus Belo Jardim',
+    hours: 20,
+    date: '2023-05-14',
+    category: 'Extensão',
+    status: 'aprovado'
+  }
 ];
 
 const breadcrumbItems = [
@@ -84,23 +95,33 @@ export default function Certificados() {
     const category = searchParams.get('category');
     const status = searchParams.get('status');
 
-    if (category && Object.keys(CATEGORY_INFO).includes(category)) {
+    if (category) {
       setSelectedCategory(category);
     }
 
-    if (status && ['approved', 'pending', 'rejected'].includes(status)) {
+    if (status && ['aprovado', 'pendente', 'rejeitado'].includes(status)) {
       setSelectedStatus(status);
     }
   }, [searchParams]);
 
   const updateFilters = (status: string, category: string) => {
-    const params = new URLSearchParams();
-    if (status !== 'all') params.set('status', status);
-    if (category !== 'all') params.set('category', category);
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (status !== 'all') {
+      params.set('status', status);
+    } else {
+      params.delete('status');
+    }
+
+    if (category !== 'all') {
+      params.set('category', category);
+    } else {
+      params.delete('category');
+    }
 
     const query = params.toString();
     const newPath = `/aluno/certificado${query ? `?${query}` : ''}`;
-    router.push(newPath, { scroll: false });
+    router.push(newPath);
   };
 
   const handleStatusChange = (status: string) => {
@@ -115,7 +136,8 @@ export default function Certificados() {
 
   const filteredCertificates = certificates.filter(cert => {
     const matchesSearch = cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      CATEGORY_INFO[cert.category]?.label.toLowerCase().includes(searchTerm.toLowerCase());
+      cert.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cert.institution.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = selectedStatus === 'all' || cert.status === selectedStatus;
     const matchesCategory = selectedCategory === 'all' || cert.category === selectedCategory;
@@ -216,68 +238,19 @@ export default function Certificados() {
               </div>
             </div>
 
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <div className="inline-block min-w-full align-middle">
-                <div className="overflow-hidden border border-gray-200 sm:rounded-lg">
-                  <table className="min-w-full divide-y divide-gray-300">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900 sm:pl-6">
-                          Título
-                        </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900 hidden sm:table-cell">
-                          Categoria
-                        </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900">
-                          Horas
-                        </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900 hidden sm:table-cell">
-                          Data
-                        </th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-xs font-semibold text-gray-900">
-                          Status
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200 bg-white">
-                      {filteredCertificates.map((cert) => (
-                        <tr key={cert.id} className="hover:bg-gray-50 cursor-pointer">
-                          <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                            {cert.title}
-                            <dl className="font-normal sm:hidden">
-                              <dt className="sr-only">Categoria</dt>
-                              <dd className="mt-1 truncate text-gray-700">
-                                {CATEGORY_INFO[cert.category].label}
-                              </dd>
-                            </dl>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 hidden sm:table-cell">
-                            {CATEGORY_INFO[cert.category].label}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                            {cert.hours}h
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 hidden sm:table-cell">
-                            {new Date(cert.date).toLocaleDateString('pt-BR')}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm">
-                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(cert.status)}`}>
-                              {getStatusText(cert.status)}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                      {filteredCertificates.length === 0 && (
-                        <tr>
-                          <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                            Nenhum certificado encontrado com os filtros selecionados.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredCertificates.length > 0 ? (
+                filteredCertificates.map((cert) => (
+                  <VerCertificado
+                    key={cert.id}
+                    certificate={cert}
+                  />
+                ))
+              ) : (
+                <div className="col-span-full p-8 text-center text-gray-500">
+                  Nenhum certificado encontrado com os filtros selecionados.
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
