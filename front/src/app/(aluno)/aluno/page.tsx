@@ -1,327 +1,58 @@
 'use client';
 import Link from 'next/link';
-import { FaHome, FaPlusCircle } from 'react-icons/fa';
+import { FaHome } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
 import StatsSummary from '@/components/Student/StatsSummary';
-import { RoundedButton } from '@/components/RoundedButton';
 import ProgressoGeral from '@/components/ProgressoGeral';
 import VerCertificado from '@/components/VerCertificado/VerCertificado';
-import { MOCK_CERTIFICATES } from '../layout';
-import { useState } from 'react';
+import { useState, useContext, createContext } from 'react';
+import NovoCertificadoButton from '@/components/NovoCertificadoButton';
+import {
+  MOCK_CERTIFICATES,
+  MOCK_USER,
+  MOCK_CATEGORIAS_COMPLEMENTARES,
+  MOCK_CATEGORIAS_EXTENSAO
+} from '@/lib/alunoMock';
+import * as Types from '@/types';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  isNewPPC: boolean;
-}
-interface Certificado {
-  id: string | number;
-  grupo: string;
-  categoria: string;
-  categoriaKey: string;
-  title: string;
-  description: string;
-  cargaHoraria: number;
-  local: string;
-  periodo: string;
-  status: 'aprovado' | 'rejeitado' | 'pendente';
-  tipo: string;
-}
+// Definir o contexto localmente
+const CertificadosContext = createContext<Types.Certificado[]>([]);
 
-const MOCK_USER: User = {
-  id: '1',
-  name: 'Silva',
-  email: 'silva@example.com',
-  role: 'aluno',
-  // Mudando o valor para true/false para simular o novo PPC
-  isNewPPC: true
-};
+// Componente AlunoPageContent para usar o contexto
+function AlunoPageContent() {
+  const certificados = useContext(CertificadosContext);
+  const user: Types.Usuario = MOCK_USER;
 
-export default function Aluno() {
-  const Certificados = MOCK_CERTIFICATES;
-  const user = MOCK_USER;
-
-  const total = Certificados.length;
-  const approved = Certificados.filter(c => c.status === 'aprovado').length;
-  const pending = Certificados.filter(c => c.status === 'pendente').length;
-  const rejected = Certificados.filter(c => c.status === 'rejeitado').length;
+  const total = certificados.length;
+  const approved = certificados.filter((c: Types.Certificado) => c.status === 'aprovado').length;
+  const pending = certificados.filter((c: Types.Certificado) => c.status === 'pendente').length;
+  const rejected = certificados.filter((c: Types.Certificado) => c.status === 'rejeitado').length;
 
   // Filtrar apenas certificados aprovados
-  const certificadosAprovados = Certificados.filter(c => c.status === 'aprovado');
+  const certificadosAprovados = certificados.filter((c: Types.Certificado) => c.status === 'aprovado');
 
   // Separar certificados aprovados por tipo
-  const compCertificados = certificadosAprovados.filter(c => c.tipo === 'complementar');
-  const extCertificados = certificadosAprovados.filter(c => c.tipo === 'extensao');
+  const compCertificados = certificadosAprovados.filter((c: Types.Certificado) => c.tipo === 'complementar');
+  const extCertificados = certificadosAprovados.filter((c: Types.Certificado) => c.tipo === 'extensao');
 
-  // Categorias de Atividades Complementares (baseado na tabela)
-  const categoriasComplementares = [
-    // Grupo I
-    {
-      grupo: 'I',
-      nome: 'Disciplinas cursadas em outros cursos de graduação',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'I' &&
-          c.categoria === 'Categoria 1'
-        )
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 60,
-      categoriaKey: 'Ensino'
-    },
-    {
-      grupo: 'I',
-      nome: 'Monitoria',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'I' &&
-          c.categoria === 'Categoria 2'
-        )
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Ensino'
-    },
-    {
-      grupo: 'I',
-      nome: 'Cursos de idiomas realizados durante o curso, comunicação e expressão e informática',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'I' &&
-          c.categoria === 'Categoria 3'
-        )
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Ensino'
-    },
-    {
-      grupo: 'I',
-      nome: 'Participação do programa institucional de bolsas de iniciação à docência',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'I' &&
-          c.categoria === 'Categoria 4'
-        )
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 40,
-      categoriaKey: 'Ensino'
-    },
-    // Grupo II
-    {
-      grupo: 'II',
-      nome: 'Visita técnica em área afim ao curso e supervisionada pela instituição, mediante apresentação de relatório.',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'II' &&
-          c.categoria === 'Categoria 5')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Estagio'
-    },
-    {
-      grupo: 'II',
-      nome: 'Estágio Profissional não obrigatório',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'II' &&
-          c.categoria === 'Categoria 6')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 60,
-      categoriaKey: 'Estagio'
-    },
+  // Usar os mocks importados para categorias
+  const categoriasComplementares: Types.CategoriaProgresso[] = MOCK_CATEGORIAS_COMPLEMENTARES.map(cat => ({
+    ...cat,
+    horas: compCertificados
+      .filter((c: Types.Certificado) => c.grupo === cat.grupo && c.categoriaKey === cat.categoriaKey)
+      .reduce((acc: number, c: Types.Certificado) => acc + c.cargaHoraria, 0) || 0,
+    total: cat.total || 0,
+  }));
 
-    // Grupo III
-    {
-      grupo: 'III',
-      nome: 'Participação como ouvinte, participante, palestrante, instrutor, apresentador, expositor ou mediador em eventos científicos, seminários, atividades culturais, esportivas, políticas e sociais, sessões técnicas, exposições, jornadas acadêmicas e científicas, palestras, seminários, congressos, conferências ou similares',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'III' &&
-          c.categoria === 'Categoria 7')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Eventos'
-    },
-
-    // Grupo IV
-    {
-      grupo: 'IV',
-      nome: 'Participação em projetos de pesquisa',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'IV' &&
-          c.categoria === 'Categoria 8')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Pesquisa'
-    },
-    {
-      grupo: 'IV',
-      nome: 'Publicações de textos acadêmicos',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'IV' &&
-          c.categoria === 'Categoria 9')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 40,
-      categoriaKey: 'Pesquisa'
-    },
-    {
-      grupo: 'IV',
-      nome: 'Grupos de estudos com produção intelectual',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'IV' &&
-          c.categoria === 'Categoria 10')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 20,
-      categoriaKey: 'Pesquisa'
-    },
-    {
-      grupo: 'IV',
-      nome: 'Trabalhos desenvolvidos sob orientação de docente apresentados em eventos acadêmicos',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'IV' &&
-          c.categoria === 'Categoria 11')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 40,
-      categoriaKey: 'Pesquisa'
-    },
-    {
-      grupo: 'V',
-      nome: 'Participação em projetos de extensão',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'V' &&
-          c.categoria === 'Categoria 12')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Curso'
-    },
-    {
-      grupo: 'V',
-      nome: 'Participar na organização, coordenação ou realização de cursos em eventos científicos',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'V' &&
-          c.categoria === 'Categoria 13')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 40,
-      categoriaKey: 'Curso'
-    },
-    {
-      grupo: 'V',
-      nome: 'Trabalhar na organização de material informativo da Instituição',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'V' &&
-          c.categoria === 'Categoria 14')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 20,
-      categoriaKey: 'Curso'
-    },
-    {
-      grupo: 'V',
-      nome: 'Trabalhar na organização ou participação em campanhas de voluntariado ou programas de ação social',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'V' &&
-          c.categoria === 'Categoria 15')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 20,
-      categoriaKey: 'Curso'
-    },
-    {
-      grupo: 'VI',
-      nome: 'Participação, como voluntário, em atividades compatíveis com os objetivos do curso realizadas em instituições filantrópicas e da sociedade civil organizada do terceiro setor',
-      horas: compCertificados
-        .filter(c =>
-          c.grupo === 'VI' &&
-          c.categoria === 'Categoria 16')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 20,
-      categoriaKey: 'Voluntariado'
-    }
-  ];
-
-  // Categorias de Atividades de Extensão (baseado na tabela)
-  const categoriasExtensao = [
-    {
-      grupo: 'Extensao',
-      nome: 'Participação como Bolsista, voluntário ou colaborador, em Projetos/Programas de Extensão coordenado por servidor do IFPE',
-      horas: extCertificados
-        .filter(c =>
-          c.grupo === 'Extensao' &&
-          c.categoria === 'Categoria 1' 
-        )
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 160,
-      categoriaKey: 'Extensao'
-    },
-    {
-      grupo: 'Extensao',
-      nome: 'Participação em Eventos voltados ao público externo como Palestrante, Instrutor, Apresentador, Expositor ou Mediador de Cursos/Palestras/Workshops/Mesas Redondas/Oficinas',
-      horas: extCertificados
-        .filter(c =>
-          c.grupo === 'Extensao' &&
-          c.categoria === 'Categoria 2'
-        )
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Extensao'
-    },
-    {
-      grupo: 'Extensao',
-      nome: 'Participação da Comissão Organizadora ou como Monitor em Eventos para exibição pública de conhecimento ou produto (Cultural, Acadêmico, Científico ou Tecnológico) desenvolvido no IFPE',
-      horas: extCertificados
-        .filter(c =>
-          c.grupo === 'Extensao' &&
-          c.categoria === 'Categoria 3'
-        )
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Extensao'
-    },
-    {	
-      grupo: 'Extensao',
-      nome: 'Prestaçaõ de serviços de caráter extensionista. Prestação de serviços como voluntário/a, bolsista ou colaborador/a, para o desenvolvimento de produtos e/ou processos voltados á resolução de problemas identificados interna ou externamente ao IFPE',
-      horas: extCertificados
-        .filter(c =>
-          c.grupo === 'Extensao' &&
-          c.categoria === 'Categoria 4'
-        )
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 160,
-      categoriaKey: 'Extensao'
-    },
-    {
-      grupo: 'Extensao',
-      nome: 'Atividades desenvolvidas por meio dos Núcleos Institucionais de Extensão',
-      horas: extCertificados
-        .filter(c =>
-          c.grupo === 'Extensao' &&
-          c.categoria === 'Categoria 5')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 80,
-      categoriaKey: 'Extensao'
-    },
-    {
-      grupo: 'Extensao',
-      nome: 'Atividades de empreendedorismo, como membro de empresa júnior ou como voluntário/a ou bolsista de incubadoras de empresas ou projetos, prestando assessoria e consultoria',
-      horas: extCertificados
-        .filter(c =>
-          c.grupo === 'Extensao' &&
-          c.categoria === 'Categoria 6')
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: 160,
-      categoriaKey: 'Extensao'
-    }
-  ];
+  const categoriasExtensao: Types.CategoriaProgresso[] = MOCK_CATEGORIAS_EXTENSAO.map(cat => ({
+    ...cat,
+    horas: extCertificados
+      .filter((c: Types.Certificado) => c.grupo === cat.grupo && c.categoriaKey === cat.categoriaKey)
+      .reduce((acc: number, c: Types.Certificado) => acc + c.cargaHoraria, 0) || 0,
+    total: cat.total || 0,
+  }));
 
   const [categoriaKeySelecionada, setCategoriaKeySelecionada] = useState<string | undefined>(undefined);
-
-  const matchesCategory = (cert: Certificado) => categoriaKeySelecionada === 'all' || cert.categoriaKey === categoriaKeySelecionada;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -338,11 +69,7 @@ export default function Aluno() {
               </p>
             </div>
 
-            <Link
-              href="/aluno/certificado/novo"
-            >
-              <RoundedButton text="Novo Certificado" icon={<FaPlusCircle />} />
-            </Link>
+            <NovoCertificadoButton />
           </div>
 
           <BreadCrumb
@@ -364,20 +91,19 @@ export default function Aluno() {
               <ProgressoGeral
                 title="Atividades Complementares"
                 subTitle="Progressão Geral - Atividades Complementares"
-                categorias={categoriasComplementares}
-                totalHoras={categoriasComplementares.reduce((acc, cat) => acc + cat.horas, 0)}
+                categorias={categoriasComplementares.filter(cat => cat.total > 0)}
+                totalHoras={categoriasComplementares.reduce((acc, cat) => acc + (cat.horas || 0), 0)}
                 totalNecessarias={280}
                 categoriaKey={categoriaKeySelecionada}
                 onCategoriaClick={setCategoriaKeySelecionada}
               />
               {/* Progresso Geral - Atividades de Extensão */}
-              {/* Renderiza Progresso Geral - Atividades de Extensão somente se isNewPPC for true */}
               {user.isNewPPC && (
                 <ProgressoGeral
                   title="Atividades de Extensão"
                   subTitle="Progressão Geral - Atividades de Extensão"
                   categorias={categoriasExtensao}
-                  totalHoras={categoriasExtensao.reduce((acc, cat) => acc + cat.horas, 0)}
+                  totalHoras={categoriasExtensao.reduce((acc, cat) => acc + (cat.horas || 0), 0)}
                   totalNecessarias={320}
                   categoriaKey={categoriaKeySelecionada}
                   onCategoriaClick={setCategoriaKeySelecionada}
@@ -396,9 +122,9 @@ export default function Aluno() {
                   </Link>
                 </div>
 
-                {Certificados.length ? (
+                {certificados.length > 0 ? (
                   <div className="space-y-4">
-                    {Certificados.slice(0, 3).map(cert => (
+                    {certificados.slice(0, 3).map((cert: Types.Certificado) => (
                       <VerCertificado
                         key={cert.id}
                         certificate={{
@@ -467,5 +193,14 @@ export default function Aluno() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Componente Aluno que provê o contexto
+export default function Aluno() {
+  return (
+    <CertificadosContext.Provider value={MOCK_CERTIFICATES}>
+      <AlunoPageContent />
+    </CertificadosContext.Provider>
   );
 }

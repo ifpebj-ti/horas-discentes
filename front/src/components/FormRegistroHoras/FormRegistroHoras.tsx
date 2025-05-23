@@ -1,182 +1,259 @@
-"use client";
+import React from 'react';
+import { FaClock, FaFileAlt, FaUser, FaCalendarAlt, FaMapMarkerAlt, FaBookOpen, FaBuilding, FaAlignLeft } from 'react-icons/fa';
+import { Controller } from 'react-hook-form';
+import { FileUploadInput } from '@components/FileUploadInput';
+import { useFormRegistroHoras } from './hooks/useFormRegistroHoras';
 
-import { FaClock, FaFileAlt, FaUser, FaCalendarAlt } from "react-icons/fa";
-import { useState } from "react";
-
-interface FormRegistroHorasProps {
-  formData: {
-    title: string;
-    institution: string;
-    category: string;
-    hours: string;
-    date: string;
-    description: string;
-    file: File | null;
-  };
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onFormSubmit: (e: React.FormEvent) => void;
+interface Categoria {
+  nome: string;
+  // outros campos se necessário
 }
 
-export default function FormRegistroHoras({ formData, onInputChange, onFileChange, onFormSubmit }: FormRegistroHorasProps) {
+interface FormRegistroHorasProps {
+  categoriasComplementares: Categoria[];
+  categoriasExtensao: Categoria[];
+}
+
+export default function FormRegistroHoras({
+  categoriasComplementares,
+  categoriasExtensao,
+}: FormRegistroHorasProps) {
+  const {
+    formMethods,
+    control,
+    handleSubmit,
+    submitForm,
+    handleFileSelect,
+    handleFileRemove,
+    anexoComprovante,
+    isLoading,
+    errors,
+    tipoRegistro,
+  } = useFormRegistroHoras();
+
+  const { register } = formMethods;
+
+  // Escolhe as categorias conforme o tipo
+  const categoriasAtuais = tipoRegistro === 'horas-extensao' ? categoriasExtensao : categoriasComplementares;
+
+  const inputClass = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const errorClass = "text-red-500 text-xs mt-1";
+
+  function getPeriodosLetivos() {
+    const periodos: string[] = [];
+    const anoInicio = 2023;
+    const dataAtual = new Date();
+    const anoAtual = dataAtual.getFullYear();
+    const mesAtual = dataAtual.getMonth() + 1; // Janeiro = 0
+
+    for (let ano = anoInicio; ano < anoAtual; ano++) {
+      periodos.push(`${ano}.1`);
+      periodos.push(`${ano}.2`);
+    }
+    // Ano atual
+    periodos.push(`${anoAtual}.1`);
+    if (mesAtual >= 8) {
+      periodos.push(`${anoAtual}.2`);
+    }
+    return periodos;
+  }
+
+  const periodosLetivos = getPeriodosLetivos();
+
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-md">
-      <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-        <FaClock className="text-blue-600" />
-        Registrar Horas Complementares
-      </h2>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-md">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <FaClock className="text-blue-600" />
+          {tipoRegistro === 'horas-extensao' ? 'Registrar Horas de Extensão' : 'Registrar Horas Complementares'}
+        </h2>
 
-      <form onSubmit={onFormSubmit} className="flex flex-col space-y-4">
-        {/* Título */}
-        <div>
-          <label className="block mb-1 font-medium">
-            <span className="flex items-center gap-2">
-              <FaFileAlt className="text-blue-600" />
-              Título da Atividade
-            </span>
-          </label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={onInputChange}
-            placeholder="Digite o título da atividade"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        {/* Instituição */}
-        <div>
-          <label className="block mb-1 font-medium">
-            <span className="flex items-center gap-2">
-              <FaUser className="text-blue-600" />
-              Instituição
-            </span>
-          </label>
-          <input
-            type="text"
-            name="institution"
-            value={formData.institution}
-            onChange={onInputChange}
-            placeholder="Digite o nome da instituição"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        {/* Descrição */}
-        <div>
-          <label className="block mb-1 font-medium">
-            <span className="flex items-center gap-2">
-              <FaFileAlt className="text-blue-600" />
-              Descrição
-            </span>
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={onInputChange}
-            placeholder="Descreva a atividade"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={3}
-            required
-          />
-        </div>
-
-        <div className="flex gap-4">
-          {/* Categoria */}
-          <div className="flex-1">
-            <label className="block mb-1 font-medium">
+        <form onSubmit={handleSubmit(submitForm)} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Primeira linha: Título, Instituição, Local */}
+          <div className="col-span-1">
+            <label htmlFor="tituloAtividade" className="block mb-1 font-medium">
               <span className="flex items-center gap-2">
-                <FaFileAlt className="text-blue-600" />
-                Categoria
-              </span>
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={onInputChange}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="">Selecione uma categoria</option>
-              <option value="Ensino">Ensino</option>
-              <option value="Pesquisa">Pesquisa</option>
-              <option value="Extensão">Extensão</option>
-              <option value="Gestão">Gestão</option>
-              <option value="Monitoria">Monitoria</option>
-              <option value="Iniciação Científica">Iniciação Científica</option>
-            </select>
-          </div>
-
-          {/* Carga Horária */}
-          <div className="flex-1">
-            <label className="block mb-1 font-medium">
-              <span className="flex items-center gap-2">
-                <FaClock className="text-blue-600" />
-                Carga Horária
+                <FaFileAlt className="text-blue-600" /> Título da Atividade
               </span>
             </label>
             <input
-              type="number"
-              name="hours"
-              value={formData.hours}
-              onChange={onInputChange}
-              placeholder="Ex.: 10"
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              min={1}
-              required
+              id="tituloAtividade"
+              type="text"
+              {...register('tituloAtividade')}
+              placeholder="Digite o título da atividade"
+              className={inputClass}
             />
+            {errors.tituloAtividade && <p className={errorClass}>{errors.tituloAtividade.message}</p>}
           </div>
-        </div>
+          <div className="col-span-1">
+            <label htmlFor="instituicao" className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaBuilding className="text-blue-600" /> Instituição
+              </span>
+            </label>
+            <input
+              id="instituicao"
+              type="text"
+              {...register('instituicao')}
+              placeholder="Digite o nome da instituição"
+              className={inputClass}
+            />
+            {errors.instituicao && <p className={errorClass}>{errors.instituicao.message}</p>}
+          </div>
+          <div className="col-span-1">
+            <label htmlFor="localRealizacao" className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaMapMarkerAlt className="text-blue-600" /> Local de Realização/Participação
+              </span>
+            </label>
+            <input
+              id="localRealizacao"
+              type="text"
+              {...register('localRealizacao')}
+              placeholder="Ex: Auditório principal, Plataforma online"
+              className={inputClass}
+            />
+            {errors.localRealizacao && <p className={errorClass}>{errors.localRealizacao.message}</p>}
+          </div>
 
-        {/* Data */}
-        <div>
-          <label className="block mb-1 font-medium">
-            <span className="flex items-center gap-2">
-              <FaCalendarAlt className="text-blue-600" />
-              Data da Atividade
-            </span>
-          </label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={onInputChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+          {/* Segunda linha: Categoria, Período */}
+          <div className="col-span-1">
+            <label htmlFor="categoria" className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaFileAlt className="text-blue-600" /> Categoria
+              </span>
+            </label>
+            <select
+              id="categoria"
+              {...register('categoria')}
+              className={inputClass}
+            >
+              <option value="">Selecione</option>
+              {categoriasAtuais.map(cat => (
+                <option key={cat.nome} value={cat.nome}>{cat.nome}</option>
+              ))}
+            </select>
+            {errors.categoria && <p className={errorClass}>{errors.categoria.message}</p>}
+          </div>
+          <div className="col-span-1">
+            <label htmlFor="periodoLetivoFaculdade" className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaBookOpen className="text-blue-600" /> Período
+              </span>
+            </label>
+            <select
+              id="periodoLetivoFaculdade"
+              {...register('periodoLetivoFaculdade')}
+              className={inputClass}
+            >
+              <option value="">Selecione</option>
+              {periodosLetivos.map(periodo => (
+                <option key={periodo} value={periodo}>{periodo}</option>
+              ))}
+            </select>
+            {errors.periodoLetivoFaculdade && <p className={errorClass}>{errors.periodoLetivoFaculdade.message}</p>}
+          </div>
 
-        {/* Anexo */}
-        <div>
-          <label className="block mb-1 font-medium">
-            <span className="flex items-center gap-2">
-              <FaFileAlt className="text-blue-600" />
-              Anexar Comprovante
-            </span>
-          </label>
-          <input
-            type="file"
-            name="file"
-            onChange={onFileChange}
-            accept=".pdf,.jpg,.jpeg,.png"
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+          {/* Terceira linha: Carga Horária, Data de Início, Data de Fim */}
+          <div className="col-span-1">
+            <label htmlFor="cargaHoraria" className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaClock className="text-blue-600" /> Carga Horária (horas)
+              </span>
+            </label>
+            <input
+              id="cargaHoraria"
+              type="number"
+              {...register('cargaHoraria')}
+              placeholder="Ex: 10"
+              className={inputClass}
+              min={1}
+            />
+            {errors.cargaHoraria && <p className={errorClass}>{errors.cargaHoraria.message}</p>}
+          </div>
+          <div className="col-span-1">
+            <label htmlFor="dataInicioAtividade" className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaCalendarAlt className="text-blue-600" /> Data de Início
+              </span>
+            </label>
+            <input
+              id="dataInicioAtividade"
+              type="date"
+              {...register('dataInicioAtividade')}
+              className={inputClass}
+            />
+            {errors.dataInicioAtividade && <p className={errorClass}>{errors.dataInicioAtividade.message}</p>}
+          </div>
+          <div className="col-span-1">
+            <label htmlFor="dataFimAtividade" className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaCalendarAlt className="text-blue-600" /> Data de Fim
+              </span>
+            </label>
+            <input
+              id="dataFimAtividade"
+              type="date"
+              {...register('dataFimAtividade')}
+              className={inputClass}
+            />
+            {errors.dataFimAtividade && <p className={errorClass}>{errors.dataFimAtividade.message}</p>}
+          </div>
 
-        {/* Botão */}
-        <div className="flex justify-end pt-4">
-          <button
-            type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
-          >
-            Enviar
-          </button>
-        </div>
-      </form>
+          {/* Quarta linha: Especificação */}
+          <div className="col-span-1 md:col-span-3">
+            <label htmlFor="especificacaoAtividade" className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaAlignLeft className="text-blue-600" /> Especificação das Atividades
+              </span>
+            </label>
+            <textarea
+              id="especificacaoAtividade"
+              {...register('especificacaoAtividade')}
+              placeholder="Descreva a atividade complementar/extensão"
+              className={`${inputClass} h-24`}
+              rows={3}
+            />
+            {errors.especificacaoAtividade && <p className={errorClass}>{errors.especificacaoAtividade.message}</p>}
+          </div>
+
+          {/* Quinta linha: Anexo */}
+          <div className="col-span-1 md:col-span-3">
+            <label className="block mb-1 font-medium">
+              <span className="flex items-center gap-2">
+                <FaFileAlt className="text-blue-600" /> Anexar Comprovante
+              </span>
+            </label>
+            <Controller
+              name="anexoComprovante"
+              control={control}
+              render={({ fieldState: { error } }) => (
+                <>
+                  <FileUploadInput
+                    file={anexoComprovante}
+                    onSelect={handleFileSelect}
+                    onRemove={handleFileRemove}
+                    isLoading={isLoading}
+                  />
+                  {error && <p className={errorClass}>{error.message}</p>}
+                </>
+              )}
+            />
+            <p className="text-xs text-gray-500 mt-1">Tipos aceitos: PDF, JPG, PNG. Tamanho máx: 5MB.</p>
+          </div>
+
+          {/* Botão de Envio */}
+          <div className="col-span-1 md:col-span-3 flex justify-end pt-4">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Enviando...' : 'Enviar'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -1,11 +1,10 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaArrowLeft, FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
-import Header from '@/components/Header';
+import { FaArrowLeft, FaUpload, FaHome, FaFileAlt, FaPlusCircle } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
-import { Form } from 'react-hook-form';
 import FormRegistroHoras from '@/components/FormRegistroHoras/FormRegistroHoras';
+import { MOCK_CATEGORIAS_COMPLEMENTARES, MOCK_CATEGORIAS_EXTENSAO } from '@/lib/alunoMock';
 
 const CATEGORIES = [
   'Ensino',
@@ -15,6 +14,10 @@ const CATEGORIES = [
   'Monitoria',
   'Iniciação Científica',
 ];
+
+interface Categoria {
+  nome: string;
+}
 
 export default function NovoCertificado() {
   const router = useRouter();
@@ -52,10 +55,13 @@ export default function NovoCertificado() {
     router.push('/aluno/certificado');
   };
 
+  const categoriasComplementares = MOCK_CATEGORIAS_COMPLEMENTARES;
+  const categoriasExtensao = MOCK_CATEGORIAS_EXTENSAO;
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
-      <main className="flex-1">
-        <div className="mx-auto max-w-2xl px-2 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 w-full">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
           {/* Cabeçalho */}
           <div className="flex flex-col gap-6 mb-6">
             <div className="flex flex-col gap-2">
@@ -100,10 +106,8 @@ export default function NovoCertificado() {
 
           {/* Formulário */}
           <FormRegistroHoras
-            formData={formData}
-            onInputChange={handleInputChange}
-            onFileChange={handleFileChange}
-            onFormSubmit={handleSubmit}
+            categoriasComplementares={categoriasComplementares}
+            categoriasExtensao={categoriasExtensao}
           />
         </div>
       </main>

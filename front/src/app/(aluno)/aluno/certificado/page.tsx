@@ -1,45 +1,15 @@
 'use client';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, createContext } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { FaHome, FaPlusCircle, FaSearch, FaFileAlt } from 'react-icons/fa';
+import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
-import { CATEGORY_INFO } from '@/types';
-import { RoundedButton } from '@/components/RoundedButton';
 import VerCertificado from '@/components/VerCertificado/VerCertificado';
-import { CertificadosContext } from '../../layout'; // ajuste o caminho se necessário
+import NovoCertificadoButton from '@/components/NovoCertificadoButton';
+import * as Types from '@/types';
+import { STATUS_OPTIONS, CATEGORY_OPTIONS, MOCK_CERTIFICATES } from '@/lib/alunoMock';
 
-interface Certificado {
-  id: string;
-  title: string;
-  institution: string;
-  description: string;
-  cargaHoraria: number;
-  local: string;
-  periodoInicio: string;
-  periodoFim: string;
-  status: string;
-  tipo: string;
-  categoriaKey: string;
-}
-
-const STATUS_OPTIONS = [
-  { value: 'all', label: 'Todos os status' },
-  { value: 'aprovado', label: 'Aprovado' },
-  { value: 'pendente', label: 'Pendente' },
-  { value: 'rejeitado', label: 'Rejeitado' },
-];
-
-const CATEGORY_OPTIONS = [
-  { value: 'all', label: 'Todas as categorias' },
-  { value: 'Ensino', label: 'Ensino' },
-  { value: 'Estagio', label: 'Estagio' },
-  { value: 'Eventos', label: 'Eventos' },
-  { value: 'Pesquisa', label: 'Pesquisa' },
-  { value: 'Extensao', label: 'Extensao' },
-  { value: 'Curso', label: 'Curso' },
-  { value: 'Voluntariado', label: 'Voluntariado' }
-];
+// Definir o contexto localmente
+const CertificadosContext = createContext<Types.Certificado[]>([]);
 
 const breadcrumbItems = [
   {
@@ -54,13 +24,14 @@ const breadcrumbItems = [
   }
 ];
 
-export default function Certificados() {
+// Componente CertificadosPageContent para usar o contexto
+function CertificadosPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const certificados = useContext(CertificadosContext) as Certificado[];
+  const certificados = useContext(CertificadosContext) as Types.Certificado[];
 
   useEffect(() => {
     const category = searchParams.get('category');
@@ -107,40 +78,14 @@ export default function Certificados() {
 
   const filteredCertificates = certificados.filter(cert => {
     const matchesSearch = cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cert.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cert.institution.toLowerCase().includes(searchTerm.toLowerCase());
+      (cert.description && cert.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      cert.local.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = selectedStatus === 'all' || cert.status === selectedStatus;
     const matchesCategory = selectedCategory === 'all' || cert.categoriaKey === selectedCategory;
 
     return matchesSearch && matchesStatus && matchesCategory;
   });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'Aprovado';
-      case 'pending':
-        return 'Pendente';
-      case 'rejected':
-        return 'Rejeitado';
-      default:
-        return status;
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
@@ -156,16 +101,8 @@ export default function Certificados() {
                   Gerencie seus certificados e acompanhe o status de cada um.
                 </p>
               </div>
-
-              <Link
-                href="/aluno/certificado/novo"
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0F4AA9] px-4 py-2 text-sm font-medium text-white shadow hover:bg-[#0D3F8E] transition-colors w-full sm:w-auto"
-              >
-                <FaPlusCircle className="text-base" />
-                Novo Certificado
-              </Link>
+              <NovoCertificadoButton />
             </div>
-
             <BreadCrumb items={breadcrumbItems} />
           </div>
 
@@ -215,7 +152,7 @@ export default function Certificados() {
                   <VerCertificado
                     key={cert.id}
                     certificate={{
-                      id: cert.id,
+                      id: String(cert.id),
                       title: cert.title,
                       institution: cert.local,
                       description: cert.description,
@@ -237,5 +174,14 @@ export default function Certificados() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Componente Certificados que provê o contexto
+export default function Certificados() {
+  return (
+    <CertificadosContext.Provider value={MOCK_CERTIFICATES}>
+      <CertificadosPageContent />
+    </CertificadosContext.Provider>
   );
 }

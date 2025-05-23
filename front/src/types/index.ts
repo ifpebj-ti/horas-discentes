@@ -1,115 +1,66 @@
-export type CertificadosCategory =
-  | 'academic'
-  | 'research'
-  | 'extension'
-  | 'representation'
-  | 'volunteering'
-  | 'internship'
-  | 'course';
+/**
+ * Status possíveis para um certificado.
+ */
+export type StatusCertificado = 'aprovado' | 'rejeitado' | 'pendente';
 
-export interface Certificados {
-  id: string;
+/**
+ * Tipos de atividades/certificados (complementar ou extensão).
+ */
+export type TipoCertificado = 'complementar' | 'extensao';
+
+/**
+ * Interface para representar um Certificado.
+ */
+export interface Certificado {
+  id: number;
+  grupo: string;
+  categoria: string;
+  categoriaKey: string;
   title: string;
-  description?: string;
-  institution: string;
-  hours: number;
-  submissionDate: string;
-  status: 'aprovado' | 'pendente' | 'rejeitado';
-  category: CertificadosCategory;
-}
-
-export interface CategoryLimit {
-  category: CertificadosCategory;
-  maxHours: number;
-  label: string;
   description: string;
+  cargaHoraria: number;
+  local: string;
+  periodoInicio: string;
+  periodoFim: string;
+  status: StatusCertificado;
+  tipo: TipoCertificado;
+  anexoComprovanteURL?: string;
 }
 
-export interface CourseRequirement {
+/**
+ * Interface para representar um Usuário.
+ */
+export interface Usuario {
   id: string;
-  name: string;
-  totalHoursRequired: number;
-  categories: CategoryLimit[];
+  name: string | null | undefined;
+  email: string | null | undefined;
+  role: string;
+  isNewPPC?: boolean;
+  image?: string | null | undefined;
 }
 
-export const CATEGORY_INFO: Record<string, { label: string, description: string }> = {
-  academic: {
-    label: 'Atividades Acadêmicas',
-    description: 'Participação em eventos, palestras, semanas acadêmicas e similares'
-  },
-  research: {
-    label: 'Pesquisa',
-    description: 'Participação em projetos de iniciação científica, publicações em congressos ou periódicos'
-  },
-  extension: {
-    label: 'Extensão',
-    description: 'Participação em projetos de extensão com a comunidade'
-  },
-  representation: {
-    label: 'Representação Estudantil',
-    description: 'Participação em órgãos colegiados, centros acadêmicos ou similares'
-  },
-  volunteering: {
-    label: 'Voluntariado',
-    description: 'Atividades voluntárias relacionadas à área de formação'
-  },
-  internship: {
-    label: 'Estágio Não-obrigatório',
-    description: 'Estágios realizados além do obrigatório para o curso'
-  },
-  course: {
-    label: 'Cursos Complementares',
-    description: 'Cursos adicionais relacionados à área de formação'
-  },
-};
+/**
+ * Interface para opções de filtros (usado em selects).
+ */
+export interface OpcaoFiltro {
+  value: string;
+  label: string;
+}
 
+/**
+ * Interface para representar uma categoria na visualização de progresso do aluno.
+ */
+export interface CategoriaProgresso {
+  grupo: string;
+  nome: string;
+  horas: number;
+  total: number;
+  categoriaKey: string;
+}
 
-export const SOFTWARE_ENGINEERING_REQUIREMENTS: CourseRequirement = {
-  id: "eng-software",
-  name: "Engenharia de Software",
-  totalHoursRequired: 200,
-  categories: [
-    {
-      category: "academic",
-      maxHours: 60,
-      label: CATEGORY_INFO.academic.label,
-      description: CATEGORY_INFO.academic.description
-    },
-    {
-      category: "research",
-      maxHours: 80,
-      label: CATEGORY_INFO.research.label,
-      description: CATEGORY_INFO.research.description
-    },
-    {
-      category: "extension",
-      maxHours: 60,
-      label: CATEGORY_INFO.extension.label,
-      description: CATEGORY_INFO.extension.description
-    },
-    {
-      category: "representation",
-      maxHours: 40,
-      label: CATEGORY_INFO.representation.label,
-      description: CATEGORY_INFO.representation.description
-    },
-    {
-      category: "volunteering",
-      maxHours: 40,
-      label: CATEGORY_INFO.volunteering.label,
-      description: CATEGORY_INFO.volunteering.description
-    },
-    {
-      category: "internship",
-      maxHours: 80,
-      label: CATEGORY_INFO.internship.label,
-      description: CATEGORY_INFO.internship.description
-    },
-    {
-      category: "course",
-      maxHours: 60,
-      label: CATEGORY_INFO.course.label,
-      description: CATEGORY_INFO.course.description
-    }
-  ]
-};
+/**
+ * Interface para as opções de categoria que serão usadas nos selects de formulários.
+ */
+export interface CategoriaSelecaoForm {
+  nome: string;
+}
