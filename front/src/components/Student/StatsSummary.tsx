@@ -12,28 +12,28 @@ interface Props {
 const CARDS = [
   {
     icon: <FaRegFileAlt />,
-    label: 'Total de Certificados',
+    label: 'Certificados',
     bg: 'bg-[#EDF2FF]',
     text: 'text-[#0F4AA9]',
     href: '/aluno/certificado'
   },
   {
     icon: <FaAward />,
-    label: 'Certificados Aprovados',
+    label: 'Aprovados',
     bg: 'bg-[#E6FFFA]',
     text: 'text-[#047857]',
     href: '/aluno/certificado?status=approved'
   },
   {
     icon: <FaClock />,
-    label: 'Pendentes de Aprovação',
+    label: 'Pendentes',
     bg: 'bg-[#FFF7ED]',
     text: 'text-[#B45309]',
     href: '/aluno/certificado?status=pending'
   },
   {
     icon: <FaTimesCircle />,
-    label: 'Certificados Rejeitados',
+    label: 'Rejeitados',
     bg: 'bg-[#FEE2E2]',
     text: 'text-[#B91C1C]',
     href: '/aluno/certificado?status=rejected'
@@ -54,17 +54,21 @@ export default function StatsSummary({
         <Link
           key={c.label}
           href={c.href}
-          className="flex items-center px-6 py-5 gap-4 sm:flex-col sm:py-6 hover:bg-gray-50 transition-colors"
+          className="relative flex items-center px-6 py-5 gap-4 sm:flex-col sm:py-6 hover:bg-gray-50 transition-colors"
         >
+          {/* Balão de Notificação */}
+          {values[i] > 0 && (
+            <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full">
+              {values[i]}
+            </div>
+          )}
+
           <div className={`${c.bg} rounded-full p-3 text-xl ${c.text}`}>
             {c.icon}
           </div>
 
           <div className="text-center sm:text-center">
             <p className="text-sm text-gray-500 mb-1">{c.label}</p>
-            <p className="text-2xl font-semibold leading-none text-[#071D41]">
-              {values[i]}
-            </p>
           </div>
         </Link>
       ))}
