@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaArrowLeft, FaUpload, FaHome, FaFileAlt, FaPlusCircle } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
-import FormRegistroHoras from '@/components/FormRegistroHoras/FormRegistroHoras';
+import FormRegistroHoras from '@/components/FormRegistroHoras';
 import { MOCK_CATEGORIAS_COMPLEMENTARES, MOCK_CATEGORIAS_EXTENSAO } from '@/lib/alunoMock';
 
 const CATEGORIES = [

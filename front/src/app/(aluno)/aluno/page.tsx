@@ -4,7 +4,7 @@ import { FaHome } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
 import StatsSummary from '@/components/Student/StatsSummary';
 import ProgressoGeral from '@/components/ProgressoGeral';
-import VerCertificado from '@/components/VerCertificado/VerCertificado';
+import VerCertificado from '@/components/VerCertificado';
 import { useState, useContext, createContext } from 'react';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
 import {

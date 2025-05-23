@@ -3,7 +3,7 @@ import { useState, useEffect, useContext, createContext } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
-import VerCertificado from '@/components/VerCertificado/VerCertificado';
+import VerCertificado from '@/components/VerCertificado';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
 import * as Types from '@/types';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS, MOCK_CERTIFICATES } from '@/lib/alunoMock';
