@@ -6,7 +6,7 @@ import { FaHome } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
 import ProgressoGeral from '@/components/ProgressoGeral';
-import StatsSummary from '@/components/Student/StatsSummary';
+import StatsSummary from '@/components/Faq';
 import VerCertificado from '@/components/VerCertificado';
 
 import {
@@ -206,25 +206,20 @@ function AlunoPageContent() {
                 </h2>
                 <ul className="space-y-3 text-sm leading-relaxed">
                   {[
-                    'Como são contabilizadas as horas?',
-                    'Quais atividades são aceitas?',
-                    'Qual o prazo para envio de certificados?',
-                    'Como saber se meu certificado foi aprovado?'
+                    { question: 'Como são contabilizadas as horas?', id: 'contabilizacao-horas' },
+                    { question: 'Quais atividades são aceitas?', id: 'atividades-aceitas' },
+                    { question: 'Qual o prazo para envio de certificados?', id: 'prazo-envio-certificados' },
+                    { question: 'Como saber se meu certificado foi aprovado?', id: 'status-certificado-aprovado' }
                   ].map((q) => (
-                    <li key={q}>
+                    <li key={q.id}>
                       <Link
-                        key={q}
-                        href={`/aluno/certificado?category=${encodeURIComponent(q.split(' ')[0])}`}
+                        href={`/aluno/perguntas?id=${q.id}`}
                         className={`
                           text-sm
-                          ${
-                            categoriaKeySelecionada === q.split(' ')[0]
-                              ? 'text-blue-600 font-semibold hover:text-blue-700'
-                              : 'text-gray-500 hover:text-blue-600'
-                          }
+                          text-gray-500 hover:text-blue-600 hover:underline
                         `}
                       >
-                        {q}
+                        {q.question}
                       </Link>
                     </li>
                   ))}
