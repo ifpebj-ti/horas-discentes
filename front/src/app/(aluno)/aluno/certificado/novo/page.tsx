@@ -1,59 +1,17 @@
 'use client';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaArrowLeft, FaUpload, FaHome, FaFileAlt, FaPlusCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
+
 import BreadCrumb from '@/components/BreadCrumb';
 import FormRegistroHoras from '@/components/FormRegistroHoras';
-import { MOCK_CATEGORIAS_COMPLEMENTARES, MOCK_CATEGORIAS_EXTENSAO } from '@/lib/alunoMock';
 
-const CATEGORIES = [
-  'Ensino',
-  'Pesquisa',
-  'Extensão',
-  'Gestão',
-  'Monitoria',
-  'Iniciação Científica',
-];
-
-interface Categoria {
-  nome: string;
-}
+import {
+  MOCK_CATEGORIAS_COMPLEMENTARES,
+  MOCK_CATEGORIAS_EXTENSAO
+} from '@/lib/alunoMock';
 
 export default function NovoCertificado() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    title: '',
-    institution: '',
-    category: '',
-    hours: '',
-    date: '',
-    description: '',
-    file: null as File | null,
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({
-        ...prev,
-        file: e.target.files![0]
-      }));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implementar envio do formulário
-    console.log('Form data:', formData);
-    router.push('/aluno/certificado');
-  };
 
   const categoriasComplementares = MOCK_CATEGORIAS_COMPLEMENTARES;
   const categoriasExtensao = MOCK_CATEGORIAS_EXTENSAO;
@@ -87,18 +45,18 @@ export default function NovoCertificado() {
                   {
                     icon: <FaHome className="text-base" />,
                     label: 'Início',
-                    href: '/aluno',
+                    href: '/aluno'
                   },
                   {
                     icon: <FaFileAlt className="text-base" />,
                     label: 'Certificados',
-                    href: '/aluno/certificado',
+                    href: '/aluno/certificado'
                   },
                   {
                     icon: <FaUpload className="text-base" />,
                     label: 'Novo Certificado',
-                    href: '/aluno/certificado/novo',
-                  },
+                    href: '/aluno/certificado/novo'
+                  }
                 ]}
               />
             </div>

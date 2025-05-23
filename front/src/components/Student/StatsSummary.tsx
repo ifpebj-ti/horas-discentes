@@ -1,8 +1,6 @@
 'use client';
 import Link from 'next/link';
-import {
-  FaRegFileAlt, FaAward, FaClock, FaTimesCircle
-} from 'react-icons/fa';
+import { FaRegFileAlt, FaAward, FaClock, FaTimesCircle } from 'react-icons/fa';
 
 interface Props {
   total: number;
@@ -42,7 +40,12 @@ const CARDS = [
   }
 ];
 
-export default function StatsSummary({ total, approved, pending, rejected }: Props) {
+export default function StatsSummary({
+  total,
+  approved,
+  pending,
+  rejected
+}: Props) {
   const values = [total, approved, pending, rejected];
 
   return (

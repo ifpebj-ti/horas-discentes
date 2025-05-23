@@ -1,8 +1,10 @@
 'use client';
 import { usePathname } from 'next/navigation';
+
 import Header from '@/components/Header';
-import * as Types from '@/types';
+
 import { MOCK_USER } from '@/lib/alunoMock';
+import * as Types from '@/types';
 
 const getTitleFromPath = (path: string): string => {
   const lastSegment = path.split('/').filter(Boolean).pop() ?? '';
@@ -19,7 +21,11 @@ const getTitleFromPath = (path: string): string => {
   }
 };
 
-export default function AlunoLayout({ children }: { children: React.ReactNode }) {
+export default function AlunoLayout({
+  children
+}: {
+  children: React.ReactNode;
+}) {
   const user: Types.Usuario = MOCK_USER;
   const pathname = usePathname();
   const menuTitle = getTitleFromPath(pathname);
@@ -34,11 +40,11 @@ export default function AlunoLayout({ children }: { children: React.ReactNode })
       <footer className="bg-white border-t py-4 text-center text-xs text-gray-500">
         IFPE - Campus Belo Jardim
         <br />
-        Endereço: Av. Sebastião Rodrigues da Costa, s/n - São Pedro, Belo Jardim - PE, 55145-065
+        Endereço: Av. Sebastião Rodrigues da Costa, s/n - São Pedro, Belo Jardim
+        - PE, 55145-065
         <br />
         Telefone: (81) 3411-3200
-        <br />
-        © 2025 Desenvolvido por Erimilson Silva.
+        <br />© 2025 Desenvolvido por Erimilson Silva.
       </footer>
     </div>
   );

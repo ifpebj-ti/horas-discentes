@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+
 import { SOFTWARE_ENGINEERING_REQUIREMENTS } from '@/types';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 
 export default function ProgressSummary({
   certificates,
-  courseRequirement = SOFTWARE_ENGINEERING_REQUIREMENTS,
+  courseRequirement = SOFTWARE_ENGINEERING_REQUIREMENTS
 }: Props) {
   /* ── cálculo total ─────────────────────────────────────────────────────── */
   const totalHours = certificates.reduce((sum, c) => sum + c.hours, 0);
@@ -17,12 +18,16 @@ export default function ProgressSummary({
   const pctTotal = Math.min((totalHours / maxHours) * 100, 100);
 
   /* ── cálculo por categoria ─────────────────────────────────────────────── */
-  const hoursByCat = courseRequirement.categories.map(cat => {
+  const hoursByCat = courseRequirement.categories.map((cat) => {
     const earned = certificates
-      .filter(c => c.category === cat.category)
+      .filter((c) => c.category === cat.category)
       .reduce((s, c) => s + c.hours, 0);
 
-    return { ...cat, earned, pct: Math.min((earned / cat.maxHours) * 100, 100) };
+    return {
+      ...cat,
+      earned,
+      pct: Math.min((earned / cat.maxHours) * 100, 100)
+    };
   });
 
   /* ── UI ────────────────────────────────────────────────────────────────── */
@@ -56,22 +61,26 @@ export default function ProgressSummary({
         </h3>
 
         <ul className="space-y-3">
-          {hoursByCat.map(cat => (
+          {hoursByCat.map((cat) => (
             <li key={cat.category}>
               <div className="flex justify-between text-sm mb-1">
                 <Link
                   href={`/aluno/certificado?category=${cat.category}`}
-                  className={cat.earned === 0
-                    ? 'text-gray-500 font-medium hover:text-[#0F4AA9] transition-colors'
-                    : 'text-[#0F4AA9] font-semibold underline cursor-pointer hover:text-[#0D3F8E] transition-colors'
+                  className={
+                    cat.earned === 0
+                      ? 'text-gray-500 font-medium hover:text-[#0F4AA9] transition-colors'
+                      : 'text-[#0F4AA9] font-semibold underline cursor-pointer hover:text-[#0D3F8E] transition-colors'
                   }
                 >
                   {cat.label}
                 </Link>
-                <span className={cat.earned === 0
-                  ? 'tabular-nums text-xs text-gray-500 font-medium'
-                  : 'tabular-nums text-xs bg-[#0F4AA9] text-white px-2 py-0.5 rounded font-semibold'
-                }>
+                <span
+                  className={
+                    cat.earned === 0
+                      ? 'tabular-nums text-xs text-gray-500 font-medium'
+                      : 'tabular-nums text-xs bg-[#0F4AA9] text-white px-2 py-0.5 rounded font-semibold'
+                  }
+                >
                   {cat.earned} / {cat.maxHours} h
                 </span>
               </div>

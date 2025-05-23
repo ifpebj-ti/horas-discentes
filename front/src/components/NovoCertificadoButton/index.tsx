@@ -1,14 +1,16 @@
 'use client';
-import { useState } from 'react';
 import Link from 'next/link';
+import { useState } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
 
 export default function NovoCertificadoButton() {
   const [open, setOpen] = useState(false);
 
-  function toggleDropdown(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+  function toggleDropdown(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void {
     event.preventDefault();
-    setOpen(prev => !prev);
+    setOpen((prev) => !prev);
   }
 
   function closeDropdown() {

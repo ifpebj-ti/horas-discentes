@@ -1,7 +1,17 @@
 import React from 'react';
-import { FaClock, FaFileAlt, FaUser, FaCalendarAlt, FaMapMarkerAlt, FaBookOpen, FaBuilding, FaAlignLeft } from 'react-icons/fa';
 import { Controller } from 'react-hook-form';
+import {
+  FaClock,
+  FaFileAlt,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaBookOpen,
+  FaBuilding,
+  FaAlignLeft
+} from 'react-icons/fa';
+
 import { FileUploadInput } from '@components/FileUploadInput';
+
 import { useFormRegistroHoras } from './hooks/useFormRegistroHoras';
 
 interface Categoria {
@@ -16,7 +26,7 @@ interface FormRegistroHorasProps {
 
 export default function FormRegistroHoras({
   categoriasComplementares,
-  categoriasExtensao,
+  categoriasExtensao
 }: FormRegistroHorasProps) {
   const {
     formMethods,
@@ -28,16 +38,20 @@ export default function FormRegistroHoras({
     anexoComprovante,
     isLoading,
     errors,
-    tipoRegistro,
+    tipoRegistro
   } = useFormRegistroHoras();
 
   const { register } = formMethods;
 
   // Escolhe as categorias conforme o tipo
-  const categoriasAtuais = tipoRegistro === 'horas-extensao' ? categoriasExtensao : categoriasComplementares;
+  const categoriasAtuais =
+    tipoRegistro === 'horas-extensao'
+      ? categoriasExtensao
+      : categoriasComplementares;
 
-  const inputClass = "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const errorClass = "text-red-500 text-xs mt-1";
+  const inputClass =
+    'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500';
+  const errorClass = 'text-red-500 text-xs mt-1';
 
   function getPeriodosLetivos() {
     const periodos: string[] = [];
@@ -65,10 +79,15 @@ export default function FormRegistroHoras({
       <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-md">
         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
           <FaClock className="text-blue-600" />
-          {tipoRegistro === 'horas-extensao' ? 'Registrar Horas de Extensão' : 'Registrar Horas Complementares'}
+          {tipoRegistro === 'horas-extensao'
+            ? 'Registrar Horas de Extensão'
+            : 'Registrar Horas Complementares'}
         </h2>
 
-        <form onSubmit={handleSubmit(submitForm)} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <form
+          onSubmit={handleSubmit(submitForm)}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
           {/* Primeira linha: Título, Instituição, Local */}
           <div className="col-span-1">
             <label htmlFor="tituloAtividade" className="block mb-1 font-medium">
@@ -83,7 +102,9 @@ export default function FormRegistroHoras({
               placeholder="Digite o título da atividade"
               className={inputClass}
             />
-            {errors.tituloAtividade && <p className={errorClass}>{errors.tituloAtividade.message}</p>}
+            {errors.tituloAtividade && (
+              <p className={errorClass}>{errors.tituloAtividade.message}</p>
+            )}
           </div>
           <div className="col-span-1">
             <label htmlFor="instituicao" className="block mb-1 font-medium">
@@ -98,12 +119,15 @@ export default function FormRegistroHoras({
               placeholder="Digite o nome da instituição"
               className={inputClass}
             />
-            {errors.instituicao && <p className={errorClass}>{errors.instituicao.message}</p>}
+            {errors.instituicao && (
+              <p className={errorClass}>{errors.instituicao.message}</p>
+            )}
           </div>
           <div className="col-span-1">
             <label htmlFor="localRealizacao" className="block mb-1 font-medium">
               <span className="flex items-center gap-2">
-                <FaMapMarkerAlt className="text-blue-600" /> Local de Realização/Participação
+                <FaMapMarkerAlt className="text-blue-600" /> Local de
+                Realização/Participação
               </span>
             </label>
             <input
@@ -113,7 +137,9 @@ export default function FormRegistroHoras({
               placeholder="Ex: Auditório principal, Plataforma online"
               className={inputClass}
             />
-            {errors.localRealizacao && <p className={errorClass}>{errors.localRealizacao.message}</p>}
+            {errors.localRealizacao && (
+              <p className={errorClass}>{errors.localRealizacao.message}</p>
+            )}
           </div>
 
           {/* Segunda linha: Categoria, Período */}
@@ -129,14 +155,21 @@ export default function FormRegistroHoras({
               className={inputClass}
             >
               <option value="">Selecione</option>
-              {categoriasAtuais.map(cat => (
-                <option key={cat.nome} value={cat.nome}>{cat.nome}</option>
+              {categoriasAtuais.map((cat) => (
+                <option key={cat.nome} value={cat.nome}>
+                  {cat.nome}
+                </option>
               ))}
             </select>
-            {errors.categoria && <p className={errorClass}>{errors.categoria.message}</p>}
+            {errors.categoria && (
+              <p className={errorClass}>{errors.categoria.message}</p>
+            )}
           </div>
           <div className="col-span-1">
-            <label htmlFor="periodoLetivoFaculdade" className="block mb-1 font-medium">
+            <label
+              htmlFor="periodoLetivoFaculdade"
+              className="block mb-1 font-medium"
+            >
               <span className="flex items-center gap-2">
                 <FaBookOpen className="text-blue-600" /> Período
               </span>
@@ -147,11 +180,17 @@ export default function FormRegistroHoras({
               className={inputClass}
             >
               <option value="">Selecione</option>
-              {periodosLetivos.map(periodo => (
-                <option key={periodo} value={periodo}>{periodo}</option>
+              {periodosLetivos.map((periodo) => (
+                <option key={periodo} value={periodo}>
+                  {periodo}
+                </option>
               ))}
             </select>
-            {errors.periodoLetivoFaculdade && <p className={errorClass}>{errors.periodoLetivoFaculdade.message}</p>}
+            {errors.periodoLetivoFaculdade && (
+              <p className={errorClass}>
+                {errors.periodoLetivoFaculdade.message}
+              </p>
+            )}
           </div>
 
           {/* Terceira linha: Carga Horária, Data de Início, Data de Fim */}
@@ -169,10 +208,15 @@ export default function FormRegistroHoras({
               className={inputClass}
               min={1}
             />
-            {errors.cargaHoraria && <p className={errorClass}>{errors.cargaHoraria.message}</p>}
+            {errors.cargaHoraria && (
+              <p className={errorClass}>{errors.cargaHoraria.message}</p>
+            )}
           </div>
           <div className="col-span-1">
-            <label htmlFor="dataInicioAtividade" className="block mb-1 font-medium">
+            <label
+              htmlFor="dataInicioAtividade"
+              className="block mb-1 font-medium"
+            >
               <span className="flex items-center gap-2">
                 <FaCalendarAlt className="text-blue-600" /> Data de Início
               </span>
@@ -183,10 +227,15 @@ export default function FormRegistroHoras({
               {...register('dataInicioAtividade')}
               className={inputClass}
             />
-            {errors.dataInicioAtividade && <p className={errorClass}>{errors.dataInicioAtividade.message}</p>}
+            {errors.dataInicioAtividade && (
+              <p className={errorClass}>{errors.dataInicioAtividade.message}</p>
+            )}
           </div>
           <div className="col-span-1">
-            <label htmlFor="dataFimAtividade" className="block mb-1 font-medium">
+            <label
+              htmlFor="dataFimAtividade"
+              className="block mb-1 font-medium"
+            >
               <span className="flex items-center gap-2">
                 <FaCalendarAlt className="text-blue-600" /> Data de Fim
               </span>
@@ -197,14 +246,20 @@ export default function FormRegistroHoras({
               {...register('dataFimAtividade')}
               className={inputClass}
             />
-            {errors.dataFimAtividade && <p className={errorClass}>{errors.dataFimAtividade.message}</p>}
+            {errors.dataFimAtividade && (
+              <p className={errorClass}>{errors.dataFimAtividade.message}</p>
+            )}
           </div>
 
           {/* Quarta linha: Especificação */}
           <div className="col-span-1 md:col-span-3">
-            <label htmlFor="especificacaoAtividade" className="block mb-1 font-medium">
+            <label
+              htmlFor="especificacaoAtividade"
+              className="block mb-1 font-medium"
+            >
               <span className="flex items-center gap-2">
-                <FaAlignLeft className="text-blue-600" /> Especificação das Atividades
+                <FaAlignLeft className="text-blue-600" /> Especificação das
+                Atividades
               </span>
             </label>
             <textarea
@@ -214,7 +269,11 @@ export default function FormRegistroHoras({
               className={`${inputClass} h-24`}
               rows={3}
             />
-            {errors.especificacaoAtividade && <p className={errorClass}>{errors.especificacaoAtividade.message}</p>}
+            {errors.especificacaoAtividade && (
+              <p className={errorClass}>
+                {errors.especificacaoAtividade.message}
+              </p>
+            )}
           </div>
 
           {/* Quinta linha: Anexo */}
@@ -239,7 +298,9 @@ export default function FormRegistroHoras({
                 </>
               )}
             />
-            <p className="text-xs text-gray-500 mt-1">Tipos aceitos: PDF, JPG, PNG. Tamanho máx: 5MB.</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Tipos aceitos: PDF, JPG, PNG. Tamanho máx: 5MB.
+            </p>
           </div>
 
           {/* Botão de Envio */}

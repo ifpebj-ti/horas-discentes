@@ -1,12 +1,18 @@
 'use client';
-import { useState, useEffect, useContext, createContext } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useContext, createContext } from 'react';
 import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
+
 import BreadCrumb from '@/components/BreadCrumb';
-import VerCertificado from '@/components/VerCertificado';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
+import VerCertificado from '@/components/VerCertificado';
+
+import {
+  STATUS_OPTIONS,
+  CATEGORY_OPTIONS,
+  MOCK_CERTIFICATES
+} from '@/lib/alunoMock';
 import * as Types from '@/types';
-import { STATUS_OPTIONS, CATEGORY_OPTIONS, MOCK_CERTIFICATES } from '@/lib/alunoMock';
 
 // Definir o contexto localmente
 const CertificadosContext = createContext<Types.Certificado[]>([]);
@@ -76,13 +82,17 @@ function CertificadosPageContent() {
     updateFilters(selectedStatus, category);
   };
 
-  const filteredCertificates = certificados.filter(cert => {
-    const matchesSearch = cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (cert.description && cert.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+  const filteredCertificates = certificados.filter((cert) => {
+    const matchesSearch =
+      cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (cert.description &&
+        cert.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
       cert.local.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = selectedStatus === 'all' || cert.status === selectedStatus;
-    const matchesCategory = selectedCategory === 'all' || cert.categoriaKey === selectedCategory;
+    const matchesStatus =
+      selectedStatus === 'all' || cert.status === selectedStatus;
+    const matchesCategory =
+      selectedCategory === 'all' || cert.categoriaKey === selectedCategory;
 
     return matchesSearch && matchesStatus && matchesCategory;
   });
@@ -126,7 +136,7 @@ function CertificadosPageContent() {
                   onChange={(e) => handleStatusChange(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4AA9] bg-white text-gray-900"
                 >
-                  {STATUS_OPTIONS.map(option => (
+                  {STATUS_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -137,7 +147,7 @@ function CertificadosPageContent() {
                   onChange={(e) => handleCategoryChange(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4AA9] bg-white text-gray-900"
                 >
-                  {CATEGORY_OPTIONS.map(option => (
+                  {CATEGORY_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -160,7 +170,7 @@ function CertificadosPageContent() {
                       date: cert.periodoInicio,
                       dateEnd: cert.periodoFim,
                       category: cert.categoriaKey,
-                      status: cert.status,
+                      status: cert.status
                     }}
                   />
                 ))

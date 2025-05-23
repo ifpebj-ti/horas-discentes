@@ -2,8 +2,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
-import * as Types from '@/types';
+
 import Menu from '@/components/Menu';
+
+import * as Types from '@/types';
 
 interface HeaderProps {
   menuTitle: string;

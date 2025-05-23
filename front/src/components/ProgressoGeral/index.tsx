@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
 import Link from 'next/link';
+import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 interface Categoria {
@@ -27,11 +27,9 @@ export default function ProgressoGeral({
   totalNecessarias,
   title,
   subTitle,
-  categoriaKey,
-  onCategoriaClick
+  categoriaKey
 }: ProgressoGeralProps) {
   const [expanded, setExpanded] = useState(false);
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
 
   return (
     <div className="bg-white rounded-xl shadow p-6">
@@ -42,9 +40,7 @@ export default function ProgressoGeral({
         className="w-full flex items-center justify-between mb-2"
         onClick={() => setExpanded(!expanded)}
       >
-        <span className="text-sm font-medium text-gray-700">
-          {subTitle}
-        </span>
+        <span className="text-sm font-medium text-gray-700">{subTitle}</span>
         <div className="flex items-center">
           <span className="text-sm font-medium text-gray-900 mr-2">
             {totalHoras} / {totalNecessarias} horas
@@ -61,7 +57,9 @@ export default function ProgressoGeral({
       <div className="w-full h-3 bg-gray-200 rounded-full mb-2">
         <div
           className="h-3 bg-blue-600 rounded-full"
-          style={{ width: `${Math.min((totalHoras / totalNecessarias) * 100, 100)}%` }}
+          style={{
+            width: `${Math.min((totalHoras / totalNecessarias) * 100, 100)}%`
+          }}
         />
       </div>
       <p className="text-sm text-gray-700 mb-2">
@@ -85,9 +83,11 @@ export default function ProgressoGeral({
                     href={`/aluno/certificado?category=${encodeURIComponent(cat.categoriaKey)}`}
                     className={`
                       text-sm
-                      ${cat.horas > 0
-                        ? 'text-blue-600 font-semibold hover:text-blue-700'
-                        : 'text-gray-500 hover:text-blue-600'}
+                      ${
+                        cat.horas > 0
+                          ? 'text-blue-600 font-semibold hover:text-blue-700'
+                          : 'text-gray-500 hover:text-blue-600'
+                      }
                       ${isSelected ? 'underline' : ''}
                     `}
                   >

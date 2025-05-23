@@ -26,13 +26,19 @@ export default function BreadCrumb({ items }: BreadCrumbProps) {
 
             <Link
               href={item.href}
-              className={`flex items-center gap-2 text-sm font-medium ${index === items.length - 1
-                ? 'text-gray-700 cursor-default'
-                : 'text-[#0F4AA9] hover:text-[#0D3F8E] transition-colors'
-                }`}
+              className={`flex items-center gap-2 text-sm font-medium ${
+                index === items.length - 1
+                  ? 'text-gray-700 cursor-default'
+                  : 'text-[#0F4AA9] hover:text-[#0D3F8E] transition-colors'
+              }`}
             >
-              <span className={`${index === items.length - 1 ? 'text-gray-500' : 'text-[#0F4AA9]'
-                }`}>
+              <span
+                className={`${
+                  index === items.length - 1
+                    ? 'text-gray-500'
+                    : 'text-[#0F4AA9]'
+                }`}
+              >
                 {item.icon}
               </span>
               {item.label}
