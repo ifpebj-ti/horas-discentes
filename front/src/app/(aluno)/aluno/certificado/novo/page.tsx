@@ -1,6 +1,6 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import { FaArrowLeft, FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
+import { FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
+import { Suspense } from 'react';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import FormRegistroHoras from '@/components/FormRegistroHoras';
@@ -11,8 +11,6 @@ import {
 } from '@/lib/alunoMock';
 
 export default function NovoCertificado() {
-  const router = useRouter();
-
   const categoriasComplementares = MOCK_CATEGORIAS_COMPLEMENTARES;
   const categoriasExtensao = MOCK_CATEGORIAS_EXTENSAO;
 
@@ -55,10 +53,12 @@ export default function NovoCertificado() {
           </div>
 
           {/* Formulário */}
-          <FormRegistroHoras
-            categoriasComplementares={categoriasComplementares}
-            categoriasExtensao={categoriasExtensao}
-          />
+          <Suspense fallback={<div>Carregando formulário...</div>}>
+            <FormRegistroHoras
+              categoriasComplementares={categoriasComplementares}
+              categoriasExtensao={categoriasExtensao}
+            />
+          </Suspense>
         </div>
       </main>
     </div>

@@ -1,6 +1,12 @@
 'use client';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect, useContext, createContext } from 'react';
+import {
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  Suspense
+} from 'react';
 import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
@@ -37,8 +43,7 @@ function CertificadosPageContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const certificados = useContext(CertificadosContext) as Types.Certificado[];
-
+  const certificados = useContext(CertificadosContext);
   useEffect(() => {
     const category = searchParams.get('category');
     const status = searchParams.get('status');
@@ -68,7 +73,7 @@ function CertificadosPageContent() {
     }
 
     const query = params.toString();
-    const newPath = `/aluno/certificado${query ? `?${query}` : ''}`;
+    const newPath = '/aluno/certificado' + (query ? '?' + query : '');
     router.push(newPath);
   };
 
@@ -85,8 +90,7 @@ function CertificadosPageContent() {
   const filteredCertificates = certificados.filter((cert) => {
     const matchesSearch =
       cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (cert.description &&
-        cert.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      cert.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cert.local.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
@@ -187,11 +191,13 @@ function CertificadosPageContent() {
   );
 }
 
-// Componente Certificados que provê o contexto
+// Componente Certificados que provê o contexto e o Suspense
 export default function Certificados() {
   return (
     <CertificadosContext.Provider value={MOCK_CERTIFICATES}>
-      <CertificadosPageContent />
+      <Suspense fallback={<div>Carregando certificados...</div>}>
+        <CertificadosPageContent />
+      </Suspense>
     </CertificadosContext.Provider>
   );
 }

@@ -11,14 +11,10 @@ interface BreadcrumbItem {
 }
 
 interface BreadCrumbProps {
-  breadcrumbInicio?: string;
-  breadcrumbTitle?: string;
-  breadcrumbIcon?: ReactNode;
-  
   items: BreadcrumbItem[];
 }
 
-export default function BreadCrumb({ items }: BreadCrumbProps) {
+export default function BreadCrumb({ items }: Readonly<BreadCrumbProps>) {
   return (
     <nav className="flex" aria-label="Breadcrumb">
       <ol className="flex items-center space-x-2">

@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { FaHome } from 'react-icons/fa';
 import { FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa6';
 
-
 import BreadCrumb from '@/components/BreadCrumb';
 import { DashboardCard } from '@/components/DashboardCard';
 
@@ -14,15 +13,12 @@ export default function CoordenacaoPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto mt-4 z-10 relative">
       <BreadCrumb
-        breadcrumbInicio="coordenacao"
-        breadcrumbTitle="Coordenação"
-        breadcrumbIcon={<FaHome />}
         items={[
           {
             icon: <FaHome />,
             label: 'Início',
-            href: '/coordenacao',
-          },
+            href: '/coordenacao'
+          }
         ]}
       />
 

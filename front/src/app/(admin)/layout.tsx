@@ -33,7 +33,9 @@ const getTitleFromPath = (path: string): string => {
   }
 };
 
-export default function AdministradorLayout({ children }: LayoutProps) {
+export default function AdministradorLayout({
+  children
+}: Readonly<LayoutProps>) {
   const pathname = usePathname();
   const menuTitle = getTitleFromPath(pathname);
 

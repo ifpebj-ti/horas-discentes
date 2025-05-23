@@ -1,20 +1,10 @@
 'use client';
-
 import { usePathname } from 'next/navigation';
-import { ReactNode } from 'react';
 
 import Header from '@/components/Header';
 
-interface LayoutProps {
-  children: ReactNode;
-}
-
-const user = {
-  id: '1',
-  name: 'Maria',
-  email: 'coordenador@example.com',
-  role: 'coordenador'
-};
+import { MOCK_USER } from '@/lib/alunoMock';
+import * as Types from '@/types';
 
 const getTitleFromPath = (path: string): string => {
   const lastSegment = path.split('/').filter(Boolean).pop() ?? '';
@@ -39,14 +29,19 @@ const getTitleFromPath = (path: string): string => {
   }
 };
 
-export default function CoordenacaoLayout({ children }: LayoutProps) {
+export default function CoordenacaoLayout({
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  const user: Types.Usuario = MOCK_USER;
   const pathname = usePathname();
   const menuTitle = getTitleFromPath(pathname);
 
   return (
     <div className="min-h-screen bg-white">
       <header className="shadow-md bg-gray-100 z-20 relative">
-        <Header menuTitle={menuTitle} user={user.name} role={user.role} />
+        <Header menuTitle={menuTitle} user={user} />
       </header>
       <main>{children}</main>
     </div>
