@@ -40,7 +40,7 @@ export default function AdministradorLayout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-white">
       <header className="shadow-md bg-gray-100 z-20 relative">
-        <Header menuTitle={menuTitle} user={user.name} role={user.role} />
+        <Header menuTitle={menuTitle} user={user} />
       </header>
       <main>{children}</main>
     </div>

@@ -32,14 +32,6 @@ export default function NovoCertificado() {
             </div>
 
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => router.back()}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                <FaArrowLeft className="text-base" />
-                Voltar
-              </button>
-
               <BreadCrumb
                 items={[
                   {

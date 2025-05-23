@@ -11,6 +11,10 @@ interface BreadcrumbItem {
 }
 
 interface BreadCrumbProps {
+  breadcrumbInicio?: string;
+  breadcrumbTitle?: string;
+  breadcrumbIcon?: ReactNode;
+  
   items: BreadcrumbItem[];
 }
 
