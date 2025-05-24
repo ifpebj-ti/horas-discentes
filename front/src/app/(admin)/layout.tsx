@@ -33,14 +33,16 @@ const getTitleFromPath = (path: string): string => {
   }
 };
 
-export default function AdministradorLayout({ children }: LayoutProps) {
+export default function AdministradorLayout({
+  children
+}: Readonly<LayoutProps>) {
   const pathname = usePathname();
   const menuTitle = getTitleFromPath(pathname);
 
   return (
     <div className="min-h-screen bg-white">
       <header className="shadow-md bg-gray-100 z-20 relative">
-        <Header menuTitle={menuTitle} user={user.name} role={user.role} />
+        <Header menuTitle={menuTitle} user={user} />
       </header>
       <main>{children}</main>
     </div>

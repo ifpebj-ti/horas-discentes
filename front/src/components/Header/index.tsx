@@ -5,13 +5,14 @@ import { FaBars } from 'react-icons/fa';
 
 import Menu from '@/components/Menu';
 
+import * as Types from '@/types';
+
 interface HeaderProps {
   menuTitle: string;
-  user: string;
-  role: string;
+  user: Types.Usuario;
 }
 
-const Header: React.FC<HeaderProps> = ({ menuTitle, user, role }) => {
+const Header = ({ menuTitle, user }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen((prev) => !prev);
   const closeMenu = () => setMenuOpen(false);
@@ -57,8 +58,8 @@ const Header: React.FC<HeaderProps> = ({ menuTitle, user, role }) => {
       {menuOpen && (
         <Menu
           user={{
-            name: user,
-            role
+            name: user.name || '',
+            role: user.role
           }}
           closeMenu={closeMenu}
         />

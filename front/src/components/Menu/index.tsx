@@ -16,7 +16,10 @@ import {
 } from 'react-icons/fa';
 
 type Props = {
-  user: { name: string; role: string };
+  user: {
+    name: string;
+    role: string;
+  };
   closeMenu: () => void;
 };
 
@@ -100,11 +103,11 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
             <CustomNavLink href="/aluno" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />
             </CustomNavLink>
-            <CustomNavLink href="/aluno/meus-certificados" onClick={closeMenu}>
-              <IconText icon={FaFileAlt} text="Meus Certificados" />
+            <CustomNavLink href="/aluno/certificado" onClick={closeMenu}>
+              <IconText icon={FaClipboard} text="Certificados" />
             </CustomNavLink>
-            <CustomNavLink href="/aluno/enviar" onClick={closeMenu}>
-              <IconText icon={FaClipboard} text="Enviar Novo" />
+            <CustomNavLink href="/aluno/certificado/novo" onClick={closeMenu}>
+              <IconText icon={FaFileAlt} text="Enviar Certificados" />
             </CustomNavLink>
           </>
         )}

@@ -13,9 +13,13 @@ export default function CoordenacaoPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto mt-4 z-10 relative">
       <BreadCrumb
-        breadcrumbInicio="coordenacao"
-        breadcrumbTitle="Coordenação"
-        breadcrumbIcon={<FaHome />}
+        items={[
+          {
+            icon: <FaHome />,
+            label: 'Início',
+            href: '/coordenacao'
+          }
+        ]}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
