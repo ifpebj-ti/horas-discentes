@@ -70,8 +70,7 @@ function AlunoPageContent() {
           .filter(
             (c: Types.Certificado) =>
               c.grupo === cat.grupo &&
-              c.categoriaKey === cat.categoriaKey &&
-              c.title === cat.nome
+              c.categoria === cat.categoria
           )
           .reduce(
             (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
@@ -137,9 +136,7 @@ function AlunoPageContent() {
               <ProgressoGeral
                 title="Atividades Complementares"
                 subTitle="Progressão Geral - Atividades Complementares"
-                categorias={categoriasComplementares.filter(
-                  (cat) => cat.total > 0
-                )}
+                categorias={categoriasComplementares}
                 totalHoras={totalHorasComplementares}
                 totalNecessarias={280}
                 categoriaKey={categoriaKeySelecionada}
@@ -202,6 +199,7 @@ function AlunoPageContent() {
             </section>
 
             {/* COLUNA LATERAL -------------------------------------------------- */}
+            {/* Resumo de Certificados ------------------------------------------ */}
             <aside className="space-y-8">
               <StatsSummary
                 total={total}
@@ -210,6 +208,7 @@ function AlunoPageContent() {
                 rejected={rejected}
               />
 
+              {/* Dúvidas Frequentes ------------------------------------------ */}
               <div className="bg-blue-50/60 border border-blue-100 rounded-2xl shadow-sm p-6">
                 <h2 className="text-md font-semibold text-[#071D41] mb-4">
                   Dúvidas Frequentes

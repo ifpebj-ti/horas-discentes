@@ -52,6 +52,7 @@ export interface OpcaoFiltro {
  */
 export interface CategoriaProgresso {
   grupo: string;
+  categoria: string;
   nome: string;
   horas: number;
   total: number;
