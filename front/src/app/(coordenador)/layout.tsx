@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation';
 
 import Header from '@/components/Header';
 
-import { MOCK_USER } from '@/lib/alunoMock';
+import { MOCK_COORDENADORES } from '@/lib/coordenacaoMock';
 import * as Types from '@/types';
 
 const getTitleFromPath = (path: string): string => {
@@ -34,14 +34,20 @@ export default function CoordenacaoLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user: Types.Usuario = MOCK_USER;
+  const coordenador: Types.Coordenador = MOCK_COORDENADORES[0];
+  const userForHeader: Types.Usuario = {
+    id: String(coordenador.id),
+    name: coordenador.nome,
+    email: coordenador.email,
+    role: coordenador.role,
+  };
   const pathname = usePathname();
   const menuTitle = getTitleFromPath(pathname);
 
   return (
     <div className="min-h-screen bg-white">
       <header className="shadow-md bg-gray-100 z-20 relative">
-        <Header menuTitle={menuTitle} user={user} />
+        <Header menuTitle={menuTitle} user={userForHeader} />
       </header>
       <main>{children}</main>
     </div>

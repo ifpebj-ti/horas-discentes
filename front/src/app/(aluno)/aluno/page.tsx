@@ -49,6 +49,18 @@ function AlunoPageContent() {
     (c: Types.Certificado) => c.tipo === 'extensao'
   );
 
+  // Calcular total de horas para atividades complementares
+  const totalHorasComplementares = compCertificados.reduce(
+    (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
+    0
+  );
+
+  // Calcular total de horas para atividades de extensão
+  const totalHorasExtensao = extCertificados.reduce(
+    (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
+    0
+  );
+
   // Usar os mocks importados para categorias
   const categoriasComplementares: Types.CategoriaProgresso[] =
     MOCK_CATEGORIAS_COMPLEMENTARES.map((cat) => ({
@@ -57,7 +69,9 @@ function AlunoPageContent() {
         compCertificados
           .filter(
             (c: Types.Certificado) =>
-              c.grupo === cat.grupo && c.categoriaKey === cat.categoriaKey
+              c.grupo === cat.grupo &&
+              c.categoriaKey === cat.categoriaKey &&
+              c.title === cat.nome
           )
           .reduce(
             (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
@@ -73,7 +87,9 @@ function AlunoPageContent() {
         extCertificados
           .filter(
             (c: Types.Certificado) =>
-              c.grupo === cat.grupo && c.categoriaKey === cat.categoriaKey
+              c.grupo === cat.grupo &&
+              c.categoriaKey === cat.categoriaKey &&
+              c.title === cat.nome
           )
           .reduce(
             (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
@@ -124,10 +140,7 @@ function AlunoPageContent() {
                 categorias={categoriasComplementares.filter(
                   (cat) => cat.total > 0
                 )}
-                totalHoras={categoriasComplementares.reduce(
-                  (acc, cat) => acc + (cat.horas || 0),
-                  0
-                )}
+                totalHoras={totalHorasComplementares}
                 totalNecessarias={280}
                 categoriaKey={categoriaKeySelecionada}
                 onCategoriaClick={setCategoriaKeySelecionada}
@@ -138,10 +151,7 @@ function AlunoPageContent() {
                   title="Atividades de Extensão"
                   subTitle="Progressão Geral - Atividades de Extensão"
                   categorias={categoriasExtensao}
-                  totalHoras={categoriasExtensao.reduce(
-                    (acc, cat) => acc + (cat.horas || 0),
-                    0
-                  )}
+                  totalHoras={totalHorasExtensao}
                   totalNecessarias={320}
                   categoriaKey={categoriaKeySelecionada}
                   onCategoriaClick={setCategoriaKeySelecionada}

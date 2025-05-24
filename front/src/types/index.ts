@@ -64,3 +64,18 @@ export interface CategoriaProgresso {
 export interface CategoriaSelecaoForm {
   nome: string;
 }
+
+
+/**
+ * Interface Coordenador
+ */
+export interface Coordenador {
+  id: number;
+  nome: string;
+  role: string;
+  email: string;
+  telefone: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
