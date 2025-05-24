@@ -3,10 +3,10 @@ import Link from 'next/link';
 import { FaRegFileAlt, FaAward, FaClock, FaTimesCircle } from 'react-icons/fa';
 
 interface Props {
-  total: number;
-  approved: number;
-  pending: number;
-  rejected: number;
+  readonly total: number;
+  readonly approved: number;
+  readonly pending: number;
+  readonly rejected: number;
 }
 
 const CARDS = [

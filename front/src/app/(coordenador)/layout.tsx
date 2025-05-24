@@ -31,9 +31,9 @@ const getTitleFromPath = (path: string): string => {
 
 export default function CoordenacaoLayout({
   children
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const coordenador: Types.Coordenador = MOCK_COORDENADORES[0];
   const userForHeader: Types.Usuario = {
     id: String(coordenador.id),
