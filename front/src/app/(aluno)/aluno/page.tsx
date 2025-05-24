@@ -4,9 +4,9 @@ import { useState, useContext, createContext } from 'react';
 import { FaHome } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
+import StatsSummary from '@/components/Faq';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
 import ProgressoGeral from '@/components/ProgressoGeral';
-import StatsSummary from '@/components/Faq';
 import VerCertificado from '@/components/VerCertificado';
 
 import {
@@ -69,8 +69,7 @@ function AlunoPageContent() {
         compCertificados
           .filter(
             (c: Types.Certificado) =>
-              c.grupo === cat.grupo &&
-              c.categoria === cat.categoria
+              c.grupo === cat.grupo && c.categoria === cat.categoria
           )
           .reduce(
             (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
@@ -215,10 +214,22 @@ function AlunoPageContent() {
                 </h2>
                 <ul className="space-y-3 text-sm leading-relaxed">
                   {[
-                    { question: 'Como são contabilizadas as horas?', id: 'contabilizacao-horas' },
-                    { question: 'Quais atividades são aceitas?', id: 'atividades-aceitas' },
-                    { question: 'Qual o prazo para envio de certificados?', id: 'prazo-envio-certificados' },
-                    { question: 'Como saber se meu certificado foi aprovado?', id: 'status-certificado-aprovado' }
+                    {
+                      question: 'Como são contabilizadas as horas?',
+                      id: 'contabilizacao-horas'
+                    },
+                    {
+                      question: 'Quais atividades são aceitas?',
+                      id: 'atividades-aceitas'
+                    },
+                    {
+                      question: 'Qual o prazo para envio de certificados?',
+                      id: 'prazo-envio-certificados'
+                    },
+                    {
+                      question: 'Como saber se meu certificado foi aprovado?',
+                      id: 'status-certificado-aprovado'
+                    }
                   ].map((q) => (
                     <li key={q.id}>
                       <Link

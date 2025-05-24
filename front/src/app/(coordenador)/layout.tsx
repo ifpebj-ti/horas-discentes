@@ -39,7 +39,7 @@ export default function CoordenacaoLayout({
     id: String(coordenador.id),
     name: coordenador.nome,
     email: coordenador.email,
-    role: coordenador.role,
+    role: coordenador.role
   };
   const pathname = usePathname();
   const menuTitle = getTitleFromPath(pathname);

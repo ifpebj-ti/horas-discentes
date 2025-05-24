@@ -36,7 +36,7 @@ export interface Usuario {
   email: string | null | undefined;
   role: string;
   isNewPPC?: boolean;
-  image?: string | null | undefined;
+  image?: string | null;
 }
 
 /**
@@ -66,7 +66,6 @@ export interface CategoriaSelecaoForm {
   nome: string;
 }
 
-
 /**
  * Interface Coordenador
  */
@@ -79,4 +78,3 @@ export interface Coordenador {
   createdAt: string;
   updatedAt: string;
 }
-

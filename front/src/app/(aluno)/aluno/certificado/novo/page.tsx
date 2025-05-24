@@ -1,6 +1,6 @@
 'use client';
-import { FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
 import { Suspense } from 'react';
+import { FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import FormRegistroHoras from '@/components/FormRegistroHoras';
