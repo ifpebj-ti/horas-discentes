@@ -35,7 +35,7 @@ export const MOCK_CERTIFICATES: Types.Certificado[] = [
     local: 'UFPE',
     periodoInicio: '2023-01-10',
     periodoFim: '2023-05-10',
-    status: 'aprovado',
+    status: 'rejeitado',
     tipo: 'complementar'
   },
   // Grupo II
@@ -161,6 +161,20 @@ export const MOCK_CERTIFICATES: Types.Certificado[] = [
     periodoFim: '2023-10-30',
     status: 'aprovado',
     tipo: 'extensao'
+  },
+  {
+    id: 11,
+    grupo: 'IV',
+    categoria: 'Categoria 4',
+    categoriaKey: 'Voluntariado',
+    title: 'Voluntariado em ONG',
+    description: 'Participação voluntária em ONG de apoio social',
+    cargaHoraria: 5,
+    local: 'ONG Esperança',
+    periodoInicio: '2023-04-01',
+    periodoFim: '2023-04-30',
+    status: 'pendente',
+    tipo: 'complementar'
   }
 ];
 
@@ -169,6 +183,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   // Grupo I
   {
     grupo: 'I',
+    categoria: 'Categoria 1',
     nome: 'Disciplinas cursadas em outros cursos de graduação',
     horas: 0,
     total: 60,
@@ -176,6 +191,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'I',
+    categoria: 'Categoria 2',
     nome: 'Monitoria',
     horas: 0,
     total: 80,
@@ -183,6 +199,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'I',
+    categoria: 'Categoria 3',
     nome: 'Cursos de idiomas realizados durante o curso, comunicação e expressão e informática',
     horas: 0,
     total: 80,
@@ -190,6 +207,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'I',
+    categoria: 'Categoria 4',
     nome: 'Participação do programa institucional de bolsas de iniciação à docência',
     horas: 0,
     total: 40,
@@ -198,6 +216,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   // Grupo II
   {
     grupo: 'II',
+    categoria: 'Categoria 5',
     nome: 'Visita técnica em área afim ao curso e supervisionada pela instituição, mediante apresentação de relatório.',
     horas: 0,
     total: 80,
@@ -205,6 +224,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'II',
+    categoria: 'Categoria 6',
     nome: 'Estágio Profissional não obrigatório',
     horas: 0,
     total: 60,
@@ -213,6 +233,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   // Grupo III
   {
     grupo: 'III',
+    categoria: 'Categoria 7',
     nome: 'Participação como ouvinte, participante, palestrante, instrutor, apresentador, expositor ou mediador em eventos científicos, seminários, atividades culturais, esportivas, políticas e sociais, sessões técnicas, exposições, jornadas acadêmicas e científicas, palestras, seminários, congressos, conferências ou similares',
     horas: 0,
     total: 80,
@@ -221,6 +242,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   // Grupo IV
   {
     grupo: 'IV',
+    categoria: 'Categoria 8',
     nome: 'Participação em projetos de pesquisa',
     horas: 0,
     total: 80,
@@ -228,6 +250,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'IV',
+    categoria: 'Categoria 9',
     nome: 'Publicações de textos acadêmicos',
     horas: 0,
     total: 40,
@@ -235,6 +258,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'IV',
+    categoria: 'Categoria 10',
     nome: 'Grupos de estudos com produção intelectual',
     horas: 0,
     total: 20,
@@ -242,6 +266,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'IV',
+    categoria: 'Categoria 11',
     nome: 'Trabalhos desenvolvidos sob orientação de docente apresentados em eventos acadêmicos',
     horas: 0,
     total: 40,
@@ -250,6 +275,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   // Grupo V
   {
     grupo: 'V',
+    categoria: 'Categoria 12',
     nome: 'Participação em projetos de extensão',
     horas: 0,
     total: 80,
@@ -257,6 +283,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'V',
+    categoria: 'Categoria 13',
     nome: 'Participar na organização, coordenação ou realização de cursos em eventos científicos',
     horas: 0,
     total: 40,
@@ -264,6 +291,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'V',
+    categoria: 'Categoria 14',
     nome: 'Trabalhar na organização de material informativo da Instituição',
     horas: 0,
     total: 20,
@@ -271,6 +299,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'V',
+    categoria: 'Categoria 15',
     nome: 'Trabalhar na organização ou participação em campanhas de voluntariado ou programas de ação social',
     horas: 0,
     total: 20,
@@ -279,6 +308,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
   // Grupo VI
   {
     grupo: 'VI',
+    categoria: 'Categoria 16',
     nome: 'Participação, como voluntário, em atividades compatíveis com os objetivos do curso realizadas em instituições filantrópicas e da sociedade civil organizada do terceiro setor',
     horas: 0,
     total: 20,
@@ -290,6 +320,7 @@ export const MOCK_CATEGORIAS_COMPLEMENTARES: Types.CategoriaProgresso[] = [
 export const MOCK_CATEGORIAS_EXTENSAO: Types.CategoriaProgresso[] = [
   {
     grupo: 'Extensao',
+    categoria: 'Categoria 1',
     nome: 'Participação como Bolsista, voluntário ou colaborador, em Projetos/Programas de Extensão coordenado por servidor do IFPE',
     horas: 0,
     total: 160,
@@ -297,6 +328,7 @@ export const MOCK_CATEGORIAS_EXTENSAO: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'Extensao',
+    categoria: 'Categoria 2',
     nome: 'Participação em Eventos voltados ao público externo como Palestrante, Instrutor, Apresentador, Expositor ou Mediador de Cursos/Palestras/Workshops/Mesas Redondas/Oficinas',
     horas: 0,
     total: 80,
@@ -304,6 +336,7 @@ export const MOCK_CATEGORIAS_EXTENSAO: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'Extensao',
+    categoria: 'Categoria 3',
     nome: 'Participação da Comissão Organizadora ou como Monitor em Eventos para exibição pública de conhecimento ou produto (Cultural, Acadêmico, Científico ou Tecnológico) desenvolvido no IFPE',
     horas: 0,
     total: 80,
@@ -311,6 +344,7 @@ export const MOCK_CATEGORIAS_EXTENSAO: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'Extensao',
+    categoria: 'Categoria 4',
     nome: 'Prestaçaõ de serviços de caráter extensionista. Prestação de serviços como voluntário/a, bolsista ou colaborador/a, para o desenvolvimento de produtos e/ou processos voltados á resolução de problemas identificados interna ou externamente ao IFPE',
     horas: 0,
     total: 160,
@@ -318,6 +352,7 @@ export const MOCK_CATEGORIAS_EXTENSAO: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'Extensao',
+    categoria: 'Categoria 5',
     nome: 'Atividades desenvolvidas por meio dos Núcleos Institucionais de Extensão',
     horas: 0,
     total: 80,
@@ -325,6 +360,7 @@ export const MOCK_CATEGORIAS_EXTENSAO: Types.CategoriaProgresso[] = [
   },
   {
     grupo: 'Extensao',
+    categoria: 'Categoria 6',
     nome: 'Atividades de empreendedorismo, como membro de empresa júnior ou como voluntário/a ou bolsista de incubadoras de empresas ou projetos, prestando assessoria e consultoria',
     horas: 0,
     total: 160,

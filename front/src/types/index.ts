@@ -36,7 +36,7 @@ export interface Usuario {
   email: string | null | undefined;
   role: string;
   isNewPPC?: boolean;
-  image?: string | null | undefined;
+  image?: string | null;
 }
 
 /**
@@ -52,6 +52,7 @@ export interface OpcaoFiltro {
  */
 export interface CategoriaProgresso {
   grupo: string;
+  categoria: string;
   nome: string;
   horas: number;
   total: number;
@@ -63,4 +64,17 @@ export interface CategoriaProgresso {
  */
 export interface CategoriaSelecaoForm {
   nome: string;
+}
+
+/**
+ * Interface Coordenador
+ */
+export interface Coordenador {
+  id: number;
+  nome: string;
+  role: string;
+  email: string;
+  telefone: string;
+  createdAt: string;
+  updatedAt: string;
 }

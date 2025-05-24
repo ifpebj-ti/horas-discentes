@@ -16,6 +16,8 @@ const getTitleFromPath = (path: string): string => {
       return 'Novo Certificado';
     case 'certificado':
       return 'Visualizar Certificados';
+    case 'perguntas':
+      return 'Perguntas Frequentes';
     default:
       return 'Início';
   }

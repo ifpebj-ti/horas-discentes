@@ -4,9 +4,9 @@ import { useState, useContext, createContext } from 'react';
 import { FaHome } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
+import StatsSummary from '@/components/Faq';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
 import ProgressoGeral from '@/components/ProgressoGeral';
-import StatsSummary from '@/components/Student/StatsSummary';
 import VerCertificado from '@/components/VerCertificado';
 
 import {
@@ -49,6 +49,18 @@ function AlunoPageContent() {
     (c: Types.Certificado) => c.tipo === 'extensao'
   );
 
+  // Calcular total de horas para atividades complementares
+  const totalHorasComplementares = compCertificados.reduce(
+    (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
+    0
+  );
+
+  // Calcular total de horas para atividades de extensão
+  const totalHorasExtensao = extCertificados.reduce(
+    (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
+    0
+  );
+
   // Usar os mocks importados para categorias
   const categoriasComplementares: Types.CategoriaProgresso[] =
     MOCK_CATEGORIAS_COMPLEMENTARES.map((cat) => ({
@@ -57,7 +69,7 @@ function AlunoPageContent() {
         compCertificados
           .filter(
             (c: Types.Certificado) =>
-              c.grupo === cat.grupo && c.categoriaKey === cat.categoriaKey
+              c.grupo === cat.grupo && c.categoria === cat.categoria
           )
           .reduce(
             (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
@@ -73,7 +85,9 @@ function AlunoPageContent() {
         extCertificados
           .filter(
             (c: Types.Certificado) =>
-              c.grupo === cat.grupo && c.categoriaKey === cat.categoriaKey
+              c.grupo === cat.grupo &&
+              c.categoriaKey === cat.categoriaKey &&
+              c.title === cat.nome
           )
           .reduce(
             (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
@@ -121,13 +135,8 @@ function AlunoPageContent() {
               <ProgressoGeral
                 title="Atividades Complementares"
                 subTitle="Progressão Geral - Atividades Complementares"
-                categorias={categoriasComplementares.filter(
-                  (cat) => cat.total > 0
-                )}
-                totalHoras={categoriasComplementares.reduce(
-                  (acc, cat) => acc + (cat.horas || 0),
-                  0
-                )}
+                categorias={categoriasComplementares}
+                totalHoras={totalHorasComplementares}
                 totalNecessarias={280}
                 categoriaKey={categoriaKeySelecionada}
                 onCategoriaClick={setCategoriaKeySelecionada}
@@ -138,10 +147,7 @@ function AlunoPageContent() {
                   title="Atividades de Extensão"
                   subTitle="Progressão Geral - Atividades de Extensão"
                   categorias={categoriasExtensao}
-                  totalHoras={categoriasExtensao.reduce(
-                    (acc, cat) => acc + (cat.horas || 0),
-                    0
-                  )}
+                  totalHoras={totalHorasExtensao}
                   totalNecessarias={320}
                   categoriaKey={categoriaKeySelecionada}
                   onCategoriaClick={setCategoriaKeySelecionada}
@@ -192,6 +198,7 @@ function AlunoPageContent() {
             </section>
 
             {/* COLUNA LATERAL -------------------------------------------------- */}
+            {/* Resumo de Certificados ------------------------------------------ */}
             <aside className="space-y-8">
               <StatsSummary
                 total={total}
@@ -200,31 +207,39 @@ function AlunoPageContent() {
                 rejected={rejected}
               />
 
+              {/* Dúvidas Frequentes ------------------------------------------ */}
               <div className="bg-blue-50/60 border border-blue-100 rounded-2xl shadow-sm p-6">
                 <h2 className="text-md font-semibold text-[#071D41] mb-4">
                   Dúvidas Frequentes
                 </h2>
                 <ul className="space-y-3 text-sm leading-relaxed">
                   {[
-                    'Como são contabilizadas as horas?',
-                    'Quais atividades são aceitas?',
-                    'Qual o prazo para envio de certificados?',
-                    'Como saber se meu certificado foi aprovado?'
+                    {
+                      question: 'Como são contabilizadas as horas?',
+                      id: 'contabilizacao-horas'
+                    },
+                    {
+                      question: 'Quais atividades são aceitas?',
+                      id: 'atividades-aceitas'
+                    },
+                    {
+                      question: 'Qual o prazo para envio de certificados?',
+                      id: 'prazo-envio-certificados'
+                    },
+                    {
+                      question: 'Como saber se meu certificado foi aprovado?',
+                      id: 'status-certificado-aprovado'
+                    }
                   ].map((q) => (
-                    <li key={q}>
+                    <li key={q.id}>
                       <Link
-                        key={q}
-                        href={`/aluno/certificado?category=${encodeURIComponent(q.split(' ')[0])}`}
+                        href={`/aluno/perguntas?id=${q.id}`}
                         className={`
                           text-sm
-                          ${
-                            categoriaKeySelecionada === q.split(' ')[0]
-                              ? 'text-blue-600 font-semibold hover:text-blue-700'
-                              : 'text-gray-500 hover:text-blue-600'
-                          }
+                          text-gray-500 hover:text-blue-600 hover:underline
                         `}
                       >
-                        {q}
+                        {q.question}
                       </Link>
                     </li>
                   ))}
