@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import {
   FaEnvelope,
@@ -26,11 +27,13 @@ interface CertificateDetailsProps {
   onApprove: () => void;
   onReject: () => void;
   onViewPdf: () => void;
+  /** ➊ Chamado quando o usuário quer voltar para a lista (só usado no mobile) */
+  onBack?: () => void;
 }
 
-export const CertificateDetailsCard: React.FC<
-  CertificateDetailsProps | null
-> = (props) => {
+export const CertificateDetailsCard: React.FC<CertificateDetailsProps | null> = (
+  props
+) => {
   if (!props) {
     return (
       <div className="flex flex-col items-center justify-center text-center text-gray-500 p-8">
@@ -58,12 +61,23 @@ export const CertificateDetailsCard: React.FC<
     onRejectionReasonChange,
     onApprove,
     onReject,
-    onViewPdf
+    onViewPdf,
+    onBack // ➋
   } = props;
 
   return (
     <div className="rounded-lg bg-white w-full">
       <div className="space-y-4">
+        {/* ➌ Botão ← Voltar visível só em telas < md */}
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="md:hidden text-blue-600 mb-2 flex items-center gap-2"
+          >
+            ← Voltar
+          </button>
+        )}
+
         <div className="mb-4">
           <p className="font-semibold text-sm">Aluno</p>
           <p className="text-sm text-gray-700 font-medium">{name}</p>
