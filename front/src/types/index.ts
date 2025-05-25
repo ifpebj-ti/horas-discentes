@@ -78,3 +78,25 @@ export interface Coordenador {
   createdAt: string;
   updatedAt: string;
 }
+
+/**
+ * Interface para representar um Certificado na visão da Coordenação.
+ */
+export interface CertificadoCoordenacao {
+  id: string; // Pode ser string ou number, mas string é mais flexível para UUIDs futuros
+  ano: number;
+  periodo: string;
+  categoriaNome: string; // Usar um nome diferente de 'categoria' se já existir com outro significado
+  descricaoAtividade: string;
+  horas: number;
+  alunoNome: string;
+  alunoEmail: string;
+  alunoMatricula: string;
+  alunoTelefone: string;
+  localAtividade: string;
+  dataAtividade: string; // Ex: "01/03/2024 a 15/03/2024"
+  status: StatusCertificado; // Reutilizando o StatusCertificado existente
+  // anexoComprovanteURL é importante para "Visualizar PDF"
+  anexoComprovanteURL?: string; // Opcional se nem todos tiverem ou se o link for construído de outra forma
+  motivoRejeicao?: string; // Opcional, preenchido ao rejeitar
+}
