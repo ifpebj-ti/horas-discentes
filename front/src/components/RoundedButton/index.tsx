@@ -24,7 +24,7 @@ export const RoundedButton = ({
       onClick={onClick}
       type={type}
       disabled={disabled}
-      className={`flex items-center justify-center gap-2 px-8 py-3 rounded-full font-medium transition w-full
+      className={`flex items-center justify-center gap-2 px-8 py-2 rounded-full font-medium transition w-full
         ${bgColor} ${textColor}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 cursor-pointer'}
       `}
