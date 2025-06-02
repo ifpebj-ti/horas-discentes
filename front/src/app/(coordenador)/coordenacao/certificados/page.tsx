@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   FaSearch,
-  FaFilePdf,
   FaCheckCircle,
   FaTimesCircle,
   FaHourglassHalf,
@@ -169,8 +168,7 @@ export default function ValidacaoCertificadosPage() {
                       'DESCRIÇÃO',
                       'HORAS',
                       'ALUNO',
-                      'STATUS',
-                      'CERTIFICADO'
+                      'STATUS'
                     ].map((h) => (
                       <th
                         key={h}
@@ -214,17 +212,6 @@ export default function ValidacaoCertificadosPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <StatusIcon status={c.status} />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-800">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewPdf(c.anexoComprovanteURL);
-                          }}
-                          className="flex items-center gap-1"
-                        >
-                          <FaFilePdf /> Ver Certificado
-                        </button>
                       </td>
                     </tr>
                   ))}

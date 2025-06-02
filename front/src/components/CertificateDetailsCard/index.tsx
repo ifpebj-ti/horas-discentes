@@ -9,8 +9,6 @@ import {
   FaRegFileAlt
 } from 'react-icons/fa';
 
-import { ParticipationOrigin } from '@/components/ParticipationOrigin';
-
 interface CertificateDetailsProps {
   name: string;
   registration: string;
