@@ -48,10 +48,10 @@ export const formRegistroHorasSchema = z
         message: 'Data de fim inválida.'
       }),
     totalPeriodos: z
-        .string(requiredError('Total de Períodos'))
-        .refine((value) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0, {
-            message: 'Total de períodos deve ser um número não negativo.'
-        })
+      .string(requiredError('Total de Períodos'))
+      .refine((value) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0, {
+        message: 'Total de períodos deve ser um número não negativo.'
+      })
       .transform((value) => parseFloat(value)), // Transforma para número após validação
     periodoLetivoFaculdade: z
       .string(requiredError('Período Letivo'))

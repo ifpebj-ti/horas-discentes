@@ -8,10 +8,12 @@ import {
   FaRegFileAlt,
   FaHome
 } from 'react-icons/fa';
+
+import BreadCrumb from '@/components/BreadCrumb';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
+
 import { MOCK_COORDENACAO_CERTIFICADOS } from '@/lib/coordenacaoCertificadosMock';
 import * as Types from '@/types';
-import BreadCrumb from '@/components/BreadCrumb';
 
 /* ---------- hook para detectar < 768 px ---------- */
 const useIsMobile = () => {
@@ -28,7 +30,9 @@ const useIsMobile = () => {
 };
 
 /* ---------- ícone de status ---------- */
-const StatusIcon: React.FC<{ status: Types.StatusCertificado }> = ({ status }) => {
+const StatusIcon: React.FC<{ status: Types.StatusCertificado }> = ({
+  status
+}) => {
   switch (status) {
     case 'aprovado':
       return <FaCheckCircle className="text-green-500" title="Aprovado" />;
@@ -44,12 +48,12 @@ const StatusIcon: React.FC<{ status: Types.StatusCertificado }> = ({ status }) =
 export default function ValidacaoCertificadosPage() {
   const isMobile = useIsMobile();
 
-  const [certificados, setCertificados] = useState<Types.CertificadoCoordenacao[]>(
-    MOCK_COORDENACAO_CERTIFICADOS
-  );
-  const [filtroStatus, setFiltroStatus] = useState<Types.StatusCertificado | 'todos'>(
-    'pendente'
-  );
+  const [certificados, setCertificados] = useState<
+    Types.CertificadoCoordenacao[]
+  >(MOCK_COORDENACAO_CERTIFICADOS);
+  const [filtroStatus, setFiltroStatus] = useState<
+    Types.StatusCertificado | 'todos'
+  >('pendente');
   const [termoBusca, setTermoBusca] = useState('');
   const [certificadoSelecionado, setCertificadoSelecionado] =
     useState<Types.CertificadoCoordenacao | null>(null);
@@ -78,9 +82,15 @@ export default function ValidacaoCertificadosPage() {
     if (!certificadoSelecionado) return;
     const id = certificadoSelecionado.id;
     setCertificados((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, status: 'aprovado', motivoRejeicao: '' } : c))
+      prev.map((c) =>
+        c.id === id ? { ...c, status: 'aprovado', motivoRejeicao: '' } : c
+      )
     );
-    setCertificadoSelecionado({ ...certificadoSelecionado, status: 'aprovado', motivoRejeicao: '' });
+    setCertificadoSelecionado({
+      ...certificadoSelecionado,
+      status: 'aprovado',
+      motivoRejeicao: ''
+    });
   };
 
   const handleReject = () => {
@@ -91,7 +101,9 @@ export default function ValidacaoCertificadosPage() {
     const id = certificadoSelecionado.id;
     setCertificados((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, status: 'rejeitado', motivoRejeicao: motivoRejeicaoInput } : c
+        c.id === id
+          ? { ...c, status: 'rejeitado', motivoRejeicao: motivoRejeicaoInput }
+          : c
       )
     );
     setCertificadoSelecionado({
@@ -134,7 +146,11 @@ export default function ValidacaoCertificadosPage() {
               className="w-full p-2 rounded-lg border border-black text-black shadow-sm bg-white
              focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={filtroStatus}
-              onChange={(e) => setFiltroStatus(e.target.value as Types.StatusCertificado | 'todos')}
+              onChange={(e) =>
+                setFiltroStatus(
+                  e.target.value as Types.StatusCertificado | 'todos'
+                )
+              }
             >
               <option value="todos">Todos Status</option>
               <option value="pendente">Pendentes</option>
@@ -149,8 +165,9 @@ export default function ValidacaoCertificadosPage() {
       <div className="flex-grow flex overflow-hidden">
         {/* LISTA  (esconde se um item estiver aberto no mobile) */}
         <div
-          className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${showDetailMobile ? 'hidden' : ''
-            }`}
+          className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${
+            showDetailMobile ? 'hidden' : ''
+          }`}
         >
           {certificadosFiltrados.length ? (
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
@@ -180,8 +197,9 @@ export default function ValidacaoCertificadosPage() {
                     <tr
                       key={c.id}
                       onClick={() => handleSelectCertificado(c)}
-                      className={`hover:bg-gray-100 cursor-pointer ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''
-                        }`}
+                      className={`hover:bg-gray-100 cursor-pointer ${
+                        certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''
+                      }`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {c.ano}
@@ -248,18 +266,24 @@ export default function ValidacaoCertificadosPage() {
                 onRejectionReasonChange={setMotivoRejeicaoInput}
                 onApprove={handleApprove}
                 onReject={handleReject}
-                onViewPdf={() => handleViewPdf(certificadoSelecionado.anexoComprovanteURL)}
-                onBack={isMobile ? () => setCertificadoSelecionado(null) : undefined}
+                onViewPdf={() =>
+                  handleViewPdf(certificadoSelecionado.anexoComprovanteURL)
+                }
+                onBack={
+                  isMobile ? () => setCertificadoSelecionado(null) : undefined
+                }
               />
             ) : (
               /* Só mostra aviso quando desktop */
               !isMobile && (
                 <div className="flex flex-col items-center justify-center text-center text-gray-500 p-8 h-full">
                   <FaRegFileAlt className="text-5xl mb-4 text-gray-400" />
-                  <p className="font-semibold text-lg">Nenhum certificado selecionado</p>
+                  <p className="font-semibold text-lg">
+                    Nenhum certificado selecionado
+                  </p>
                   <p className="text-sm mt-1">
-                    Clique em um certificado na lista para visualizar os detalhes e
-                    realizar ações.
+                    Clique em um certificado na lista para visualizar os
+                    detalhes e realizar ações.
                   </p>
                 </div>
               )

@@ -27,7 +27,7 @@ interface FormRegistroHorasProps {
 export default function FormRegistroHoras({
   categoriasComplementares,
   categoriasExtensao
-}: FormRegistroHorasProps) {
+}: Readonly<FormRegistroHorasProps>) {
   const {
     formMethods,
     control,
@@ -252,11 +252,12 @@ export default function FormRegistroHoras({
           </div>
           <div className="col-span-1">
             <label
-              htmlFor='Total de Periodos'
+              htmlFor="Total de Periodos"
               className="block mb-1 font-medium"
             >
               <span className="flex items-center gap-2">
-                <FaBookOpen className="text-blue-600" /> Total de Períodos da Atividade
+                <FaBookOpen className="text-blue-600" /> Total de Períodos da
+                Atividade
               </span>
             </label>
             <input
@@ -271,7 +272,6 @@ export default function FormRegistroHoras({
               <p className={errorClass}>{errors.totalPeriodos.message}</p>
             )}
           </div>
-
 
           {/* Quarta linha: Especificação */}
           <div className="col-span-1 md:col-span-3">
@@ -300,7 +300,10 @@ export default function FormRegistroHoras({
 
           {/* Quinta linha: Anexo */}
           <div className="col-span-1 md:col-span-3">
-            <label className="block mb-1 font-medium">
+            <label
+              htmlFor="anexoComprovante"
+              className="block mb-1 font-medium"
+            >
               <span className="flex items-center gap-2">
                 <FaFileAlt className="text-blue-600" /> Anexar Comprovante
               </span>
