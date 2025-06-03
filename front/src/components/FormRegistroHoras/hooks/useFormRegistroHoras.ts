@@ -21,6 +21,7 @@ export function useFormRegistroHoras(/* props: UseFormRegistroHorasProps */) {
       cargaHoraria: 0,
       dataInicioAtividade: '',
       dataFimAtividade: '',
+      totalPeriodos: 1, // Valor padrão para totalPeriodos
       especificacaoAtividade: '',
       anexoComprovante: null
     },

@@ -171,7 +171,7 @@ export default function FormRegistroHoras({
               className="block mb-1 font-medium"
             >
               <span className="flex items-center gap-2">
-                <FaBookOpen className="text-blue-600" /> Período
+                <FaBookOpen className="text-blue-600" /> Período Letivo
               </span>
             </label>
             <select
@@ -250,6 +250,28 @@ export default function FormRegistroHoras({
               <p className={errorClass}>{errors.dataFimAtividade.message}</p>
             )}
           </div>
+          <div className="col-span-1">
+            <label
+              htmlFor='Total de Periodos'
+              className="block mb-1 font-medium"
+            >
+              <span className="flex items-center gap-2">
+                <FaBookOpen className="text-blue-600" /> Total de Períodos da Atividade
+              </span>
+            </label>
+            <input
+              id="totalPeriodos"
+              type="number"
+              {...register('totalPeriodos')}
+              placeholder="Ex: 2"
+              className={inputClass}
+              min={1}
+            />
+            {errors.totalPeriodos && (
+              <p className={errorClass}>{errors.totalPeriodos.message}</p>
+            )}
+          </div>
+
 
           {/* Quarta linha: Especificação */}
           <div className="col-span-1 md:col-span-3">

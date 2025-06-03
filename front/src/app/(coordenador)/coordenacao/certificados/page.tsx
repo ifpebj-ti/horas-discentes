@@ -5,13 +5,13 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaHourglassHalf,
-  FaRegFileAlt
+  FaRegFileAlt,
+  FaHome
 } from 'react-icons/fa';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
 import { MOCK_COORDENACAO_CERTIFICADOS } from '@/lib/coordenacaoCertificadosMock';
 import * as Types from '@/types';
 import BreadCrumb from '@/components/BreadCrumb';
-import { FaHome } from 'react-icons/fa';
 
 /* ---------- hook para detectar < 768 px ---------- */
 const useIsMobile = () => {
@@ -57,7 +57,7 @@ export default function ValidacaoCertificadosPage() {
 
   /* ---------- sincroniza motivo de rejeição ---------- */
   useEffect(() => {
-    setMotivoRejeicaoInput(certificadoSelecionado?.motivoRejeicao || '');
+    setMotivoRejeicaoInput(certificadoSelecionado?.motivoRejeicao ?? '');
   }, [certificadoSelecionado]);
 
   /* ---------- filtros ---------- */
@@ -113,32 +113,28 @@ export default function ValidacaoCertificadosPage() {
       <div className="p-6 bg-gray-50">
         <BreadCrumb
           items={[
-            { icon: <FaHome />, label: 'Página Inicial', href: '/coordenador' },
+            { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
             { icon: null, label: 'Validar Certificados', href: '' }
           ]}
         />
-        <h1 className="text-2xl font-semibold text-gray-800 mt-2 mb-6">
-          Validar Certificados
-        </h1>
-
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center">
+        <div className="mt-4 flex flex-col sm:flex-row gap-4 items-center">
           <div className="relative flex-grow w-full sm:w-auto">
             <input
               type="text"
               placeholder="Buscar por aluno, atividade, categoria..."
-              className="w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 pl-10 border text-black border-black rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={termoBusca}
               onChange={(e) => setTermoBusca(e.target.value)}
             />
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           </div>
           <div className="w-full sm:w-auto">
+            {/* … cabeçalho omitido para focar no ponto alterado … */}
             <select
-              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full p-2 rounded-lg border border-black text-black shadow-sm bg-white
+             focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={filtroStatus}
-              onChange={(e) =>
-                setFiltroStatus(e.target.value as Types.StatusCertificado | 'todos')
-              }
+              onChange={(e) => setFiltroStatus(e.target.value as Types.StatusCertificado | 'todos')}
             >
               <option value="todos">Todos Status</option>
               <option value="pendente">Pendentes</option>
@@ -159,7 +155,7 @@ export default function ValidacaoCertificadosPage() {
           {certificadosFiltrados.length ? (
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-100">
+                <thead className="bg-gray-100 border-b border-gray-200">
                   <tr>
                     {[
                       'ANO',
