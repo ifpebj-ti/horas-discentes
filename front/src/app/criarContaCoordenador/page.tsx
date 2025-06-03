@@ -1,3 +1,4 @@
+'use client';
 import { CreateCoordinatorAccount } from '@/components/CreateCoordinatorAccount';
 
 export default function PrimeiroAcesso() {

@@ -1,3 +1,4 @@
+'use client';
 import { CreateSecretariatAccount } from '@/components/CreateSecretariatAccount';
 
 export default function PrimeiroAcesso() {
