@@ -7,7 +7,7 @@ import { FormRegistroHorasSchema } from '@components/FormRegistroHoras/schemas/f
 
 export function useFormRegistroHoras(/* props: UseFormRegistroHorasProps */) {
   const searchParams = useSearchParams();
-  const tipoRegistro = searchParams.get('tipo') || 'horas-complementares'; // 'horas-complementares' ou 'horas-extensao'
+  const tipoRegistro = searchParams.get('tipo') ?? 'horas-complementares'; // 'horas-complementares' ou 'horas-extensao'
 
   const [isUploading, setIsUploading] = useState(false); // Estado para o loading do upload
 
@@ -21,6 +21,7 @@ export function useFormRegistroHoras(/* props: UseFormRegistroHorasProps */) {
       cargaHoraria: 0,
       dataInicioAtividade: '',
       dataFimAtividade: '',
+      totalPeriodos: 1, // Valor padrão para totalPeriodos
       especificacaoAtividade: '',
       anexoComprovante: null
     },

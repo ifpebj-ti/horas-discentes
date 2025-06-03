@@ -1,0 +1,72 @@
+import * as Types from '@/types';
+
+export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] = [
+  {
+    id: 'cert1',
+    ano: 2024,
+    periodo: '1º Semestre',
+    categoriaNome: 'Categoria 1',
+    descricaoAtividade: 'Participação em Congresso de Tecnologia Avançada',
+    horas: 20,
+    alunoNome: 'João Silva',
+    alunoEmail: 'joao.silva@example.com',
+    alunoMatricula: '20221ESOFT0001',
+    alunoTelefone: '(81) 99999-9999',
+    localAtividade: 'Centro de Convenções',
+    dataAtividade: '10/03/2024 a 12/03/2024',
+    status: 'pendente',
+    anexoComprovanteURL: '/mocks/certificado_joao.pdf',
+    motivoRejeicao: ''
+  },
+  {
+    id: 'cert2',
+    ano: 2024,
+    periodo: '1º Semestre',
+    categoriaNome: 'Categoria 3',
+    descricaoAtividade: 'Curso de Programação Online FullStack',
+    horas: 30,
+    alunoNome: 'Maria Santos',
+    alunoEmail: 'maria.santos@example.com',
+    alunoMatricula: '20221ESOFT0002',
+    alunoTelefone: '(81) 98888-8888',
+    localAtividade: 'Plataforma Online XPTO',
+    dataAtividade: '15/02/2024 a 15/04/2024',
+    status: 'pendente',
+    anexoComprovanteURL: '/mocks/certificado_maria.pdf',
+    motivoRejeicao: ''
+  },
+  {
+    id: 'cert3',
+    ano: 2023,
+    periodo: '2º Semestre',
+    categoriaNome: 'Categoria 2',
+    descricaoAtividade: 'Monitoria em Algoritmos',
+    horas: 60,
+    alunoNome: 'Carlos Lima',
+    alunoEmail: 'carlos.lima@example.com',
+    alunoMatricula: '20212ESOFT0099',
+    alunoTelefone: '(81) 97777-7777',
+    localAtividade: 'IFPE - Campus Belo Jardim',
+    dataAtividade: '01/08/2023 a 30/11/2023',
+    status: 'aprovado',
+    anexoComprovanteURL: '/mocks/certificado_carlos.pdf',
+    motivoRejeicao: ''
+  },
+  {
+    id: 'cert4',
+    ano: 2023,
+    periodo: '1º Semestre',
+    categoriaNome: 'Categoria 1',
+    descricaoAtividade: 'Palestra sobre Inteligência Artificial',
+    horas: 4,
+    alunoNome: 'Ana Pereira',
+    alunoEmail: 'ana.pereira@example.com',
+    alunoMatricula: '20231ESOFT0005',
+    alunoTelefone: '(81) 96666-6666',
+    localAtividade: 'Auditório Principal - Evento Tech',
+    dataAtividade: '20/05/2023',
+    status: 'rejeitado',
+    anexoComprovanteURL: '/mocks/certificado_ana.pdf',
+    motivoRejeicao: 'Carga horária não compatível com o evento.'
+  }
+];
