@@ -6,9 +6,9 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaHourglassHalf,
-  FaRegFileAlt
+  FaRegFileAlt,
+  FaHome
 } from 'react-icons/fa';
-import { FaHome } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
@@ -62,7 +62,7 @@ export default function ValidacaoCertificadosPage() {
 
   useEffect(() => {
     if (certificadoSelecionado) {
-      setMotivoRejeicaoInput(certificadoSelecionado.motivoRejeicao || '');
+      setMotivoRejeicaoInput(certificadoSelecionado.motivoRejeicao ?? '');
     } else {
       setMotivoRejeicaoInput('');
     }
