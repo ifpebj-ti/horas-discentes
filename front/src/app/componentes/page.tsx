@@ -4,6 +4,7 @@ import { FaChalkboardTeacher, FaGraduationCap, FaIdCard } from 'react-icons/fa';
 import { FiSend, FiMapPin, FiClock, FiCalendar } from 'react-icons/fi';
 
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
+import CourseCard from '@/components/CourseCard';
 import { DashboardCard } from '@/components/DashboardCard';
 import { FileUploadInput } from '@/components/FileUploadInput';
 import { ParticipationOrigin } from '@/components/ParticipationOrigin';
@@ -211,6 +212,24 @@ export default function Componentes() {
           label="Secretaria"
           onClick={() => alert('Secretaria')}
         />
+      </div>
+      {/* Cartão de Curso */}
+      <div className="flex flex-col items-center gap-4 mt-12">
+        <p className="font-semibold">Cartão de Curso</p>
+        <div className="flex gap-4 flex-wrap">
+          <CourseCard
+            courseName="Engenharia de Software"
+            coordinators={2}
+            classes={3}
+            onManageCourse={() => console.log('Curso gerenciado!')}
+          />
+          <CourseCard
+            courseName="Musica bá blá blá"
+            coordinators={1}
+            classes={5}
+            onManageCourse={() => console.log('Curso gerenciado!')}
+          />
+        </div>
       </div>
     </div>
   );
