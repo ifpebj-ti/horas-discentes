@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { FaUser, FaIdCard, FaRegNewspaper } from 'react-icons/fa';
 
@@ -12,9 +11,6 @@ import { RoundedButton } from '@/components/RoundedButton';
 import { useCreateCoordinatorAccount } from './hooks/useCreateCoordinatorAccount';
 
 export const CreateCoordinatorAccount = () => {
-  const searchParams = useSearchParams();
-  const token = searchParams.get('token') || '';
-
   const {
     form: { register, handleSubmit, watch, formState },
     loading,
@@ -30,7 +26,7 @@ export const CreateCoordinatorAccount = () => {
     // Mock do email a partir do token
     const mockedEmail = 'coordenador@example.com';
     setPrefilledEmail(mockedEmail);
-  }, [token, setPrefilledEmail]);
+  }, [setPrefilledEmail]);
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">
