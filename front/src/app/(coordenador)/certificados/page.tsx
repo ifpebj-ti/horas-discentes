@@ -185,16 +185,16 @@ export default function ValidacaoCertificadosPage() {
           {certificadosFiltrados.length ? (
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                {/* thead */}
+                {/* ---------- THEAD ---------- */}
                 <thead className="bg-gray-100">
                   <tr>
                     {[
-                      'ANO',
+                      'ALUNO',
+                      'TURMA',
                       'PERÍODO',
                       'CATEGORIA',
-                      'DESCRIÇÃO',
                       'HORAS',
-                      'ALUNO',
+                      'DESCRIÇÃO',
                       'STATUS',
                       'CERTIFICADO'
                     ].map((h) => (
@@ -208,42 +208,56 @@ export default function ValidacaoCertificadosPage() {
                   </tr>
                 </thead>
 
-                {/* tbody */}
+                {/* ---------- TBODY ---------- */}
                 <tbody className="bg-white divide-y divide-gray-200">
                   {certificadosFiltrados.map((c) => (
                     <tr
                       key={c.id}
                       onClick={() => handleSelectCertificado(c)}
-                      className={`hover:bg-gray-100 cursor-pointer ${
-                        certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''
-                      }`}
+                      className={`hover:bg-gray-100 cursor-pointer ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''
+                        }`}
                     >
+                      {/* 👉 1. ALUNO */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.ano}
+                        {c.alunoNome}
                       </td>
+
+                      {/* 👉 2. TURMA */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                        {c.turma}
+                      </td>
+
+                      {/* 👉 3. PERÍODO */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {c.periodo}
                       </td>
+
+                      {/* 👉 4. CATEGORIA */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                           {c.categoriaNome}
                         </span>
                       </td>
+
+                      {/* 👉 5. HORAS */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                        {c.horas}h
+                      </td>
+
+                      {/* 👉 6. DESCRIÇÃO */}
                       <td
                         className="px-6 py-4 max-w-xs text-sm text-gray-700 truncate"
                         title={c.descricaoAtividade}
                       >
                         {c.descricaoAtividade}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.horas}h
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.alunoNome}
-                      </td>
+
+                      {/* 👉 7. STATUS */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <StatusIcon status={c.status} />
                       </td>
+
+                      {/* (extra) PDF */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-800">
                         <button
                           onClick={(e) => {

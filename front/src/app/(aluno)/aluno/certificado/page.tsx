@@ -168,7 +168,7 @@ function CertificadosPageContent() {
                     certificate={{
                       id: String(cert.id),
                       title: cert.title,
-                      institution: cert.local,
+                      local: cert.local,
                       description: cert.description,
                       hours: cert.cargaHoraria,
                       date: cert.periodoInicio,
