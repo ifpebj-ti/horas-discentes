@@ -18,7 +18,7 @@ export const CardLogin = () => {
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">
-      <div className="flex items-start md:items-center justify-center bg-white pt-4 pb-0">
+      <div className="flex items-start md:items-center justify-center pt-4 pb-0">
         <Image
           src="/login.svg"
           alt="Login"

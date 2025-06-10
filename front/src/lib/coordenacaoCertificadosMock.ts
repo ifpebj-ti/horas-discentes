@@ -1,72 +1,96 @@
 import * as Types from '@/types';
 
-export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] = [
+// Supondo que MOCK_CERTIFICATES está no mesmo arquivo ou importado
+import { MOCK_CERTIFICATES } from './alunoMock'; // Ajuste o caminho conforme necessário
+
+// --- Dados dos Alunos para o Mock ---
+const AlunosMock = [
   {
-    id: 'cert1',
-    ano: 2024,
-    periodo: '1º Semestre',
-    categoriaNome: 'Categoria 1',
-    descricaoAtividade: 'Participação em Congresso de Tecnologia Avançada',
-    horas: 20,
-    alunoNome: 'João Silva',
-    alunoEmail: 'joao.silva@example.com',
-    alunoMatricula: '20221ESOFT0001',
-    alunoTelefone: '(81) 99999-9999',
-    localAtividade: 'Centro de Convenções',
-    dataAtividade: '10/03/2024 a 12/03/2024',
-    status: 'pendente',
-    anexoComprovanteURL: '/mocks/certificado_joao.pdf',
-    motivoRejeicao: ''
+    nome: 'João Silva',
+    email: 'joao.silva@example.com',
+    matricula: '20221ESOFT0001',
+    telefone: '(81) 99999-9999',
+    turma: 2024,
+    periodo: 1
   },
   {
-    id: 'cert2',
-    ano: 2024,
-    periodo: '1º Semestre',
-    categoriaNome: 'Categoria 3',
-    descricaoAtividade: 'Curso de Programação Online FullStack',
-    horas: 30,
-    alunoNome: 'Maria Santos',
-    alunoEmail: 'maria.santos@example.com',
-    alunoMatricula: '20221ESOFT0002',
-    alunoTelefone: '(81) 98888-8888',
-    localAtividade: 'Plataforma Online XPTO',
-    dataAtividade: '15/02/2024 a 15/04/2024',
-    status: 'pendente',
-    anexoComprovanteURL: '/mocks/certificado_maria.pdf',
-    motivoRejeicao: ''
+    nome: 'Maria Santos',
+    email: 'maria.santos@example.com',
+    matricula: '20221ESOFT0002',
+    telefone: '(81) 98888-8888',
+    turma: 2024,
+    periodo: 1
   },
   {
-    id: 'cert3',
-    ano: 2023,
-    periodo: '2º Semestre',
-    categoriaNome: 'Categoria 2',
-    descricaoAtividade: 'Monitoria em Algoritmos',
-    horas: 60,
-    alunoNome: 'Carlos Lima',
-    alunoEmail: 'carlos.lima@example.com',
-    alunoMatricula: '20212ESOFT0099',
-    alunoTelefone: '(81) 97777-7777',
-    localAtividade: 'IFPE - Campus Belo Jardim',
-    dataAtividade: '01/08/2023 a 30/11/2023',
-    status: 'aprovado',
-    anexoComprovanteURL: '/mocks/certificado_carlos.pdf',
-    motivoRejeicao: ''
+    nome: 'Carlos Lima',
+    email: 'carlos.lima@example.com',
+    matricula: '20212ESOFT0099',
+    telefone: '(81) 97777-7777',
+    turma: 2023,
+    periodo: 2
   },
   {
-    id: 'cert4',
-    ano: 2023,
-    periodo: '1º Semestre',
-    categoriaNome: 'Categoria 1',
-    descricaoAtividade: 'Palestra sobre Inteligência Artificial',
-    horas: 4,
-    alunoNome: 'Ana Pereira',
-    alunoEmail: 'ana.pereira@example.com',
-    alunoMatricula: '20231ESOFT0005',
-    alunoTelefone: '(81) 96666-6666',
-    localAtividade: 'Auditório Principal - Evento Tech',
-    dataAtividade: '20/05/2023',
-    status: 'rejeitado',
-    anexoComprovanteURL: '/mocks/certificado_ana.pdf',
-    motivoRejeicao: 'Carga horária não compatível com o evento.'
+    nome: 'Ana Pereira',
+    email: 'ana.pereira@example.com',
+    matricula: '20231ESOFT0005',
+    telefone: '(81) 96666-6666',
+    turma: 2023,
+    periodo: 2
   }
 ];
+
+// --- Função Helper para formatar a data ---
+const formatarData = (inicio: string, fim: string): string => {
+  const dataInicio = new Date(inicio + 'T00:00:00'); // Adiciona T00:00:00 para evitar problemas de fuso horário
+  const dataFim = new Date(fim + 'T00:00:00');
+
+  const options: Intl.DateTimeFormatOptions = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  };
+  const inicioFmt = dataInicio.toLocaleDateString('pt-BR', options);
+  const fimFmt = dataFim.toLocaleDateString('pt-BR', options);
+
+  return inicioFmt === fimFmt ? inicioFmt : `${inicioFmt} a ${fimFmt}`;
+};
+
+// --- Mock da Coordenação Vinculado ---
+export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] =
+  MOCK_CERTIFICATES.map((cert, index) => {
+    // Distribui os certificados entre os alunos de forma circular
+    const aluno = AlunosMock[index % AlunosMock.length];
+
+    return {
+      id: `coord-cert-${cert.id}`, // Cria um ID único para a visão da coordenação
+      certificadoId: cert.id, // Mantém o ID original como referência
+
+      // Dados do Certificado (herdados do mock de aluno)
+      grupo: cert.grupo,
+      categoria: cert.categoria,
+      title: cert.title,
+      description: cert.description,
+      cargaHoraria: cert.cargaHoraria,
+      local: cert.local,
+      periodoInicio: cert.periodoInicio,
+      periodoFim: cert.periodoFim,
+      status: cert.status,
+      tipo: cert.tipo,
+      anexoComprovanteURL: `/mocks/certificado_aluno_${cert.id}.pdf`, // URL mock
+
+      // Dados do Aluno
+      alunoNome: aluno.nome,
+      alunoEmail: aluno.email,
+      alunoMatricula: aluno.matricula,
+      alunoTelefone: aluno.telefone,
+
+      // Dados da Coordenação
+      turma: aluno.turma,
+      periodo: aluno.periodo,
+      dataAtividade: formatarData(cert.periodoInicio, cert.periodoFim),
+      motivoRejeicao:
+        cert.status === 'rejeitado'
+          ? 'Carga horária ou documento inválido.'
+          : undefined
+    };
+  });

@@ -6,12 +6,14 @@ import {
   FaTimesCircle,
   FaHourglassHalf,
   FaRegFileAlt,
-  FaHome
+  FaHome,
+  FaIdCard
 } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
 
+// Assumindo que este mock agora contém os dados vinculados que criamos
 import { MOCK_COORDENACAO_CERTIFICADOS } from '@/lib/coordenacaoCertificadosMock';
 import * as Types from '@/types';
 
@@ -70,8 +72,9 @@ export default function ValidacaoCertificadosPage() {
     .filter(
       (c) =>
         c.alunoNome.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        c.descricaoAtividade.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        c.categoriaNome.toLowerCase().includes(termoBusca.toLowerCase())
+        // CORRIGIDO: 'descricaoAtividade' para 'description' e 'categoriaNome' para 'categoria'
+        c.description.toLowerCase().includes(termoBusca.toLowerCase()) ||
+        c.categoria.toLowerCase().includes(termoBusca.toLowerCase())
     );
 
   /* ---------- handlers principais ---------- */
@@ -126,7 +129,7 @@ export default function ValidacaoCertificadosPage() {
         <BreadCrumb
           items={[
             { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
-            { icon: null, label: 'Validar Certificados', href: '' }
+            { icon: <FaIdCard />, label: 'Validar Certificados', href: '' }
           ]}
         />
         <div className="mt-4 flex flex-col sm:flex-row gap-4 items-center">
@@ -141,7 +144,6 @@ export default function ValidacaoCertificadosPage() {
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           </div>
           <div className="w-full sm:w-auto">
-            {/* … cabeçalho omitido para focar no ponto alterado … */}
             <select
               className="w-full p-2 rounded-lg border border-black text-black shadow-sm bg-white
              focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -163,7 +165,7 @@ export default function ValidacaoCertificadosPage() {
 
       {/* ---------- conteúdo ---------- */}
       <div className="flex-grow flex overflow-hidden">
-        {/* LISTA  (esconde se um item estiver aberto no mobile) */}
+        {/* LISTA (esconde se um item estiver aberto no mobile) */}
         <div
           className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${
             showDetailMobile ? 'hidden' : ''
@@ -175,7 +177,7 @@ export default function ValidacaoCertificadosPage() {
                 <thead className="bg-gray-100 border-b border-gray-200">
                   <tr>
                     {[
-                      'ANO',
+                      'TURMA',
                       'PERÍODO',
                       'CATEGORIA',
                       'DESCRIÇÃO',
@@ -202,24 +204,26 @@ export default function ValidacaoCertificadosPage() {
                       }`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.ano}
+                        {c.turma}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {c.periodo}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {c.categoriaNome}
+                          {c.categoria /* CORRIGIDO: de categoriaNome */}
                         </span>
                       </td>
                       <td
                         className="px-6 py-4 max-w-xs text-sm text-gray-700 truncate"
-                        title={c.descricaoAtividade}
+                        title={
+                          c.description /* CORRIGIDO: de descricaoAtividade */
+                        }
                       >
-                        {c.descricaoAtividade}
+                        {c.description /* CORRIGIDO: de descricaoAtividade */}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.horas}h
+                        {c.cargaHoraria}h {/* CORRIGIDO: de horas */}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {c.alunoNome}
@@ -241,7 +245,7 @@ export default function ValidacaoCertificadosPage() {
           )}
         </div>
 
-        {/* DETALHES  (desktop ➜ lateral | mobile ➜ overlay) */}
+        {/* DETALHES (desktop ➜ lateral | mobile ➜ overlay) */}
         {(certificadoSelecionado || !isMobile) && (
           <aside
             className={
@@ -256,12 +260,13 @@ export default function ValidacaoCertificadosPage() {
                 registration={certificadoSelecionado.alunoMatricula}
                 phone={certificadoSelecionado.alunoTelefone}
                 email={certificadoSelecionado.alunoEmail}
-                activity={certificadoSelecionado.descricaoAtividade}
-                category={certificadoSelecionado.categoriaNome}
-                description={certificadoSelecionado.descricaoAtividade}
-                location={certificadoSelecionado.localAtividade}
+                // CORRIGIDO: Mapeamento dos campos para o componente de detalhes
+                activity={certificadoSelecionado.description}
+                category={certificadoSelecionado.categoria}
+                description={certificadoSelecionado.description}
+                location={certificadoSelecionado.local}
                 date={certificadoSelecionado.dataAtividade}
-                workload={`${certificadoSelecionado.horas} horas`}
+                workload={`${certificadoSelecionado.cargaHoraria} horas`}
                 rejectionReason={motivoRejeicaoInput}
                 onRejectionReasonChange={setMotivoRejeicaoInput}
                 onApprove={handleApprove}

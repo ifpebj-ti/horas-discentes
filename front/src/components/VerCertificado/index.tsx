@@ -5,7 +5,7 @@ import { FaBuilding, FaClock, FaCalendarAlt, FaDownload } from 'react-icons/fa';
 interface Certificate {
   id: string;
   title: string;
-  institution: string;
+  local: string;
   description: string;
   hours: number;
   date: string;
@@ -57,7 +57,7 @@ export default function VerCertificado({ certificate }: VerCertificadoProps) {
         <div className="flex flex-col gap-2 text-sm">
           <div className="flex items-center gap-2 text-gray-600">
             <FaBuilding className="text-blue-600" />
-            <span>{certificate.institution}</span>
+            <span>{certificate.local}</span>
           </div>
 
           <div className="flex items-center gap-2 text-gray-600">
