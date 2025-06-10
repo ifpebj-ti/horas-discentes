@@ -247,9 +247,9 @@ export default function ValidacaoCertificadosPage() {
                       {/* 👉 6. DESCRIÇÃO */}
                       <td
                         className="px-6 py-4 max-w-xs text-sm text-gray-700 truncate"
-                        title={c.descricao}
+                        title={c.description}
                       >
-                        {c.descricao}
+                        {c.description}
                       </td>
 
                       {/* 👉 7. STATUS */}
@@ -295,12 +295,12 @@ export default function ValidacaoCertificadosPage() {
               registration={certificadoSelecionado.alunoMatricula}
               phone={certificadoSelecionado.alunoTelefone}
               email={certificadoSelecionado.alunoEmail}
-              activity={certificadoSelecionado.descricao}
-              category={certificadoSelecionado.categoriaNome}
-              description={certificadoSelecionado.descricao}
-              location={certificadoSelecionado.localAtividade}
+              activity={certificadoSelecionado.description}
+              category={certificadoSelecionado.categoria}
+              description={certificadoSelecionado.description}
+              location={certificadoSelecionado.local}
               date={certificadoSelecionado.dataAtividade}
-              workload={`${certificadoSelecionado.horas} horas`}
+              workload={`${certificadoSelecionado.cargaHoraria} horas`}
               rejectionReason={motivoRejeicaoInput}
               onRejectionReasonChange={setMotivoRejeicaoInput}
               onApprove={handleApprove}
