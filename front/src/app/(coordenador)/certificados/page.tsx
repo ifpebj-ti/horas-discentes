@@ -73,8 +73,8 @@ export default function ValidacaoCertificadosPage() {
     .filter(
       (c) =>
         c.alunoNome.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        c.descricaoAtividade.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        c.categoriaNome.toLowerCase().includes(termoBusca.toLowerCase())
+        c.description.toLowerCase().includes(termoBusca.toLowerCase()) ||
+        c.categoria.toLowerCase().includes(termoBusca.toLowerCase())
     );
 
   /* … funções handleApprove, handleReject e handleViewPdf permanecem iguais … */
@@ -235,21 +235,21 @@ export default function ValidacaoCertificadosPage() {
                       {/* 👉 4. CATEGORIA */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {c.categoriaNome}
+                          {c.categoria}
                         </span>
                       </td>
 
                       {/* 👉 5. HORAS */}
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.horas}h
+                        {c.cargaHoraria} horas
                       </td>
 
                       {/* 👉 6. DESCRIÇÃO */}
                       <td
                         className="px-6 py-4 max-w-xs text-sm text-gray-700 truncate"
-                        title={c.descricaoAtividade}
+                        title={c.descricao}
                       >
-                        {c.descricaoAtividade}
+                        {c.descricao}
                       </td>
 
                       {/* 👉 7. STATUS */}
@@ -295,9 +295,9 @@ export default function ValidacaoCertificadosPage() {
               registration={certificadoSelecionado.alunoMatricula}
               phone={certificadoSelecionado.alunoTelefone}
               email={certificadoSelecionado.alunoEmail}
-              activity={certificadoSelecionado.descricaoAtividade}
+              activity={certificadoSelecionado.descricao}
               category={certificadoSelecionado.categoriaNome}
-              description={certificadoSelecionado.descricaoAtividade}
+              description={certificadoSelecionado.descricao}
               location={certificadoSelecionado.localAtividade}
               date={certificadoSelecionado.dataAtividade}
               workload={`${certificadoSelecionado.horas} horas`}
