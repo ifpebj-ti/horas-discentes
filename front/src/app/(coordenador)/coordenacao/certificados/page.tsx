@@ -167,8 +167,9 @@ export default function ValidacaoCertificadosPage() {
       <div className="flex-grow flex overflow-hidden">
         {/* LISTA (esconde se um item estiver aberto no mobile) */}
         <div
-          className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${showDetailMobile ? 'hidden' : ''
-            }`}
+          className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${
+            showDetailMobile ? 'hidden' : ''
+          }`}
         >
           {certificadosFiltrados.length ? (
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
@@ -198,8 +199,9 @@ export default function ValidacaoCertificadosPage() {
                     <tr
                       key={c.id}
                       onClick={() => handleSelectCertificado(c)}
-                      className={`hover:bg-gray-100 cursor-pointer ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''
-                        }`}
+                      className={`hover:bg-gray-100 cursor-pointer ${
+                        certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''
+                      }`}
                     >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {c.turma}
@@ -214,7 +216,9 @@ export default function ValidacaoCertificadosPage() {
                       </td>
                       <td
                         className="px-6 py-4 max-w-xs text-sm text-gray-700 truncate"
-                        title={c.description /* CORRIGIDO: de descricaoAtividade */}
+                        title={
+                          c.description /* CORRIGIDO: de descricaoAtividade */
+                        }
                       >
                         {c.description /* CORRIGIDO: de descricaoAtividade */}
                       </td>

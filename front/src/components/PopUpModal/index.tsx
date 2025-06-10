@@ -64,7 +64,10 @@ export const PopUpModal: React.FC<ModalProps> = ({
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
             {selectedStyle.icon}
-            <h3 id="modal-title" className="text-xl font-semibold text-gray-800">
+            <h3
+              id="modal-title"
+              className="text-xl font-semibold text-gray-800"
+            >
               {title}
             </h3>
           </div>

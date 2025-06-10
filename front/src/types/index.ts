@@ -119,5 +119,3 @@ export interface Coordenador {
   createdAt: string;
   updatedAt: string;
 }
-
-

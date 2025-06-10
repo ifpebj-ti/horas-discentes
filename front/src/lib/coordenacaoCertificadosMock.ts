@@ -1,4 +1,5 @@
 import * as Types from '@/types';
+
 // Supondo que MOCK_CERTIFICATES está no mesmo arquivo ou importado
 import { MOCK_CERTIFICATES } from './alunoMock'; // Ajuste o caminho conforme necessário
 
@@ -43,7 +44,11 @@ const formatarData = (inicio: string, fim: string): string => {
   const dataInicio = new Date(inicio + 'T00:00:00'); // Adiciona T00:00:00 para evitar problemas de fuso horário
   const dataFim = new Date(fim + 'T00:00:00');
 
-  const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const options: Intl.DateTimeFormatOptions = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  };
   const inicioFmt = dataInicio.toLocaleDateString('pt-BR', options);
   const fimFmt = dataFim.toLocaleDateString('pt-BR', options);
 
@@ -51,37 +56,41 @@ const formatarData = (inicio: string, fim: string): string => {
 };
 
 // --- Mock da Coordenação Vinculado ---
-export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] = MOCK_CERTIFICATES.map((cert, index) => {
-  // Distribui os certificados entre os alunos de forma circular
-  const aluno = AlunosMock[index % AlunosMock.length];
+export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] =
+  MOCK_CERTIFICATES.map((cert, index) => {
+    // Distribui os certificados entre os alunos de forma circular
+    const aluno = AlunosMock[index % AlunosMock.length];
 
-  return {
-    id: `coord-cert-${cert.id}`, // Cria um ID único para a visão da coordenação
-    certificadoId: cert.id, // Mantém o ID original como referência
+    return {
+      id: `coord-cert-${cert.id}`, // Cria um ID único para a visão da coordenação
+      certificadoId: cert.id, // Mantém o ID original como referência
 
-    // Dados do Certificado (herdados do mock de aluno)
-    grupo: cert.grupo,
-    categoria: cert.categoria,
-    title: cert.title,
-    description: cert.description,
-    cargaHoraria: cert.cargaHoraria,
-    local: cert.local,
-    periodoInicio: cert.periodoInicio,
-    periodoFim: cert.periodoFim,
-    status: cert.status,
-    tipo: cert.tipo,
-    anexoComprovanteURL: `/mocks/certificado_aluno_${cert.id}.pdf`, // URL mock
+      // Dados do Certificado (herdados do mock de aluno)
+      grupo: cert.grupo,
+      categoria: cert.categoria,
+      title: cert.title,
+      description: cert.description,
+      cargaHoraria: cert.cargaHoraria,
+      local: cert.local,
+      periodoInicio: cert.periodoInicio,
+      periodoFim: cert.periodoFim,
+      status: cert.status,
+      tipo: cert.tipo,
+      anexoComprovanteURL: `/mocks/certificado_aluno_${cert.id}.pdf`, // URL mock
 
-    // Dados do Aluno
-    alunoNome: aluno.nome,
-    alunoEmail: aluno.email,
-    alunoMatricula: aluno.matricula,
-    alunoTelefone: aluno.telefone,
+      // Dados do Aluno
+      alunoNome: aluno.nome,
+      alunoEmail: aluno.email,
+      alunoMatricula: aluno.matricula,
+      alunoTelefone: aluno.telefone,
 
-    // Dados da Coordenação
-    turma: aluno.turma,
-    periodo: aluno.periodo,
-    dataAtividade: formatarData(cert.periodoInicio, cert.periodoFim),
-    motivoRejeicao: cert.status === 'rejeitado' ? 'Carga horária ou documento inválido.' : undefined
-  };
-});
+      // Dados da Coordenação
+      turma: aluno.turma,
+      periodo: aluno.periodo,
+      dataAtividade: formatarData(cert.periodoInicio, cert.periodoFim),
+      motivoRejeicao:
+        cert.status === 'rejeitado'
+          ? 'Carga horária ou documento inválido.'
+          : undefined
+    };
+  });
