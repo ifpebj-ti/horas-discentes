@@ -264,7 +264,7 @@ export default function CourseDetailPage() {
 
       <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
         {/* Coordenador */}
-        <div className="bg-white shadow rounded-lg p-4">
+        <div className="bg-white shadow rounded-lg p-4 border border-gray-200">
           <h2 className="text-lg font-semibold mb-4">Coordenador</h2>
           {courseData.coordinator ? (
             <div className="flex justify-between items-center">
@@ -282,7 +282,7 @@ export default function CourseDetailPage() {
         </div>
 
         {/* Secretarias */}
-        <div className="bg-white shadow rounded-lg p-4">
+        <div className="bg-white shadow rounded-lg p-4 border border-gray-200">
           <h2 className="text-lg font-semibold mb-4">Secretaria</h2>
           <ul className="space-y-2">
             {courseData.secretaries.map((sec) => (
@@ -295,7 +295,7 @@ export default function CourseDetailPage() {
       </div>
 
       {/* Turmas */}
-      <div className="bg-white shadow rounded-lg p-4">
+      <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200 overflow-hidden">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Turmas</h2>
         </div>
