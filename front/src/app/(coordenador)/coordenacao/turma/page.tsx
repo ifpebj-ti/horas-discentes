@@ -3,11 +3,12 @@
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
+  FaHome,
+  FaGraduationCap,
   FaPlus,
   FaEnvelope,
   FaPaperPlane,
-  FaTimes,
-  FaGraduationCap
+  FaTimes
 } from 'react-icons/fa';
 
 import { RoundedButton } from '@/components/RoundedButton';
@@ -30,6 +31,7 @@ import {
   SelectItem
 } from '@/components/ui/select';
 import Swal from 'sweetalert2';
+import BreadCrumb from '@/components/BreadCrumb';
 
 // Tipagens
 interface Coordinator {
@@ -250,6 +252,12 @@ export default function CourseDetailPage() {
 
   return (
     <div className="p-6 space-y-6">
+      <BreadCrumb
+                items={[
+                  { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
+                  { icon: <FaGraduationCap />, label: 'Turma', href: '' }
+                ]}
+              />
       <div>
         <h1 className="text-2xl font-bold">{courseData.name}</h1>
       </div>
