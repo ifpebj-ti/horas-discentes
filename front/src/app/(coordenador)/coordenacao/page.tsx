@@ -24,22 +24,22 @@ export default function CoordenacaoPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <DashboardCard
-          icon={<FaUsers className="text-blue-600 text-3xl" />}
-          label="Alunos"
-          notificationCount={5}
-          onClick={() => router.push('/coordenacao/alunos')}
-        />
-
-        <DashboardCard
           icon={<FaGraduationCap className="text-blue-600 text-3xl" />}
-          label="Cursos"
-          onClick={() => router.push('/coordenacao/cursos')}
+          label="Turma"
+          onClick={() => router.push('/coordenacao/turma')}
         />
 
         <DashboardCard
           icon={<FaIdCard className="text-blue-600 text-3xl" />}
-          label="Certificados"
+          label="Validação de Certificados"
           onClick={() => router.push('/coordenacao/certificados')}
+        />
+
+        <DashboardCard
+          icon={<FaUsers className="text-blue-600 text-3xl" />}
+          label="Secretaria"
+          notificationCount={5}
+          onClick={() => router.push('/coordenacao/contabilizarHoras')}
         />
       </div>
     </div>
