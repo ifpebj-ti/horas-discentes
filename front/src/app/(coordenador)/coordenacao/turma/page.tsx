@@ -37,14 +37,13 @@ interface CourseDetails {
 
 export default function CourseDetailPage() {
   const router = useRouter();
-  const { id: courseId } = useParams() as { id: string };
-
+  const { id: courseId } = useParams();
   const [courseData, setCourseData] = useState<CourseDetails | null>(null);
 
   /* mock de dados */
   useEffect(() => {
     setCourseData({
-      id: courseId,
+      id: courseId as string,
       name: 'Engenharia de Software',
       coordinator: { id: 'c1', name: 'Ana Lima' },
       secretaries: [
