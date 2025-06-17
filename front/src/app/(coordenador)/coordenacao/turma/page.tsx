@@ -2,10 +2,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import {
-  FaHome,
-  FaGraduationCap,
-} from 'react-icons/fa';
+import { FaHome, FaGraduationCap } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 
@@ -78,7 +75,10 @@ export default function CourseDetailPage() {
           <h2 className="text-lg font-semibold mb-4">Coordenador</h2>
           <ul className="space-y-2">
             {courseData.coordinator ? (
-              <li key={courseData.coordinator.id} className="flex justify-between items-center">
+              <li
+                key={courseData.coordinator.id}
+                className="flex justify-between items-center"
+              >
                 <span>{courseData.coordinator.name}</span>
               </li>
             ) : (

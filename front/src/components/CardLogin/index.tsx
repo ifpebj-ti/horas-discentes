@@ -35,7 +35,9 @@ export const CardLogin = () => {
           </h1>
 
           <div className="mb-4">
-            <label htmlFor="email" className="block mb-1 text-sm">Email:</label>
+            <label htmlFor="email" className="block mb-1 text-sm">
+              Email:
+            </label>
             <Input
               id="email"
               type="email"
@@ -51,7 +53,9 @@ export const CardLogin = () => {
           </div>
 
           <div className="mb-1">
-            <label htmlFor="password" className="block mb-1 text-sm">Senha:</label>
+            <label htmlFor="password" className="block mb-1 text-sm">
+              Senha:
+            </label>
             <InputPassword
               id="password"
               placeholder="Digite sua senha de segurança."
@@ -70,7 +74,10 @@ export const CardLogin = () => {
           </p>
 
           <div className="text-right mb-4">
-            <button type="button" className="text-sm text-[#0a0b0b] hover:underline">
+            <button
+              type="button"
+              className="text-sm text-[#0a0b0b] hover:underline"
+            >
               Esqueceu a senha?
             </button>
           </div>
