@@ -149,14 +149,18 @@ export default function FormRegistroHoras({
                 <FaFileAlt className="text-blue-600" /> Categoria
               </span>
             </label>
+            {/* CORREÇÃO APLICADA AQUI:
+              1. Removi as classes de overflow que não funcionam na lista de opções.
+              2. Adicionei o atributo `title` a cada `<option>` para mostrar o texto completo no hover.
+            */}
             <select
               id="categoria"
               {...register('categoria')}
-              className={inputClass}
+              className={inputClass} // Apenas a classe padrão é necessária
             >
               <option value="">Selecione</option>
               {categoriasAtuais.map((cat) => (
-                <option key={cat.nome} value={cat.nome}>
+                <option key={cat.nome} value={cat.nome} title={cat.nome}>
                   {cat.nome}
                 </option>
               ))}
@@ -165,6 +169,7 @@ export default function FormRegistroHoras({
               <p className={errorClass}>{errors.categoria.message}</p>
             )}
           </div>
+
           <div className="col-span-1">
             <label
               htmlFor="periodoLetivoFaculdade"
