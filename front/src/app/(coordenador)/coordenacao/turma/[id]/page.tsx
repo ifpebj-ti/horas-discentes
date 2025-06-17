@@ -6,7 +6,9 @@ import {
   FaClock,
   FaCheckCircle,
   FaTimesCircle,
-  FaUser
+  FaUser,
+  FaHome,
+  FaGraduationCap
 } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 
@@ -22,6 +24,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 
 import Swal from 'sweetalert2';
+import BreadCrumb from '@/components/BreadCrumb';
 
 interface Student {
   id: string;
@@ -112,14 +115,28 @@ const VisualizarTurma = () => {
 
   return (
     <div className="space-y-8 p-4 md:p-6">
+
+      {/* Breadcrumb */}
+      <BreadCrumb
+        items={[
+          { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
+          { icon: <FaGraduationCap />, label: 'Turmas', href: '/coordenacao/turma' },
+          {
+            icon: <FaUsers />,
+            label: `Turma ${turma.codigo}`,
+            href: `/coordenacao/turma/${turma.codigo}`
+          }
+        ]}
+      />
+
       {/* Informações da Turma */}
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between sm:space-y-0">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              {/* <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                 <FaUsers className="w-6 h-6 text-blue-600" />
-              </div>
+              </div> */}
               <div>
                 <CardTitle className="text-xl">
                   Engenharia de Software
