@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 
+import BreadCrumb from '@/components/BreadCrumb';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,7 +25,6 @@ import {
 import { Progress } from '@/components/ui/progress';
 
 import Swal from 'sweetalert2';
-import BreadCrumb from '@/components/BreadCrumb';
 
 interface Student {
   id: string;
@@ -69,7 +69,7 @@ const VisualizarTurma = () => {
 
   // Mock turma data
   const turma = {
-    codigo: id || 'turma-abc123',
+    codigo: id ?? 'turma-abc123',
     periodo: '2025.1',
     turno: 'Noite'
   };
@@ -89,9 +89,9 @@ const VisualizarTurma = () => {
       prev.map((student) =>
         student.id === studentId
           ? {
-            ...student,
-            status: student.status === 'ativo' ? 'inativo' : 'ativo'
-          }
+              ...student,
+              status: student.status === 'ativo' ? 'inativo' : 'ativo'
+            }
           : student
       )
     );
@@ -115,12 +115,15 @@ const VisualizarTurma = () => {
 
   return (
     <div className="space-y-8 p-4 md:p-6">
-
       {/* Breadcrumb */}
       <BreadCrumb
         items={[
           { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
-          { icon: <FaGraduationCap />, label: 'Turmas', href: '/coordenacao/turma' },
+          {
+            icon: <FaGraduationCap />,
+            label: 'Turmas',
+            href: '/coordenacao/turma'
+          },
           {
             icon: <FaUsers />,
             label: `Turma ${turma.codigo}`,

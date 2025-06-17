@@ -79,7 +79,10 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
             {/* <CustomNavLink href="/coordenacao/alunos" onClick={closeMenu}>
               <IconText icon={FaUsers} text="Alunos" />
             </CustomNavLink> */}
-            <CustomNavLink href="/coordenacao/contabilizarHoras" onClick={closeMenu}>
+            <CustomNavLink
+              href="/coordenacao/contabilizarHoras"
+              onClick={closeMenu}
+            >
               <IconText icon={FaEnvelope} text="Secretaria" />
             </CustomNavLink>
             {/* <CustomNavLink href="/coordenacao/campus" onClick={closeMenu}>

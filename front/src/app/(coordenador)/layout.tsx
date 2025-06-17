@@ -10,9 +10,9 @@ const getTitleFromPath = (path: string): string => {
   const parts = path.split('/').filter(Boolean);
 
   if (parts[0] === 'curso') {
-    if (parts.length === 1) return 'Cursos';              // /curso
-    if (parts.length === 2) return `Curso ${parts[1]}`;   // /curso/:id
-    if (parts.length >= 3) return `Turma ${parts[2]}`;    // /curso/:id/:turmaId
+    if (parts.length === 1) return 'Cursos'; // /curso
+    if (parts.length === 2) return `Curso ${parts[1]}`; // /curso/:id
+    if (parts.length >= 3) return `Turma ${parts[2]}`; // /curso/:id/:turmaId
   }
 
   switch (parts[0]) {

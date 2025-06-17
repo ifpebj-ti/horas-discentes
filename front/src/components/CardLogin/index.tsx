@@ -92,7 +92,10 @@ export const CardLogin = () => {
           <hr className="my-6 border-t-2 border-gray-300 rounded-2xl" />
 
           <div className="text-center">
-            <a href="primeiroAcesso" className="text-[#1351B4] font-medium hover:underline">
+            <a
+              href="primeiroAcesso"
+              className="text-[#1351B4] font-medium hover:underline"
+            >
               Primeiro Acesso?
             </a>
           </div>
