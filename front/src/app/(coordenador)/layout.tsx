@@ -7,23 +7,23 @@ import { MOCK_COORDENADORES } from '@/lib/coordenacaoMock';
 import * as Types from '@/types';
 
 const getTitleFromPath = (path: string): string => {
-  const lastSegment = path.split('/').filter(Boolean).pop() ?? '';
+  const parts = path.split('/').filter(Boolean);
 
-  switch (lastSegment) {
+  if (parts[0] === 'curso') {
+    if (parts.length === 1) return 'Cursos'; // /curso
+    if (parts.length === 2) return `Curso ${parts[1]}`; // /curso/:id
+    if (parts.length >= 3) return `Turma ${parts[2]}`; // /curso/:id/:turmaId
+  }
+
+  switch (parts[0]) {
     case 'coordenacao':
       return 'Coordenação';
     case 'certificados':
       return 'Validação de Certificados';
     case 'turmas':
       return 'Turmas';
-    case 'alunos':
-      return 'Alunos';
     case 'secretaria':
       return 'Secretaria';
-    case 'campus':
-      return 'Campus';
-    case 'configuracoes':
-      return 'Configurações';
     default:
       return 'Início';
   }
