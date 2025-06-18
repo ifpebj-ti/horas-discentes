@@ -46,7 +46,7 @@ export default function AlunoLayout({
         - PE, 55145-065
         <br />
         Telefone: (81) 3411-3200
-        <br />© 2025 Desenvolvido por Erimilson Silva.
+        <br />© 2025 Desenvolvido por Erison Cavalcante e Erimilson Silva.
       </footer>
     </div>
   );
