@@ -7,5 +7,6 @@ public class ApplicationDbContext : DbContext
     {
     }
     // DbSets para suas entidades
+    
     // public DbSet<Entidade> Entidades { get; set; }
 }
