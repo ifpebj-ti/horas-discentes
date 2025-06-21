@@ -1,0 +1,109 @@
+﻿namespace Back.Domain.Entities.Certificado;
+
+public class CertificadoBuilder
+{
+    private readonly Certificado _certificado = new();
+
+    public CertificadoBuilder()
+    {
+        _certificado.Status = StatusCertificado.PENDENTE; // padrão
+    }
+
+    public CertificadoBuilder WithId(Guid id)
+    {
+        _certificado.Id = id;
+        return this;
+    }
+
+    public CertificadoBuilder WithTituloAtividade(string titulo)
+    {
+        _certificado.TituloAtividade = titulo;
+        return this;
+    }
+
+    public CertificadoBuilder WithInstituicao(string instituicao)
+    {
+        _certificado.Instituicao = instituicao;
+        return this;
+    }
+
+    public CertificadoBuilder WithLocal(string local)
+    {
+        _certificado.Local = local;
+        return this;
+    }
+
+    public CertificadoBuilder WithCategoria(string categoria)
+    {
+        _certificado.Categoria = categoria;
+        return this;
+    }
+
+    public CertificadoBuilder WithGrupo(string grupo)
+    {
+        _certificado.Grupo = grupo;
+        return this;
+    }
+
+    public CertificadoBuilder WithPeriodoLetivo(string periodo)
+    {
+        _certificado.PeriodoLetivo = periodo;
+        return this;
+    }
+
+    public CertificadoBuilder WithCargaHoraria(int carga)
+    {
+        _certificado.CargaHoraria = carga;
+        return this;
+    }
+
+    public CertificadoBuilder WithDataInicio(DateTime inicio)
+    {
+        _certificado.DataInicio = inicio;
+        return this;
+    }
+
+    public CertificadoBuilder WithDataFim(DateTime fim)
+    {
+        _certificado.DataFim = fim;
+        return this;
+    }
+
+    public CertificadoBuilder WithTotalPeriodos(int total)
+    {
+        _certificado.TotalPeriodos = total;
+        return this;
+    }
+
+    public CertificadoBuilder WithDescricao(string? descricao)
+    {
+        _certificado.Descricao = descricao;
+        return this;
+    }
+
+    public CertificadoBuilder WithAnexo(byte[] anexo)
+    {
+        _certificado.Anexo = anexo;
+        return this;
+    }
+
+    public CertificadoBuilder WithTipo(TipoCertificado tipo)
+    {
+        _certificado.Tipo = tipo;
+        return this;
+    }
+
+    public CertificadoBuilder WithAlunoId(Guid alunoId)
+    {
+        _certificado.AlunoId = alunoId;
+        return this;
+    }
+
+    public CertificadoBuilder WithAtividadeId(Guid atividadeId)
+    {
+        _certificado.AtividadeId = atividadeId;
+        return this;
+    }
+
+    public Certificado Build() => _certificado;
+}
