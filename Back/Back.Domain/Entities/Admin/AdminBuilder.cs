@@ -16,9 +16,9 @@ public class AdminBuilder
         return this;
     }
 
-    public AdminBuilder WithSenha(string senha)
+    public AdminBuilder WithIdentityUserId(string identityUserId)
     {
-        _admin.Senha = senha;
+        _admin.IdentityUserId = identityUserId;
         return this;
     }
 

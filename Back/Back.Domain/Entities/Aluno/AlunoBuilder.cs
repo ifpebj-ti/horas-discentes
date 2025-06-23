@@ -6,7 +6,7 @@ public class AlunoBuilder
 
     public AlunoBuilder()
     {
-        _aluno.JaBaixadoHoras = false; // padrão ao criar
+        _aluno.JaBaixadoHoras = false;
     }
 
     public AlunoBuilder WithId(Guid id)
@@ -33,15 +33,15 @@ public class AlunoBuilder
         return this;
     }
 
-    public AlunoBuilder WithSenha(string senha)
-    {
-        _aluno.Senha = senha;
-        return this;
-    }
-
     public AlunoBuilder WithTurmaId(Guid turmaId)
     {
         _aluno.TurmaId = turmaId;
+        return this;
+    }
+
+    public AlunoBuilder WithIdentityUserId(string identityUserId)
+    {
+        _aluno.IdentityUserId = identityUserId;
         return this;
     }
 

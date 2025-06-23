@@ -20,10 +20,20 @@ public class Coordenador
     [EmailAddress(ErrorMessage = "O campo Email deve ser um endereço de email válido.")]
     public string Email { get; set; }
 
-    [Required(ErrorMessage = "O campo Senha é obrigatório.")]
-    [MinLength(6, ErrorMessage = "A senha deve conter no mínimo 6 caracteres.")]
-    public string Senha { get; set; }
-
     [Required(ErrorMessage = "O campo CursoId é obrigatório.")]
     public Guid CursoId { get; set; }
+    [Required]
+    public string IdentityUserId { get; set; }
+    public Curso.Curso Curso { get; private set; }
+
+    internal Coordenador() { }
+
+    internal Coordenador(Guid id, string nome, string email, string identityUserId, Guid cursoId)
+    {
+        Id = id;
+        Nome = nome;
+        Email = email;
+        IdentityUserId = identityUserId;
+        CursoId = cursoId;
+    }
 }

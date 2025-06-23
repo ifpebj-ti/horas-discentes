@@ -1,6 +1,0 @@
-﻿namespace Back.API.Controllers
-{
-    public class controller
-    {
-    }
-}

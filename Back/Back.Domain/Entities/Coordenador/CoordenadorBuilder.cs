@@ -34,15 +34,15 @@ public class CoordenadorBuilder
         return this;
     }
 
-    public CoordenadorBuilder WithSenha(string senha)
-    {
-        _coordenador.Senha = senha;
-        return this;
-    }
-
     public CoordenadorBuilder WithCursoId(Guid cursoId)
     {
         _coordenador.CursoId = cursoId;
+        return this;
+    }
+
+    public CoordenadorBuilder WithIdentityUserId(string identityUserId)
+    {
+        _coordenador.IdentityUserId = identityUserId;
         return this;
     }
 

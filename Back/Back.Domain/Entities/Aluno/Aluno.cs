@@ -17,12 +17,24 @@ public class Aluno
     [Required(ErrorMessage = "O campo Matrícula é obrigatório.")]
     public string Matricula { get; set; }
 
-    [Required(ErrorMessage = "O campo Senha é obrigatório.")]
-    [MinLength(6, ErrorMessage = "A senha deve conter no mínimo 6 caracteres.")]
-    public string Senha { get; set; }
-
     public bool JaBaixadoHoras { get; set; }
 
     [Required(ErrorMessage = "O campo TurmaId é obrigatório.")]
     public Guid TurmaId { get; set; }
+
+    [Required]
+    public string IdentityUserId { get; set; }
+    public Turma.Turma Turma { get; private set; }
+
+    internal Aluno() { }
+
+    internal Aluno(Guid id, string nome, string email, string matricula, Guid turmaId, string identityUserId)
+    {
+        Id = id;
+        Nome = nome;
+        Email = email;
+        Matricula = matricula;
+        TurmaId = turmaId;
+        IdentityUserId = identityUserId;
+    }
 }
