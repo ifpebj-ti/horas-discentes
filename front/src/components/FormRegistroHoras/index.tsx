@@ -11,8 +11,9 @@ import {
 } from 'react-icons/fa';
 
 import { FileUploadInput } from '@components/FileUploadInput';
-import { useFormRegistroHoras } from './hooks/useFormRegistroHoras';
 import SelectBox from '@components/ui/SelectBox';
+
+import { useFormRegistroHoras } from './hooks/useFormRegistroHoras';
 
 interface Categoria {
   nome: string;
@@ -160,7 +161,7 @@ export default function FormRegistroHoras({
                   onChange={field.onChange}
                   options={categoriasAtuais.map((c) => ({
                     value: c.nome,
-                    label: c.nome,
+                    label: c.nome
                   }))}
                   error={errors.categoria?.message}
                 />
@@ -237,7 +238,10 @@ export default function FormRegistroHoras({
           </div>
 
           <div className="col-span-1">
-            <label htmlFor="dataFimAtividade" className="block mb-1 font-medium">
+            <label
+              htmlFor="dataFimAtividade"
+              className="block mb-1 font-medium"
+            >
               <span className="flex items-center gap-2">
                 <FaCalendarAlt className="text-blue-600" /> Data de Fim
               </span>
@@ -300,7 +304,10 @@ export default function FormRegistroHoras({
 
           {/* ---------- Quinta linha ---------- */}
           <div className="col-span-1 md:col-span-3">
-            <label htmlFor="anexoComprovante" className="block mb-1 font-medium">
+            <label
+              htmlFor="anexoComprovante"
+              className="block mb-1 font-medium"
+            >
               <span className="flex items-center gap-2">
                 <FaFileAlt className="text-blue-600" /> Anexar Comprovante
               </span>

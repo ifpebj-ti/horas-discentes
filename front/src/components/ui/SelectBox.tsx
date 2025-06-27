@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 
-interface Option { value: string; label: string }
+interface Option {
+  value: string;
+  label: string;
+}
 interface Props {
   value: string;
   onChange: (v: string) => void;
@@ -15,7 +18,7 @@ export default function SelectBox({
   onChange,
   options,
   placeholder = 'Selecione',
-  error,
+  error
 }: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -23,7 +26,8 @@ export default function SelectBox({
   /* Fecha ao clicar fora */
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -55,7 +59,7 @@ export default function SelectBox({
           bg-white border rounded-lg shadow
           max-h-56 overflow-y-auto
         "
-      >
+        >
           {options.map((opt) => (
             <li
               key={opt.value}

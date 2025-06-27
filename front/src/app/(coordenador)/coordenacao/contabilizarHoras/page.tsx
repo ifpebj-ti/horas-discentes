@@ -1,19 +1,15 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  FaSearch,
-  FaDownload,
-  FaCheckSquare,
-  FaSquare
-} from 'react-icons/fa';
+import { FaSearch, FaDownload, FaCheckSquare, FaSquare } from 'react-icons/fa';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 // ----------------------------------------------------------------
-// Tipos 
+// Tipos
+
 // ----------------------------------------------------------------
 interface Aluno {
   id: number;
@@ -181,14 +177,16 @@ const TabelaSkeleton: React.FC<{ rows?: number }> = ({ rows = 5 }) => {
 // ----------------------------------------------------------------
 const GerenciamentoHoras: React.FC = () => {
   /* ------------------ Estados de filtro ------------------ */
-  const [filtroNome, setFiltroNome]           = useState('');
+  const [filtroNome, setFiltroNome] = useState('');
   const [filtroMatricula, setFiltroMatricula] = useState('');
-  const [filtroStatus, setFiltroStatus]       = useState<'finalizados' | 'concluidos'>(
-    'finalizados'
-  );
+  const [filtroStatus, setFiltroStatus] = useState<
+    'finalizados' | 'concluidos'
+  >('finalizados');
 
   /* ------------------ Estados de seleção ----------------- */
-  const [alunosSelecionados, setAlunosSelecionados] = useState<Set<number>>(new Set());
+  const [alunosSelecionados, setAlunosSelecionados] = useState<Set<number>>(
+    new Set()
+  );
 
   /* ------------------ Paginação -------------------------- */
   const [paginaAtual, setPaginaAtual] = useState(1);
@@ -196,9 +194,9 @@ const GerenciamentoHoras: React.FC = () => {
 
   /* ------------------ Visão & Categoria ------------------ */
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
-  const [selectedCategory, setSelectedCategory] = useState<'horasComplementares' | 'extensao' | null>(
-    null
-  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    'horasComplementares' | 'extensao' | null
+  >(null);
 
   /* ------------------ Estado de Carregamento ------------- */
   const [isLoading, setIsLoading] = useState(true);
@@ -215,7 +213,9 @@ const GerenciamentoHoras: React.FC = () => {
    * ======================================================*/
   const alunosFiltrados = useMemo(() => {
     return alunosMock.filter((aluno) => {
-      const matchNome      = aluno.nome.toLowerCase().includes(filtroNome.toLowerCase());
+      const matchNome = aluno.nome
+        .toLowerCase()
+        .includes(filtroNome.toLowerCase());
       const matchMatricula = aluno.matricula.includes(filtroMatricula);
 
       const matchStatus =
@@ -223,7 +223,9 @@ const GerenciamentoHoras: React.FC = () => {
           ? aluno.cargaHorariaFinalizada && !aluno.jaFezDownload
           : aluno.jaFezDownload;
 
-      const matchCategory = selectedCategory ? aluno.categoria === selectedCategory : true;
+      const matchCategory = selectedCategory
+        ? aluno.categoria === selectedCategory
+        : true;
 
       return matchNome && matchMatricula && matchStatus && matchCategory;
     });
@@ -231,7 +233,7 @@ const GerenciamentoHoras: React.FC = () => {
 
   const totalPaginas = Math.ceil(alunosFiltrados.length / itensPorPagina) || 1;
   const indiceInicio = (paginaAtual - 1) * itensPorPagina;
-  const indiceFim    = indiceInicio + itensPorPagina;
+  const indiceFim = indiceInicio + itensPorPagina;
   const alunosPaginados = alunosFiltrados.slice(indiceInicio, indiceFim);
 
   /* --------------------------------------------------------
@@ -247,7 +249,11 @@ const GerenciamentoHoras: React.FC = () => {
 
   const toggleSelecionarAluno = (id: number) => {
     const nova = new Set(alunosSelecionados);
-    nova.has(id) ? nova.delete(id) : nova.add(id);
+    if (nova.has(id)) {
+      nova.delete(id);
+    } else {
+      nova.add(id);
+    }
     setAlunosSelecionados(nova);
   };
 
@@ -255,7 +261,8 @@ const GerenciamentoHoras: React.FC = () => {
    *  Download (mock)
    * -----------------------------------------------------*/
   const handleDownloadAlunosSelecionados = () => {
-    if (alunosSelecionados.size === 0) return alert('Selecione pelo menos um aluno.');
+    if (alunosSelecionados.size === 0)
+      return alert('Selecione pelo menos um aluno.');
 
     console.log('Baixando dados dos alunos:', Array.from(alunosSelecionados));
     alert('Informações baixadas com sucesso!');
@@ -269,18 +276,26 @@ const GerenciamentoHoras: React.FC = () => {
     setPaginaAtual(1);
   }, [filtroNome, filtroMatricula, filtroStatus, selectedCategory]);
 
-  const todosSelecionados = alunosPaginados.length > 0 && alunosSelecionados.size === alunosPaginados.length;
-  const algunsSelecionados = alunosSelecionados.size > 0 && alunosSelecionados.size < alunosPaginados.length;
+  const todosSelecionados =
+    alunosPaginados.length > 0 &&
+    alunosSelecionados.size === alunosPaginados.length;
+  const algunsSelecionados =
+    alunosSelecionados.size > 0 &&
+    alunosSelecionados.size < alunosPaginados.length;
 
   /* ========================================================
    *  RENDERIZAÇÃO
    * ======================================================*/
-   return (
+  return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-6">
       {/* Cabeçalho */}
       <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Gerenciamento de Horas dos Alunos</h1>
-        <p className="text-sm sm:text-base text-muted-foreground">Gerencie a contabilização de horas dos alunos</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+          Gerenciamento de Horas dos Alunos
+        </h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
+          Gerencie a contabilização de horas dos alunos
+        </p>
       </div>
 
       {/* ============================== VISÃO: CARDS ============================== */}
@@ -294,8 +309,12 @@ const GerenciamentoHoras: React.FC = () => {
             }}
             className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center"
           >
-            <h2 className="text-xl font-semibold mb-2 text-foreground">Horas Complementares</h2>
-            <p className="text-muted-foreground text-sm">Gerencie as horas complementares dos alunos.</p>
+            <h2 className="text-xl font-semibold mb-2 text-foreground">
+              Horas Complementares
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Gerencie as horas complementares dos alunos.
+            </p>
           </div>
 
           {/* Card Extensão */}
@@ -306,8 +325,12 @@ const GerenciamentoHoras: React.FC = () => {
             }}
             className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center"
           >
-            <h2 className="text-xl font-semibold mb-2 text-foreground">Extensão</h2>
-            <p className="text-muted-foreground text-sm">Gerencie as horas de extensão dos alunos.</p>
+            <h2 className="text-xl font-semibold mb-2 text-foreground">
+              Extensão
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Gerencie as horas de extensão dos alunos.
+            </p>
           </div>
         </div>
       )}
@@ -338,7 +361,12 @@ const GerenciamentoHoras: React.FC = () => {
             {/* Busca */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="filtro-nome" className="block text-sm font-medium text-foreground">Nome do Aluno</label>
+                <label
+                  htmlFor="filtro-nome"
+                  className="block text-sm font-medium text-foreground"
+                >
+                  Nome do Aluno
+                </label>
                 <div className="relative">
                   <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary w-4 h-4" />
                   <Input
@@ -352,7 +380,12 @@ const GerenciamentoHoras: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="filtro-matricula" className="block text-sm font-medium text-foreground">Matrícula</label>
+                <label
+                  htmlFor="filtro-matricula"
+                  className="block text-sm font-medium text-foreground"
+                >
+                  Matrícula
+                </label>
                 <div className="relative">
                   <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary w-4 h-4" />
                   <Input
@@ -368,29 +401,52 @@ const GerenciamentoHoras: React.FC = () => {
 
             {/* Status */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-foreground">Status</label>
+              <label className="block text-sm font-medium text-foreground">
+                Status
+              </label>
               <div className="flex flex-col sm:flex-row gap-2">
                 <Button
-                  variant={filtroStatus === 'finalizados' ? 'default' : 'outline'}
+                  variant={
+                    filtroStatus === 'finalizados' ? 'default' : 'outline'
+                  }
                   onClick={() => setFiltroStatus('finalizados')}
                   size="sm"
                   className="w-full sm:w-auto"
                 >
-                  <span className="text-xs sm:text-sm">Carga Horária Finalizada</span>
+                  <span className="text-xs sm:text-sm">
+                    Carga Horária Finalizada
+                  </span>
                   <Badge variant="secondary" className="ml-2 text-xs">
-                    {alunosMock.filter((a) => a.cargaHorariaFinalizada && !a.jaFezDownload && (!selectedCategory || a.categoria === selectedCategory)).length}
+                    {
+                      alunosMock.filter(
+                        (a) =>
+                          a.cargaHorariaFinalizada &&
+                          !a.jaFezDownload &&
+                          (!selectedCategory ||
+                            a.categoria === selectedCategory)
+                      ).length
+                    }
                   </Badge>
                 </Button>
 
                 <Button
-                  variant={filtroStatus === 'concluidos' ? 'default' : 'outline'}
+                  variant={
+                    filtroStatus === 'concluidos' ? 'default' : 'outline'
+                  }
                   onClick={() => setFiltroStatus('concluidos')}
                   size="sm"
                   className="w-full sm:w-auto"
                 >
                   <span className="text-xs sm:text-sm">Já Concluídos</span>
                   <Badge variant="secondary" className="ml-2 text-xs">
-                    {alunosMock.filter((a) => a.jaFezDownload && (!selectedCategory || a.categoria === selectedCategory)).length}
+                    {
+                      alunosMock.filter(
+                        (a) =>
+                          a.jaFezDownload &&
+                          (!selectedCategory ||
+                            a.categoria === selectedCategory)
+                      ).length
+                    }
                   </Badge>
                 </Button>
               </div>
@@ -400,9 +456,13 @@ const GerenciamentoHoras: React.FC = () => {
           {/* -------------------- AÇÕES & INFO -------------------- */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div className="text-xs sm:text-sm text-muted-foreground">
-              Exibindo {indiceInicio + 1}-{Math.min(indiceFim, alunosFiltrados.length)} de {alunosFiltrados.length} alunos
+              Exibindo {indiceInicio + 1}-
+              {Math.min(indiceFim, alunosFiltrados.length)} de{' '}
+              {alunosFiltrados.length} alunos
               {alunosSelecionados.size > 0 && (
-                <span className="ml-2 font-medium text-primary">({alunosSelecionados.size} selecionados)</span>
+                <span className="ml-2 font-medium text-primary">
+                  ({alunosSelecionados.size} selecionados)
+                </span>
               )}
             </div>
             <Button
@@ -428,7 +488,11 @@ const GerenciamentoHoras: React.FC = () => {
                       <th className="bg-muted py-3 px-2 sm:px-4 w-12">
                         <button
                           onClick={toggleSelecionarTodos}
-                          aria-label={todosSelecionados ? 'Desmarcar todos' : 'Selecionar todos'}
+                          aria-label={
+                            todosSelecionados
+                              ? 'Desmarcar todos'
+                              : 'Selecionar todos'
+                          }
                           className="flex items-center justify-center w-full p-1 hover:bg-muted/50 rounded"
                         >
                           {todosSelecionados ? (
@@ -440,17 +504,28 @@ const GerenciamentoHoras: React.FC = () => {
                           )}
                         </button>
                       </th>
-                      <th className="bg-muted text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold">Nome do Aluno</th>
-                      <th className="bg-muted text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold">Matrícula</th>
+                      <th className="bg-muted text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold">
+                        Nome do Aluno
+                      </th>
+                      <th className="bg-muted text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold">
+                        Matrícula
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {alunosPaginados.map((aluno) => (
-                      <tr key={aluno.id} className="border-b border-border hover:bg-muted/30">
+                      <tr
+                        key={aluno.id}
+                        className="border-b border-border hover:bg-muted/30"
+                      >
                         <td className="py-3 px-2 sm:px-4">
                           <button
                             onClick={() => toggleSelecionarAluno(aluno.id)}
-                            aria-label={alunosSelecionados.has(aluno.id) ? 'Desmarcar ' + aluno.nome : 'Selecionar ' + aluno.nome}
+                            aria-label={
+                              alunosSelecionados.has(aluno.id)
+                                ? 'Desmarcar ' + aluno.nome
+                                : 'Selecionar ' + aluno.nome
+                            }
                             className="flex items-center justify-center w-full p-1 hover:bg-muted/50 rounded"
                           >
                             {alunosSelecionados.has(aluno.id) ? (
@@ -460,13 +535,20 @@ const GerenciamentoHoras: React.FC = () => {
                             )}
                           </button>
                         </td>
-                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-foreground">{aluno.nome}</td>
-                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-foreground">{aluno.matricula}</td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-foreground">
+                          {aluno.nome}
+                        </td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-foreground">
+                          {aluno.matricula}
+                        </td>
                       </tr>
                     ))}
                     {alunosPaginados.length === 0 && (
                       <tr>
-                        <td colSpan={3} className="p-6 text-center text-muted-foreground text-sm">
+                        <td
+                          colSpan={3}
+                          className="p-6 text-center text-muted-foreground text-sm"
+                        >
                           Nenhum aluno encontrado com os filtros aplicados.
                         </td>
                       </tr>
@@ -491,15 +573,31 @@ const GerenciamentoHoras: React.FC = () => {
                 className="w-20 px-2 py-1 border border-input rounded-md text-xs sm:text-sm focus:outline-none"
               >
                 {[5, 10, 25, 50, 100].map((n) => (
-                  <option key={n} value={n}>{n}</option>
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
                 ))}
               </select>
             </div>
 
             {/* Navegação */}
             <div className="flex items-center gap-1 flex-wrap justify-center">
-              <Button variant="outline" size="sm" disabled={paginaAtual === 1} onClick={() => setPaginaAtual(1)}>{'<<'}</Button>
-              <Button variant="outline" size="sm" disabled={paginaAtual === 1} onClick={() => setPaginaAtual(paginaAtual - 1)}>{'<'}</Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={paginaAtual === 1}
+                onClick={() => setPaginaAtual(1)}
+              >
+                {'<<'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={paginaAtual === 1}
+                onClick={() => setPaginaAtual(paginaAtual - 1)}
+              >
+                {'<'}
+              </Button>
 
               {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
                 let page = 1;
@@ -525,8 +623,22 @@ const GerenciamentoHoras: React.FC = () => {
                 );
               })}
 
-              <Button variant="outline" size="sm" disabled={paginaAtual === totalPaginas} onClick={() => setPaginaAtual(paginaAtual + 1)}>{'>'}</Button>
-              <Button variant="outline" size="sm" disabled={paginaAtual === totalPaginas} onClick={() => setPaginaAtual(totalPaginas)}>{'>>'}</Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={paginaAtual === totalPaginas}
+                onClick={() => setPaginaAtual(paginaAtual + 1)}
+              >
+                {'>'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={paginaAtual === totalPaginas}
+                onClick={() => setPaginaAtual(totalPaginas)}
+              >
+                {'>>'}
+              </Button>
             </div>
           </div>
         </>
@@ -535,4 +647,4 @@ const GerenciamentoHoras: React.FC = () => {
   );
 };
 
-export default GerenciamentoHoras; 
+export default GerenciamentoHoras;
