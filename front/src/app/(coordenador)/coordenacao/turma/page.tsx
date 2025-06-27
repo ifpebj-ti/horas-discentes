@@ -128,7 +128,7 @@ export default function CourseDetailPage() {
                 <td className="text-center">{cls.students}</td>
                 <td className="text-right px-4">
                   <button
-                    className="text-sm text-blue-600 border border-blue-600 px-3 py-1 rounded-full hover:bg-blue-50"
+                    className="text-xs px-2 py-0.5 sm:text-sm sm:px-3 sm:py-1 text-blue-600 border border-blue-600 rounded-full hover:bg-blue-50"
                     onClick={() => router.push(`/coordenacao/turma/${cls.id}`)}
                   >
                     Visualizar turma
