@@ -11,12 +11,12 @@ import {
 } from 'react-icons/fa';
 
 import { FileUploadInput } from '@components/FileUploadInput';
+import SelectBox from '@components/ui/SelectBox';
 
 import { useFormRegistroHoras } from './hooks/useFormRegistroHoras';
 
 interface Categoria {
   nome: string;
-  // outros campos se necessário
 }
 
 interface FormRegistroHorasProps {
@@ -43,7 +43,7 @@ export default function FormRegistroHoras({
 
   const { register } = formMethods;
 
-  // Escolhe as categorias conforme o tipo
+  /** Categorias exibidas conforme o tipo de registro */
   const categoriasAtuais =
     tipoRegistro === 'horas-extensao'
       ? categoriasExtensao
@@ -53,30 +53,31 @@ export default function FormRegistroHoras({
     'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500';
   const errorClass = 'text-red-500 text-xs mt-1';
 
-  function getPeriodosLetivos() {
+  /** Gera períodos letivos AAAA.1 / AAAA.2 */
+  const periodosLetivos = (() => {
     const periodos: string[] = [];
     const anoInicio = 2023;
     const dataAtual = new Date();
     const anoAtual = dataAtual.getFullYear();
-    const mesAtual = dataAtual.getMonth() + 1; // Janeiro = 0
+    const mesAtual = dataAtual.getMonth() + 1;
 
     for (let ano = anoInicio; ano < anoAtual; ano++) {
-      periodos.push(`${ano}.1`);
-      periodos.push(`${ano}.2`);
+      periodos.push(`${ano}.1`, `${ano}.2`);
     }
-    // Ano atual
     periodos.push(`${anoAtual}.1`);
-    if (mesAtual >= 8) {
-      periodos.push(`${anoAtual}.2`);
-    }
+    if (mesAtual >= 8) periodos.push(`${anoAtual}.2`);
     return periodos;
-  }
-
-  const periodosLetivos = getPeriodosLetivos();
+  })();
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-md">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 overflow-x-auto">
+      <div
+        className="
+          w-full max-w-5xl mx-auto p-4 md:p-8 bg-white
+          rounded-2xl shadow-md
+          overflow-hidden               /*  ⬅️ impede overflow do dropdown */
+        "
+      >
         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
           <FaClock className="text-blue-600" />
           {tipoRegistro === 'horas-extensao'
@@ -88,7 +89,7 @@ export default function FormRegistroHoras({
           onSubmit={handleSubmit(submitForm)}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {/* Primeira linha: Título, Instituição, Local */}
+          {/* ---------- Primeira linha ---------- */}
           <div className="col-span-1">
             <label htmlFor="tituloAtividade" className="block mb-1 font-medium">
               <span className="flex items-center gap-2">
@@ -106,6 +107,7 @@ export default function FormRegistroHoras({
               <p className={errorClass}>{errors.tituloAtividade.message}</p>
             )}
           </div>
+
           <div className="col-span-1">
             <label htmlFor="instituicao" className="block mb-1 font-medium">
               <span className="flex items-center gap-2">
@@ -123,6 +125,7 @@ export default function FormRegistroHoras({
               <p className={errorClass}>{errors.instituicao.message}</p>
             )}
           </div>
+
           <div className="col-span-1">
             <label htmlFor="localRealizacao" className="block mb-1 font-medium">
               <span className="flex items-center gap-2">
@@ -142,32 +145,28 @@ export default function FormRegistroHoras({
             )}
           </div>
 
-          {/* Segunda linha: Categoria, Período */}
+          {/* ---------- Segunda linha ---------- */}
           <div className="col-span-1">
             <label htmlFor="categoria" className="block mb-1 font-medium">
               <span className="flex items-center gap-2">
                 <FaFileAlt className="text-blue-600" /> Categoria
               </span>
             </label>
-            {/* CORREÇÃO APLICADA AQUI:
-              1. Removi as classes de overflow que não funcionam na lista de opções.
-              2. Adicionei o atributo `title` a cada `<option>` para mostrar o texto completo no hover.
-            */}
-            <select
-              id="categoria"
-              {...register('categoria')}
-              className={inputClass} // Apenas a classe padrão é necessária
-            >
-              <option value="">Selecione</option>
-              {categoriasAtuais.map((cat) => (
-                <option key={cat.nome} value={cat.nome} title={cat.nome}>
-                  {cat.nome}
-                </option>
-              ))}
-            </select>
-            {errors.categoria && (
-              <p className={errorClass}>{errors.categoria.message}</p>
-            )}
+            <Controller
+              control={control}
+              name="categoria"
+              render={({ field }) => (
+                <SelectBox
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={categoriasAtuais.map((c) => ({
+                    value: c.nome,
+                    label: c.nome
+                  }))}
+                  error={errors.categoria?.message}
+                />
+              )}
+            />
           </div>
 
           <div className="col-span-1">
@@ -198,7 +197,7 @@ export default function FormRegistroHoras({
             )}
           </div>
 
-          {/* Terceira linha: Carga Horária, Data de Início, Data de Fim */}
+          {/* ---------- Terceira linha ---------- */}
           <div className="col-span-1">
             <label htmlFor="cargaHoraria" className="block mb-1 font-medium">
               <span className="flex items-center gap-2">
@@ -217,6 +216,7 @@ export default function FormRegistroHoras({
               <p className={errorClass}>{errors.cargaHoraria.message}</p>
             )}
           </div>
+
           <div className="col-span-1">
             <label
               htmlFor="dataInicioAtividade"
@@ -236,6 +236,7 @@ export default function FormRegistroHoras({
               <p className={errorClass}>{errors.dataInicioAtividade.message}</p>
             )}
           </div>
+
           <div className="col-span-1">
             <label
               htmlFor="dataFimAtividade"
@@ -255,11 +256,9 @@ export default function FormRegistroHoras({
               <p className={errorClass}>{errors.dataFimAtividade.message}</p>
             )}
           </div>
+
           <div className="col-span-1">
-            <label
-              htmlFor="Total de Periodos"
-              className="block mb-1 font-medium"
-            >
+            <label htmlFor="totalPeriodos" className="block mb-1 font-medium">
               <span className="flex items-center gap-2">
                 <FaBookOpen className="text-blue-600" /> Total de Períodos da
                 Atividade
@@ -278,7 +277,7 @@ export default function FormRegistroHoras({
             )}
           </div>
 
-          {/* Quarta linha: Especificação */}
+          {/* ---------- Quarta linha ---------- */}
           <div className="col-span-1 md:col-span-3">
             <label
               htmlFor="especificacaoAtividade"
@@ -303,7 +302,7 @@ export default function FormRegistroHoras({
             )}
           </div>
 
-          {/* Quinta linha: Anexo */}
+          {/* ---------- Quinta linha ---------- */}
           <div className="col-span-1 md:col-span-3">
             <label
               htmlFor="anexoComprovante"
@@ -329,16 +328,19 @@ export default function FormRegistroHoras({
               )}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Tipos aceitos: PDF, JPG, PNG. Tamanho máx: 5MB.
+              Tipos aceitos: PDF, JPG, PNG. Tamanho máx: 5&nbsp;MB.
             </p>
           </div>
 
-          {/* Botão de Envio */}
+          {/* ---------- Botão ---------- */}
           <div className="col-span-1 md:col-span-3 flex justify-end pt-4">
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="
+                bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg
+                transition-colors disabled:opacity-50 disabled:cursor-not-allowed
+              "
             >
               {isLoading ? 'Enviando...' : 'Enviar'}
             </button>
