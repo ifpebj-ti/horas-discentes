@@ -59,6 +59,11 @@ jobs:
           nova_tag="${major}.${minor}.${patch}"
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
 
+      - name: Criar e enviar a nova tag
+        run: |
+          git tag ${{ steps.nova_tag.outputs.nova_tag }}
+          git push origin ${{ steps.nova_tag.outputs.nova_tag }}
+
   frontend:
     name: 🏗️ Frontend CI/CD
     needs: prepare-tag
@@ -111,15 +116,12 @@ jobs:
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          # Contexto é a raiz para que o Dockerfile veja a pasta Back/
           context: .
-          # Aponta para o Dockerfile que criamos em Back/Dockerfile
           file: Back/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
-
 
   create-release:
     name: 🚀 Criar Release
@@ -130,11 +132,16 @@ jobs:
       contents: write
 
     steps:
-      - name: Publicar Release no GitHub
-        uses: softprops/action-gh-release@v2
+      - uses: actions/checkout@v4
+
+      - name: Publicar release
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.prepare-tag.outputs.new_tag }}
           name: Release ${{ needs.prepare-tag.outputs.new_tag }}
           generate_release_notes: true
+          body: |
+            Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
+            Tipo de mudança: ${{ needs.prepare-tag.outputs.tipo }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
