@@ -2,21 +2,20 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copia toda a pasta Back com a estrutura completa
-COPY Back/ ./Back/
-
-# Entra na pasta Back
+# Copia csproj e restaura dependências
+COPY Back/*.csproj ./Back/
 WORKDIR /src/Back
+RUN dotnet restore
 
-# Restaura os pacotes
-RUN dotnet restore Back.sln
+# Copia o restante do projeto
+COPY Back/. ./
 
 # Publica o projeto
-RUN dotnet publish Back.API/Back.API.csproj -c Release -o /app/out
+RUN dotnet publish -c Release -o /app/out
 
 # Etapa de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /app/out .
+COPY --from=build /app/out ./
 EXPOSE 5000
-ENTRYPOINT ["dotnet", "Back.API.dll"]
+ENTRYPOINT ["dotnet", "Back.dll"]
