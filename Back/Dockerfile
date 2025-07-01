@@ -2,19 +2,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copia os arquivos de projeto para restaurar dependências
-COPY Back/Back.sln Back/
-COPY Back/Back.API/Back.API.csproj Back/Back.API/
-COPY Back/Back.Application/Back.Application.csproj Back/Back.Application/
-COPY Back/Back.Domain/Back.Domain.csproj Back/Back.Domain/
-COPY Back/Back.Infrastructure/Back.Infrastructure.csproj Back/Back.Infrastructure/
+# Copia toda a pasta Back com a estrutura completa
+COPY Back/ ./Back/
+
+# Entra na pasta Back
+WORKDIR /src/Back
 
 # Restaura os pacotes
-WORKDIR /src/Back
 RUN dotnet restore Back.sln
-
-# Copia o restante do código
-COPY Back/. ./
 
 # Publica o projeto
 RUN dotnet publish Back.API/Back.API.csproj -c Release -o /app/out
