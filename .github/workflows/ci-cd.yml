@@ -128,6 +128,9 @@ jobs:
     needs: [frontend, backend]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    env:
+      NEW_TAG: ${{ needs.prepare-tag.outputs.new_tag }}
+      TIPO:    ${{ needs.prepare-tag.outputs.tipo }}
     permissions:
       contents: write
 
@@ -137,11 +140,11 @@ jobs:
       - name: Publicar release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.prepare-tag.outputs.new_tag }}
-          name: Release ${{ needs.prepare-tag.outputs.new_tag }}
+          tag_name: ${{ env.NEW_TAG }}
+          name: Release ${{ env.NEW_TAG }}
           generate_release_notes: true
           body: |
             Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
-            Tipo de mudança: ${{ needs.prepare-tag.outputs.tipo }}
+            Tipo de mudança: ${{ env.TIPO }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
