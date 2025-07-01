@@ -2,7 +2,7 @@ name: Production CI/CD
 
 on:
   pull_request:
-    types: [closed]         
+    types: [closed]
     branches: [ "main" ]
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
         id: tipo
         run: |
           echo "${{ github.event.pull_request.body }}" > body.txt
-      
+
           tipo=""
           if grep -q "\[x\] marco-no-projeto" body.txt; then
             tipo="marco-no-projeto"
@@ -34,7 +34,7 @@ jobs:
           else
             echo "Nenhuma opção marcada corretamente em 'tipo:'"
           fi
-          
+
           echo "tipo=$tipo" >> "$GITHUB_OUTPUT"
 
       - name: Obter a última tag da release
@@ -59,60 +59,58 @@ jobs:
           nova_tag="${major}.${minor}.${patch}"
           echo "Nova tag: $nova_tag"
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
-  
+
   frontend:
-      name: Frontend CI/CD
-      runs-on: ubuntu-latest
-      needs: prepare-tag
-      permissions:
-        contents: write
-        packages: write
-      env:
-        TAG: ${{ needs.prepare-tag.outputs.new_tag }}
-  
-      steps:
-        - uses: actions/checkout@v4
+    name: Frontend CI/CD
+    runs-on: ubuntu-latest
+    needs: prepare-tag
+    permissions:
+      contents: write
+      packages: write
+    env:
+      TAG: ${{ needs.prepare-tag.outputs.new_tag }}
 
-        - name: Docker Login
-          uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-          with:
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ secrets.GH_PACKAGES_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Build and push Docker images
-          uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-          with:
-            context: ./frontend/
-            push: true
-            tags: ghcr.io/ifpebj-ti/polifarm-frontend:$TAG
-            
+      - name: Docker Login
+        uses: docker/login-action@v3.4.0
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend/
+          push: true
+          tags: horasdiscentes/frontend:${{ env.TAG }}
+
   backend:
-      name: Backend CI/CD
-      runs-on: ubuntu-latest
-      needs: prepare-tag
-      permissions:
-        contents: write
-        packages: write
-      env:
-        TAG: ${{ needs.prepare-tag.outputs.new_tag }}
-  
-      steps:
-        - uses: actions/checkout@v4
+    name: Backend CI/CD
+    runs-on: ubuntu-latest
+    needs: prepare-tag
+    permissions:
+      contents: write
+      packages: write
+    env:
+      TAG: ${{ needs.prepare-tag.outputs.new_tag }}
 
-        - name: Docker Login
-          uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
-          with:
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ secrets.GH_PACKAGES_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Build and push Docker images
-          uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-          with:
-            context: ./backend/
-            push: true
-            tags: ghcr.io/ifpebj-ti/polifarm-backend:$TAG
+      - name: Docker Login
+        uses: docker/login-action@v3.4.0
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/
+          push: true
+          tags: horasdiscentes/backend:${{ env.TAG }}
 
   create-release:
     name: Criar release
@@ -121,6 +119,7 @@ jobs:
     env:
       NEW_TAG: ${{ needs.prepare-tag.outputs.new_tag }}
       TIPO:    ${{ needs.prepare-tag.outputs.tipo }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -134,4 +133,4 @@ jobs:
             Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
             Tipo de mudança: ${{ env.TIPO }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

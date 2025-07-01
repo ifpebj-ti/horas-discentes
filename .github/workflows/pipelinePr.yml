@@ -8,67 +8,29 @@ on:
 
 jobs:
   frontend:
-      name: Frontend CI
-      runs-on: ubuntu-latest
-  
-      steps:
-        - uses: actions/checkout@v4
-        - uses: actions/setup-node@v3
-          with:
-            node-version: '18'
-        
-        - name: Install dependencies
-          run: |
-            cd frontend
-            npm install
-  
-        - name: Run ESLint
-          run: |
-            cd frontend
-            npm run lint
-            
-        - name: Run Build
-          run: |
-            cd frontend
-            docker build -t polifarm-frontend:latest .
-
-        - name: Docker Login
-          uses: docker/login-action@v3.4.0
-          with:
-            username: ${{ secrets.DOCKER_HUB_USER }}
-            password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-        
-        - name: Scan Docker image (Docker Scout)
-          run: |
-            curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-            sh install-scout.sh
-            docker scout quickview polifarm-frontend:latest
-            docker scout cves "-only-severity critical --exit-code 1 polifarm-frontend:latest || exit 0"
-
-  backend:
-    name: Backend CI
+    name: Frontend CI
     runs-on: ubuntu-latest
-  
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-node@v3
         with:
-          dotnet-version: '8.0'
-      
+          node-version: '18'
+
       - name: Install dependencies
         run: |
-          cd backend
-          dotnet restore
+          cd frontend
+          npm install
 
-      - name: Run Build
+      - name: Run ESLint
         run: |
-          cd backend
-          docker build -t polifarm-backend:latest .
-          
-      - name: Run Tests
+          cd frontend
+          npm run lint
+
+      - name: Build Docker image
         run: |
-          cd backend
-          echo "Ainda não tem testes"
+          cd frontend
+          docker build -t horasdiscentes/frontend:pr .
 
       - name: Docker Login
         uses: docker/login-action@v3.4.0
@@ -76,9 +38,47 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Scan Docker image (Docker Scout)
+      - name: Scan Docker image
         run: |
           curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
           sh install-scout.sh
-          docker scout quickview polifarm-backend:latest
-          docker scout cves "-only-severity critical --exit-code 1 polifarm-backend:latest || exit 0"
+          docker scout quickview horasdiscentes/frontend:pr
+          docker scout cves --only-severity critical --exit-code 1 horasdiscentes/frontend:pr || exit 0
+
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Restore dependencies
+        run: |
+          cd backend
+          dotnet restore
+
+      - name: Build Docker image
+        run: |
+          cd backend
+          docker build -t horasdiscentes/backend:pr .
+
+      - name: Run Tests
+        run: |
+          cd backend
+          echo "Ainda não há testes definidos."
+
+      - name: Docker Login
+        uses: docker/login-action@v3.4.0
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Scan Docker image
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+          sh install-scout.sh
+          docker scout quickview horasdiscentes/backend:pr
+          docker scout cves --only-severity critical --exit-code 1 horasdiscentes/backend:pr || exit 0
