@@ -119,7 +119,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t horas-discentes-backend:latest -f Back/Dockerfile Back/
+          docker build -t horas-discentes-backend:latest -f Back/Dockerfile .
 
       - name: Install Docker Scout
         run: |
