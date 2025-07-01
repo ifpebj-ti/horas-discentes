@@ -3,10 +3,11 @@ import { ReactNode } from 'react';
 type RoundedButtonProps = {
   text: string;
   icon?: ReactNode;
-  textColor?: string; // ex: "text-white"
-  bgColor?: string; // ex: "bg-blue-700"
+  textColor?: string;
+  bgColor?: string;
   onClick?: () => void;
   type?: 'button' | 'submit';
+  disabled?: boolean;
 };
 
 export const RoundedButton = ({
@@ -15,13 +16,18 @@ export const RoundedButton = ({
   textColor = 'text-white',
   bgColor = 'bg-blue-700',
   onClick,
-  type = 'button'
+  type = 'button',
+  disabled = false
 }: RoundedButtonProps) => {
   return (
     <button
       onClick={onClick}
       type={type}
-      className={`flex items-center justify-center gap-2 px-8 py-3 rounded-full ${bgColor} ${textColor} font-medium transition hover:opacity-90 w-full cursor-pointer`}
+      disabled={disabled}
+      className={`flex items-center justify-center gap-2 px-8 py-2 rounded-full font-medium transition w-full
+        ${bgColor} ${textColor}
+        ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 cursor-pointer'}
+      `}
     >
       {icon && <span className="w-5 h-5">{icon}</span>}
       <span>{text}</span>

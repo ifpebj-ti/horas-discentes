@@ -1,0 +1,68 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Back.Domain.Entities.Certificado;
+
+public class Certificado
+{
+    [Key]
+    public Guid Id { get; set; }
+
+    [Required(ErrorMessage = "O título da atividade é obrigatório.")]
+    public string TituloAtividade { get; set; }
+
+    [Required(ErrorMessage = "A instituição é obrigatória.")]
+    public string Instituicao { get; set; }
+
+    [Required(ErrorMessage = "O local é obrigatório.")]
+    public string Local { get; set; }
+
+    [Required(ErrorMessage = "A categoria é obrigatória.")]
+    public string Categoria { get; set; }
+
+    [Required(ErrorMessage = "O grupo é obrigatório.")]
+    public string Grupo { get; set; }
+
+    [Required(ErrorMessage = "O período letivo é obrigatório.")]
+    public string PeriodoLetivo { get; set; }
+
+    [Required(ErrorMessage = "A carga horária é obrigatória.")]
+    public int CargaHoraria { get; set; }
+
+    [Required(ErrorMessage = "A data de início é obrigatória.")]
+    public DateTime DataInicio { get; set; }
+
+    [Required(ErrorMessage = "A data de fim é obrigatória.")]
+    public DateTime DataFim { get; set; }
+
+    [Required(ErrorMessage = "O total de períodos é obrigatório.")]
+    public int TotalPeriodos { get; set; }
+
+    public string? Descricao { get; set; }
+
+    [Required(ErrorMessage = "O anexo é obrigatório.")]
+    public byte[] Anexo { get; set; }
+
+    public StatusCertificado Status { get; set; } = StatusCertificado.PENDENTE;
+
+    [Required(ErrorMessage = "O campo Tipo é obrigatório.")]
+    public TipoCertificado Tipo { get; set; }
+
+    [Required(ErrorMessage = "O campo AlunoId é obrigatório.")]
+    public Guid AlunoId { get; set; }
+
+    [Required(ErrorMessage = "O campo AtividadeId é obrigatório.")]
+    public Guid AtividadeId { get; set; }
+}
+
+public enum StatusCertificado
+{
+    PENDENTE,
+    APROVADO,
+    REPROVADO
+}
+
+public enum TipoCertificado
+{
+    EXTENSAO,
+    COMPLEMENTAR
+}

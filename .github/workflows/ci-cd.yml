@@ -1,85 +1,104 @@
 name: CI/CD Workflow
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'front/**'
-      - 'Back/**'
   pull_request:
-    branches:
-      - main
-    paths:
-      - 'front/**'
-      - 'Back/**'
+    types: [closed]
+    branches: [ "main" ]
 
 jobs:
+  prepare-tag:
+    name: 🏷️ Preparar nova tag
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.nova_tag.outputs.new_tag }}
+      tipo:    ${{ steps.tipo.outputs.tipo }}
+
+    steps:
+      - name:  checkout
+        uses: actions/checkout@v4
+
+      - name: Extrair tipo de mudança da PR
+        id: tipo
+        run: |
+          # Salva o corpo do PR em um arquivo para análise
+          echo "${{ github.event.pull_request.body }}" > body.txt
+      
+          tipo=""
+          if grep -q "\[x\] marco-no-projeto" body.txt; then
+            tipo="marco-no-projeto"
+          elif grep -q "\[x\] nova-feature" body.txt; then
+            tipo="nova-feature"
+          elif grep -q "\[x\] bug-fix" body.txt; then
+            tipo="bug-fix"
+          else
+            # Falha o job se nenhum tipo for selecionado, evitando releases acidentais
+            echo "Erro: Nenhum tipo de mudança foi selecionado no template do Pull Request."
+            exit 1
+          fi
+          
+          echo "tipo=$tipo" >> "$GITHUB_OUTPUT"
+
+      - name: Obter a última tag da release
+        id: ultima
+        run: |
+          # Busca a última tag de release. Se nenhuma existir, começa com 0.0.0
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          echo "Tag atual: $tag"
+          echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Calcular nova tag (SemVer)
+        id: nova_tag
+        run: |
+          IFS='.' read -r major minor patch <<< "${{ steps.ultima.outputs.tag_atual }}"
+          case "${{ steps.tipo.outputs.tipo }}" in
+            bug-fix)           patch=$((patch + 1));;
+            nova-feature)      minor=$((minor + 1)); patch=0;;
+            marco-no-projeto)  major=$((major + 1)); minor=0; patch=0;;
+          esac
+          nova_tag="${major}.${minor}.${patch}"
+          echo "Nova tag calculada: $nova_tag"
+          echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
+
   frontend:
-    name: Frontend CI/CD
+    name: 🏗️ Frontend CI/CD
+    needs: prepare-tag
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      security-events: write
     defaults:
       run:
         working-directory: front
-
+  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Lint
-        run: npm run lint
-
-      - name: Docker login to GitHub Container Registry
-        uses: docker/login-action@v2
+      - name: Docker Login
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker login to Docker Hub for Scout
-        uses: docker/login-action@v2
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          context: ./front/ 
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.prepare-tag.outputs.new_tag }}
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
 
-      - name: Build Docker image
-        run: |
-          docker build -t horas-discentes-frontend:latest -f Dockerfile .
-
-      - name: Install Docker Scout
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-          sh install-scout.sh
-
-      - name: Scan frontend image for critical vulnerabilities
-        run: |
-          docker scout cves --only-severity=critical --exit-code horas-discentes-frontend:latest
-          docker scout quickview horas-discentes-frontend:latest
-
-      - name: Push Docker image to GitHub Container Registry
-        run: |
-          docker tag horas-discentes-frontend:latest ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
 
   backend:
-    name: Backend CI/CD
+    name: 🏗️ Backend CI/CD
+    needs: prepare-tag
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      security-events: write
     defaults:
       run:
         working-directory: .
@@ -93,74 +112,33 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore Back/Back.csproj
-
-      - name: Run unit tests
-        run: dotnet test Back.Tests/Back.Tests.csproj --no-build --verbosity normal
-
-      - name: Docker login to GitHub Container Registry
-        uses: docker/login-action@v2
+      - name: Docker Login
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker login to Docker Hub for Scout
-        uses: docker/login-action@v2
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build Docker image
-        run: |
-          docker build -t horas-discentes-backend:latest -f Back/Dockerfile .
-
-      - name: Install Docker Scout
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-          sh install-scout.sh
-
-      - name: Scan backend image for critical vulnerabilities
-        run: |
-          docker scout cves --only-severity=critical --ignore-base horas-discentes-backend:latest
-          docker scout quickview horas-discentes-backend:latest
-
-      - name: Push Docker image to GitHub Container Registry
-        run: |
-          docker tag horas-discentes-backend:latest ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
-          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
-
-  deploy:
-    name: Deploy Application with Docker Compose
+          context: . 
+          file: ./Back/Dockerfile 
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
+  
+  create-release:
+    name: 🚀 Criar Release
+    needs: [frontend, backend]
     runs-on: ubuntu-latest
-    needs: [frontend, backend]  # Garante que o deploy ocorra após as etapas de frontend e backend.
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
-      - name: Start Application using Docker Compose
-        run: |
-          docker-compose -f docker-compose.yml up -d
-
-      - name: Check if Frontend is running
-        run: |
-          curl -f http://localhost:${{ secrets.PORT_MACHINE_FRONTEND }} || exit 1
-
-      - name: Check if Backend is running
-        run: |
-          curl -f http://localhost:${{ secrets.PORT_MACHINE_BACKEND }} || exit 1
-
-      - name: Run Database Migrations
-        run: |
-          docker exec -it horas-discentes-backend bash -c "dotnet ef database update"
-
-      - name: Start Portainer for container management
-        run: |
-          docker-compose -f docker-compose.yml up -d portainer
+      - name: Publicar Release no GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare-tag.outputs.new_tag }}
+          generate_release_notes: true

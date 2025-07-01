@@ -18,7 +18,7 @@ export const CardLogin = () => {
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">
-      <div className="flex items-start md:items-center justify-center bg-white pt-4 pb-0">
+      <div className="flex items-start md:items-center justify-center pt-4 pb-0">
         <Image
           src="/login.svg"
           alt="Login"
@@ -35,8 +35,11 @@ export const CardLogin = () => {
           </h1>
 
           <div className="mb-4">
-            <label className="block mb-1 text-sm">Email:</label>
+            <label htmlFor="email" className="block mb-1 text-sm">
+              Email:
+            </label>
             <Input
+              id="email"
               type="email"
               placeholder="Digite seu email institucional."
               icon={FaEnvelope}
@@ -50,8 +53,11 @@ export const CardLogin = () => {
           </div>
 
           <div className="mb-1">
-            <label className="block mb-1 text-sm">Senha:</label>
+            <label htmlFor="password" className="block mb-1 text-sm">
+              Senha:
+            </label>
             <InputPassword
+              id="password"
               placeholder="Digite sua senha de segurança."
               {...register('password')}
             />
@@ -68,9 +74,12 @@ export const CardLogin = () => {
           </p>
 
           <div className="text-right mb-4">
-            <a href="#" className="text-sm text-[#1351B4] hover:underline">
+            <button
+              type="button"
+              className="text-sm text-[#0a0b0b] hover:underline"
+            >
               Esqueceu a senha?
-            </a>
+            </button>
           </div>
 
           <div className="flex items-center mb-6">
@@ -92,7 +101,10 @@ export const CardLogin = () => {
           <hr className="my-6 border-t-2 border-gray-300 rounded-2xl" />
 
           <div className="text-center">
-            <a href="#" className="text-[#1351B4] font-medium hover:underline">
+            <a
+              href="primeiroAcesso"
+              className="text-[#1351B4] font-medium hover:underline"
+            >
               Primeiro Acesso?
             </a>
           </div>

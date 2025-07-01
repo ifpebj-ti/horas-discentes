@@ -5,18 +5,18 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 import {
   FaFileAlt,
-  FaUserGraduate,
-  FaUsers,
   FaEnvelope,
-  FaBuilding,
-  FaCog,
   FaHome,
   FaSignOutAlt,
-  FaClipboard
+  FaClipboard,
+  FaGraduationCap
 } from 'react-icons/fa';
 
 type Props = {
-  user: { name: string; role: string };
+  user: {
+    name: string;
+    role: string;
+  };
   closeMenu: () => void;
 };
 
@@ -70,27 +70,30 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
             <CustomNavLink href="/coordenacao" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />
             </CustomNavLink>
+            <CustomNavLink href="/coordenacao/turma" onClick={closeMenu}>
+              <IconText icon={FaGraduationCap} text="Turma" />
+            </CustomNavLink>
             <CustomNavLink href="/coordenacao/certificados" onClick={closeMenu}>
               <IconText icon={FaFileAlt} text="Validação de Certificados" />
             </CustomNavLink>
-            <CustomNavLink href="/coordenacao/turmas" onClick={closeMenu}>
-              <IconText icon={FaUserGraduate} text="Turmas" />
-            </CustomNavLink>
-            <CustomNavLink href="/coordenacao/alunos" onClick={closeMenu}>
+            {/* <CustomNavLink href="/coordenacao/alunos" onClick={closeMenu}>
               <IconText icon={FaUsers} text="Alunos" />
-            </CustomNavLink>
-            <CustomNavLink href="/coordenacao/secretaria" onClick={closeMenu}>
+            </CustomNavLink> */}
+            <CustomNavLink
+              href="/coordenacao/contabilizarHoras"
+              onClick={closeMenu}
+            >
               <IconText icon={FaEnvelope} text="Secretaria" />
             </CustomNavLink>
-            <CustomNavLink href="/coordenacao/campus" onClick={closeMenu}>
+            {/* <CustomNavLink href="/coordenacao/campus" onClick={closeMenu}>
               <IconText icon={FaBuilding} text="Campus" />
-            </CustomNavLink>
-            <CustomNavLink
+            </CustomNavLink> */}
+            {/* <CustomNavLink
               href="/coordenacao/configuracoes"
               onClick={closeMenu}
             >
               <IconText icon={FaCog} text="Configurações" />
-            </CustomNavLink>
+            </CustomNavLink> */}
           </>
         )}
 
@@ -100,11 +103,11 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
             <CustomNavLink href="/aluno" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />
             </CustomNavLink>
-            <CustomNavLink href="/aluno/meus-certificados" onClick={closeMenu}>
-              <IconText icon={FaFileAlt} text="Meus Certificados" />
+            <CustomNavLink href="/aluno/certificado" onClick={closeMenu}>
+              <IconText icon={FaClipboard} text="Certificados" />
             </CustomNavLink>
-            <CustomNavLink href="/aluno/enviar" onClick={closeMenu}>
-              <IconText icon={FaClipboard} text="Enviar Novo" />
+            <CustomNavLink href="/aluno/certificado/novo" onClick={closeMenu}>
+              <IconText icon={FaFileAlt} text="Enviar Certificados" />
             </CustomNavLink>
           </>
         )}
