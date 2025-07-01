@@ -1,25 +1,17 @@
-# Stage 1: restore & build
+# Etapa de build com SDK
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# 1) Copia só os arquivos de projeto + solução para usar cache no restore
-COPY Back/Back.API/Back.sln .
-COPY Back/Back.API/Back.API.csproj ./Back.API/
-COPY Back/Back.Application/Back.Application.csproj ./Back.Application/
-COPY Back/Back.Domain/Back.Domain.csproj ./Back.Domain/
-COPY Back/Back.Infrastructure/Back.Infrastructure.csproj ./Back.Infrastructure/
-
-# 2) Restore da solução inteira
-RUN dotnet restore Back.sln
-
-# 3) Copia todo o restante do código
+# 1) Copia TODO o repositório
 COPY . .
 
-# 4) Publica em RELEASE
-RUN dotnet publish Back/Back.API/Back.API.csproj -c Release -o /app/out
+# 2) Roda restore e publish no projeto API
+WORKDIR /src/Back/Back.API
+RUN dotnet restore
+RUN dotnet publish Back.API.csproj -c Release -o /app/out
 
-# Stage 2: runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Etapa de runtime mais enxuta
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out .
 ENTRYPOINT ["dotnet", "Back.API.dll"]
