@@ -7,6 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import { gerarCartaDocx } from '@/utils/docxGenerator';
+import { Certificado } from '@/types';
+
 // ----------------------------------------------------------------
 // Tipos
 
@@ -15,7 +18,12 @@ interface Aluno {
   id: number;
   nome: string;
   matricula: string;
+  telefone: string;      // <-- acrescentado
+  email: string;      // <-- acrescentado
+  curso: string;      // <-- acrescentado
+  certificados: Certificado[];
   cargaHorariaFinalizada: boolean;
+  cargaHoraria: number; // <-- acrescentado
   jaFezDownload: boolean;
   categoria: 'horasComplementares' | 'extensao';
 }
@@ -28,6 +36,40 @@ const alunosMock: Aluno[] = [
     id: 1,
     nome: 'Ana Silva Santos',
     matricula: '2023001',
+    telefone: '11999999999', // <-- acrescentado
+    email: 'ana.silva@example.com', // <-- acrescentado
+    curso: 'Engenharia de Software', // <-- acrescentado
+    certificados: [
+        {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+        },
+        {
+          id: 2,
+          grupo: 'II',
+          categoria: 'Categoria 1',
+          categoriaKey: 'Extensão',
+          title: 'Curso de Programação',
+          description: 'Curso de Programação Avançada',
+          cargaHoraria: 10,
+          local: 'UFPE',
+          periodoInicio: '2023-02-01',
+          periodoFim: '2023-06-01',
+          status: 'aprovado',
+          tipo: 'extensao'
+        }
+    ],
+    cargaHoraria: 120, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: false,
     categoria: 'horasComplementares'
@@ -36,6 +78,40 @@ const alunosMock: Aluno[] = [
     id: 2,
     nome: 'Carlos Eduardo Lima',
     matricula: '2023002',
+    telefone: '11999999998',
+    email: 'carlos.eduardo@example.com',
+    curso: 'Engenharia de Computação',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 300, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: true,
     categoria: 'extensao'
@@ -44,14 +120,82 @@ const alunosMock: Aluno[] = [
     id: 3,
     nome: 'Maria Fernanda Costa',
     matricula: '2023003',
+    telefone: '11999999997',
+    email: 'maria.fernanda@example.com',
+    curso: 'Ciência da Computação',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
     cargaHorariaFinalizada: true,
     jaFezDownload: false,
+    cargaHoraria: 120, // <-- acrescentado
     categoria: 'horasComplementares'
   },
   {
     id: 4,
     nome: 'João Pedro Oliveira',
     matricula: '2023004',
+    telefone: '11999999996',
+    email: 'joao.pedro@example.com',
+    curso: 'Sistemas de Informação',
+    certificados: [
+        {
+            id: 1,
+            grupo: 'I',
+            categoria: 'Categoria 2',
+            categoriaKey: 'Ensino',
+            title: 'Monitoria',
+            description: 'Monitoria',
+            cargaHoraria: 5,
+            local: 'UFPE',
+            periodoInicio: '2023-01-10',
+            periodoFim: '2023-05-10',
+            status: 'aprovado',
+            tipo: 'complementar'
+        },
+        {
+            id: 2,
+            grupo: 'II',
+            categoria: 'Categoria 1',
+            categoriaKey: 'Extensão',
+            title: 'Curso de Programação',
+            description: 'Curso de Programação Avançada',
+            cargaHoraria: 10,
+            local: 'UFPE',
+            periodoInicio: '2023-02-01',
+            periodoFim: '2023-06-01',
+            status: 'aprovado',
+            tipo: 'extensao'
+        }
+    ],
+    cargaHoraria: 200, // <-- acrescentado
     cargaHorariaFinalizada: false,
     jaFezDownload: false,
     categoria: 'extensao'
@@ -60,6 +204,40 @@ const alunosMock: Aluno[] = [
     id: 5,
     nome: 'Beatriz Almeida Rocha',
     matricula: '2023005',
+    telefone: '11999999995',
+    email: 'beatriz.almeida@example.com',
+    curso: 'Engenharia de Produção',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 150, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: true,
     categoria: 'horasComplementares'
@@ -68,6 +246,40 @@ const alunosMock: Aluno[] = [
     id: 6,
     nome: 'Rafael Santos Pereira',
     matricula: '2023006',
+    telefone: '11999999994',
+    email: 'rafael.santos@example.com',
+    curso: 'Engenharia Civil',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 180, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: false,
     categoria: 'extensao'
@@ -76,6 +288,40 @@ const alunosMock: Aluno[] = [
     id: 7,
     nome: 'Juliana Martins Silva',
     matricula: '2023007',
+    telefone: '11999999993',
+    email: 'juliana.martins@example.com',
+    curso: 'Ciência da Computação',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 120, // <-- acrescentado
     cargaHorariaFinalizada: false,
     jaFezDownload: false,
     categoria: 'horasComplementares'
@@ -84,6 +330,40 @@ const alunosMock: Aluno[] = [
     id: 8,
     nome: 'Pedro Henrique Souza',
     matricula: '2023008',
+    telefone: '11999999992',
+    email: 'pedro.henrique@example.com',
+    curso: 'Engenharia Mecânica',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 150, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: false,
     categoria: 'extensao'
@@ -92,6 +372,40 @@ const alunosMock: Aluno[] = [
     id: 9,
     nome: 'Camila Rodrigues Lima',
     matricula: '2023009',
+    telefone: '11999999991',
+    email: 'camila.rodrigues@example.com',
+    curso: 'Engenharia Elétrica',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 180, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: true,
     categoria: 'horasComplementares'
@@ -100,6 +414,40 @@ const alunosMock: Aluno[] = [
     id: 10,
     nome: 'Lucas Gabriel Santos',
     matricula: '2023010',
+    telefone: '11999999990',
+    email: 'lucas.gabriel@example.com',
+    curso: 'Engenharia Química',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 120, // <-- acrescentado
     cargaHorariaFinalizada: false,
     jaFezDownload: false,
     categoria: 'extensao'
@@ -108,6 +456,40 @@ const alunosMock: Aluno[] = [
     id: 11,
     nome: 'Amanda Cristina Alves',
     matricula: '2023011',
+    telefone: '11999999989',
+    email: 'amanda.cristina@example.com',
+    curso: 'Engenharia de Alimentos',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 150, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: false,
     categoria: 'horasComplementares'
@@ -116,6 +498,40 @@ const alunosMock: Aluno[] = [
     id: 12,
     nome: 'Gustavo Silva Ferreira',
     matricula: '2023012',
+    telefone: '11999999988',
+    email: 'gustavo.silva@example.com',
+    curso: 'Engenharia de Controle e Automação',
+    certificados: [
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
+    cargaHoraria: 180, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: true,
     categoria: 'extensao'
@@ -124,6 +540,40 @@ const alunosMock: Aluno[] = [
     id: 13,
     nome: 'Erison Silva Ferreira',
     matricula: '2023112',
+    telefone: '11999999987',
+    email: 'erison.silva@example.com',
+    curso: 'Engenharia de Software',
+    certificados: [
+        {
+            id: 1,
+            grupo: 'I',
+            categoria: 'Categoria 2',
+            categoriaKey: 'Ensino',
+            title: 'Monitoria',
+            description: 'Monitoria',
+            cargaHoraria: 5,
+            local: 'UFPE',
+            periodoInicio: '2023-01-10',
+            periodoFim: '2023-05-10',
+            status: 'aprovado',
+            tipo: 'complementar'
+        },
+        {
+            id: 2,
+            grupo: 'II',
+            categoria: 'Categoria 1',
+            categoriaKey: 'Extensão',
+            title: 'Curso de Programação',
+            description: 'Curso de Programação Avançada',
+            cargaHoraria: 10,
+            local: 'UFPE',
+            periodoInicio: '2023-02-01',
+            periodoFim: '2023-06-01',
+            status: 'aprovado',
+            tipo: 'extensao'
+        }
+        ],
+    cargaHoraria: 120, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: false,
     categoria: 'horasComplementares'
@@ -260,12 +710,25 @@ const GerenciamentoHoras: React.FC = () => {
   /* --------------------------------------------------------
    *  Download (mock)
    * -----------------------------------------------------*/
-  const handleDownloadAlunosSelecionados = () => {
-    if (alunosSelecionados.size === 0)
-      return alert('Selecione pelo menos um aluno.');
+  const handleDownloadAlunosSelecionados = async () => {
+    if (alunosSelecionados.size === 0) {
+      alert('Selecione pelo menos um aluno.');
+      return;
+    }
 
-    console.log('Baixando dados dos alunos:', Array.from(alunosSelecionados));
-    alert('Informações baixadas com sucesso!');
+    // Para cada aluno selecionado dispara um download
+    const selecionados = alunosMock.filter(a => alunosSelecionados.has(a.id));
+
+    for (const aluno of selecionados) {
+      await gerarCartaDocx([aluno]);
+      // opcional: marcar como "já fez download"
+      // (isso poderia ser feito com uma chamada à API real)
+      // mas aqui apenas atualizamos o estado local
+      // para simular o comportamento
+      // (isso poderia ser feito com uma chamada à API real)
+      aluno.cargaHorariaFinalizada = true; // Simula que a carga horária foi finalizada
+      aluno.jaFezDownload = true;
+    }
     setAlunosSelecionados(new Set());
   };
 

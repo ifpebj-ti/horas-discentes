@@ -119,3 +119,20 @@ export interface Coordenador {
   createdAt: string;
   updatedAt: string;
 }
+
+/**
+ * Interface Aluno
+ */
+export interface Aluno {
+  id: number;
+  nome: string;
+  matricula: string;
+  telefone: string;      // <-- acrescentado
+  email: string;      // <-- acrescentado
+  curso: string;      // <-- acrescentado
+  certificados: Certificado[];
+  cargaHorariaFinalizada: boolean;
+  jaFezDownload: boolean;
+  categoria: 'horasComplementares' | 'extensao';
+}
+
