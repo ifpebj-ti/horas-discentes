@@ -114,7 +114,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t horas-discentes-backend:latest -f Back/Dockerfile .  # Caminho corrigido para Dockerfile
+          docker build -t horas-discentes-backend:latest -f Back/Dockerfile Back/
 
       - name: Install Docker Scout
         run: |
