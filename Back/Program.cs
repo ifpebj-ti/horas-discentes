@@ -80,4 +80,4 @@ app.MapControllers();
 app.MapGet("/status", () => Results.Ok("Backend rodando e conectado ao banco!"));
 
 app.Run();
-"// trigger" 
+
