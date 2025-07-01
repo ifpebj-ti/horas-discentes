@@ -15,6 +15,7 @@ RUN dotnet restore Back.sln
 # Copia o restante do código
 COPY Back/. ./
 
+
 # Publica a aplicação
 RUN dotnet publish Back.API/Back.API.csproj -c Release -o /app/out
 
