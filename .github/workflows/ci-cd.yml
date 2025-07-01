@@ -17,11 +17,12 @@ jobs:
     steps:
       - name:  checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
 
       - name: Extrair tipo de mudança da PR
         id: tipo
         run: |
-          # Salva o corpo do PR em um arquivo para análise
           echo "${{ github.event.pull_request.body }}" > body.txt
       
           tipo=""
@@ -32,7 +33,6 @@ jobs:
           elif grep -q "\[x\] bug-fix" body.txt; then
             tipo="bug-fix"
           else
-            # Falha o job se nenhum tipo for selecionado, evitando releases acidentais
             echo "Erro: Nenhum tipo de mudança foi selecionado no template do Pull Request."
             exit 1
           fi
@@ -42,8 +42,7 @@ jobs:
       - name: Obter a última tag da release
         id: ultima
         run: |
-          # Busca a última tag de release. Se nenhuma existir, começa com 0.0.0
-          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "0.0.0")
           echo "Tag atual: $tag"
           echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
 
@@ -63,6 +62,7 @@ jobs:
   frontend:
     name: 🏗️ Frontend CI/CD
     needs: prepare-tag
+    if: github.event.pull_request.merged == true 
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -85,23 +85,23 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./front/ 
+          context: ./front/
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.prepare-tag.outputs.new_tag }}
             ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
 
-
   backend:
     name: 🏗️ Backend CI/CD
     needs: prepare-tag
+    if: github.event.pull_request.merged == true 
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     defaults:
       run:
-        working-directory: .
+        working-directory: Back
 
     steps:
       - name: Checkout repository
@@ -122,8 +122,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: . 
-          file: ./Back/Dockerfile 
+          context: .
+          file: ./Back/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
@@ -132,6 +132,7 @@ jobs:
   create-release:
     name: 🚀 Criar Release
     needs: [frontend, backend]
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
