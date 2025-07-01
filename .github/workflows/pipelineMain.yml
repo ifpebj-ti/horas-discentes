@@ -1,136 +1,33 @@
-name: Production CI/CD
-
-on:
-  pull_request:
-    types: [closed]
-    branches: [ "main" ]
-
 jobs:
-  prepare-tag:
-    name: Preparar nova tag
+  build-and-deploy:
     runs-on: ubuntu-latest
-    outputs:
-      new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
-      tipo:    ${{ steps.tipo.outputs.tipo }}
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
 
-      - name: Instalar GitHub CLI
-        run: sudo apt-get install -y gh
-
-      - name: Extrair tipo de mudança da PR
-        id: tipo
-        run: |
-          echo "${{ github.event.pull_request.body }}" > body.txt
-
-          tipo=""
-          if grep -q "\[x\] marco-no-projeto" body.txt; then
-            tipo="marco-no-projeto"
-          elif grep -q "\[x\] nova-feature" body.txt; then
-            tipo="nova-feature"
-          elif grep -q "\[x\] bug-fix" body.txt; then
-            tipo="bug-fix"
-          else
-            echo "Nenhuma opção marcada corretamente em 'tipo:'"
-          fi
-
-          echo "tipo=$tipo" >> "$GITHUB_OUTPUT"
-
-      - name: Obter a última tag da release
-        id: ultima
-        run: |
-          gh auth setup-git
-          tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
-          if [[ -z "$tag" ]]; then tag="0.0.0"; fi
-          echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Calcular nova tag
-        id: nova_tag
-        run: |
-          IFS='.' read -r major minor patch <<< "${{ steps.ultima.outputs.tag_atual }}"
-          case "${{ steps.tipo.outputs.tipo }}" in
-            bug-fix)           patch=$((patch + 1));;
-            nova-feature)      minor=$((minor + 1)); patch=0;;
-            marco-no-projeto)  major=$((major + 1)); minor=0; patch=0;;
-          esac
-          nova_tag="${major}.${minor}.${patch}"
-          echo "Nova tag: $nova_tag"
-          echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
-
-  frontend:
-    name: Frontend CI/CD
-    runs-on: ubuntu-latest
-    needs: prepare-tag
-    permissions:
-      contents: write
-      packages: write
-    env:
-      TAG: ${{ needs.prepare-tag.outputs.new_tag }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Docker Login
-        uses: docker/login-action@v3.4.0
+      - name: Login do Docker
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build e push do backend
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend/
+          context: ./Back
           push: true
-          tags: horasdiscentes/frontend:${{ env.TAG }}
+          tags: horasdiscentes/backend:0.1.0
 
-  backend:
-    name: Backend CI/CD
-    runs-on: ubuntu-latest
-    needs: prepare-tag
-    permissions:
-      contents: write
-      packages: write
-    env:
-      TAG: ${{ needs.prepare-tag.outputs.new_tag }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Docker Login
-        uses: docker/login-action@v3.4.0
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
-      - name: Build and push Docker image
+      - name: Build e push do frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./backend/
+          context: ./front
           push: true
-          tags: horasdiscentes/backend:${{ env.TAG }}
+          tags: horasdiscentes/frontend:0.1.0
 
-  create-release:
-    name: Criar release
-    runs-on: ubuntu-latest
-    needs: prepare-tag
-    env:
-      NEW_TAG: ${{ needs.prepare-tag.outputs.new_tag }}
-      TIPO:    ${{ needs.prepare-tag.outputs.tipo }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Publicar release
+      - name: Criar release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.NEW_TAG }}
-          name: Release ${{ env.NEW_TAG }}
-          generate_release_notes: true
-          body: |
-            Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
-            Tipo de mudança: ${{ env.TIPO }}
+          tag_name: 0.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
