@@ -1,18 +1,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ["Back/Back.API/Back.sln", "Back.API/"]
-COPY ["Back/Back.API/Back.API.csproj", "Back.API/"]
-COPY ["Back/Back.Application/Back.Application.csproj", "Back.Application/"]
-COPY ["Back/Back.Domain/Back.Domain.csproj", "Back.Domain/"]
-COPY ["Back/Back.Infrastructure/Back.Infrastructure.csproj", "Back.Infrastructure/"]
+COPY Back.API/Back.sln Back.API/
+COPY Back.API/Back.API.csproj Back.API/
+COPY Back.Application/Back.Application.csproj Back.Application/
+COPY Back.Domain/Back.Domain.csproj Back.Domain/
+COPY Back.Infrastructure/Back.Infrastructure.csproj Back.Infrastructure/
 
-RUN dotnet restore "Back.API/Back.sln"
+WORKDIR /src/Back.API
+RUN dotnet restore "Back.sln"
 
-COPY . .
+COPY Back.API/. Back.API/
+COPY Back.Application/. Back.Application/
+COPY Back.Domain/. Back.Domain/
+COPY Back.Infrastructure/. Back.Infrastructure/
 
-WORKDIR "/src/Back.API"
-RUN dotnet publish "Back.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "Back.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
