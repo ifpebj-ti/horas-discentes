@@ -24,8 +24,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extrair tipo de mudança da PR
-        id: tipo
+      - id: tipo
+        name: Extrair tipo de mudança da PR
         run: |
           echo "${{ github.event.pull_request.body }}" > body.txt
           tipo=""
@@ -41,14 +41,14 @@ jobs:
           fi
           echo "tipo=$tipo" >> "$GITHUB_OUTPUT"
 
-      - name: Obter a última tag da release
-        id: ultima
+      - id: ultima
+        name: Obter a última tag da release
         run: |
-          tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "0.0.0")
+          tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0")
           echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
 
-      - name: Calcular nova tag (SemVer)
-        id: nova_tag
+      - id: nova_tag
+        name: Calcular nova tag (SemVer)
         run: |
           IFS='.' read -r major minor patch <<< "${{ steps.ultima.outputs.tag_atual }}"
           case "${{ steps.tipo.outputs.tipo }}" in
@@ -67,9 +67,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    defaults:
-      run:
-        working-directory: front
 
     steps:
       - name: Checkout repository
@@ -82,10 +79,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./front
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.prepare-tag.outputs.new_tag }}
@@ -99,9 +96,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    defaults:
-      run:
-        working-directory: Back
 
     steps:
       - name: Checkout repository
@@ -119,11 +113,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: Dockerfile
+          context: ./Back
+          file: ./Back/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
