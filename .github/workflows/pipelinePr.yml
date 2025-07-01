@@ -3,8 +3,8 @@ name: Pull requests CI
 on:
   pull_request:
     paths:
-      - 'frontend/**'
-      - 'backend/**'
+      - 'front/**'
+      - 'Back/**'
 
 jobs:
   frontend:
@@ -19,18 +19,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd frontend
+          cd front
           npm install
 
       - name: Run ESLint
         run: |
-          cd frontend
+          cd front
           npm run lint
 
-      - name: Build Docker image
+      - name: Run Build
         run: |
-          cd frontend
-          docker build -t horasdiscentes/frontend:pr .
+          cd front
+          docker build -t horasdiscentes-frontend:latest .
 
       - name: Docker Login
         uses: docker/login-action@v3.4.0
@@ -38,12 +38,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Scan Docker image
+      - name: Scan Docker image (Docker Scout)
         run: |
           curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
           sh install-scout.sh
-          docker scout quickview horasdiscentes/frontend:pr
-          docker scout cves --only-severity critical --exit-code 1 horasdiscentes/frontend:pr || exit 0
+          docker scout quickview horasdiscentes-frontend:latest
+          docker scout cves "-only-severity critical --exit-code 1 horasdiscentes-frontend:latest || exit 0"
 
   backend:
     name: Backend CI
@@ -55,20 +55,20 @@ jobs:
         with:
           dotnet-version: '8.0'
 
-      - name: Restore dependencies
+      - name: Install dependencies
         run: |
-          cd backend
+          cd Back
           dotnet restore
 
-      - name: Build Docker image
+      - name: Run Build
         run: |
-          cd backend
-          docker build -t horasdiscentes/backend:pr .
+          cd Back
+          docker build -t horasdiscentes-backend:latest .
 
       - name: Run Tests
         run: |
-          cd backend
-          echo "Ainda não há testes definidos."
+          cd Back
+          echo "Ainda não tem testes"
 
       - name: Docker Login
         uses: docker/login-action@v3.4.0
@@ -76,9 +76,9 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Scan Docker image
+      - name: Scan Docker image (Docker Scout)
         run: |
           curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
           sh install-scout.sh
-          docker scout quickview horasdiscentes/backend:pr
-          docker scout cves --only-severity critical --exit-code 1 horasdiscentes/backend:pr || exit 0
+          docker scout quickview horasdiscentes-backend:latest
+          docker scout cves "-only-severity critical --exit-code 1 horasdiscentes-backend:latest || exit 0"
