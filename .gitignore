@@ -1,1 +1,2 @@
 -e "bin/\nobj/\n*.pem" 
+-e "bin/\nobj/\n*.pem" 
