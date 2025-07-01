@@ -110,8 +110,19 @@ jobs:
       - name: Docker login to Docker Hub for Scout
         uses: docker/login-action@v2
         with:
+<<<<<<< Updated upstream
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+=======
+          # Contexto é a raiz para que o Dockerfile veja a pasta Back/
+          context: .
+          # Aponta para o Dockerfile que criamos em Back/Dockerfile
+          file: ./Back/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
+>>>>>>> Stashed changes
 
       - name: Build Docker image
         run: |
