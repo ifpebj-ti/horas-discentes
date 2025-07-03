@@ -1,6 +1,7 @@
 ﻿using Back.Application.Interfaces;
 using Back.Application.Interfaces.Identity;
 using Back.Application.Interfaces.Repositories;
+using Back.Application.UseCases.Certificado;
 using Back.Infrastructure.Persistence.Repositories;
 using Back.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
@@ -26,8 +27,10 @@ public static class DependencyInjection
         services.AddScoped<IConviteCoordenadorRepository, ConviteCoordenadorRepository>();
         services.AddScoped<ICoordenadorRepository, CoordenadorRepository>();
         services.AddScoped<IAuthService, AuthService>();
-
-
+        services.AddScoped<IAtividadeRepository, AtividadeRepository>();
+        services.AddScoped<IAlunoAtividadeRepository, AlunoAtividadeRepository>();
+        services.AddScoped<ICertificadoRepository, CertificadoRepository>();
+        services.AddScoped<AtualizarStatusCertificadoUseCase>();
         return services;
     }
 }

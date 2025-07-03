@@ -1,5 +1,7 @@
 ﻿using Back.Application.UseCases.Aluno;
+using Back.Application.UseCases.Atividade;
 using Back.Application.UseCases.Auth;
+using Back.Application.UseCases.Certificado;
 using Back.Application.UseCases.Coordenador;
 using Back.Application.UseCases.Curso;
 using Back.Application.UseCases.Turma;
@@ -34,7 +36,13 @@ public static class DependencyInjection
         //coordenador
         services.AddScoped<EnviarConviteUseCase>();
         services.AddScoped<CriarCoordenadorUseCase>();
+        services.AddScoped<GetAtividadesByCursoIdUseCase>();
 
+        //certificado
+        services.AddScoped<CreateCertificadoUseCase>();
+        services.AddScoped<GetCertificadosUseCase>();
+        services.AddScoped<GetCertificadosDoAlunoAutenticadoUseCase>();
+        services.AddScoped<AtualizarStatusCertificadoUseCase>();
 
         return services;
     }

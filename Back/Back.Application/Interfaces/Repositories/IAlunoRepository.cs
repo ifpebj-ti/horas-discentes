@@ -8,4 +8,6 @@ public interface IAlunoRepository
 {
     Task AddAsync(Aluno aluno);
     Task<Aluno?> GetByIdAsync(Guid id);
+    Task<Aluno?> GetByIdentityUserIdAsync(string identityUserId);
+
 }

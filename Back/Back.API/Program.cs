@@ -2,6 +2,7 @@ using Back.API.Configurations;
 using Back.Application;
 using Back.Infrastructure;
 using Back.Infrastructure.Persistence.Context;
+using Back.Infrastructure.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -54,7 +55,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// App DI: Application & Infrastructure
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -73,7 +73,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Middleware pipeline
 app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
@@ -84,11 +83,22 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// AUTH: JWT
-app.UseAuthentication(); // importante: vem antes do Authorization
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 
 app.MapControllers();
+
+//seedando os dados iniciais no banco de dados para Atividades
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+//    //  Substitua esse Guid pelo ID real do curso que você já cadastrou
+//    var cursoId = new Guid("INSIRA_O_ID_DO_CURSO");
+
+//    await AtividadeSeeder.SeedAsync(db, cursoId);
+//}
 
 app.Run();

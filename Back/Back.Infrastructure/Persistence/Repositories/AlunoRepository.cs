@@ -28,4 +28,10 @@ public class AlunoRepository : IAlunoRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.Id == id);
     }
+    public async Task<Aluno?> GetByIdentityUserIdAsync(string identityUserId)
+    {
+        return await _context.Alunos
+            .FirstOrDefaultAsync(a => a.IdentityUserId == identityUserId);
+    }
+
 }
