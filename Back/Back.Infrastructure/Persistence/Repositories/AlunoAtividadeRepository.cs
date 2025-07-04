@@ -26,7 +26,12 @@ public class AlunoAtividadeRepository : IAlunoAtividadeRepository
     public async Task<AlunoAtividade?> GetByAlunoEAtividadeAsync(Guid alunoId, Guid atividadeId)
     {
         return await _context.AlunoAtividades
-            .AsNoTracking()
+            .Include(aa => aa.Atividade) 
             .FirstOrDefaultAsync(aa => aa.AlunoId == alunoId && aa.AtividadeId == atividadeId);
+    }
+    public async Task UpdateAsync(AlunoAtividade alunoAtividade)
+    {
+        _context.AlunoAtividades.Update(alunoAtividade);
+        await _context.SaveChangesAsync();
     }
 }

@@ -9,4 +9,5 @@ public interface IAlunoAtividadeRepository
 {
     Task AddRangeAsync(IEnumerable<AlunoAtividade> alunoAtividades);
     Task<AlunoAtividade?> GetByAlunoEAtividadeAsync(Guid alunoId, Guid atividadeId);
+    Task UpdateAsync(AlunoAtividade alunoAtividade);
 }

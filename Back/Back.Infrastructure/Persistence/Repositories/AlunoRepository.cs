@@ -1,8 +1,10 @@
 ﻿using Back.Application.Interfaces.Repositories;
 using Back.Domain.Entities.Aluno;
 using Back.Infrastructure.Persistence.Context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Back.Infrastructure.Persistence.Repositories;
@@ -10,10 +12,11 @@ namespace Back.Infrastructure.Persistence.Repositories;
 public class AlunoRepository : IAlunoRepository
 {
     private readonly ApplicationDbContext _context;
-
-    public AlunoRepository(ApplicationDbContext context)
+    private readonly UserManager<IdentityUser> _userManager;
+    public AlunoRepository(ApplicationDbContext context, UserManager<IdentityUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task AddAsync(Aluno aluno)
@@ -31,6 +34,62 @@ public class AlunoRepository : IAlunoRepository
     public async Task<Aluno?> GetByIdentityUserIdAsync(string identityUserId)
     {
         return await _context.Alunos
+            .FirstOrDefaultAsync(a => a.IdentityUserId == identityUserId);
+    }
+    public async Task<IEnumerable<Aluno>> GetAllWithAtividadesAsync()
+    {
+        return await _context.Alunos
+            .Include(a => a.Turma)
+            .Include(a => a.Atividades)
+                .ThenInclude(aa => aa.Atividade)
+            .ToListAsync();
+    }
+
+    public async Task<Aluno?> GetByIdWithAtividadesAsync(Guid id)
+    {
+        return await _context.Alunos
+            .Include(a => a.Turma)
+            .Include(a => a.Atividades)
+                .ThenInclude(aa => aa.Atividade)
+            .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
+    public async Task UpdateAsync(Aluno aluno)
+    {
+        _context.Alunos.Update(aluno);
+        await _context.SaveChangesAsync();
+    }
+    public async Task DeleteAsync(Aluno aluno)
+    {
+        _context.Alunos.Remove(aluno);
+        await _context.SaveChangesAsync();
+    }
+    public async Task DeleteComIdentityAsync(Guid alunoId)
+    {
+        var aluno = await _context.Alunos.FirstOrDefaultAsync(a => a.Id == alunoId);
+
+        if (aluno == null) return;
+
+        // Remove o usuário da AspNetUsers
+        if (!string.IsNullOrWhiteSpace(aluno.IdentityUserId))
+        {
+            var identityUser = await _userManager.FindByIdAsync(aluno.IdentityUserId);
+            if (identityUser != null)
+            {
+                await _userManager.DeleteAsync(identityUser);
+            }
+        }
+
+        // Remove o aluno
+        _context.Alunos.Remove(aluno);
+        await _context.SaveChangesAsync();
+    }
+    public async Task<Aluno?> GetByIdentityUserIdWithAtividadesAsync(string identityUserId)
+    {
+        return await _context.Alunos
+            .Include(a => a.Turma)
+            .Include(a => a.Atividades)
+                .ThenInclude(aa => aa.Atividade)
             .FirstOrDefaultAsync(a => a.IdentityUserId == identityUserId);
     }
 

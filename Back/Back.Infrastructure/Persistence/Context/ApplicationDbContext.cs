@@ -60,5 +60,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .WithMany() // ou WithOne() se for 1:1
             .HasForeignKey(c => c.AlunoAtividadeId);
 
+        modelBuilder.Entity<Certificado>()
+            .Property(c => c.Anexo)
+            .HasColumnType("bytea");
+
+
+
     }
 }

@@ -96,9 +96,37 @@ app.MapControllers();
 //    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
 //    //  Substitua esse Guid pelo ID real do curso que você já cadastrou
-//    var cursoId = new Guid("INSIRA_O_ID_DO_CURSO");
+//    var cursoId = new Guid("c77b9418-8892-41c4-899b-e25d399c088b");
 
 //    await AtividadeSeeder.SeedAsync(db, cursoId);
+
+//    Console.WriteLine("Atividades seedadas com sucesso.");
 //}
 
+//para rodar usar (dotnet run --project Back.API -- --seed)
+if (args.Contains("--seed"))
+{
+    await SeedDatabaseAsync(app);
+    return;
+}
 app.Run();
+async Task SeedDatabaseAsync(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    var roles = new[] { "ALUNO", "COORDENADOR", "ADMIN" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+    }
+
+    await Back.Infrastructure.Seeders.AdminSeeder.SeedAsync(context, userManager);
+
+    Console.WriteLine("Seed executado com sucesso.");
+}

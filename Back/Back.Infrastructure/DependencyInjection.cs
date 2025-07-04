@@ -30,7 +30,8 @@ public static class DependencyInjection
         services.AddScoped<IAtividadeRepository, AtividadeRepository>();
         services.AddScoped<IAlunoAtividadeRepository, AlunoAtividadeRepository>();
         services.AddScoped<ICertificadoRepository, CertificadoRepository>();
-        services.AddScoped<AtualizarStatusCertificadoUseCase>();
+        services.AddScoped<ILimiteHorasAlunoRepository, LimiteHorasAlunoRepository>();
+
         return services;
     }
 }

@@ -13,4 +13,6 @@ public interface ITurmaRepository
     Task<Turma?> GetByIdAsync(Guid id);
     Task<bool> ExistsAsync(Guid id);
     Task<IEnumerable<Aluno>> GetAlunosByTurmaAsync(Guid turmaId);
+    Task<IEnumerable<Turma>> GetByCursoIdAsync(Guid cursoId);
+
 }

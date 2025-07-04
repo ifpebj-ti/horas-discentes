@@ -41,13 +41,33 @@ public class CertificadoRepository : ICertificadoRepository
 
     public async Task<Certificado?> GetByIdAsync(Guid id)
     {
-        return await _context.Certificados.FindAsync(id);
+        return await _context.Certificados
+            .Include(c => c.AlunoAtividade)
+                .ThenInclude(aa => aa!.Atividade)
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
+
+
 
     public async Task UpdateAsync(Certificado certificado)
     {
         _context.Certificados.Update(certificado);
         await _context.SaveChangesAsync();
     }
+    public async Task<IEnumerable<Certificado>> GetByAlunoAtividadeAsync(Guid alunoAtividadeId)
+    {
+        return await _context.Certificados
+            .Where(c => c.AlunoAtividadeId == alunoAtividadeId)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+    public async Task<Certificado?> GetByIdWithAlunoAtividadeAsync(Guid id)
+    {
+        return await _context.Certificados
+            .Include(c => c.AlunoAtividade)
+                .ThenInclude(aa => aa!.Atividade)
+            .FirstOrDefaultAsync(c => c.Id == id);
+    }
+
 
 }
