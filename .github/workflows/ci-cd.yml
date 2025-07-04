@@ -1,9 +1,13 @@
-name: CI/CD Workflow
+name: Automatic Release CI/CD
 
 on:
   pull_request:
     types: [closed]
-    branches: [ "main" ]
+    branches: ["main"]
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   prepare-tag:
@@ -11,19 +15,19 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
-      new_tag: ${{ steps.nova_tag.outputs.new_tag }}
+      new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
       tipo:    ${{ steps.tipo.outputs.tipo }}
 
     steps:
-      - name:  checkout
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Extrair tipo de mudança da PR
-        id: tipo
+      - id: tipo
+        name: Extrair tipo de mudança da PR
         run: |
-          # Salva o corpo do PR em um arquivo para análise
           echo "${{ github.event.pull_request.body }}" > body.txt
-      
           tipo=""
           if grep -q "\[x\] marco-no-projeto" body.txt; then
             tipo="marco-no-projeto"
@@ -32,23 +36,19 @@ jobs:
           elif grep -q "\[x\] bug-fix" body.txt; then
             tipo="bug-fix"
           else
-            # Falha o job se nenhum tipo for selecionado, evitando releases acidentais
             echo "Erro: Nenhum tipo de mudança foi selecionado no template do Pull Request."
             exit 1
           fi
-          
           echo "tipo=$tipo" >> "$GITHUB_OUTPUT"
 
-      - name: Obter a última tag da release
-        id: ultima
+      - id: ultima
+        name: Obter a última tag da release
         run: |
-          # Busca a última tag de release. Se nenhuma existir, começa com 0.0.0
-          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
-          echo "Tag atual: $tag"
+          tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0")
           echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
 
-      - name: Calcular nova tag (SemVer)
-        id: nova_tag
+      - id: nova_tag
+        name: Calcular nova tag (SemVer)
         run: |
           IFS='.' read -r major minor patch <<< "${{ steps.ultima.outputs.tag_atual }}"
           case "${{ steps.tipo.outputs.tipo }}" in
@@ -57,20 +57,17 @@ jobs:
             marco-no-projeto)  major=$((major + 1)); minor=0; patch=0;;
           esac
           nova_tag="${major}.${minor}.${patch}"
-          echo "Nova tag calculada: $nova_tag"
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
 
   frontend:
     name: 🏗️ Frontend CI/CD
     needs: prepare-tag
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    defaults:
-      run:
-        working-directory: front
-  
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -82,35 +79,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./front/ 
+          context: ./front
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.prepare-tag.outputs.new_tag }}
             ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
 
-
   backend:
     name: 🏗️ Backend CI/CD
     needs: prepare-tag
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-    defaults:
-      run:
-        working-directory: Back
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
 
       - name: Docker Login
         uses: docker/login-action@v3
@@ -119,26 +108,38 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: . 
-          file: ./Back/Dockerfile 
+          context: .
+          file: Back/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
-  
+
   create-release:
     name: 🚀 Criar Release
     needs: [frontend, backend]
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    env:
+      NEW_TAG: ${{ needs.prepare-tag.outputs.new_tag }}
+      TIPO:    ${{ needs.prepare-tag.outputs.tipo }}
     permissions:
       contents: write
 
     steps:
-      - name: Publicar Release no GitHub
-        uses: softprops/action-gh-release@v2
+      - uses: actions/checkout@v4
+
+      - name: Publicar release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.prepare-tag.outputs.new_tag }}
+          tag_name: ${{ env.NEW_TAG }}
+          name: Release ${{ env.NEW_TAG }}
           generate_release_notes: true
+          body: |
+            Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
+            Tipo de mudança: ${{ env.TIPO }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

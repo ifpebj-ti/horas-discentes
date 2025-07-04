@@ -10,6 +10,7 @@ using Back.Domain.Entities.LimiteHorasAluno;
 using Back.Domain.Entities.Convite;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Back.Domain.Entities.AlunoAtividade;
 
 namespace Back.Infrastructure.Persistence.Context;
 
@@ -29,6 +30,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Atividade> Atividades { get; set; }
     public DbSet<LimiteHorasAluno> LimitesHoras { get; set; }
     public DbSet<ConviteCoordenador> Convites { get; set; }
+    public DbSet<AlunoAtividade> AlunoAtividades { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,13 +44,27 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         // Turma -> Curso
         modelBuilder.Entity<Turma>()
             .HasOne(t => t.Curso)
-            .WithMany()
+            .WithMany(c => c.Turmas)
             .HasForeignKey(t => t.CursoId);
+
 
         // Coordenador -> Curso
         modelBuilder.Entity<Coordenador>()
             .HasOne(c => c.Curso)
-            .WithMany()
+            .WithMany(curso => curso.Coordenadores)
             .HasForeignKey(c => c.CursoId);
+
+        // Certificado -> AlunoAtividade
+        modelBuilder.Entity<Certificado>()
+            .HasOne(c => c.AlunoAtividade)
+            .WithMany() // ou WithOne() se for 1:1
+            .HasForeignKey(c => c.AlunoAtividadeId);
+
+        modelBuilder.Entity<Certificado>()
+            .Property(c => c.Anexo)
+            .HasColumnType("bytea");
+
+
+
     }
 }

@@ -7,6 +7,7 @@ public class AlunoBuilder
     public AlunoBuilder()
     {
         _aluno.JaBaixadoHoras = false;
+        _aluno.IsAtivo = true;
     }
 
     public AlunoBuilder WithId(Guid id)
@@ -42,6 +43,12 @@ public class AlunoBuilder
     public AlunoBuilder WithIdentityUserId(string identityUserId)
     {
         _aluno.IdentityUserId = identityUserId;
+        return this;
+    }
+
+    public AlunoBuilder WithIsAtivo(bool isAtivo)
+    {
+        _aluno.IsAtivo = isAtivo;
         return this;
     }
 

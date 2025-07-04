@@ -47,4 +47,12 @@ public class TurmaRepository : ITurmaRepository
             .Where(a => a.TurmaId == turmaId)
             .ToListAsync();
     }
+    public async Task<IEnumerable<Turma>> GetByCursoIdAsync(Guid cursoId)
+    {
+        return await _context.Turmas
+            .AsNoTracking()
+            .Where(t => t.CursoId == cursoId)
+            .ToListAsync();
+    }
+
 }

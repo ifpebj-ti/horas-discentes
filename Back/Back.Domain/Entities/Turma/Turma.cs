@@ -8,17 +8,17 @@ public class Turma
     public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O campo Período é obrigatório.")]
-    public string Periodo { get; set; }
+    public string? Periodo { get; set; }
 
     [Required(ErrorMessage = "O campo Turno é obrigatório.")]
-    public string Turno { get; set; }
+    public string? Turno { get; set; }
 
     public bool PossuiExtensao { get; set; }
 
     [Required(ErrorMessage = "O campo CursoId é obrigatório.")]
     public Guid CursoId { get; set; }
 
-    public Curso.Curso Curso { get; private set; }
+    public Curso.Curso? Curso { get; private set; }
 
     public ICollection<Aluno.Aluno> Alunos { get; private set; }
 
