@@ -37,7 +37,6 @@ export default function AlunoLayout({
     email: session?.user.email || '',
     role: session?.user.role || ''
   };
-
   return (
     <ProtectedLayout allowedRoles={['aluno']}>
       <div className="min-h-screen bg-white text-black">
