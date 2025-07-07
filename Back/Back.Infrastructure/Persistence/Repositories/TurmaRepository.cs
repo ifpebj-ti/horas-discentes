@@ -27,12 +27,18 @@ public class TurmaRepository : ITurmaRepository
 
     public async Task<IEnumerable<Turma>> GetAllAsync()
     {
-        return await _context.Turmas.AsNoTracking().ToListAsync();
+        return await _context.Turmas
+            .Include(t => t.Curso)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<Turma?> GetByIdAsync(Guid id)
     {
-        return await _context.Turmas.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
+        return await _context.Turmas
+            .Include(t => t.Curso)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == id);
     }
 
     public async Task<bool> ExistsAsync(Guid id)
@@ -50,6 +56,7 @@ public class TurmaRepository : ITurmaRepository
     public async Task<IEnumerable<Turma>> GetByCursoIdAsync(Guid cursoId)
     {
         return await _context.Turmas
+            .Include(t => t.Curso)
             .AsNoTracking()
             .Where(t => t.CursoId == cursoId)
             .ToListAsync();

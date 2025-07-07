@@ -1,11 +1,13 @@
 ﻿using Back.Application.DTOs.Auth;
 using Back.Application.UseCases.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Back.API.Controllers;
 
 [ApiController]
+[AllowAnonymous]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {

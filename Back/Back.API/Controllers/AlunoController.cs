@@ -44,7 +44,7 @@ public class AlunoController : ControllerBase
     /// <response code="201">Aluno criado com sucesso.</response>
     /// <response code="400">Dados inválidos ou erro de validação.</response>
     [HttpPost]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [AllowAnonymous]
     public async Task<IActionResult> Criar([FromBody] CreateAlunoRequest request)
     {
         var result = await _create.ExecuteAsync(request);

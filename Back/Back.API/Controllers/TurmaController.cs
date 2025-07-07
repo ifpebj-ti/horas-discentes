@@ -62,6 +62,7 @@ public class TurmaController : ControllerBase
     /// Retorna os dados de uma turma pelo ID.
     /// </summary>
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
     [SwaggerOperation(Summary = "Busca turma por ID", Tags = new[] { "Turmas" })]
     [ProducesResponseType(typeof(TurmaResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -82,6 +83,7 @@ public class TurmaController : ControllerBase
     /// Verifica se uma turma existe.
     /// </summary>
     [HttpGet("verificar/{id:guid}")]
+    [AllowAnonymous]
     [SwaggerOperation(Summary = "Verifica se uma turma existe", Tags = new[] { "Turmas" })]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     public async Task<IActionResult> Verificar(Guid id)

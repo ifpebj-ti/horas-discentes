@@ -1,18 +1,18 @@
 'use client';
+
+import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 
 import Header from '@/components/Header';
-
-import { MOCK_COORDENADORES } from '@/lib/coordenacaoMock';
-import * as Types from '@/types';
+import ProtectedLayout from '@/components/ProtectedLayout';
 
 const getTitleFromPath = (path: string): string => {
   const parts = path.split('/').filter(Boolean);
 
   if (parts[0] === 'curso') {
-    if (parts.length === 1) return 'Cursos'; // /curso
-    if (parts.length === 2) return `Curso ${parts[1]}`; // /curso/:id
-    if (parts.length >= 3) return `Turma ${parts[2]}`; // /curso/:id/:turmaId
+    if (parts.length === 1) return 'Cursos';
+    if (parts.length === 2) return `Curso ${parts[1]}`;
+    if (parts.length >= 3) return `Turma ${parts[2]}`;
   }
 
   switch (parts[0]) {
@@ -31,25 +31,28 @@ const getTitleFromPath = (path: string): string => {
 
 export default function CoordenacaoLayout({
   children
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const coordenador: Types.Coordenador = MOCK_COORDENADORES[0];
-  const userForHeader: Types.Usuario = {
-    id: String(coordenador.id),
-    name: coordenador.nome,
-    email: coordenador.email,
-    role: coordenador.role
-  };
+}) {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const menuTitle = getTitleFromPath(pathname);
 
+  const user = {
+    id: '',
+    name: session?.user.name || '',
+    email: session?.user.email || '',
+    role: session?.user.role || ''
+  };
+
   return (
-    <div className="min-h-screen bg-white">
-      <header className="shadow-md bg-gray-100 z-20 relative">
-        <Header menuTitle={menuTitle} user={userForHeader} />
-      </header>
-      <main>{children}</main>
-    </div>
+    <ProtectedLayout allowedRoles={['coordenador']}>
+      <div className="min-h-screen bg-white">
+        <header className="shadow-md bg-gray-100 z-20 relative">
+          <Header menuTitle={menuTitle} user={user} />
+        </header>
+        <main>{children}</main>
+      </div>
+    </ProtectedLayout>
   );
 }

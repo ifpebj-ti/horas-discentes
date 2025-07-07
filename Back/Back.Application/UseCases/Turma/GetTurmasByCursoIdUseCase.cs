@@ -21,6 +21,13 @@ public class GetTurmasByCursoIdUseCase
         var turmas = await _repo.GetByCursoIdAsync(cursoId);
 
         return turmas.Select(t => new TurmaResponse(
-            t.Id, t.Periodo!, t.Turno!, t.PossuiExtensao, t.CursoId));
+            t.Id,
+            t.Periodo!,
+            t.Turno!,
+            t.PossuiExtensao,
+            t.CursoId,
+            t.Curso?.Nome ?? "Curso não encontrado"
+        ));
     }
+
 }
