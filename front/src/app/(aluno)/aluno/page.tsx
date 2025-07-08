@@ -1,108 +1,80 @@
 'use client';
+
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useState, useContext, createContext } from 'react';
+import { useEffect, useState, createContext, useContext } from 'react';
 import { FaHome } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import StatsSummary from '@/components/Faq';
+import LoadingOverlay from '@/components/LoadingOverlay';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
 import ProgressoGeral from '@/components/ProgressoGeral';
 import VerCertificado from '@/components/VerCertificado';
 
+import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
-  MOCK_CERTIFICATES,
-  MOCK_USER,
   MOCK_CATEGORIAS_COMPLEMENTARES,
   MOCK_CATEGORIAS_EXTENSAO
 } from '@/lib/alunoMock';
+import {
+  listarMeusCertificados,
+  TipoCertificado,
+  StatusCertificado
+} from '@/services/certificadoService';
 import * as Types from '@/types';
 
-// Definir o contexto localmente
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
-// Componente AlunoPageContent para usar o contexto
-function AlunoPageContent() {
+function AlunoPageContent({ user }: { user: Types.Usuario }) {
   const certificados = useContext(CertificadosContext);
-  const user: Types.Usuario = MOCK_USER;
+  const [categoriaKeySelecionada, setCategoriaKeySelecionada] =
+    useState<string>();
 
-  const total = certificados.length;
-  const approved = certificados.filter(
-    (c: Types.Certificado) => c.status === 'aprovado'
-  ).length;
-  const pending = certificados.filter(
-    (c: Types.Certificado) => c.status === 'pendente'
-  ).length;
-  const rejected = certificados.filter(
-    (c: Types.Certificado) => c.status === 'rejeitado'
-  ).length;
-
-  // Filtrar apenas certificados aprovados
   const certificadosAprovados = certificados.filter(
-    (c: Types.Certificado) => c.status === 'aprovado'
+    (c) => c.status === 'aprovado'
   );
-
-  // Separar certificados aprovados por tipo
   const compCertificados = certificadosAprovados.filter(
-    (c: Types.Certificado) => c.tipo === 'complementar'
+    (c) => c.tipo === 'complementar'
   );
   const extCertificados = certificadosAprovados.filter(
-    (c: Types.Certificado) => c.tipo === 'extensao'
+    (c) => c.tipo === 'extensao'
   );
 
-  // Calcular total de horas para atividades complementares
   const totalHorasComplementares = compCertificados.reduce(
-    (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
+    (acc, c) => acc + c.cargaHoraria,
     0
   );
-
-  // Calcular total de horas para atividades de extensão
   const totalHorasExtensao = extCertificados.reduce(
-    (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
+    (acc, c) => acc + c.cargaHoraria,
     0
   );
 
-  // Usar os mocks importados para categorias
-  const categoriasComplementares: Types.CategoriaProgresso[] =
-    MOCK_CATEGORIAS_COMPLEMENTARES.map((cat) => ({
+  const categoriasComplementares = MOCK_CATEGORIAS_COMPLEMENTARES.map(
+    (cat) => ({
       ...cat,
-      horas:
-        compCertificados
-          .filter(
-            (c: Types.Certificado) =>
-              c.grupo === cat.grupo && c.categoria === cat.categoria
-          )
-          .reduce(
-            (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
-            0
-          ) || 0,
+      horas: compCertificados
+        .filter((c) => c.grupo === cat.grupo && c.categoria === cat.categoria)
+        .reduce((acc, c) => acc + c.cargaHoraria, 0),
       total: cat.total || 0
-    }));
+    })
+  );
 
-  const categoriasExtensao: Types.CategoriaProgresso[] =
-    MOCK_CATEGORIAS_EXTENSAO.map((cat) => ({
-      ...cat,
-      horas:
-        extCertificados
-          .filter(
-            (c: Types.Certificado) =>
-              c.grupo === cat.grupo &&
-              c.categoriaKey === cat.categoriaKey &&
-              c.title === cat.nome
-          )
-          .reduce(
-            (acc: number, c: Types.Certificado) => acc + c.cargaHoraria,
-            0
-          ) || 0,
-      total: cat.total || 0
-    }));
-
-  const [categoriaKeySelecionada, setCategoriaKeySelecionada] = useState<
-    string | undefined
-  >(undefined);
+  const categoriasExtensao = MOCK_CATEGORIAS_EXTENSAO.map((cat) => ({
+    ...cat,
+    horas: extCertificados
+      .filter(
+        (c) =>
+          c.grupo === cat.grupo &&
+          c.categoriaKey === cat.categoriaKey &&
+          c.title === cat.nome
+      )
+      .reduce((acc, c) => acc + c.cargaHoraria, 0),
+    total: cat.total || 0
+  }));
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* MAIN ---------------------------------------------------------------- */}
       <main className="flex-1">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -114,7 +86,6 @@ function AlunoPageContent() {
                 Bem-vindo ao Horas Discentes. Acompanhe seu progresso aqui.
               </p>
             </div>
-
             <NovoCertificadoButton />
           </div>
 
@@ -129,9 +100,7 @@ function AlunoPageContent() {
           />
 
           <div className="grid gap-10 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-            {/* COLUNA PRINCIPAL ------------------------------------------------ */}
             <section className="space-y-8">
-              {/* Progresso Geral - Atividades Complementares */}
               <ProgressoGeral
                 title="Atividades Complementares"
                 subTitle="Progressão Geral - Atividades Complementares"
@@ -141,7 +110,7 @@ function AlunoPageContent() {
                 categoriaKey={categoriaKeySelecionada}
                 onCategoriaClick={setCategoriaKeySelecionada}
               />
-              {/* Progresso Geral - Atividades de Extensão */}
+
               {user.isNewPPC && (
                 <ProgressoGeral
                   title="Atividades de Extensão"
@@ -154,7 +123,6 @@ function AlunoPageContent() {
                 />
               )}
 
-              {/* Certificados recentes ------------------------------------- */}
               <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-[#071D41]">
@@ -162,7 +130,7 @@ function AlunoPageContent() {
                   </h2>
                   <Link
                     href="/aluno/certificado"
-                    className="text-sm font-medium text-[#0F4AA9] hover:underline hover:text-[#0D3F8E] transition-colors"
+                    className="text-sm font-medium text-[#0F4AA9] hover:underline"
                   >
                     Ver todos
                   </Link>
@@ -170,11 +138,11 @@ function AlunoPageContent() {
 
                 {certificados.length > 0 ? (
                   <div className="space-y-4">
-                    {certificados.slice(0, 3).map((cert: Types.Certificado) => (
+                    {certificados.slice(0, 3).map((cert) => (
                       <VerCertificado
                         key={cert.id}
                         certificate={{
-                          id: String(cert.id),
+                          id: cert.id,
                           title: cert.title,
                           local: cert.local,
                           description: cert.description,
@@ -197,54 +165,19 @@ function AlunoPageContent() {
               </div>
             </section>
 
-            {/* COLUNA LATERAL -------------------------------------------------- */}
-            {/* Resumo de Certificados ------------------------------------------ */}
             <aside className="space-y-8">
               <StatsSummary
-                total={total}
-                approved={approved}
-                pending={pending}
-                rejected={rejected}
+                total={certificados.length}
+                approved={
+                  certificados.filter((c) => c.status === 'aprovado').length
+                }
+                pending={
+                  certificados.filter((c) => c.status === 'pendente').length
+                }
+                rejected={
+                  certificados.filter((c) => c.status === 'rejeitado').length
+                }
               />
-
-              {/* Dúvidas Frequentes ------------------------------------------ */}
-              <div className="bg-blue-50/60 border border-blue-100 rounded-2xl shadow-sm p-6">
-                <h2 className="text-md font-semibold text-[#071D41] mb-4">
-                  Dúvidas Frequentes
-                </h2>
-                <ul className="space-y-3 text-sm leading-relaxed">
-                  {[
-                    {
-                      question: 'Como são contabilizadas as horas?',
-                      id: 'contabilizacao-horas'
-                    },
-                    {
-                      question: 'Quais atividades são aceitas?',
-                      id: 'atividades-aceitas'
-                    },
-                    {
-                      question: 'Qual o prazo para envio de certificados?',
-                      id: 'prazo-envio-certificados'
-                    },
-                    {
-                      question: 'Como saber se meu certificado foi aprovado?',
-                      id: 'status-certificado-aprovado'
-                    }
-                  ].map((q) => (
-                    <li key={q.id}>
-                      <Link
-                        href={`/aluno/perguntas?id=${q.id}`}
-                        className={`
-                          text-sm
-                          text-gray-500 hover:text-blue-600 hover:underline
-                        `}
-                      >
-                        {q.question}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </aside>
           </div>
         </div>
@@ -253,11 +186,80 @@ function AlunoPageContent() {
   );
 }
 
-// Componente Aluno que provê o contexto
 export default function Aluno() {
+  const { data: session, status } = useSession();
+  const loadingOverlay = useLoadingOverlay(true);
+  const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
+
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+
+    const fetchCertificados = async () => {
+      try {
+        loadingOverlay.show();
+        const data = await listarMeusCertificados();
+        console.log('CERTIFICADOS ORIGINAIS:', data);
+
+        const mapped: Types.Certificado[] = data.map((cert) => ({
+          id: cert.id,
+          title: cert.tituloAtividade,
+          local: cert.local,
+          description: cert.descricao || '',
+          cargaHoraria: cert.cargaHoraria,
+          periodoInicio: cert.dataInicio,
+          periodoFim: cert.dataFim,
+          categoria: cert.categoria,
+          grupo: cert.grupo,
+          categoriaKey:
+            cert.tipo === TipoCertificado.EXTENSAO
+              ? 'Extensao'
+              : 'Complementar',
+          tipo:
+            cert.tipo === TipoCertificado.EXTENSAO
+              ? 'extensao'
+              : 'complementar',
+          status:
+            cert.status === StatusCertificado.APROVADO
+              ? 'aprovado'
+              : cert.status === StatusCertificado.REPROVADO
+                ? 'rejeitado'
+                : 'pendente'
+        }));
+
+        console.log('CERTIFICADOS MAPEADOS:', mapped);
+        setCertificados(mapped);
+      } catch (error) {
+        console.error('Erro ao buscar certificados:', error);
+      } finally {
+        loadingOverlay.hide();
+      }
+    };
+
+    fetchCertificados();
+  }, [status]);
+
+  if (status === 'loading' || loadingOverlay.visible) {
+    return <LoadingOverlay show={true} />;
+  }
+
+  if (!session?.user) return null;
+
+  const user: Types.Usuario = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    id: (session.user as any).entidadeId,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    name: (session.user as any).nome || session.user.name,
+    email: session.user.email,
+    role: session.user.role,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    isNewPPC: (session.user as any).isNewPpc === true
+  };
+
+  console.log('USER FINAL:', user);
+
   return (
-    <CertificadosContext.Provider value={MOCK_CERTIFICATES}>
-      <AlunoPageContent />
+    <CertificadosContext.Provider value={certificados}>
+      <AlunoPageContent user={user} />
     </CertificadosContext.Provider>
   );
 }
