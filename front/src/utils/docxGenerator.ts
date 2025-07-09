@@ -4,7 +4,10 @@ import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import type { Aluno } from '@/types';
 
-export async function gerarCartaDocx(alunos: Aluno[]) {
+export const gerarCartaDocx = async (alunos: Aluno[]) => {
+  // Sort students alphabetically by name
+  alunos.sort((a, b) => a.nome.localeCompare(b.nome));
+
   const template = await fetch('/docs/Coordenador-Requerimento.docx')
     .then(r => r.arrayBuffer());
 
@@ -19,12 +22,14 @@ export async function gerarCartaDocx(alunos: Aluno[]) {
       .toLowerCase();
   }
 
+  // Create a single document for all selected students
+  const zip = new PizZip(template);
+  const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
 
-  for (const aluno of alunos) {
-    const zip = new PizZip(template);
-    const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-
-    /* --- prepara o array de certificados para o loop --- */
+  // Prepare data for all students. This structure assumes the DOCX template
+  // can iterate over an array of students. You will need to update your
+  // Coordenador-Requerimento.docx template to support this structure.
+  const studentsData = alunos.map(aluno => {
     const certs = aluno.certificados.map((c, i) => ({
       idx: i + 1,
       descricao: `${c.title} – ${c.cargaHoraria} h (${c.periodoInicio}-${c.periodoFim})`,
@@ -36,22 +41,24 @@ export async function gerarCartaDocx(alunos: Aluno[]) {
 
     const totalHoras = certs.reduce((acc, c) => acc + c.cargaHoraria, 0);
 
-    doc.setData({
+    return {
       estudante: aluno.nome,
       matricula: aluno.matricula,
       carga: totalHoras,
       totalHoras,
       dataHoje: new Date().toLocaleDateString('pt-BR'),
-      certs       // ← passa o array para o template
-    });
+      certs,
+    };
+  });
 
-    try {
-      doc.render();
-      const blob = doc.getZip().generate({ type: 'blob' });
-      const arquivo = `${slugify(aluno.nome)}.contabilizacao-horas.docx`;
-      saveAs(blob, arquivo);
-    } catch (e) {
-      console.error('Erro ao gerar documento', e);
-    }
+  // Set data for the document. The template needs to be adapted to handle 'students' array.
+  doc.setData({ students: studentsData });
+
+  try {
+    doc.render();
+    // Retornar o buffer do DOCX gerado
+    return doc.getZip().generate({ type: 'nodebuffer' });
+  } catch (e) {
+    console.error('Erro ao gerar documento', e);
   }
-}
+};

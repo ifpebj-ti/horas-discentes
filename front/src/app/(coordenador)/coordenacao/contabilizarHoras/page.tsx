@@ -2,12 +2,14 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { FaSearch, FaDownload, FaCheckSquare, FaSquare } from 'react-icons/fa';
+import { Core } from '@pdftron/webviewer';
+import { saveAs } from 'file-saver';
+import PizZip from 'pizzip';
+import Docxtemplater from 'docxtemplater';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-import { gerarCartaDocx } from '@/utils/docxGenerator';
 import { Certificado } from '@/types';
 
 // ----------------------------------------------------------------
@@ -716,16 +718,59 @@ const GerenciamentoHoras: React.FC = () => {
       return;
     }
 
-    // Para cada aluno selecionado dispara um download
+    // Seleciona os alunos marcados
     const selecionados = alunosMock.filter(a => alunosSelecionados.has(a.id));
+    if (selecionados.length === 0) return;
 
+    // Ordena alfabeticamente
+    selecionados.sort((a, b) => a.nome.localeCompare(b.nome));
+
+    // Monta os dados conforme o template
+    const data = {
+      alunos: selecionados.map(aluno => ({
+        estudante: aluno.nome,
+        matricula: aluno.matricula,
+        carga: aluno.cargaHoraria,
+        certs: aluno.certificados?.map((cert, idx) => ({
+          idx: idx + 1,
+          title: cert.title,
+          cargaHoraria: cert.cargaHoraria,
+          periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
+        })) || []
+      }))
+    };
+
+    // Carrega o template
+    let response;
+    try {
+      response = await fetch('/docs/Coordenador-Requerimento.docx');
+      if (!response.ok) throw new Error('Não foi possível carregar o template.');
+    } catch (err) {
+      alert('Erro ao carregar template: ' + err.message);
+      return;
+    }
+    let templateArrayBuffer;
+    try {
+      templateArrayBuffer = await response.arrayBuffer();
+    } catch (err) {
+      alert('Erro ao ler template: ' + err.message);
+      return;
+    }
+    let zip, doc;
+    try {
+      zip = new PizZip(templateArrayBuffer);
+      doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+      doc.setData(data);
+      doc.render();
+    } catch (error) {
+      alert('Erro ao gerar documento: ' + (error.message || error));
+      return;
+    }
+    const out = doc.getZip().generate({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    saveAs(out, 'requerimento_alunos.docx');
+
+    // Atualizar estado local para simular comportamento de download
     for (const aluno of selecionados) {
-      await gerarCartaDocx([aluno]);
-      // opcional: marcar como "já fez download"
-      // (isso poderia ser feito com uma chamada à API real)
-      // mas aqui apenas atualizamos o estado local
-      // para simular o comportamento
-      // (isso poderia ser feito com uma chamada à API real)
       aluno.cargaHorariaFinalizada = true; // Simula que a carga horária foi finalizada
       aluno.jaFezDownload = true;
     }
