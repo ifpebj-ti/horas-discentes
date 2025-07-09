@@ -1,26 +1,16 @@
 'use client';
 
-import PizZip from 'pizzip';
-import Docxtemplater from 'docxtemplater';
 import type { Aluno } from '@/types';
+import Docxtemplater from 'docxtemplater';
+import PizZip from 'pizzip';
 
 export const gerarCartaDocx = async (alunos: Aluno[]) => {
   // Sort students alphabetically by name
   alunos.sort((a, b) => a.nome.localeCompare(b.nome));
 
-  const template = await fetch('/docs/Coordenador-Requerimento.docx')
-    .then(r => r.arrayBuffer());
-
-  const { saveAs } = await import('file-saver');
-
-  function slugify(str: string) {
-    return str
-      .normalize('NFD')               // remove acentos
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '_')           // espaços → _
-      .replace(/[^a-zA-Z0-9_]/g, '')  // remove símbolos
-      .toLowerCase();
-  }
+  const template = await fetch('/docs/Coordenador-Requerimento.docx').then(
+    (r) => r.arrayBuffer()
+  );
 
   // Create a single document for all selected students
   const zip = new PizZip(template);
@@ -29,14 +19,14 @@ export const gerarCartaDocx = async (alunos: Aluno[]) => {
   // Prepare data for all students. This structure assumes the DOCX template
   // can iterate over an array of students. You will need to update your
   // Coordenador-Requerimento.docx template to support this structure.
-  const studentsData = alunos.map(aluno => {
+  const studentsData = alunos.map((aluno) => {
     const certs = aluno.certificados.map((c, i) => ({
       idx: i + 1,
       descricao: `${c.title} – ${c.cargaHoraria} h (${c.periodoInicio}-${c.periodoFim})`,
       categoria: c.categoria,
       cargaHoraria: c.cargaHoraria,
       title: c.title,
-      periodo: `${c.periodoInicio} a ${c.periodoFim}`,
+      periodo: `${c.periodoInicio} a ${c.periodoFim}`
     }));
 
     const totalHoras = certs.reduce((acc, c) => acc + c.cargaHoraria, 0);
@@ -47,7 +37,7 @@ export const gerarCartaDocx = async (alunos: Aluno[]) => {
       carga: totalHoras,
       totalHoras,
       dataHoje: new Date().toLocaleDateString('pt-BR'),
-      certs,
+      certs
     };
   });
 

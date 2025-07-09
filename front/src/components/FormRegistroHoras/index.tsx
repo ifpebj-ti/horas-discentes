@@ -147,8 +147,10 @@ export default function FormRegistroHoras({
 
           {/* ---------- Segunda linha ---------- */}
           <div className="col-span-1">
-            <label htmlFor="categoria"
-              className="block mb-1 max-w-fit font-medium">
+            <label
+              htmlFor="categoria"
+              className="block mb-1 max-w-fit font-medium"
+            >
               <span className="flex items-center gap-2">
                 <FaFileAlt className="text-blue-600" /> Categoria
               </span>

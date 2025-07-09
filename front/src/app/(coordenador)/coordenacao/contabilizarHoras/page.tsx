@@ -2,15 +2,15 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { FaSearch, FaDownload, FaCheckSquare, FaSquare } from 'react-icons/fa';
-import { Core } from '@pdftron/webviewer';
-import { saveAs } from 'file-saver';
-import PizZip from 'pizzip';
-import Docxtemplater from 'docxtemplater';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+
 import { Certificado } from '@/types';
+import Docxtemplater from 'docxtemplater';
+import { saveAs } from 'file-saver';
+import PizZip from 'pizzip';
 
 // ----------------------------------------------------------------
 // Tipos
@@ -20,9 +20,9 @@ interface Aluno {
   id: number;
   nome: string;
   matricula: string;
-  telefone: string;      // <-- acrescentado
-  email: string;      // <-- acrescentado
-  curso: string;      // <-- acrescentado
+  telefone: string; // <-- acrescentado
+  email: string; // <-- acrescentado
+  curso: string; // <-- acrescentado
   certificados: Certificado[];
   cargaHorariaFinalizada: boolean;
   cargaHoraria: number; // <-- acrescentado
@@ -42,7 +42,7 @@ const alunosMock: Aluno[] = [
     email: 'ana.silva@example.com', // <-- acrescentado
     curso: 'Engenharia de Software', // <-- acrescentado
     certificados: [
-        {
+      {
         id: 1,
         grupo: 'I',
         categoria: 'Categoria 2',
@@ -55,21 +55,21 @@ const alunosMock: Aluno[] = [
         periodoFim: '2023-05-10',
         status: 'aprovado',
         tipo: 'complementar'
-        },
-        {
-          id: 2,
-          grupo: 'II',
-          categoria: 'Categoria 1',
-          categoriaKey: 'Extensão',
-          title: 'Curso de Programação',
-          description: 'Curso de Programação Avançada',
-          cargaHoraria: 10,
-          local: 'UFPE',
-          periodoInicio: '2023-02-01',
-          periodoFim: '2023-06-01',
-          status: 'aprovado',
-          tipo: 'extensao'
-        }
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
     ],
     cargaHoraria: 120, // <-- acrescentado
     cargaHorariaFinalizada: true,
@@ -168,34 +168,34 @@ const alunosMock: Aluno[] = [
     email: 'joao.pedro@example.com',
     curso: 'Sistemas de Informação',
     certificados: [
-        {
-            id: 1,
-            grupo: 'I',
-            categoria: 'Categoria 2',
-            categoriaKey: 'Ensino',
-            title: 'Monitoria',
-            description: 'Monitoria',
-            cargaHoraria: 5,
-            local: 'UFPE',
-            periodoInicio: '2023-01-10',
-            periodoFim: '2023-05-10',
-            status: 'aprovado',
-            tipo: 'complementar'
-        },
-        {
-            id: 2,
-            grupo: 'II',
-            categoria: 'Categoria 1',
-            categoriaKey: 'Extensão',
-            title: 'Curso de Programação',
-            description: 'Curso de Programação Avançada',
-            cargaHoraria: 10,
-            local: 'UFPE',
-            periodoInicio: '2023-02-01',
-            periodoFim: '2023-06-01',
-            status: 'aprovado',
-            tipo: 'extensao'
-        }
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
     ],
     cargaHoraria: 200, // <-- acrescentado
     cargaHorariaFinalizada: false,
@@ -546,35 +546,35 @@ const alunosMock: Aluno[] = [
     email: 'erison.silva@example.com',
     curso: 'Engenharia de Software',
     certificados: [
-        {
-            id: 1,
-            grupo: 'I',
-            categoria: 'Categoria 2',
-            categoriaKey: 'Ensino',
-            title: 'Monitoria',
-            description: 'Monitoria',
-            cargaHoraria: 5,
-            local: 'UFPE',
-            periodoInicio: '2023-01-10',
-            periodoFim: '2023-05-10',
-            status: 'aprovado',
-            tipo: 'complementar'
-        },
-        {
-            id: 2,
-            grupo: 'II',
-            categoria: 'Categoria 1',
-            categoriaKey: 'Extensão',
-            title: 'Curso de Programação',
-            description: 'Curso de Programação Avançada',
-            cargaHoraria: 10,
-            local: 'UFPE',
-            periodoInicio: '2023-02-01',
-            periodoFim: '2023-06-01',
-            status: 'aprovado',
-            tipo: 'extensao'
-        }
-        ],
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
+        id: 2,
+        grupo: 'II',
+        categoria: 'Categoria 1',
+        categoriaKey: 'Extensão',
+        title: 'Curso de Programação',
+        description: 'Curso de Programação Avançada',
+        cargaHoraria: 10,
+        local: 'UFPE',
+        periodoInicio: '2023-02-01',
+        periodoFim: '2023-06-01',
+        status: 'aprovado',
+        tipo: 'extensao'
+      }
+    ],
     cargaHoraria: 120, // <-- acrescentado
     cargaHorariaFinalizada: true,
     jaFezDownload: false,
@@ -586,6 +586,10 @@ const alunosMock: Aluno[] = [
 // Componente Skeleton
 // ----------------------------------------------------------------
 const TabelaSkeleton: React.FC<{ rows?: number }> = ({ rows = 5 }) => {
+  const skeletonKeys = useMemo(
+    () => Array.from({ length: rows }, () => crypto.randomUUID()),
+    [rows]
+  );
   return (
     <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
@@ -604,8 +608,8 @@ const TabelaSkeleton: React.FC<{ rows?: number }> = ({ rows = 5 }) => {
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: rows }).map((_, index) => (
-              <tr key={index} className="border-b border-border">
+            {skeletonKeys.map((key) => (
+              <tr key={key} className="border-b border-border">
                 <td className="py-3 px-2 sm:px-4">
                   <div className="h-4 w-4 bg-muted-foreground/20 rounded animate-pulse" />
                 </td>
@@ -719,7 +723,7 @@ const GerenciamentoHoras: React.FC = () => {
     }
 
     // Seleciona os alunos marcados
-    const selecionados = alunosMock.filter(a => alunosSelecionados.has(a.id));
+    const selecionados = alunosMock.filter((a) => alunosSelecionados.has(a.id));
     if (selecionados.length === 0) return;
 
     // Ordena alfabeticamente
@@ -727,16 +731,17 @@ const GerenciamentoHoras: React.FC = () => {
 
     // Monta os dados conforme o template
     const data = {
-      alunos: selecionados.map(aluno => ({
+      alunos: selecionados.map((aluno) => ({
         estudante: aluno.nome,
         matricula: aluno.matricula,
         carga: aluno.cargaHoraria,
-        certs: aluno.certificados?.map((cert, idx) => ({
-          idx: idx + 1,
-          title: cert.title,
-          cargaHoraria: cert.cargaHoraria,
-          periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
-        })) || []
+        certs:
+          aluno.certificados?.map((cert, idx) => ({
+            idx: idx + 1,
+            title: cert.title,
+            cargaHoraria: cert.cargaHoraria,
+            periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
+          })) || []
       }))
     };
 
@@ -744,16 +749,20 @@ const GerenciamentoHoras: React.FC = () => {
     let response;
     try {
       response = await fetch('/docs/Coordenador-Requerimento.docx');
-      if (!response.ok) throw new Error('Não foi possível carregar o template.');
+      if (!response.ok)
+        throw new Error('Não foi possível carregar o template.');
     } catch (err) {
-      alert('Erro ao carregar template: ' + err.message);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      alert('Erro ao carregar template: ' + errorMessage);
       return;
     }
     let templateArrayBuffer;
     try {
       templateArrayBuffer = await response.arrayBuffer();
     } catch (err) {
-      alert('Erro ao ler template: ' + err.message);
+      alert(
+        'Erro ao ler template: ' + (err instanceof Error ? err.message : err)
+      );
       return;
     }
     let zip, doc;
@@ -763,10 +772,17 @@ const GerenciamentoHoras: React.FC = () => {
       doc.setData(data);
       doc.render();
     } catch (error) {
-      alert('Erro ao gerar documento: ' + (error.message || error));
+      alert(
+        'Erro ao gerar documento: ' +
+          (error instanceof Error ? error.message : String(error))
+      );
       return;
     }
-    const out = doc.getZip().generate({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    const out = doc.getZip().generate({
+      type: 'blob',
+      mimeType:
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
     saveAs(out, 'requerimento_alunos.docx');
 
     // Atualizar estado local para simular comportamento de download
