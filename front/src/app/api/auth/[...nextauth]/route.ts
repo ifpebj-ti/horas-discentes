@@ -1,25 +1,46 @@
 import NextAuth from 'next-auth';
+import type { AuthOptions } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { LoginResponseDto } from '@/types/auth';
 import axios from 'axios';
 import https from 'https';
+import jwt_decode from 'jsonwebtoken';
 
-const handler = NextAuth({
+interface BackendUser {
+  nome: string;
+  email: string;
+  role: 'admin' | 'coordenador' | 'aluno';
+  token: string;
+}
+
+interface DecodedToken {
+  entidadeId?: string;
+  isNewPpc?: string;
+  [key: string]: unknown;
+}
+
+interface ExtendedToken extends JWT {
+  accessToken: string;
+  role: string;
+  entidadeId?: string;
+  isNewPpc?: boolean;
+  nome?: string;
+}
+
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: {},
-        password: {}
+        email: { label: 'Email', type: 'text' },
+        password: { label: 'Senha', type: 'password' }
       },
       async authorize(credentials) {
         try {
-          const httpsAgent = new https.Agent({
-            rejectUnauthorized: false // <- ignora certificado autoassinado
-          });
+          const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
-          const response = await axios.post<LoginResponseDto>(
+          const response = await axios.post<BackendUser>(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
               email: credentials?.email,
@@ -29,30 +50,24 @@ const handler = NextAuth({
           );
 
           const user = response.data;
-
-          // Ensure role is one of the allowed values
-          const allowedRoles = ['admin', 'coordenador', 'aluno'] as const;
           const userRole = user.role.toLowerCase();
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if (!allowedRoles.includes(userRole as any)) {
-            throw new Error('Invalid user role');
-          }
           return {
             id: user.email,
+            sub: user.email,
             name: user.nome,
             email: user.email,
             role: userRole as 'admin' | 'coordenador' | 'aluno',
-            token: user.token
+            accessToken: user.token
           };
-        } catch (err) {
-          console.error('Erro ao autenticar:', err);
+        } catch (error) {
+          console.error('Erro ao autenticar:', error);
           return null;
         }
       }
     })
   ],
   pages: {
-    signIn: '/login'
+    signIn: '/'
   },
   session: {
     strategy: 'jwt'
@@ -60,22 +75,41 @@ const handler = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
+      if (user && 'accessToken' in user) {
+        const decoded = jwt_decode.decode(
+          user.accessToken as string
+        ) as DecodedToken;
+
         token.name = user.name;
         token.email = user.email;
         token.role = user.role;
-        token.token = user.token;
+        token.accessToken = user.accessToken as string;
+
+        if (user.role === 'aluno') {
+          token.entidadeId = decoded?.entidadeId as string;
+          token.isNewPpc = decoded?.isNewPpc === 'true';
+        }
       }
-      return token;
+
+      return token as ExtendedToken;
     },
+
     async session({ session, token }) {
       session.user.name = token.name as string;
       session.user.email = token.email as string;
       session.user.role = token.role as 'admin' | 'coordenador' | 'aluno';
-      session.token = token.token as string;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (session.user as any).entidadeId = token.entidadeId;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (session.user as any).isNewPpc = token.isNewPpc;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (session as any).token = token.accessToken;
+
       return session;
     }
   }
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

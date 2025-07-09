@@ -8,6 +8,21 @@ export type StatusCertificado = 'pendente' | 'aprovado' | 'rejeitado';
  */
 export type TipoCertificado = 'complementar' | 'extensao';
 
+// Função para mapear status do backend para o tipo do frontend
+export const mapStatusCertificado = (
+  status: string | number
+): StatusCertificado => {
+  if (status === 'APROVADO' || status === 1) return 'aprovado';
+  if (status === 'REPROVADO' || status === 2) return 'rejeitado';
+  return 'pendente';
+};
+
+// Função para mapear tipo do backend para o tipo do frontend
+export const mapTipoCertificado = (tipo: string | number): TipoCertificado => {
+  if (tipo === 'EXTENSAO' || tipo === 0) return 'extensao';
+  return 'complementar';
+};
+
 /**
  * Interface base para representar um Certificado do Aluno.
  */

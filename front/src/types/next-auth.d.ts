@@ -8,8 +8,7 @@ declare module 'next-auth' {
       email: string;
       role: 'admin' | 'coordenador' | 'aluno';
       sub: string;
-      nome: string;
-      isNewPpc?: bool;
+      isNewPpc?: boolean;
     };
     token: string;
   }
@@ -19,7 +18,6 @@ declare module 'next-auth' {
     email: string;
     role: 'admin' | 'coordenador' | 'aluno';
     sub: string;
-    nome: string;
-    isNewPpc?: bool; // opcional
+    isNewPpc?: boolean; // opcional
   }
 }

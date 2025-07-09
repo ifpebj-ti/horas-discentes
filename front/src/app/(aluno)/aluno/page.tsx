@@ -19,11 +19,10 @@ import {
 } from '@/lib/alunoMock';
 import {
   listarMeusCertificados,
-  TipoCertificado,
-  StatusCertificado
+  TipoCertificado
 } from '@/services/certificadoService';
 import * as Types from '@/types';
-
+import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
 function AlunoPageContent({ user }: { user: Types.Usuario }) {
@@ -214,16 +213,8 @@ export default function Aluno() {
             cert.tipo === TipoCertificado.EXTENSAO
               ? 'Extensao'
               : 'Complementar',
-          tipo:
-            cert.tipo === TipoCertificado.EXTENSAO
-              ? 'extensao'
-              : 'complementar',
-          status:
-            cert.status === StatusCertificado.APROVADO
-              ? 'aprovado'
-              : cert.status === StatusCertificado.REPROVADO
-                ? 'rejeitado'
-                : 'pendente'
+          tipo: mapTipoCertificado(cert.tipo),
+          status: mapStatusCertificado(cert.status)
         }));
 
         console.log('CERTIFICADOS MAPEADOS:', mapped);
@@ -256,7 +247,7 @@ export default function Aluno() {
   };
 
   console.log('USER FINAL:', user);
-
+  console.log('CERTIFICADOS FINAL:', certificados);
   return (
     <CertificadosContext.Provider value={certificados}>
       <AlunoPageContent user={user} />
