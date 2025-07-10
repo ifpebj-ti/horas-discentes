@@ -42,21 +42,21 @@ const alunosMock: Aluno[] = [
     email: 'ana.silva@example.com', // <-- acrescentado
     curso: 'Engenharia de Software', // <-- acrescentado
     certificados: [
-      {
-        id: 1,
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
+    {
+      id: 1,
+      grupo: 'I',
+      categoria: 'Categoria 2',
+      categoriaKey: 'Ensino',
+      title: 'Monitoria',
+      description: 'Monitoria',
+      cargaHoraria: 5,
+      local: 'UFPE',
+      periodoInicio: '2023-01-10',
+      periodoFim: '2023-05-10',
+      status: 'aprovado',
+      tipo: 'complementar'
+    },
+    {
         id: 2,
         grupo: 'II',
         categoria: 'Categoria 1',
@@ -714,8 +714,10 @@ const GerenciamentoHoras: React.FC = () => {
   };
 
   /* --------------------------------------------------------
-   *  Download (mock)
-   * -----------------------------------------------------*/
+ *  Download (mock)
+ * -----------------------------------------------------*/
+
+
   const handleDownloadAlunosSelecionados = async () => {
     if (alunosSelecionados.size === 0) {
       alert('Selecione pelo menos um aluno.');
@@ -729,61 +731,66 @@ const GerenciamentoHoras: React.FC = () => {
     // Ordena alfabeticamente
     selecionados.sort((a, b) => a.nome.localeCompare(b.nome));
 
-    // Monta os dados conforme o template
-    const data = {
-      alunos: selecionados.map((aluno) => ({
-        estudante: aluno.nome,
-        matricula: aluno.matricula,
-        carga: aluno.cargaHoraria,
-        certs:
-          aluno.certificados?.map((cert, idx) => ({
-            idx: idx + 1,
-            title: cert.title,
-            cargaHoraria: cert.cargaHoraria,
-            periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
-          })) || []
-      }))
-    };
-
-    // Carrega o template
-    let response;
+    // Carrega o template UMA VEZ
+    let templateArrayBuffer;
     try {
-      response = await fetch('/docs/Coordenador-Requerimento.docx');
+      const response = await fetch('/docs/Coordenador-Requerimento.docx');
       if (!response.ok)
         throw new Error('Não foi possível carregar o template.');
+      templateArrayBuffer = await response.arrayBuffer();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       alert('Erro ao carregar template: ' + errorMessage);
       return;
     }
-    let templateArrayBuffer;
-    try {
-      templateArrayBuffer = await response.arrayBuffer();
-    } catch (err) {
-      alert(
-        'Erro ao ler template: ' + (err instanceof Error ? err.message : err)
-      );
-      return;
+
+    // Gera um documento para CADA aluno selecionado
+    for (const aluno of selecionados) {
+      try {
+        // Monta os dados para o aluno atual
+        const data = {
+          alunos: [
+            // O template espera um array, então colocamos o aluno dentro de um
+            {
+              estudante: aluno.nome,
+              matricula: aluno.matricula,
+              carga: aluno.cargaHoraria,
+              certs:
+                aluno.certificados?.map((cert, idx) => ({
+                  idx: idx + 1,
+                  title: cert.title,
+                  cargaHoraria: cert.cargaHoraria,
+                  periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
+                })) || []
+            }
+          ]
+        };
+
+        const zip = new PizZip(templateArrayBuffer);
+        const doc = new Docxtemplater(zip, {
+          paragraphLoop: true,
+          linebreaks: true
+        });
+        doc.setData(data);
+        doc.render();
+
+        const out = doc.getZip().generate({
+          type: 'blob',
+          mimeType:
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        });
+
+        // Salva o arquivo com o nome do aluno
+        saveAs(out, `requerimento_${aluno.nome.replace(/\s+/g, '_')}.docx`);
+      } catch (error) {
+        alert(
+          `Erro ao gerar documento para ${aluno.nome}: ` +
+            (error instanceof Error ? error.message : String(error))
+        );
+        // Continua para o próximo aluno mesmo se um falhar
+        continue;
+      }
     }
-    let zip, doc;
-    try {
-      zip = new PizZip(templateArrayBuffer);
-      doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-      doc.setData(data);
-      doc.render();
-    } catch (error) {
-      alert(
-        'Erro ao gerar documento: ' +
-          (error instanceof Error ? error.message : String(error))
-      );
-      return;
-    }
-    const out = doc.getZip().generate({
-      type: 'blob',
-      mimeType:
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    });
-    saveAs(out, 'requerimento_alunos.docx');
 
     // Atualizar estado local para simular comportamento de download
     for (const aluno of selecionados) {

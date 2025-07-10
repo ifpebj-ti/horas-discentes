@@ -81,10 +81,14 @@ export default function CourseDetailPage() {
     periodo: string;
     cargaHorariaExtensao: string;
     turno: string;
-  }>({
+    hasExtensionHours: 'sim' | 'nao'; // Novo campo para o radio button
+    extensionHours: string; // Novo campo para as horas de extensão
+  }>({ // Inicialização dos novos campos
     periodo: '',
     cargaHorariaExtensao: '',
-    turno: ''
+    turno: '',
+    hasExtensionHours: 'nao', // Valor padrão
+    extensionHours: ''
   });
   const [isTurmaLoading, setIsTurmaLoading] = useState(false);
 
@@ -232,14 +236,21 @@ export default function CourseDetailPage() {
     setFormData({
       periodo: '',
       cargaHorariaExtensao: '',
-      turno: ''
+      turno: '',
+      hasExtensionHours: 'nao', // Resetar para o valor padrão
+      extensionHours: ''
     });
     setIsTurmaLoading(false);
     setIsTurmaModalOpen(true);
   };
 
   const handleTurmaChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+      // Se o campo for hasExtensionHours e o valor for 'nao', resetar extensionHours
+      ...(field === 'hasExtensionHours' && value === 'nao' ? { extensionHours: '' } : {})
+    }));
   };
 
   const handleTurmaSubmit = async (e: React.FormEvent) => {
@@ -652,25 +663,45 @@ export default function CourseDetailPage() {
                       </p>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-2">
                       <Label>Essa turma tem carga horária de extensão?</Label>
                       <RadioGroup
-                        value={formData.cargaHorariaExtensao}
-                        onValueChange={(value) =>
-                          handleTurmaChange('cargaHorariaExtensao', value)
+                        value={formData.hasExtensionHours}
+                        onValueChange={(value: 'sim' | 'nao') =>
+                          handleTurmaChange('hasExtensionHours', value)
                         }
-                        className="flex space-x-6"
+                        className="flex space-x-4"
                       >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="sim" id="sim" />
-                          <Label htmlFor="sim">Sim</Label>
+                          <RadioGroupItem value="sim" id="extensao-sim" />
+                          <Label htmlFor="extensao-sim">Sim</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="nao" id="nao" />
-                          <Label htmlFor="nao">Não</Label>
+                          <RadioGroupItem value="nao" id="extensao-nao" />
+                          <Label htmlFor="extensao-nao">Não</Label>
                         </div>
                       </RadioGroup>
                     </div>
+
+                    {formData.hasExtensionHours === 'sim' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="extensionHours">Horas de Extensão</Label>
+                        <Input
+                          id="extensionHours"
+                          type="number"
+                          placeholder="Digite as horas de extensão (máx. 300)"
+                          value={formData.extensionHours}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === '' || (Number(value) >= 0 && Number(value) <= 300)) {
+                              handleTurmaChange('extensionHours', value);
+                            }
+                          }}
+                          required
+                          max={300}
+                        />
+                      </div>
+                    )}
 
                     <div className="space-y-2">
                       <Label htmlFor="turno">Turno</Label>
@@ -679,14 +710,15 @@ export default function CourseDetailPage() {
                         onValueChange={(value) =>
                           handleTurmaChange('turno', value)
                         }
+                        required
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione o turno" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="manha">Manhã</SelectItem>
-                          <SelectItem value="tarde">Tarde</SelectItem>
-                          <SelectItem value="noite">Noite</SelectItem>
+                          <SelectItem value="Manhã">Manhã</SelectItem>
+                          <SelectItem value="Tarde">Tarde</SelectItem>
+                          <SelectItem value="Noite">Noite</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
