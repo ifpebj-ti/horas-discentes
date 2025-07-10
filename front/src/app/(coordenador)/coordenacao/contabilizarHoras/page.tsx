@@ -16,6 +16,13 @@ import PizZip from 'pizzip';
 // Tipos
 
 // ----------------------------------------------------------------
+interface docxData {
+  Coordenador: string;
+  curso: string;
+  Portaria: number;
+  DOU: string;
+}
+
 interface Aluno {
   id: number;
   nome: string;
@@ -33,6 +40,15 @@ interface Aluno {
 // ----------------------------------------------------------------
 // Mock de dados (mantido no front apenas para demonstração)
 // ----------------------------------------------------------------
+const docxMock: docxData[] = [
+  {
+    Coordenador: 'João Almeida e Silva',
+    curso: 'Engenharia de Software',
+    Portaria: 605,
+    DOU: '2023/01/01',
+  }
+]
+
 const alunosMock: Aluno[] = [
   {
     id: 1,
