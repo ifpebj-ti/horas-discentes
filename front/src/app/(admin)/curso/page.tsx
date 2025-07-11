@@ -47,6 +47,9 @@ export default function CursoPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
+  const [complementaryHours, setComplementaryHours] = useState('');
+  const [hasExtension, setHasExtension] = useState(false);
+  const [extensionHours, setExtensionHours] = useState('');
 
   const filteredCourses = courses.filter((course) =>
     course.courseName.toLowerCase().includes(search.toLowerCase())
@@ -150,23 +153,66 @@ export default function CursoPage() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Adicionar novo curso</h2>
-
-            <input
-              type="text"
-              placeholder="Nome do curso"
-              value={newCourseName}
-              onChange={(e) => setNewCourseName(e.target.value)}
-              className="w-full border border-gray-300 rounded px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <div className="flex justify-end gap-4">
+            <div className="space-y-4">
+              <legend className="font-semibold mb-4">Adicionar Novo Curso</legend>
+              <input
+                type="text"
+                placeholder="Nome do curso"
+                value={newCourseName}
+                onChange={(e) => setNewCourseName(e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <legend className="font-semibold mb-4">Total de Horas Complementares</legend>
+              <input
+                type="number"
+                placeholder="Horas complementares"
+                value={complementaryHours}
+                onChange={(e) => setComplementaryHours(e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <fieldset className="space-y-2">
+                <legend className="font-semibold">Este curso tem carga horária de extensão?</legend>
+                <div className="flex gap-6">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={hasExtension === true}
+                      onChange={() => setHasExtension(true)}
+                      className="accent-blue-600"
+                    />
+                    Sim
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      checked={hasExtension === false}
+                      onChange={() => setHasExtension(false)}
+                      className="accent-blue-600"
+                    />
+                    Não
+                  </label>
+                </div>
+              </fieldset>
+              {hasExtension && (
+                <input
+                  type="number"
+                  placeholder="Horas de extensão"
+                  value={extensionHours}
+                  onChange={(e) => setExtensionHours(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              )}
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => {
                   setIsModalOpen(false);
                   setNewCourseName('');
+                  setComplementaryHours('');
+                  setHasExtension(false);
+                  setExtensionHours('');
                 }}
-                className="px-4 py-2 rounded border border-gray-300"
+                className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
               >
                 Cancelar
               </button>
