@@ -75,7 +75,7 @@ export default function FormRegistroHoras({
         className="
           w-full max-w-5xl mx-auto p-4 md:p-8 bg-white
           rounded-2xl shadow-md
-          overflow-hidden               /*  ⬅️ impede overflow do dropdown */
+          overflow-hidden
         "
       >
         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -147,7 +147,10 @@ export default function FormRegistroHoras({
 
           {/* ---------- Segunda linha ---------- */}
           <div className="col-span-1">
-            <label htmlFor="categoria" className="block mb-1 font-medium">
+            <label
+              htmlFor="categoria"
+              className="block mb-1 max-w-fit font-medium"
+            >
               <span className="flex items-center gap-2">
                 <FaFileAlt className="text-blue-600" /> Categoria
               </span>
