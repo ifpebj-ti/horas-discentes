@@ -59,7 +59,7 @@ const alunosMock: Aluno[] = [
     curso: 'Engenharia de Software', // <-- acrescentado
     certificados: [
       {
-        id: 1,
+        id: 1.1,
         grupo: 'I',
         categoria: 'Categoria 2',
         categoriaKey: 'Ensino',
