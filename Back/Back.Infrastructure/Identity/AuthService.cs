@@ -51,7 +51,14 @@ public class AuthService : IAuthService
                 var aluno = await _context.Set<Aluno>()
                     .AsNoTracking()
                     .FirstOrDefaultAsync(a => a.IdentityUserId == identityUser.Id);
-                nome = aluno?.Nome ?? throw new UnauthorizedAccessException("Aluno não encontrado.");
+
+                if (aluno == null)
+                    throw new UnauthorizedAccessException("Aluno não encontrado.");
+
+                if (!aluno.IsAtivo)
+                    throw new UnauthorizedAccessException("Aluno inativo. Acesso não permitido.");
+
+                nome = aluno.Nome!;
                 break;
 
             case "COORDENADOR":

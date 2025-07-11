@@ -2,6 +2,7 @@
 using Back.Application.UseCases.Coordenador;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Back.API.Controllers;
 
@@ -21,10 +22,20 @@ public class CoordenadorController : ControllerBase
     }
 
     /// <summary>
-    /// Envia um convite para coordenador (feito apenas por admin)
+    /// Envia um convite para um novo coordenador (somente ADMIN).
     /// </summary>
+    /// <remarks>
+    /// Um email de convite é enviado para o endereço informado. Apenas usuários com perfil ADMIN podem executar esta ação.
+    /// </remarks>
+    /// <param name="request">Dados do convite</param>
+    /// <returns>Mensagem de confirmação</returns>
     [HttpPost("convite")]
     [Authorize(Roles = "ADMIN")]
+    [SwaggerOperation(
+        Summary = "Envia um convite para um novo coordenador.",
+        Description = "Somente usuários com o papel ADMIN podem enviar convites para coordenadores.",
+        Tags = new[] { "Coordenadores" })]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     public async Task<IActionResult> EnviarConvite([FromBody] ConviteCoordenadorRequest request)
     {
         await _enviarConvite.ExecuteAsync(request);
@@ -32,9 +43,21 @@ public class CoordenadorController : ControllerBase
     }
 
     /// <summary>
-    /// Cria a conta do coordenador a partir do token do convite
+    /// Cria a conta do coordenador a partir de um convite com token válido.
     /// </summary>
+    /// <remarks>
+    /// Esta rota é usada para que o próprio coordenador conclua o cadastro após receber o convite.
+    /// </remarks>
+    /// <param name="request">Dados de cadastro + token do convite</param>
+    /// <returns>Dados da conta criada</returns>
     [HttpPost("cadastrar")]
+    [AllowAnonymous]
+    [SwaggerOperation(
+        Summary = "Cadastra um coordenador a partir de um convite.",
+        Description = "Não requer autenticação. O token do convite é obrigatório.",
+        Tags = new[] { "Coordenadores" })]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Cadastrar([FromBody] CadastroCoordenadorRequest request)
     {
         var result = await _criarCoordenador.ExecuteAsync(request);

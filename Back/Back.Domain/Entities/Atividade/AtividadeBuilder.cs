@@ -40,5 +40,23 @@ public class AtividadeBuilder
         return this;
     }
 
+    public AtividadeBuilder WithCategoria(string categoria)
+    {
+        _atividade.Categoria = categoria;
+        return this;
+    }
+
+    public AtividadeBuilder WithCategoriaKey(string categoriaKey)
+    {
+        _atividade.CategoriaKey = categoriaKey;
+        return this;
+    }
+
+    public AtividadeBuilder WithCursoId(Guid cursoId)
+    {
+        _atividade.CursoId = cursoId;
+        return this;
+    }
+
     public Atividade Build() => _atividade;
 }
