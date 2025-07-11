@@ -3,10 +3,18 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FaHome, FaPlus } from 'react-icons/fa';
+import { FaGraduationCap, FaTimes } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import CourseCard from '@/components/CourseCard';
 import { RoundedButton } from '@/components/RoundedButton';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from '@/components/ui/card';
 
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -151,84 +159,126 @@ export default function CursoPage() {
 
       {/* Modal Simples */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-            <div className="space-y-4">
-              <legend className="font-semibold mb-4">
-                Adicionar Novo Curso
-              </legend>
-              <input
-                type="text"
-                placeholder="Nome do curso"
-                value={newCourseName}
-                onChange={(e) => setNewCourseName(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <legend className="font-semibold mb-4">
-                Total de Horas Complementares
-              </legend>
-              <input
-                type="number"
-                placeholder="Horas complementares"
-                value={complementaryHours}
-                onChange={(e) => setComplementaryHours(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <fieldset className="space-y-2">
-                <legend className="font-semibold">
-                  Este curso tem carga horária de extensão?
-                </legend>
-                <div className="flex gap-6">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      checked={hasExtension === true}
-                      onChange={() => setHasExtension(true)}
-                      className="accent-blue-600"
-                    />
-                    Sim
-                  </label>
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg overflow-auto max-h-full w-full max-w-2xl p-7 relative">
+            {/* Close Button */}
+            <button
+              className="absolute top-0 mt-1 mb-1 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <FaTimes className="w-6 h-6" />
+            </button>
 
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      checked={hasExtension === false}
-                      onChange={() => setHasExtension(false)}
-                      className="accent-blue-600"
-                    />
-                    Não
-                  </label>
-                </div>
-              </fieldset>
-              {hasExtension && (
-                <input
-                  type="number"
-                  placeholder="Horas de extensão"
-                  value={extensionHours}
-                  onChange={(e) => setExtensionHours(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              )}
-            </div>
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => {
-                  setIsModalOpen(false);
-                  setNewCourseName('');
-                  setComplementaryHours('');
-                  setHasExtension(false);
-                  setExtensionHours('');
-                }}
-                className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleAddCourse}
-                className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-              >
-                Salvar
-              </button>
+            <div className="max-w-2xl mx-auto space-y-8">
+              <Card>
+                <CardHeader className="text-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaGraduationCap className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <CardTitle>Adicionar Novo Curso</CardTitle>
+                  <CardDescription>
+                    Preencha todos os campos para criar um novo curso
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleAddCourse} className="space-y-6">
+                    <div className="space-y-2">
+                      <label htmlFor="courseName" className="block font-medium">
+                        Nome do curso
+                      </label>
+                      <input
+                        id="courseName"
+                        type="text"
+                        placeholder="Nome do curso"
+                        value={newCourseName}
+                        onChange={(e) => setNewCourseName(e.target.value)}
+                        required
+                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="complementaryHours"
+                        className="block font-medium"
+                      >
+                        Total de Horas Complementares
+                      </label>
+                      <input
+                        id="complementaryHours"
+                        type="number"
+                        placeholder="Horas complementares"
+                        value={complementaryHours}
+                        onChange={(e) => setComplementaryHours(e.target.value)}
+                        required
+                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="font-medium">
+                        Este curso tem carga horária de extensão?
+                      </p>
+                      <div className="flex space-x-6">
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasExtension"
+                            value="sim"
+                            checked={hasExtension === true}
+                            onChange={() => setHasExtension(true)}
+                            className="accent-purple-600"
+                          />
+                          <span>Sim</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasExtension"
+                            value="nao"
+                            checked={hasExtension === false}
+                            onChange={() => setHasExtension(false)}
+                            className="accent-purple-600"
+                          />
+                          <span>Não</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {hasExtension && (
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="extensionHours"
+                          className="block font-medium"
+                        >
+                          Horas de Extensão
+                        </label>
+                        <input
+                          id="extensionHours"
+                          type="number"
+                          placeholder="Horas de extensão"
+                          value={extensionHours}
+                          onChange={(e) => setExtensionHours(e.target.value)}
+                          required
+                          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={
+                        !newCourseName.trim() ||
+                        !complementaryHours.trim() ||
+                        (hasExtension && !extensionHours.trim())
+                      }
+                      className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 disabled:opacity-50"
+                    >
+                      Criar Curso
+                    </button>
+                  </form>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
