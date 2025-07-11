@@ -35,7 +35,7 @@ namespace Back.Application.UseCases.Coordenador
             await _conviteRepo.AddAsync(convite);
 
             var emailEncoded = Uri.EscapeDataString(request.Email);
-            var link = $"https://localhost:3000/criarContaCoordenador?token={token}&email={emailEncoded}";
+            var link = $"http://localhost:3000/criarContaCoordenador?token={token}&email={emailEncoded}";
 
             var mensagem = $@"
 <!DOCTYPE html>

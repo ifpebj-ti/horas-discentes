@@ -1,4 +1,5 @@
 'use client';
+
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
   useState,
@@ -10,17 +11,20 @@ import {
 import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
+import LoadingOverlay from '@/components/LoadingOverlay';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
 import VerCertificado from '@/components/VerCertificado';
 
+import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
 import {
-  STATUS_OPTIONS,
-  CATEGORY_OPTIONS,
-  MOCK_CERTIFICATES
-} from '@/lib/alunoMock';
+  listarMeusCertificados,
+  obterCertificadoPorId
+} from '@/services/certificadoService';
 import * as Types from '@/types';
+import { mapStatusCertificado, mapTipoCertificado } from '@/types';
+import Swal from 'sweetalert2';
 
-// Definir o contexto localmente
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
 const breadcrumbItems = [
@@ -35,8 +39,12 @@ const breadcrumbItems = [
     href: '/aluno/certificado'
   }
 ];
-
-// Componente CertificadosPageContent para usar o contexto
+function baixarPDFBase64(base64: string, nomeArquivo: string) {
+  const link = document.createElement('a');
+  link.href = `data:application/pdf;base64,${base64}`;
+  link.download = nomeArquivo;
+  link.click();
+}
 function CertificadosPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -44,14 +52,12 @@ function CertificadosPageContent() {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const certificados = useContext(CertificadosContext);
+
   useEffect(() => {
     const category = searchParams.get('category');
     const status = searchParams.get('status');
 
-    if (category) {
-      setSelectedCategory(category);
-    }
-
+    if (category) setSelectedCategory(category);
     if (status && ['aprovado', 'pendente', 'rejeitado'].includes(status)) {
       setSelectedStatus(status);
     }
@@ -59,22 +65,18 @@ function CertificadosPageContent() {
 
   const updateFilters = (status: string, category: string) => {
     const params = new URLSearchParams(searchParams.toString());
-
     if (status !== 'all') {
       params.set('status', status);
     } else {
       params.delete('status');
     }
-
     if (category !== 'all') {
       params.set('category', category);
     } else {
       params.delete('category');
     }
 
-    const query = params.toString();
-    const newPath = '/aluno/certificado' + (query ? '?' + query : '');
-    router.push(newPath);
+    router.push('/aluno/certificado' + (params.toString() ? `?${params}` : ''));
   };
 
   const handleStatusChange = (status: string) => {
@@ -96,11 +98,34 @@ function CertificadosPageContent() {
     const matchesStatus =
       selectedStatus === 'all' || cert.status === selectedStatus;
     const matchesCategory =
-      selectedCategory === 'all' || cert.categoriaKey === selectedCategory;
-
+      selectedCategory === 'all' ||
+      cert.categoriaKey.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesStatus && matchesCategory;
   });
-
+  const handleVerCertificado = async (id: string) => {
+    try {
+      const detalhes = await obterCertificadoPorId(id);
+      if (detalhes.anexoBase64 && detalhes.tituloAtividade) {
+        baixarPDFBase64(
+          detalhes.anexoBase64,
+          `${detalhes.tituloAtividade}.pdf`
+        );
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Certificado inválido',
+          text: 'Certificado ou nome do arquivo indisponível.'
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao baixar certificado:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao visualizar',
+        text: 'Não foi possível visualizar o certificado.'
+      });
+    }
+  };
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
       <main className="flex-1 w-full">
@@ -122,17 +147,15 @@ function CertificadosPageContent() {
 
           <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 border border-gray-200">
             <div className="flex flex-col gap-4 mb-6">
-              <div className="flex-1">
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Buscar certificados..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4AA9]"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
+              <div className="relative">
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar certificados..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4AA9]"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <select
@@ -176,6 +199,7 @@ function CertificadosPageContent() {
                       category: cert.categoriaKey,
                       status: cert.status
                     }}
+                    onClick={handleVerCertificado}
                   />
                 ))
               ) : (
@@ -191,13 +215,49 @@ function CertificadosPageContent() {
   );
 }
 
-// Componente Certificados que provê o contexto e o Suspense
 export default function Certificados() {
+  const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
+  const loadingOverlay = useLoadingOverlay(true);
+
+  useEffect(() => {
+    const fetchCertificados = async () => {
+      try {
+        loadingOverlay.show();
+        const data = await listarMeusCertificados();
+        const mapped = data.map((cert) => ({
+          id: cert.id,
+          title: cert.tituloAtividade,
+          local: cert.local,
+          description: cert.descricao || '',
+          cargaHoraria: cert.cargaHoraria,
+          periodoInicio: cert.dataInicio,
+          periodoFim: cert.dataFim,
+          categoria: cert.categoria,
+          grupo: cert.grupo,
+          categoriaKey: cert.categoriaKey,
+          tipo: mapTipoCertificado(cert.tipo),
+          status: mapStatusCertificado(cert.status)
+        }));
+
+        setCertificados(mapped);
+      } catch (error) {
+        console.error('Erro ao buscar certificados:', error);
+      } finally {
+        loadingOverlay.hide();
+      }
+    };
+
+    fetchCertificados();
+  }, []);
+
   return (
-    <CertificadosContext.Provider value={MOCK_CERTIFICATES}>
-      <Suspense fallback={<div>Carregando certificados...</div>}>
-        <CertificadosPageContent />
-      </Suspense>
-    </CertificadosContext.Provider>
+    <>
+      <LoadingOverlay show={loadingOverlay.visible} />
+      <CertificadosContext.Provider value={certificados}>
+        <Suspense fallback={<div>Carregando certificados...</div>}>
+          <CertificadosPageContent />
+        </Suspense>
+      </CertificadosContext.Provider>
+    </>
   );
 }

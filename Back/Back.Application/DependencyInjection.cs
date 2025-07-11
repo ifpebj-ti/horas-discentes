@@ -1,7 +1,10 @@
 ﻿using Back.Application.UseCases.Aluno;
+using Back.Application.UseCases.Atividade;
 using Back.Application.UseCases.Auth;
+using Back.Application.UseCases.Certificado;
 using Back.Application.UseCases.Coordenador;
 using Back.Application.UseCases.Curso;
+using Back.Application.UseCases.LimiteHorasAluno;
 using Back.Application.UseCases.Turma;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,10 +26,16 @@ public static class DependencyInjection
         services.AddScoped<GetTurmaByIdUseCase>();
         services.AddScoped<VerificarTurmaExisteUseCase>();
         services.AddScoped<GetAlunosByTurmaUseCase>();
+        services.AddScoped<GetTurmasByCursoIdUseCase>();
 
         //Aluno
         services.AddScoped<CreateAlunoUseCase>();
         services.AddScoped<GetAlunoByIdUseCase>();
+        services.AddScoped<DeleteAlunoUseCase>();
+        services.AddScoped<ToggleAlunoStatusUseCase>();
+        services.AddScoped<GetAlunoDetalhadoUseCase>();
+        services.AddScoped<GetResumoHorasUseCase>();
+        services.AddScoped<GetAlunoFromTokenUseCase>();
 
         //auth
         services.AddScoped<LoginUseCase>();
@@ -34,8 +43,17 @@ public static class DependencyInjection
         //coordenador
         services.AddScoped<EnviarConviteUseCase>();
         services.AddScoped<CriarCoordenadorUseCase>();
+        services.AddScoped<GetAtividadesByCursoIdUseCase>();
 
+        //certificado
+        services.AddScoped<CreateCertificadoUseCase>();
+        services.AddScoped<GetCertificadosUseCase>();
+        services.AddScoped<GetCertificadosDoAlunoAutenticadoUseCase>();
+        services.AddScoped<AtualizarStatusCertificadoUseCase>();
+        services.AddScoped<GetCertificadoByIdUseCase>();
 
+        //Limitehoras
+        services.AddScoped<CreateLimiteHorasAlunoUseCase>();
         return services;
     }
 }
