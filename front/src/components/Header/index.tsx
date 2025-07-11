@@ -1,6 +1,3 @@
-'use client';
-
-import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -47,15 +44,15 @@ const Header = ({ menuTitle, user }: HeaderProps) => {
           </div>
         </div>
 
-        <button
+        <Link
+          href="/"
           onClick={() => {
             closeMenu();
-            signOut({ callbackUrl: '/' }); // Redireciona para login após sair
           }}
-          className="text-blue-600 text-sm font-medium cursor-pointer"
+          className="text-blue-600 text-sm font-medium"
         >
           Sair
-        </button>
+        </Link>
       </div>
 
       {menuOpen && (

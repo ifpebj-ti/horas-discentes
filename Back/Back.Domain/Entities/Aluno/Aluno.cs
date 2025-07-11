@@ -8,14 +8,14 @@ public class Aluno
     public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O campo Nome é obrigatório.")]
-    public string? Nome { get; set; }
+    public string Nome { get; set; }
 
     [Required(ErrorMessage = "O campo Email é obrigatório.")]
     [EmailAddress(ErrorMessage = "Email inválido.")]
-    public string? Email { get; set; }
+    public string Email { get; set; }
 
     [Required(ErrorMessage = "O campo Matrícula é obrigatório.")]
-    public string? Matricula { get; set; }
+    public string Matricula { get; set; }
 
     public bool JaBaixadoHoras { get; set; }
 
@@ -23,13 +23,8 @@ public class Aluno
     public Guid TurmaId { get; set; }
 
     [Required]
-    public string? IdentityUserId { get; set; }
-
-    public bool IsAtivo { get; set; } = true;
-
-    public Turma.Turma? Turma { get; private set; }
-
-    public ICollection<AlunoAtividade.AlunoAtividade> Atividades { get; set; } = new List<AlunoAtividade.AlunoAtividade>();
+    public string IdentityUserId { get; set; }
+    public Turma.Turma Turma { get; private set; }
 
     internal Aluno() { }
 
@@ -41,6 +36,5 @@ public class Aluno
         Matricula = matricula;
         TurmaId = turmaId;
         IdentityUserId = identityUserId;
-        IsAtivo = true;
     }
 }

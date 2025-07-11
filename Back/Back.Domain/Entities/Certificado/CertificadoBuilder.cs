@@ -6,7 +6,7 @@ public class CertificadoBuilder
 
     public CertificadoBuilder()
     {
-        _certificado.Status = StatusCertificado.PENDENTE;
+        _certificado.Status = StatusCertificado.PENDENTE; // padrão
     }
 
     public CertificadoBuilder WithId(Guid id)
@@ -93,9 +93,15 @@ public class CertificadoBuilder
         return this;
     }
 
-    public CertificadoBuilder WithAlunoAtividadeId(Guid alunoAtividadeId)
+    public CertificadoBuilder WithAlunoId(Guid alunoId)
     {
-        _certificado.AlunoAtividadeId = alunoAtividadeId;
+        _certificado.AlunoId = alunoId;
+        return this;
+    }
+
+    public CertificadoBuilder WithAtividadeId(Guid atividadeId)
+    {
+        _certificado.AtividadeId = atividadeId;
         return this;
     }
 

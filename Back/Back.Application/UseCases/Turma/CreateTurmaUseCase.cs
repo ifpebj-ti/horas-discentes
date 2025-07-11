@@ -27,17 +27,7 @@ public class CreateTurmaUseCase
 
         await _repo.AddAsync(turma);
 
-        // Recarrega com curso incluído
-        var turmaCompleta = await _repo.GetByIdAsync(turma.Id);
-
         return new TurmaResponse(
-            turmaCompleta!.Id,
-            turmaCompleta.Periodo!,
-            turmaCompleta.Turno!,
-            turmaCompleta.PossuiExtensao,
-            turmaCompleta.CursoId,
-            turmaCompleta.Curso?.Nome ?? "Curso não encontrado"
-        );
+            turma.Id, turma.Periodo, turma.Turno, turma.PossuiExtensao, turma.CursoId);
     }
-
 }

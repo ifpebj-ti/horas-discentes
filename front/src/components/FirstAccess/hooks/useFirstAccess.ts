@@ -1,17 +1,11 @@
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { criarAluno } from '@/services/alunoService';
-import { verificarTurmaExiste, obterTurmaPorId } from '@/services/turmaService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
 import { firstAccessSchema, FirstAccessSchema } from '../schemas/schema';
-
 export const useFirstAccess = () => {
-  const router = useRouter();
-
   const [step, setStep] = useState(1);
   const [codigo, setCodigo] = useState('');
   const [turma, setTurma] = useState<{ id: string; nome: string } | null>(null);
@@ -22,62 +16,37 @@ export const useFirstAccess = () => {
     mode: 'onChange'
   });
 
-  const handleValidarCodigo = async () => {
-    try {
-      setLoading(true);
-      const exists = await verificarTurmaExiste(codigo.trim());
-
-      if (!exists) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Código inválido',
-          text: 'Solicite ao coordenador ou à secretaria.',
-          confirmButtonColor: '#f87171'
-        });
-        return;
-      }
-
-      const turmaData = await obterTurmaPorId(codigo.trim());
-
-      const nomeTurma = `Turma de ${turmaData.cursoNome} ${turmaData.periodo}`;
-      setTurma({ id: turmaData.id, nome: nomeTurma });
+  const handleValidarCodigo = () => {
+    if (codigo.trim() === 'ABC123') {
+      setTurma({ id: '1', nome: 'Turma de Engenharia 2024' });
       setStep(2);
-    } catch (error) {
+    } else {
       Swal.fire({
         icon: 'error',
-        title: 'Erro ao validar código',
-        text: 'Tente novamente mais tarde.',
+        title: 'Código inválido',
+        text: 'Solicite ao coordenador ou a Secretária.',
         confirmButtonColor: '#f87171'
       });
-      console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleFinalizarCadastro = async (data: FirstAccessSchema) => {
-    if (!turma) return;
-
     setLoading(true);
     try {
-      await criarAluno({
-        ...data,
-        turmaId: turma.id
-      });
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulação
 
+      console.log('Dados enviados:', { ...data, turmaId: turma?.id });
       Swal.fire({
         icon: 'success',
         title: 'Cadastro realizado com sucesso!',
         text: 'Você pode acessar o sistema agora.',
         confirmButtonColor: '#1351B4'
-      }).then(() => {
-        router.push('/');
       });
     } catch (err) {
       Swal.fire({
         icon: 'error',
         title: 'Erro ao cadastrar',
-        text: 'Tente novamente.',
+        text: String(err),
         confirmButtonColor: '#f87171'
       });
       console.error('Erro ao cadastrar:', err);

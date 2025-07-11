@@ -18,14 +18,6 @@ public class GetAllTurmasUseCase
     public async Task<IEnumerable<TurmaResponse>> ExecuteAsync()
     {
         var turmas = await _repo.GetAllAsync();
-        return turmas.Select(t => new TurmaResponse(
-            t.Id,
-            t.Periodo!,
-            t.Turno!,
-            t.PossuiExtensao,
-            t.CursoId,
-            t.Curso?.Nome ?? "Curso não encontrado"
-        ));
+        return turmas.Select(t => new TurmaResponse(t.Id, t.Periodo, t.Turno, t.PossuiExtensao, t.CursoId));
     }
-
 }

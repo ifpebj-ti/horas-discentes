@@ -1,7 +1,6 @@
 ﻿using Back.Application.DTOs.Curso;
 using Back.Application.Interfaces.Repositories;
 using Back.Domain.Entities.Curso;
-using Back.Domain.Entities.LimiteHorasAluno;
 using System;
 using System.Threading.Tasks;
 
@@ -9,35 +8,22 @@ namespace Back.Application.UseCases.Curso;
 
 public class CreateCursoUseCase
 {
-    private readonly ICursoRepository _cursoRepository;
-    private readonly ILimiteHorasAlunoRepository _limiteHorasAlunoRepository;
+    private readonly ICursoRepository _repository;
 
-    public CreateCursoUseCase(
-        ICursoRepository cursoRepository,
-        ILimiteHorasAlunoRepository limiteHorasAlunoRepository)
+    public CreateCursoUseCase(ICursoRepository repository)
     {
-        _cursoRepository = cursoRepository;
-        _limiteHorasAlunoRepository = limiteHorasAlunoRepository;
+        _repository = repository;
     }
 
-    public async Task<CursoResponse> ExecuteAsync(CreateCursoComLimiteHorasRequest request)
+    public async Task<CursoResponse> ExecuteAsync(CreateCursoRequest request)
     {
         var curso = new CursoBuilder()
             .WithId(Guid.NewGuid())
-            .WithNome(request.NomeCurso!)
+            .WithNome(request.Nome)
             .Build();
 
-        await _cursoRepository.AddAsync(curso);
+        await _repository.AddAsync(curso);
 
-        var limite = new LimiteHorasAlunoBuilder()
-            .WithId(Guid.NewGuid())
-            .WithMaximoHorasComplementar(request.MaximoHorasComplementar)
-            .WithMaximoHorasExtensao(request.MaximoHorasExtensao)
-            .WithCursoId(curso.Id)
-            .Build();
-
-        await _limiteHorasAlunoRepository.AddAsync(limite);
-
-        return new CursoResponse(curso.Id, curso.Nome!);
+        return new CursoResponse(curso.Id, curso.Nome);
     }
 }

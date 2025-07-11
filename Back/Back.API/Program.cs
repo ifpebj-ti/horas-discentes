@@ -2,7 +2,6 @@ using Back.API.Configurations;
 using Back.Application;
 using Back.Infrastructure;
 using Back.Infrastructure.Persistence.Context;
-using Back.Infrastructure.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +54,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// App DI: Application & Infrastructure
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -73,6 +73,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// Middleware pipeline
 app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
@@ -83,50 +84,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
-app.UseAuthentication();
+// AUTH: JWT
+app.UseAuthentication(); // importante: vem antes do Authorization
 app.UseAuthorization();
 
 
 app.MapControllers();
 
-//seedando os dados iniciais no banco de dados para Atividades
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-//    //  Substitua esse Guid pelo ID real do curso que você já cadastrou
-//    var cursoId = new Guid("c77b9418-8892-41c4-899b-e25d399c088b");
-
-//    await AtividadeSeeder.SeedAsync(db, cursoId);
-
-//    Console.WriteLine("Atividades seedadas com sucesso.");
-//}
-
-//para rodar usar (dotnet run --project Back.API -- --seed)
-if (args.Contains("--seed"))
-{
-    await SeedDatabaseAsync(app);
-    return;
-}
 app.Run();
-async Task SeedDatabaseAsync(WebApplication app)
-{
-    using var scope = app.Services.CreateScope();
-
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-    var roles = new[] { "ALUNO", "COORDENADOR", "ADMIN" };
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-            await roleManager.CreateAsync(new IdentityRole(role));
-    }
-
-    await Back.Infrastructure.Seeders.AdminSeeder.SeedAsync(context, userManager);
-
-    Console.WriteLine("Seed executado com sucesso.");
-}

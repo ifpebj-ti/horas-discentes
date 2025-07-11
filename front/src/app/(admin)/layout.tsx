@@ -1,16 +1,27 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
+import { ReactNode } from 'react';
 
 import Header from '@/components/Header';
-import ProtectedLayout from '@/components/ProtectedLayout';
+
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const user = {
+  id: '1',
+  name: 'Admin',
+  email: 'admin@example.com',
+  role: 'administrador'
+};
 
 const getTitleFromPath = (path: string): string => {
-  const last = path.split('/').filter(Boolean).pop() ?? '';
-  switch (last) {
-    case 'curso':
-      return 'Cursos';
+  const lastSegment = path.split('/').filter(Boolean).pop() ?? '';
+
+  switch (lastSegment) {
+    case 'administrador':
+      return 'Administrador';
     case 'usuarios':
       return 'Gerenciar Usuários';
     case 'relatorios':
@@ -22,30 +33,18 @@ const getTitleFromPath = (path: string): string => {
   }
 };
 
-export default function AdminLayout({
+export default function AdministradorLayout({
   children
-}: {
-  children: React.ReactNode;
-}) {
+}: Readonly<LayoutProps>) {
   const pathname = usePathname();
-  const { data: session } = useSession();
   const menuTitle = getTitleFromPath(pathname);
 
-  const user = {
-    id: '',
-    name: session?.user.name || '',
-    email: session?.user.email || '',
-    role: session?.user.role || ''
-  };
-
   return (
-    <ProtectedLayout allowedRoles={['admin']}>
-      <div className="min-h-screen bg-white">
-        <header className="shadow-md bg-gray-100 z-20 relative">
-          <Header menuTitle={menuTitle} user={user} />
-        </header>
-        <main>{children}</main>
-      </div>
-    </ProtectedLayout>
+    <div className="min-h-screen bg-white">
+      <header className="shadow-md bg-gray-100 z-20 relative">
+        <Header menuTitle={menuTitle} user={user} />
+      </header>
+      <main>{children}</main>
+    </div>
   );
 }

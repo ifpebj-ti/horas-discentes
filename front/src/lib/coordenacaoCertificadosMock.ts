@@ -63,7 +63,7 @@ export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] =
 
     return {
       id: `coord-cert-${cert.id}`, // Cria um ID único para a visão da coordenação
-      certificadoId: Number(cert.id), // Mantém o ID original como referência e garante que seja number
+      certificadoId: cert.id, // Mantém o ID original como referência
 
       // Dados do Certificado (herdados do mock de aluno)
       grupo: cert.grupo,

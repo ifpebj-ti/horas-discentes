@@ -22,6 +22,6 @@ public class GetAlunoByIdUseCase
         if (aluno == null)
             throw new KeyNotFoundException("Aluno não encontrado.");
 
-        return new AlunoResponse(aluno.Id, aluno.Nome!, aluno.Email!, aluno.Matricula!, "ALUNO");
+        return new AlunoResponse(aluno.Id, aluno.Nome, aluno.Email, aluno.Matricula, "ALUNO");
     }
 }

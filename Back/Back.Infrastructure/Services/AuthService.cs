@@ -44,7 +44,6 @@ public class AuthService : IAuthService
         Guid entidadeId;
         Guid cursoId = Guid.Empty;
         Guid turmaId = Guid.Empty;
-        bool isNewPpc = false;
 
         switch (role.ToUpper())
         {
@@ -55,14 +54,10 @@ public class AuthService : IAuthService
                     .FirstOrDefaultAsync(a => a.IdentityUserId == identityUser.Id)
                     ?? throw new UnauthorizedAccessException("Aluno não encontrado.");
 
-                if (!aluno.IsAtivo)
-                    throw new UnauthorizedAccessException("Aluno inativo. Acesso não permitido.");
-
                 nome = aluno.Nome;
                 entidadeId = aluno.Id;
                 turmaId = aluno.TurmaId;
                 cursoId = aluno.Turma?.CursoId ?? throw new UnauthorizedAccessException("Curso não encontrado.");
-                isNewPpc = aluno.Turma?.PossuiExtensao ?? false;
                 break;
 
             case "COORDENADOR":
@@ -88,12 +83,12 @@ public class AuthService : IAuthService
                 throw new UnauthorizedAccessException("Perfil inválido.");
         }
 
-        var token = GenerateJwtToken(identityUser, role, nome, entidadeId, cursoId, turmaId, isNewPpc);
+        var token = GenerateJwtToken(identityUser, role, nome, entidadeId, cursoId, turmaId);
 
         return new LoginResponseDto(nome, identityUser.Email!, role, token);
     }
 
-    private string GenerateJwtToken(IdentityUser user, string role, string nome, Guid entidadeId, Guid cursoId, Guid turmaId, bool isNewPpc)
+    private string GenerateJwtToken(IdentityUser user, string role, string nome, Guid entidadeId, Guid cursoId, Guid turmaId)
     {
         var expiration = DateTime.UtcNow.AddHours(4);
 
@@ -112,8 +107,6 @@ public class AuthService : IAuthService
 
         if (turmaId != Guid.Empty)
             claims.Add(new Claim("turmaId", turmaId.ToString()));
-        if (role.ToUpper() == "ALUNO")
-            claims.Add(new Claim("isNewPpc", isNewPpc.ToString().ToLower()));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

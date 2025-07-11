@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 
 namespace Back.API.Configurations;
 
@@ -14,8 +13,6 @@ public static class SwaggerConfig
                 Title = "Horas Discentes API",
                 Version = "v1"
             });
-            c.EnableAnnotations();
-
 
             var securityScheme = new OpenApiSecurityScheme
             {
@@ -42,10 +39,6 @@ public static class SwaggerConfig
 
             c.AddSecurityDefinition("Bearer", securityScheme);
             c.AddSecurityRequirement(securityRequirement);
-
-            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            c.IncludeXmlComments(xmlPath);
         });
 
         return services;
