@@ -27,7 +27,7 @@ export const mapTipoCertificado = (tipo: string | number): TipoCertificado => {
  * Interface base para representar um Certificado do Aluno.
  */
 export interface Certificado {
-  id: number; // ID numérico original do certificado do aluno
+  id: string; // ID numérico original do certificado do aluno
   grupo: string;
   categoria: string;
   categoriaKey: string;
@@ -137,20 +137,4 @@ export interface Coordenador {
   telefone: string;
   createdAt: string;
   updatedAt: string;
-}
-
-/**
- * Interface Aluno
- */
-export interface Aluno {
-  id: number;
-  nome: string;
-  matricula: string;
-  telefone: string; // <-- acrescentado
-  email: string; // <-- acrescentado
-  curso: string; // <-- acrescentado
-  certificados: Certificado[];
-  cargaHorariaFinalizada: boolean;
-  jaFezDownload: boolean;
-  categoria: 'horasComplementares' | 'extensao';
 }

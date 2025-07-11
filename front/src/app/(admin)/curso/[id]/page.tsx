@@ -1,4 +1,3 @@
-/* cspell:ignore Graduation RoundedButton Card CardHeader CardTitle CardDescription CardContent Swal sweetalert Coordinator Secretary CourseDetails courseData periodo cargaHorariaExtensao mockData Resetar */
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -82,18 +81,10 @@ export default function CourseDetailPage() {
     periodo: string;
     cargaHorariaExtensao: string;
     turno: string;
-    complementaryHours: string; // Campo para as horas complementares, agora sempre presente
-    hasComplementaryHours: 'sim' | 'nao';
-    hasExtensionHours: 'sim' | 'nao';
-    extensionHours: string;
   }>({
     periodo: '',
     cargaHorariaExtensao: '',
-    turno: '',
-    complementaryHours: '',
-    hasComplementaryHours: 'nao',
-    hasExtensionHours: 'nao',
-    extensionHours: ''
+    turno: ''
   });
   const [isTurmaLoading, setIsTurmaLoading] = useState(false);
 
@@ -236,15 +227,19 @@ export default function CourseDetailPage() {
     }, 1000);
   };
 
+  // Handlers Turma
+  const handleAddTurmaClick = () => {
+    setFormData({
+      periodo: '',
+      cargaHorariaExtensao: '',
+      turno: ''
+    });
+    setIsTurmaLoading(false);
+    setIsTurmaModalOpen(true);
+  };
+
   const handleTurmaChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-      // Se o campo for hasExtensionHours e o valor for 'nao', resetar extensionHours
-      ...(field === 'hasExtensionHours' && value === 'nao'
-        ? { extensionHours: '' }
-        : {})
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleTurmaSubmit = async (e: React.FormEvent) => {
@@ -311,20 +306,6 @@ export default function CourseDetailPage() {
   };
 
   if (!courseData) return <p className="p-6">Carregando...</p>;
-
-  function handleAddTurmaClick(): void {
-    setFormData({
-      periodo: '',
-      complementaryHours: '',
-      cargaHorariaExtensao: '',
-      turno: '',
-      hasComplementaryHours: 'nao',
-      hasExtensionHours: 'nao',
-      extensionHours: ''
-    });
-    setIsTurmaLoading(false);
-    setIsTurmaModalOpen(true);
-  }
 
   return (
     <div className="p-6 space-y-6">
@@ -671,84 +652,41 @@ export default function CourseDetailPage() {
                       </p>
                     </div>
 
-                    {/* Carga Horária Complementar - sempre visível */}
-                    <div className="space-y-2">
-                      <Label htmlFor="complementaryHours">
-                        Carga Horária Complementar (horas)
-                      </Label>
-                      <Input
-                        id="complementaryHours"
-                        type="number"
-                        placeholder="Ex: 300"
-                        value={formData.complementaryHours}
-                        onChange={(e) =>
-                          handleTurmaChange(
-                            'complementaryHours',
-                            e.target.value
-                          )
-                        }
-                        required
-                        className="text-lg"
-                      />
-                    </div>
-
-                    {/* Pergunta existente para carga horária de extensão */}
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                       <Label>Essa turma tem carga horária de extensão?</Label>
                       <RadioGroup
-                        onValueChange={(value: 'sim' | 'nao') =>
-                          handleTurmaChange('hasExtensionHours', value)
+                        value={formData.cargaHorariaExtensao}
+                        onValueChange={(value) =>
+                          handleTurmaChange('cargaHorariaExtensao', value)
                         }
-                        value={formData.hasExtensionHours}
-                        className="flex space-x-4"
+                        className="flex space-x-6"
                       >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="sim" id="extension-sim" />
-                          <Label htmlFor="extension-sim">Sim</Label>
+                          <RadioGroupItem value="sim" id="sim" />
+                          <Label htmlFor="sim">Sim</Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="nao" id="extension-nao" />
-                          <Label htmlFor="extension-nao">Não</Label>
+                          <RadioGroupItem value="nao" id="nao" />
+                          <Label htmlFor="nao">Não</Label>
                         </div>
                       </RadioGroup>
                     </div>
 
-                    {formData.hasExtensionHours === 'sim' && (
-                      <div className="space-y-2">
-                        <Label htmlFor="extensionHours">
-                          Carga Horária de Extensão (horas)
-                        </Label>
-                        <Input
-                          id="extensionHours"
-                          type="number"
-                          placeholder="Ex: 300"
-                          value={formData.extensionHours}
-                          onChange={(e) =>
-                            handleTurmaChange('extensionHours', e.target.value)
-                          }
-                          maxLength={3}
-                          required
-                          className="text-lg"
-                        />
-                      </div>
-                    )}
-
                     <div className="space-y-2">
                       <Label htmlFor="turno">Turno</Label>
                       <Select
+                        value={formData.turno}
                         onValueChange={(value) =>
                           handleTurmaChange('turno', value)
                         }
-                        value={formData.turno}
                       >
-                        <SelectTrigger className="w-full text-lg">
+                        <SelectTrigger>
                           <SelectValue placeholder="Selecione o turno" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Manhã">Manhã</SelectItem>
-                          <SelectItem value="Tarde">Tarde</SelectItem>
-                          <SelectItem value="Noite">Noite</SelectItem>
-                          <SelectItem value="Integral">Integral</SelectItem>
+                          <SelectItem value="manha">Manhã</SelectItem>
+                          <SelectItem value="tarde">Tarde</SelectItem>
+                          <SelectItem value="noite">Noite</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -756,13 +694,38 @@ export default function CourseDetailPage() {
                     <Button
                       type="submit"
                       className="w-full"
-                      disabled={isTurmaLoading}
+                      disabled={
+                        isTurmaLoading ||
+                        !formData.periodo ||
+                        !formData.cargaHorariaExtensao ||
+                        !formData.turno
+                      }
                     >
-                      {isTurmaLoading ? <>Criando...</> : <>Criar turma</>}
+                      {isTurmaLoading ? (
+                        <>Criando turma...</>
+                      ) : (
+                        <>
+                          <FaPlus className="w-4 h-4 mr-2" />
+                          Criar turma
+                        </>
+                      )}
                     </Button>
                   </form>
                 </CardContent>
               </Card>
+
+              <div className="bg-purple-50 rounded-lg p-6">
+                <h3 className="font-semibold text-purple-900 mb-2">
+                  Próximos passos
+                </h3>
+                <ul className="text-purple-700 space-y-1 text-sm">
+                  <li>• Após criar a turma, você receberá um código único</li>
+                  <li>
+                    • Use este código para que alunos se inscrevam na turma
+                  </li>
+                  <li>• Você poderá gerenciar alunos e acompanhar progresso</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
