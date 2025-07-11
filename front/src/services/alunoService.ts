@@ -31,6 +31,7 @@ export interface AtividadeAlunoResumo {
   cargaMaximaSemestral: number;
   cargaMaximaCurso: number;
   horasConcluidas: number;
+  tipo: string;
 }
 
 export interface AlunoDetalhadoResponse {

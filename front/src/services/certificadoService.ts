@@ -28,6 +28,7 @@ export interface CertificadoResponse {
   status: StatusCertificado;
   alunoId: string;
   atividadeId: string;
+  categoriaKey: string; // Chave para identificar a categoria
 }
 
 export interface CertificadoDetalhadoResponse extends CertificadoResponse {

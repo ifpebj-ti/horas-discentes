@@ -30,12 +30,14 @@ export default function AlunoLayout({
   const pathname = usePathname();
   const { data: session } = useSession();
   const menuTitle = getTitleFromPath(pathname);
-
   const user = {
-    id: '',
+    id: session?.user.entidadeId || '',
     name: session?.user.name || '',
     email: session?.user.email || '',
-    role: session?.user.role || ''
+    role: session?.user.role || '',
+    isNewPpc: session?.user.isNewPpc || false,
+    cursoId: session?.user.cursoId || '',
+    turmaId: session?.user.turmaId || ''
   };
   return (
     <ProtectedLayout allowedRoles={['aluno']}>

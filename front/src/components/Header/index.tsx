@@ -52,7 +52,7 @@ const Header = ({ menuTitle, user }: HeaderProps) => {
             closeMenu();
             signOut({ callbackUrl: '/' }); // Redireciona para login após sair
           }}
-          className="text-blue-600 text-sm font-medium"
+          className="text-blue-600 text-sm font-medium cursor-pointer"
         >
           Sair
         </button>

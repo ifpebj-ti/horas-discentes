@@ -37,7 +37,8 @@ public class GetAlunoDetalhadoUseCase
             a.Atividade.CategoriaKey!,
             a.Atividade.CargaMaximaSemestral,
             a.Atividade.CargaMaximaCurso,
-            a.HorasConcluidas
+            a.HorasConcluidas,
+            a.Atividade.Tipo.ToString()
         ));
 
         var limite = await _limiteRepo.GetByCursoIdAsync(aluno.Turma!.CursoId);

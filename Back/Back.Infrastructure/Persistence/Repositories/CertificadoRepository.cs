@@ -28,6 +28,7 @@ public class CertificadoRepository : ICertificadoRepository
     {
         var query = _context.Certificados
             .Include(c => c.AlunoAtividade)
+                .ThenInclude(aa => aa!.Atividade)
             .AsQueryable();
 
         if (status.HasValue)

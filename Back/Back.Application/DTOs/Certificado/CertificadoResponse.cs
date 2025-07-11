@@ -19,5 +19,6 @@ public record CertificadoResponse(
     TipoCertificado Tipo,
     StatusCertificado Status,
     Guid AlunoId,
-    Guid AtividadeId
+    Guid AtividadeId,
+    string CategoriaKey
 );

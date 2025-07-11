@@ -7,6 +7,11 @@ declare module 'next-auth' {
       name: string;
       email: string;
       role: 'admin' | 'coordenador' | 'aluno';
+      sub: string;
+      isNewPpc?: boolean;
+      entidadeId?: string; // opcional
+      cursoId?: string; // opcional
+      turmaId?: string; // opcional
     };
     token: string;
   }
@@ -15,6 +20,7 @@ declare module 'next-auth' {
     name: string;
     email: string;
     role: 'admin' | 'coordenador' | 'aluno';
-    token: string;
+    sub: string;
+    isNewPpc?: boolean; // opcional
   }
 }

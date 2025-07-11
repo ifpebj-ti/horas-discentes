@@ -8,11 +8,26 @@ export type StatusCertificado = 'pendente' | 'aprovado' | 'rejeitado';
  */
 export type TipoCertificado = 'complementar' | 'extensao';
 
+// Função para mapear status do backend para o tipo do frontend
+export const mapStatusCertificado = (
+  status: string | number
+): StatusCertificado => {
+  if (status === 'APROVADO' || status === 1) return 'aprovado';
+  if (status === 'REPROVADO' || status === 2) return 'rejeitado';
+  return 'pendente';
+};
+
+// Função para mapear tipo do backend para o tipo do frontend
+export const mapTipoCertificado = (tipo: string | number): TipoCertificado => {
+  if (tipo === 'EXTENSAO' || tipo === 0) return 'extensao';
+  return 'complementar';
+};
+
 /**
  * Interface base para representar um Certificado do Aluno.
  */
 export interface Certificado {
-  id: number; // ID numérico original do certificado do aluno
+  id: string; // ID numérico original do certificado do aluno
   grupo: string;
   categoria: string;
   categoriaKey: string;
@@ -66,6 +81,10 @@ export interface Usuario {
   role: string;
   isNewPPC?: boolean;
   image?: string | null;
+  totalHorasExtensao?: number;
+  maximoHorasExtensao?: number;
+  totalHorasComplementar?: number;
+  maximoHorasComplementar?: number;
 }
 
 /**
@@ -118,20 +137,4 @@ export interface Coordenador {
   telefone: string;
   createdAt: string;
   updatedAt: string;
-}
-
-/**
- * Interface Aluno
- */
-export interface Aluno {
-  id: number;
-  nome: string;
-  matricula: string;
-  telefone: string; // <-- acrescentado
-  email: string; // <-- acrescentado
-  curso: string; // <-- acrescentado
-  certificados: Certificado[];
-  cargaHorariaFinalizada: boolean;
-  jaFezDownload: boolean;
-  categoria: 'horasComplementares' | 'extensao';
 }

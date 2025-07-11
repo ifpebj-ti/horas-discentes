@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { FaEnvelope } from 'react-icons/fa';
+import { FaEnvelope, FaCircleNotch } from 'react-icons/fa';
 
 import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticateduseRedirectIfAuthenticated';
 import { Input } from '../Input';
@@ -94,9 +94,15 @@ export const CardLogin = () => {
           <div className="w-full">
             <RoundedButton
               type="submit"
-              text="Entrar"
+              text={formState.isSubmitting ? 'Entrando...' : 'Entrar'}
               bgColor="bg-[#1351B4]"
               textColor="text-white"
+              disabled={formState.isSubmitting}
+              icon={
+                formState.isSubmitting ? (
+                  <FaCircleNotch className="animate-spin" />
+                ) : undefined
+              }
             />
           </div>
 

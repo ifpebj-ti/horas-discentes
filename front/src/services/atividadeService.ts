@@ -4,6 +4,9 @@ export interface AtividadeResponse {
   id: string;
   nome: string;
   cursoId: string;
+  tipo: 'COMPLEMENTAR' | 'EXTENSAO';
+  grupo: string;
+  categoria: string;
 }
 
 export const listarAtividadesPorCurso = async (

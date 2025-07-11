@@ -36,7 +36,8 @@ public class GetAlunoFromTokenUseCase
             a.Atividade.CategoriaKey!,
             a.Atividade.CargaMaximaSemestral,
             a.Atividade.CargaMaximaCurso,
-            a.HorasConcluidas
+            a.HorasConcluidas,
+            a.Atividade.Tipo.ToString()
         ));
 
         var ext = aluno.Atividades

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Back.Domain.Entities.Atividade;
+using System;
 
 namespace Back.Application.DTOs.Aluno;
 public record AtividadeAlunoResumo(
@@ -9,4 +10,5 @@ public record AtividadeAlunoResumo(
     string CategoriaKey,
     int CargaMaximaSemestral,
     int CargaMaximaCurso,
-    int HorasConcluidas);
+    int HorasConcluidas,
+    string Tipo);
