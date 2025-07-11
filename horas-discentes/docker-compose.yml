@@ -16,7 +16,7 @@ services:
 
   backend:
     build:
-      context: ./Back/Back.API  # Caminho onde está o Dockerfile do backend
+      context: ./Back
     ports:
       - "${PORT_MACHINE_BACKEND}:5000"
     environment:
