@@ -154,7 +154,9 @@ export default function CursoPage() {
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
             <div className="space-y-4">
-              <legend className="font-semibold mb-4">Adicionar Novo Curso</legend>
+              <legend className="font-semibold mb-4">
+                Adicionar Novo Curso
+              </legend>
               <input
                 type="text"
                 placeholder="Nome do curso"
@@ -162,7 +164,9 @@ export default function CursoPage() {
                 onChange={(e) => setNewCourseName(e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <legend className="font-semibold mb-4">Total de Horas Complementares</legend>
+              <legend className="font-semibold mb-4">
+                Total de Horas Complementares
+              </legend>
               <input
                 type="number"
                 placeholder="Horas complementares"
@@ -171,7 +175,9 @@ export default function CursoPage() {
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <fieldset className="space-y-2">
-                <legend className="font-semibold">Este curso tem carga horária de extensão?</legend>
+                <legend className="font-semibold">
+                  Este curso tem carga horária de extensão?
+                </legend>
                 <div className="flex gap-6">
                   <label className="flex items-center gap-2">
                     <input
@@ -182,6 +188,7 @@ export default function CursoPage() {
                     />
                     Sim
                   </label>
+
                   <label className="flex items-center gap-2">
                     <input
                       type="radio"
