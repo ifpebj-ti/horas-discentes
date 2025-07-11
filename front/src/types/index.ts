@@ -12,7 +12,7 @@ export type TipoCertificado = 'complementar' | 'extensao';
  * Interface base para representar um Certificado do Aluno.
  */
 export interface Certificado {
-  id: string; // ID numérico original do certificado do aluno
+  id: Number; // ID numérico original do certificado do aluno
   grupo: string;
   categoria: string;
   categoriaKey: string;
