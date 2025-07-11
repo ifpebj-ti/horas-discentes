@@ -746,74 +746,41 @@ const GerenciamentoHoras: React.FC = () => {
     // Ordena alfabeticamente
     selecionados.sort((a, b) => a.nome.localeCompare(b.nome));
 
-    // Carrega o template UMA VEZ
-    let templateArrayBuffer;
-    try {
-      const response = await fetch('/docs/Coordenador-Requerimento.docx');
-      if (!response.ok)
-        throw new Error('Não foi possível carregar o template.');
-      templateArrayBuffer = await response.arrayBuffer();
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      alert('Erro ao carregar template: ' + errorMessage);
-      return;
-    }
-
-    // Gera um documento para CADA aluno selecionado
     for (const aluno of selecionados) {
+      // Monta os certificados para o template
+      const certs = aluno.certificados.map((cert, idx) => ({
+        idx: idx + 1,
+        title: cert.title,
+        cargaHoraria: cert.cargaHoraria,
+        periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
+      }));
+      // Monta os dados para o template
+      const docxVars = {
+        ...docxMock[0],
+        alunos: [{
+          estudante: aluno.nome,
+          matricula: aluno.matricula,
+          carga: aluno.cargaHoraria
+        }],
+        certs
+      };
       try {
-        // Monta os dados para o aluno atual
-        const certs = aluno.certificados.map((cert, idx) => ({
-          idx: idx + 1,
-          title: cert.title,
-          cargaHoraria: cert.cargaHoraria,
-          periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
-        }));
-        const docxVars = {
-          ...docxMock[0],
-          alunos: [
-            {
-              estudante: aluno.nome,
-              matricula: aluno.matricula,
-              carga: aluno.cargaHoraria
-            }
-          ],
-          certs
-        };
-
-        const zip = new PizZip(templateArrayBuffer);
-        const doc = new Docxtemplater(zip, {
-          paragraphLoop: true,
-          linebreaks: true
-        });
+        // Carrega o template DOCX (ajuste o caminho conforme necessário)
+        const response = await fetch('/docs/Coordenador-Requerimento.docx');
+        const arrayBuffer = await response.arrayBuffer();
+        const zip = new PizZip(arrayBuffer);
+        const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
         doc.setData(docxVars);
         doc.render();
-
-        const out = doc.getZip().generate({
-          type: 'blob',
-          mimeType:
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        });
-
-        // Salva o arquivo com o nome do aluno
-        saveAs(out, `requerimento_${aluno.nome.replace(/\s+/g, '_')}.docx`);
+        const out = doc.getZip().generate({ type: 'blob' });
+        saveAs(out, `contabilizacao_${aluno.nome.replace(/\s/g, '_')}.docx`);
       } catch (error) {
-        alert(
-          `Erro ao gerar documento para ${aluno.nome}: ` +
-          (error instanceof Error ? error.message : String(error))
-        );
-        // Continua para o próximo aluno mesmo se um falhar
-        continue;
+        console.error('Erro ao gerar DOCX:', error);
       }
-    }
-
-    // Atualizar estado local para simular comportamento de download
-    for (const aluno of selecionados) {
-      aluno.cargaHorariaFinalizada = true; // Simula que a carga horária foi finalizada
-      aluno.jaFezDownload = true;
     }
     setAlunosSelecionados(new Set());
   };
+
 
   /* --------------------------------------------------------
    *  Resetar página quando filtros mudarem
