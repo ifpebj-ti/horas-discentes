@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   frontend:
-    image: horas-discentes_frontend:latest  
+    build:
+      context: ./Front
+      dockerfile: Dockerfile
     ports:
       - "${PORT_MACHINE_FRONTEND}:3000"
     environment:
@@ -14,7 +16,9 @@ services:
     restart: unless-stopped
 
   backend:
-    image: horas-discentes_backend:latest   
+    build:
+      context: ./Back/Back.API
+      dockerfile: Dockerfile
     ports:
       - "${PORT_MACHINE_BACKEND}:5000"
     environment:
