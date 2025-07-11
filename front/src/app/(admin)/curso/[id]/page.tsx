@@ -241,7 +241,9 @@ export default function CourseDetailPage() {
       ...prev,
       [field]: value,
       // Se o campo for hasExtensionHours e o valor for 'nao', resetar extensionHours
-      ...(field === 'hasExtensionHours' && value === 'nao' ? { extensionHours: '' } : {})
+      ...(field === 'hasExtensionHours' && value === 'nao'
+        ? { extensionHours: '' }
+        : {})
     }));
   };
 
@@ -310,19 +312,19 @@ export default function CourseDetailPage() {
 
   if (!courseData) return <p className="p-6">Carregando...</p>;
 
-    function handleAddTurmaClick(): void {
-        setFormData({
-            periodo: '',
-            complementaryHours: '',
-            cargaHorariaExtensao: '',
-            turno: '',
-            hasComplementaryHours: 'nao',
-            hasExtensionHours: 'nao',
-            extensionHours: ''
-        });
-        setIsTurmaLoading(false);
-        setIsTurmaModalOpen(true);
-    }
+  function handleAddTurmaClick(): void {
+    setFormData({
+      periodo: '',
+      complementaryHours: '',
+      cargaHorariaExtensao: '',
+      turno: '',
+      hasComplementaryHours: 'nao',
+      hasExtensionHours: 'nao',
+      extensionHours: ''
+    });
+    setIsTurmaLoading(false);
+    setIsTurmaModalOpen(true);
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -671,8 +673,23 @@ export default function CourseDetailPage() {
 
                     {/* Carga Horária Complementar - sempre visível */}
                     <div className="space-y-2">
-                      <Label htmlFor="complementaryHours">Carga Horária Complementar (horas)</Label>
-                      <Input id="complementaryHours" type="number" placeholder="Ex: 300" value={formData.complementaryHours} onChange={(e) => handleTurmaChange('complementaryHours', e.target.value)} required className="text-lg" />
+                      <Label htmlFor="complementaryHours">
+                        Carga Horária Complementar (horas)
+                      </Label>
+                      <Input
+                        id="complementaryHours"
+                        type="number"
+                        placeholder="Ex: 300"
+                        value={formData.complementaryHours}
+                        onChange={(e) =>
+                          handleTurmaChange(
+                            'complementaryHours',
+                            e.target.value
+                          )
+                        }
+                        required
+                        className="text-lg"
+                      />
                     </div>
 
                     {/* Pergunta existente para carga horária de extensão */}
@@ -741,11 +758,7 @@ export default function CourseDetailPage() {
                       className="w-full"
                       disabled={isTurmaLoading}
                     >
-                      {isTurmaLoading ? (
-                        <>Criando...</>
-                      ) : (
-                        <>Criar turma</>
-                      )}
+                      {isTurmaLoading ? <>Criando...</> : <>Criar turma</>}
                     </Button>
                   </form>
                 </CardContent>
@@ -756,5 +769,4 @@ export default function CourseDetailPage() {
       )}
     </div>
   );
-
 }

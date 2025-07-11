@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 
-
 import './globals.css';
 interface ClientProvidersProps {
   children: React.ReactNode;
@@ -16,10 +15,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const ClientProviders = ({children}: ClientProvidersProps) => {
+  const ClientProviders = ({ children }: ClientProvidersProps) => {
     return <>{children}</>;
   };
-  
+
   return (
     <html lang="pt-br">
       <body>

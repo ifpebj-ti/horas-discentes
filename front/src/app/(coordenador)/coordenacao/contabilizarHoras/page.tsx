@@ -42,12 +42,12 @@ interface Aluno {
 // ----------------------------------------------------------------
 const docxMock: docxData[] = [
   {
-    Coordenador: 'João Almeida e Silva',
-    curso: 'Engenharia de Software',
+    Coordenador: 'Teste nome do Coordenador',
+    curso: 'Curso de Teste ES',
     Portaria: 605,
-    DOU: '2023/01/01',
+    DOU: '2023/01/01'
   }
-]
+];
 
 const alunosMock: Aluno[] = [
   {
@@ -58,21 +58,21 @@ const alunosMock: Aluno[] = [
     email: 'ana.silva@example.com', // <-- acrescentado
     curso: 'Engenharia de Software', // <-- acrescentado
     certificados: [
-    {
-      id: 1,
-      grupo: 'I',
-      categoria: 'Categoria 2',
-      categoriaKey: 'Ensino',
-      title: 'Monitoria',
-      description: 'Monitoria',
-      cargaHoraria: 5,
-      local: 'UFPE',
-      periodoInicio: '2023-01-10',
-      periodoFim: '2023-05-10',
-      status: 'aprovado',
-      tipo: 'complementar'
-    },
-    {
+      {
+        id: 1,
+        grupo: 'I',
+        categoria: 'Categoria 2',
+        categoriaKey: 'Ensino',
+        title: 'Monitoria',
+        description: 'Monitoria',
+        cargaHoraria: 5,
+        local: 'UFPE',
+        periodoInicio: '2023-01-10',
+        periodoFim: '2023-05-10',
+        status: 'aprovado',
+        tipo: 'complementar'
+      },
+      {
         id: 2,
         grupo: 'II',
         categoria: 'Categoria 1',
@@ -730,9 +730,8 @@ const GerenciamentoHoras: React.FC = () => {
   };
 
   /* --------------------------------------------------------
- *  Download (mock)
- * -----------------------------------------------------*/
-
+   *  Download (mock)
+   * -----------------------------------------------------*/
 
   const handleDownloadAlunosSelecionados = async () => {
     if (alunosSelecionados.size === 0) {
@@ -764,22 +763,22 @@ const GerenciamentoHoras: React.FC = () => {
     for (const aluno of selecionados) {
       try {
         // Monta os dados para o aluno atual
-        const data = {
+        const certs = aluno.certificados.map((cert, idx) => ({
+          idx: idx + 1,
+          title: cert.title,
+          cargaHoraria: cert.cargaHoraria,
+          periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
+        }));
+        const docxVars = {
+          ...docxMock[0],
           alunos: [
-            // O template espera um array, então colocamos o aluno dentro de um
             {
               estudante: aluno.nome,
               matricula: aluno.matricula,
-              carga: aluno.cargaHoraria,
-              certs:
-                aluno.certificados?.map((cert, idx) => ({
-                  idx: idx + 1,
-                  title: cert.title,
-                  cargaHoraria: cert.cargaHoraria,
-                  periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
-                })) || []
+              carga: aluno.cargaHoraria
             }
-          ]
+          ],
+          certs
         };
 
         const zip = new PizZip(templateArrayBuffer);
@@ -787,7 +786,7 @@ const GerenciamentoHoras: React.FC = () => {
           paragraphLoop: true,
           linebreaks: true
         });
-        doc.setData(data);
+        doc.setData(docxVars);
         doc.render();
 
         const out = doc.getZip().generate({
