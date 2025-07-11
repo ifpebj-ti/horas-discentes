@@ -9,6 +9,9 @@ declare module 'next-auth' {
       role: 'admin' | 'coordenador' | 'aluno';
       sub: string;
       isNewPpc?: boolean;
+      entidadeId?: string; // opcional
+      cursoId?: string; // opcional
+      turmaId?: string; // opcional
     };
     token: string;
   }

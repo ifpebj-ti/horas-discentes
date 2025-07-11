@@ -1,15 +1,31 @@
-import { useSearchParams } from 'next/navigation'; // Para obter o 'tipo'
-import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useState, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import { FormRegistroHorasSchema } from '@components/FormRegistroHoras/schemas/formRegistroHorasSchema';
 
-export function useFormRegistroHoras(/* props: UseFormRegistroHorasProps */) {
-  const searchParams = useSearchParams();
-  const tipoRegistro = searchParams.get('tipo') ?? 'horas-complementares'; // 'horas-complementares' ou 'horas-extensao'
+import { AtividadeResponse } from '@/services/atividadeService';
+import { enviarCertificado } from '@/services/certificadoService';
+import Swal from 'sweetalert2';
 
-  const [isUploading, setIsUploading] = useState(false); // Estado para o loading do upload
+export interface UseFormRegistroHorasProps {
+  categoriasComplementares: AtividadeResponse[];
+  categoriasExtensao: AtividadeResponse[];
+}
+
+export function useFormRegistroHoras({
+  categoriasComplementares,
+  categoriasExtensao
+}: UseFormRegistroHorasProps) {
+  const searchParams = useSearchParams();
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const tipoRegistro = searchParams.get('tipo') ?? 'horas-complementares';
+
+  const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<FormRegistroHorasSchema>({
     defaultValues: {
@@ -21,7 +37,7 @@ export function useFormRegistroHoras(/* props: UseFormRegistroHorasProps */) {
       cargaHoraria: 0,
       dataInicioAtividade: '',
       dataFimAtividade: '',
-      totalPeriodos: 1, // Valor padrão para totalPeriodos
+      totalPeriodos: 1,
       especificacaoAtividade: '',
       anexoComprovante: null
     },
@@ -36,8 +52,13 @@ export function useFormRegistroHoras(/* props: UseFormRegistroHorasProps */) {
     formState: { errors, isSubmitting }
   } = form;
 
-  // Observa o valor do arquivo para passar para o FileUploadInput
   const anexoComprovante = watch('anexoComprovante');
+
+  const categoriasAtuais = useMemo(() => {
+    return tipoRegistro === 'horas-extensao'
+      ? categoriasExtensao
+      : categoriasComplementares;
+  }, [tipoRegistro, categoriasComplementares, categoriasExtensao]);
 
   const handleFileSelect = (file: File) => {
     setValue('anexoComprovante', file, {
@@ -54,49 +75,91 @@ export function useFormRegistroHoras(/* props: UseFormRegistroHorasProps */) {
   };
 
   const submitForm: SubmitHandler<FormRegistroHorasSchema> = async (data) => {
-    setIsUploading(true); // Simula início do upload
-    console.log('Dados do formulário:', data);
-    // Aqui você faria a chamada para sua API, enviando `data`
-    // Exemplo:
-    // try {
-    //   const formDataApi = new FormData();
-    //   Object.keys(data).forEach(key => {
-    //     if (key === 'anexoComprovante' && data.anexoComprovante) {
-    //       formDataApi.append(key, data.anexoComprovante);
-    //     } else {
-    //       formDataApi.append(key, String(data[key as keyof FormRegistroHorasSchema]));
-    //     }
-    //   });
-    //   // await api.post('/sua-rota-de-upload', formDataApi);
-    //   toast.success('Horas registradas com sucesso!');
-    //   form.reset(); // Limpa o formulário após o sucesso
-    // } catch (error) {
-    //   toast.error('Erro ao registrar horas. Tente novamente.');
-    //   console.error("Erro na submissão:", error);
-    // } finally {
-    //   setIsUploading(false);
-    // }
+    try {
+      if (!session?.user?.entidadeId || !session?.user?.cursoId) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Erro de autenticação',
+          text: 'Usuário não autenticado ou curso não identificado.'
+        });
+        return;
+      }
 
-    // Simulação de chamada API
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsUploading(false);
-    toast.success(
-      `Horas de ${tipoRegistro === 'horas-extensao' ? 'Extensão' : 'Complementares'} registradas com sucesso!`
-    );
-    console.log('Dados enviados (simulação):', data);
-    form.reset(); // Limpa o formulário
+      const atividadeSelecionada = categoriasAtuais.find(
+        (c) => c.nome === data.categoria
+      );
+
+      if (!atividadeSelecionada) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Categoria inválida',
+          text: 'Categoria não encontrada ou inválida.'
+        });
+        return;
+      }
+
+      const dataInicioUTC = new Date(
+        data.dataInicioAtividade + 'T00:00:00Z'
+      ).toISOString();
+
+      const dataFimUTC = new Date(
+        data.dataFimAtividade + 'T00:00:00Z'
+      ).toISOString();
+
+      const formData = new FormData();
+      formData.append('TituloAtividade', data.tituloAtividade);
+      formData.append('Instituicao', data.instituicao);
+      formData.append('Local', data.localRealizacao);
+      formData.append('Categoria', atividadeSelecionada.categoria);
+      formData.append('Grupo', atividadeSelecionada.grupo);
+      formData.append('PeriodoLetivo', data.periodoLetivoFaculdade);
+      formData.append('CargaHoraria', data.cargaHoraria.toString());
+      formData.append('DataInicio', dataInicioUTC);
+      formData.append('DataFim', dataFimUTC);
+      formData.append('TotalPeriodos', data.totalPeriodos.toString());
+      if (data.especificacaoAtividade) {
+        formData.append('Descricao', data.especificacaoAtividade);
+      }
+      formData.append('AlunoId', session.user.entidadeId);
+      formData.append('AtividadeId', atividadeSelecionada.id);
+      formData.append('Tipo', tipoRegistro === 'horas-extensao' ? '0' : '1');
+      if (data.anexoComprovante) {
+        formData.append('Anexo', data.anexoComprovante);
+      }
+
+      setIsUploading(true);
+      await enviarCertificado(formData);
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: 'Certificado enviado com sucesso.'
+      });
+
+      form.reset();
+      router.push('/aluno/certificado');
+    } catch (error) {
+      console.error(error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Erro ao enviar',
+        text: 'Não foi possível enviar o certificado.'
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return {
-    formMethods: form, // Retorna todos os métodos do react-hook-form se necessário
+    formMethods: form,
     control,
     handleSubmit,
     submitForm,
     handleFileSelect,
     handleFileRemove,
-    anexoComprovante, // O arquivo para o FileUploadInput
-    isLoading: isSubmitting || isUploading, // Combina o estado de submissão do form com o de upload
-    errors, // Para exibir erros nos campos
-    tipoRegistro // Para o título dinâmico e seleção de categorias
+    anexoComprovante,
+    isLoading: isSubmitting || isUploading,
+    errors,
+    tipoRegistro
   };
 }

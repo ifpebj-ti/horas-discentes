@@ -17,9 +17,13 @@ import VerCertificado from '@/components/VerCertificado';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
-import { listarMeusCertificados } from '@/services/certificadoService';
+import {
+  listarMeusCertificados,
+  obterCertificadoPorId
+} from '@/services/certificadoService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
+import Swal from 'sweetalert2';
 
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
@@ -35,7 +39,12 @@ const breadcrumbItems = [
     href: '/aluno/certificado'
   }
 ];
-
+function baixarPDFBase64(base64: string, nomeArquivo: string) {
+  const link = document.createElement('a');
+  link.href = `data:application/pdf;base64,${base64}`;
+  link.download = nomeArquivo;
+  link.click();
+}
 function CertificadosPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -89,11 +98,34 @@ function CertificadosPageContent() {
     const matchesStatus =
       selectedStatus === 'all' || cert.status === selectedStatus;
     const matchesCategory =
-      selectedCategory === 'all' || cert.categoriaKey === selectedCategory;
-
+      selectedCategory === 'all' ||
+      cert.categoriaKey.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesStatus && matchesCategory;
   });
-
+  const handleVerCertificado = async (id: string) => {
+    try {
+      const detalhes = await obterCertificadoPorId(id);
+      if (detalhes.anexoBase64 && detalhes.tituloAtividade) {
+        baixarPDFBase64(
+          detalhes.anexoBase64,
+          `${detalhes.tituloAtividade}.pdf`
+        );
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Certificado inválido',
+          text: 'Certificado ou nome do arquivo indisponível.'
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao baixar certificado:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao visualizar',
+        text: 'Não foi possível visualizar o certificado.'
+      });
+    }
+  };
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
       <main className="flex-1 w-full">
@@ -167,6 +199,7 @@ function CertificadosPageContent() {
                       category: cert.categoriaKey,
                       status: cert.status
                     }}
+                    onClick={handleVerCertificado}
                   />
                 ))
               ) : (
@@ -191,7 +224,6 @@ export default function Certificados() {
       try {
         loadingOverlay.show();
         const data = await listarMeusCertificados();
-
         const mapped = data.map((cert) => ({
           id: cert.id,
           title: cert.tituloAtividade,
@@ -202,7 +234,7 @@ export default function Certificados() {
           periodoFim: cert.dataFim,
           categoria: cert.categoria,
           grupo: cert.grupo,
-          categoriaKey: cert.tipo === 'EXTENSAO' ? 'Extensao' : 'Complementar',
+          categoriaKey: cert.categoriaKey,
           tipo: mapTipoCertificado(cert.tipo),
           status: mapStatusCertificado(cert.status)
         }));

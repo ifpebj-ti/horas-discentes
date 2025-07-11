@@ -1,19 +1,46 @@
 'use client';
-import { Suspense } from 'react';
+
+import { useSession } from 'next-auth/react';
+import { useEffect, useState, Suspense } from 'react';
 import { FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import FormRegistroHoras from '@/components/FormRegistroHoras';
 
 import {
-  MOCK_CATEGORIAS_COMPLEMENTARES,
-  MOCK_CATEGORIAS_EXTENSAO
-} from '@/lib/alunoMock';
+  listarAtividadesPorCurso,
+  AtividadeResponse
+} from '@/services/atividadeService';
 
 export default function NovoCertificado() {
-  const categoriasComplementares = MOCK_CATEGORIAS_COMPLEMENTARES;
-  const categoriasExtensao = MOCK_CATEGORIAS_EXTENSAO;
+  const { data: session, status } = useSession();
+  const [complementares, setComplementares] = useState<AtividadeResponse[]>([]);
+  const [extensao, setExtensao] = useState<AtividadeResponse[]>([]);
 
+  useEffect(() => {
+    const fetchAtividades = async () => {
+      if (status !== 'authenticated' || !session?.user?.cursoId) return;
+
+      try {
+        const atividades = await listarAtividadesPorCurso(session.user.cursoId);
+
+        const atividadesComplementares = atividades.filter(
+          (a) => a.tipo === 'COMPLEMENTAR'
+        );
+
+        const atividadesExtensao = atividades.filter(
+          (a) => a.tipo === 'EXTENSAO'
+        );
+
+        setComplementares(atividadesComplementares);
+        setExtensao(atividadesExtensao);
+      } catch (error) {
+        console.error('Erro ao buscar atividades do curso:', error);
+      }
+    };
+
+    fetchAtividades();
+  }, [session, status]);
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
       <main className="flex-1 w-full">
@@ -55,8 +82,8 @@ export default function NovoCertificado() {
           {/* Formulário */}
           <Suspense fallback={<div>Carregando formulário...</div>}>
             <FormRegistroHoras
-              categoriasComplementares={categoriasComplementares}
-              categoriasExtensao={categoriasExtensao}
+              categoriasComplementares={complementares}
+              categoriasExtensao={extensao}
             />
           </Suspense>
         </div>

@@ -1,3 +1,4 @@
+// src/app/aluno/page.tsx
 'use client';
 
 import { useSession } from 'next-auth/react';
@@ -13,64 +14,59 @@ import ProgressoGeral from '@/components/ProgressoGeral';
 import VerCertificado from '@/components/VerCertificado';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
-import {
-  MOCK_CATEGORIAS_COMPLEMENTARES,
-  MOCK_CATEGORIAS_EXTENSAO
-} from '@/lib/alunoMock';
+import { obterMeusDadosDetalhados } from '@/services/alunoService';
 import {
   listarMeusCertificados,
-  TipoCertificado
+  obterCertificadoPorId
 } from '@/services/certificadoService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
-const CertificadosContext = createContext<Types.Certificado[]>([]);
+import Swal from 'sweetalert2';
 
-function AlunoPageContent({ user }: { user: Types.Usuario }) {
+const CertificadosContext = createContext<Types.Certificado[]>([]);
+function baixarPDFBase64(base64: string, nomeArquivo: string) {
+  const link = document.createElement('a');
+  link.href = `data:application/pdf;base64,${base64}`;
+  link.download = nomeArquivo;
+  link.click();
+}
+
+function AlunoPageContent({
+  user,
+  categoriasComplementares,
+  categoriasExtensao
+}: {
+  user: Types.Usuario;
+  categoriasComplementares: Types.CategoriaProgresso[];
+  categoriasExtensao: Types.CategoriaProgresso[];
+}) {
   const certificados = useContext(CertificadosContext);
   const [categoriaKeySelecionada, setCategoriaKeySelecionada] =
     useState<string>();
-
-  const certificadosAprovados = certificados.filter(
-    (c) => c.status === 'aprovado'
-  );
-  const compCertificados = certificadosAprovados.filter(
-    (c) => c.tipo === 'complementar'
-  );
-  const extCertificados = certificadosAprovados.filter(
-    (c) => c.tipo === 'extensao'
-  );
-
-  const totalHorasComplementares = compCertificados.reduce(
-    (acc, c) => acc + c.cargaHoraria,
-    0
-  );
-  const totalHorasExtensao = extCertificados.reduce(
-    (acc, c) => acc + c.cargaHoraria,
-    0
-  );
-
-  const categoriasComplementares = MOCK_CATEGORIAS_COMPLEMENTARES.map(
-    (cat) => ({
-      ...cat,
-      horas: compCertificados
-        .filter((c) => c.grupo === cat.grupo && c.categoria === cat.categoria)
-        .reduce((acc, c) => acc + c.cargaHoraria, 0),
-      total: cat.total || 0
-    })
-  );
-
-  const categoriasExtensao = MOCK_CATEGORIAS_EXTENSAO.map((cat) => ({
-    ...cat,
-    horas: extCertificados
-      .filter(
-        (c) =>
-          c.grupo === cat.grupo &&
-          c.categoriaKey === cat.categoriaKey &&
-          c.title === cat.nome
-      )
-      .reduce((acc, c) => acc + c.cargaHoraria, 0),
-    total: cat.total || 0
-  }));
+  const handleVerCertificado = async (id: string) => {
+    try {
+      const detalhes = await obterCertificadoPorId(id);
+      if (detalhes.anexoBase64 && detalhes.tituloAtividade) {
+        baixarPDFBase64(
+          detalhes.anexoBase64,
+          `${detalhes.tituloAtividade}.pdf`
+        );
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Certificado inválido',
+          text: 'Certificado ou nome do arquivo indisponível.'
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao baixar certificado:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao visualizar',
+        text: 'Não foi possível visualizar o certificado.'
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -104,8 +100,8 @@ function AlunoPageContent({ user }: { user: Types.Usuario }) {
                 title="Atividades Complementares"
                 subTitle="Progressão Geral - Atividades Complementares"
                 categorias={categoriasComplementares}
-                totalHoras={totalHorasComplementares}
-                totalNecessarias={280}
+                totalHoras={user.totalHorasComplementar ?? 0}
+                totalNecessarias={user.maximoHorasComplementar ?? 0}
                 categoriaKey={categoriaKeySelecionada}
                 onCategoriaClick={setCategoriaKeySelecionada}
               />
@@ -115,8 +111,8 @@ function AlunoPageContent({ user }: { user: Types.Usuario }) {
                   title="Atividades de Extensão"
                   subTitle="Progressão Geral - Atividades de Extensão"
                   categorias={categoriasExtensao}
-                  totalHoras={totalHorasExtensao}
-                  totalNecessarias={320}
+                  totalHoras={user.totalHorasExtensao ?? 0}
+                  totalNecessarias={user.maximoHorasExtensao ?? 0}
                   categoriaKey={categoriaKeySelecionada}
                   onCategoriaClick={setCategoriaKeySelecionada}
                 />
@@ -151,6 +147,7 @@ function AlunoPageContent({ user }: { user: Types.Usuario }) {
                           category: cert.categoriaKey,
                           status: cert.status
                         }}
+                        onClick={handleVerCertificado}
                       />
                     ))}
                   </div>
@@ -189,17 +186,28 @@ export default function Aluno() {
   const { data: session, status } = useSession();
   const loadingOverlay = useLoadingOverlay(true);
   const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
+  const [categoriasComplementares, setCategoriasComplementares] = useState<
+    Types.CategoriaProgresso[]
+  >([]);
+  const [categoriasExtensao, setCategoriasExtensao] = useState<
+    Types.CategoriaProgresso[]
+  >([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
     if (status !== 'authenticated') return;
 
-    const fetchCertificados = async () => {
+    const fetchData = async () => {
       try {
         loadingOverlay.show();
-        const data = await listarMeusCertificados();
-        console.log('CERTIFICADOS ORIGINAIS:', data);
 
-        const mapped: Types.Certificado[] = data.map((cert) => ({
+        const [certData, detalhado] = await Promise.all([
+          listarMeusCertificados(),
+          obterMeusDadosDetalhados()
+        ]);
+
+        const mapped: Types.Certificado[] = certData.map((cert) => ({
           id: cert.id,
           title: cert.tituloAtividade,
           local: cert.local,
@@ -209,48 +217,74 @@ export default function Aluno() {
           periodoFim: cert.dataFim,
           categoria: cert.categoria,
           grupo: cert.grupo,
-          categoriaKey:
-            cert.tipo === TipoCertificado.EXTENSAO
-              ? 'Extensao'
-              : 'Complementar',
+          categoriaKey: cert.categoriaKey,
           tipo: mapTipoCertificado(cert.tipo),
           status: mapStatusCertificado(cert.status)
         }));
 
-        console.log('CERTIFICADOS MAPEADOS:', mapped);
+        const comp = detalhado.atividades.filter(
+          (a) => a.tipo === 'COMPLEMENTAR'
+        );
+        const ext = detalhado.atividades.filter((a) => a.tipo === 'EXTENSAO');
+
+        setCategoriasComplementares(
+          comp.map((a) => ({
+            grupo: a.grupo,
+            categoria: a.categoria,
+            nome: a.nome,
+            horas: a.horasConcluidas,
+            total: a.cargaMaximaCurso,
+            categoriaKey: a.categoriaKey
+          }))
+        );
+
+        setCategoriasExtensao(
+          ext.map((a) => ({
+            grupo: a.grupo,
+            categoria: a.categoria,
+            nome: a.nome,
+            horas: a.horasConcluidas,
+            total: a.cargaMaximaCurso,
+            categoriaKey: a.categoriaKey
+          }))
+        );
+
         setCertificados(mapped);
+        setUserData(detalhado);
       } catch (error) {
-        console.error('Erro ao buscar certificados:', error);
+        console.error('Erro ao buscar dados:', error);
       } finally {
         loadingOverlay.hide();
       }
     };
 
-    fetchCertificados();
+    fetchData();
   }, [status]);
 
-  if (status === 'loading' || loadingOverlay.visible) {
+  if (status === 'loading' || loadingOverlay.visible || !userData) {
     return <LoadingOverlay show={true} />;
   }
-
   if (!session?.user) return null;
-
   const user: Types.Usuario = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     id: (session.user as any).entidadeId,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    name: (session.user as any).nome || session.user.name,
+    name: session.user.name,
     email: session.user.email,
     role: session.user.role,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    isNewPPC: (session.user as any).isNewPpc === true
+    isNewPPC: session.user.isNewPpc === true,
+    totalHorasExtensao: userData.totalHorasExtensao,
+    maximoHorasExtensao: userData.maximoHorasExtensao,
+    totalHorasComplementar: userData.totalHorasComplementar,
+    maximoHorasComplementar: userData.maximoHorasComplementar
   };
 
-  console.log('USER FINAL:', user);
-  console.log('CERTIFICADOS FINAL:', certificados);
   return (
     <CertificadosContext.Provider value={certificados}>
-      <AlunoPageContent user={user} />
+      <AlunoPageContent
+        user={user}
+        categoriasComplementares={categoriasComplementares}
+        categoriasExtensao={categoriasExtensao}
+      />
     </CertificadosContext.Provider>
   );
 }

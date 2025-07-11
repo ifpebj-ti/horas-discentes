@@ -81,6 +81,10 @@ export interface Usuario {
   role: string;
   isNewPPC?: boolean;
   image?: string | null;
+  totalHorasExtensao?: number;
+  maximoHorasExtensao?: number;
+  totalHorasComplementar?: number;
+  maximoHorasComplementar?: number;
 }
 
 /**

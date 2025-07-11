@@ -37,7 +37,8 @@ public class GetCertificadosUseCase
             c.Tipo,
             c.Status,
             c.AlunoAtividade!.AlunoId,
-            c.AlunoAtividade.AtividadeId
+            c.AlunoAtividade.AtividadeId,
+            c.AlunoAtividade.Atividade!.CategoriaKey!
         ));
     }
 }

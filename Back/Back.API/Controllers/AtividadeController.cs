@@ -10,7 +10,7 @@ namespace Back.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "ADMIN,COORDENADOR")]
+[Authorize]
 public class AtividadeController : ControllerBase
 {
     private readonly GetAtividadesByCursoIdUseCase _getByCurso;
