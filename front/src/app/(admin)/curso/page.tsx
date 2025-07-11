@@ -3,12 +3,18 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FaHome, FaPlus } from 'react-icons/fa';
+import { FaGraduationCap, FaTimes } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import CourseCard from '@/components/CourseCard';
 import { RoundedButton } from '@/components/RoundedButton';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { FaGraduationCap, FaTimes } from 'react-icons/fa';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from '@/components/ui/card';
 
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -192,7 +198,10 @@ export default function CursoPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label htmlFor="complementaryHours" className="block font-medium">
+                      <label
+                        htmlFor="complementaryHours"
+                        className="block font-medium"
+                      >
                         Total de Horas Complementares
                       </label>
                       <input
@@ -207,7 +216,9 @@ export default function CursoPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <p className="font-medium">Este curso tem carga horária de extensão?</p>
+                      <p className="font-medium">
+                        Este curso tem carga horária de extensão?
+                      </p>
                       <div className="flex space-x-6">
                         <label className="flex items-center space-x-2">
                           <input
@@ -236,7 +247,10 @@ export default function CursoPage() {
 
                     {hasExtension && (
                       <div className="space-y-2">
-                        <label htmlFor="extensionHours" className="block font-medium">
+                        <label
+                          htmlFor="extensionHours"
+                          className="block font-medium"
+                        >
                           Horas de Extensão
                         </label>
                         <input
@@ -253,7 +267,11 @@ export default function CursoPage() {
 
                     <button
                       type="submit"
-                      disabled={!newCourseName.trim() || !complementaryHours.trim() || (hasExtension && !extensionHours.trim())}
+                      disabled={
+                        !newCourseName.trim() ||
+                        !complementaryHours.trim() ||
+                        (hasExtension && !extensionHours.trim())
+                      }
                       className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 disabled:opacity-50"
                     >
                       Criar Curso
