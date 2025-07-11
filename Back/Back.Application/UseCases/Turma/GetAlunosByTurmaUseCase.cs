@@ -21,6 +21,6 @@ public class GetAlunosByTurmaUseCase
         var alunos = await _repo.GetAlunosByTurmaAsync(turmaId);
 
         return alunos.Select(a =>
-            new AlunoPorTurmaResponse(a.Id, a.Nome, a.Email, a.Matricula));
+            new AlunoPorTurmaResponse(a.Id, a.Nome!, a.Email!, a.Matricula!));
     }
 }

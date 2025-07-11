@@ -3,12 +3,14 @@
 import Image from 'next/image';
 import { FaEnvelope } from 'react-icons/fa';
 
+import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticateduseRedirectIfAuthenticated';
 import { Input } from '../Input';
 import { InputPassword } from '../InputPassword';
 import { RoundedButton } from '../RoundedButton';
 import { useCardLogin } from './hooks/useCardLogin';
 
 export const CardLogin = () => {
+  useRedirectIfAuthenticated();
   const {
     form: { register, handleSubmit, formState },
     submitForm

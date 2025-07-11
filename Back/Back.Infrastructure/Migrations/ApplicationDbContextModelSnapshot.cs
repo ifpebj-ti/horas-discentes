@@ -55,6 +55,9 @@ namespace Back.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsAtivo")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("JaBaixadoHoras")
                         .HasColumnType("boolean");
 
@@ -71,7 +74,33 @@ namespace Back.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TurmaId");
+
                     b.ToTable("Alunos");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.AlunoAtividade.AlunoAtividade", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AlunoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AtividadeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("HorasConcluidas")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlunoId");
+
+                    b.HasIndex("AtividadeId");
+
+                    b.ToTable("AlunoAtividades");
                 });
 
             modelBuilder.Entity("Back.Domain.Entities.Atividade.Atividade", b =>
@@ -86,6 +115,17 @@ namespace Back.Infrastructure.Migrations
                     b.Property<int>("CargaMaximaSemestral")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CategoriaKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CursoId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Grupo")
                         .IsRequired()
                         .HasColumnType("text");
@@ -99,6 +139,8 @@ namespace Back.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CursoId");
+
                     b.ToTable("Atividades");
                 });
 
@@ -108,15 +150,12 @@ namespace Back.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AlunoId")
+                    b.Property<Guid>("AlunoAtividadeId")
                         .HasColumnType("uuid");
 
                     b.Property<byte[]>("Anexo")
                         .IsRequired()
                         .HasColumnType("bytea");
-
-                    b.Property<Guid>("AtividadeId")
-                        .HasColumnType("uuid");
 
                     b.Property<int>("CargaHoraria")
                         .HasColumnType("integer");
@@ -164,6 +203,8 @@ namespace Back.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AlunoAtividadeId");
 
                     b.ToTable("Certificados");
                 });
@@ -227,6 +268,8 @@ namespace Back.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CursoId");
+
                     b.ToTable("Coordenadores");
                 });
 
@@ -286,6 +329,8 @@ namespace Back.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CursoId");
 
                     b.ToTable("Turmas");
                 });
@@ -486,6 +531,80 @@ namespace Back.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Back.Domain.Entities.Aluno.Aluno", b =>
+                {
+                    b.HasOne("Back.Domain.Entities.Turma.Turma", "Turma")
+                        .WithMany("Alunos")
+                        .HasForeignKey("TurmaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Turma");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.AlunoAtividade.AlunoAtividade", b =>
+                {
+                    b.HasOne("Back.Domain.Entities.Aluno.Aluno", "Aluno")
+                        .WithMany("Atividades")
+                        .HasForeignKey("AlunoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Back.Domain.Entities.Atividade.Atividade", "Atividade")
+                        .WithMany("Alunos")
+                        .HasForeignKey("AtividadeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Aluno");
+
+                    b.Navigation("Atividade");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.Atividade.Atividade", b =>
+                {
+                    b.HasOne("Back.Domain.Entities.Curso.Curso", "Curso")
+                        .WithMany("Atividades")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Curso");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.Certificado.Certificado", b =>
+                {
+                    b.HasOne("Back.Domain.Entities.AlunoAtividade.AlunoAtividade", "AlunoAtividade")
+                        .WithMany()
+                        .HasForeignKey("AlunoAtividadeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AlunoAtividade");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.Coordenador.Coordenador", b =>
+                {
+                    b.HasOne("Back.Domain.Entities.Curso.Curso", "Curso")
+                        .WithMany("Coordenadores")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Curso");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.Turma.Turma", b =>
+                {
+                    b.HasOne("Back.Domain.Entities.Curso.Curso", "Curso")
+                        .WithMany("Turmas")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Curso");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -535,6 +654,30 @@ namespace Back.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.Aluno.Aluno", b =>
+                {
+                    b.Navigation("Atividades");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.Atividade.Atividade", b =>
+                {
+                    b.Navigation("Alunos");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.Curso.Curso", b =>
+                {
+                    b.Navigation("Atividades");
+
+                    b.Navigation("Coordenadores");
+
+                    b.Navigation("Turmas");
+                });
+
+            modelBuilder.Entity("Back.Domain.Entities.Turma.Turma", b =>
+                {
+                    b.Navigation("Alunos");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,7 @@
 /**
  * Status possíveis para um certificado.
  */
-export type StatusCertificado = 'aprovado' | 'rejeitado' | 'pendente';
+export type StatusCertificado = 'pendente' | 'aprovado' | 'rejeitado';
 
 /**
  * Tipos de atividades/certificados (complementar ou extensão).
@@ -12,7 +12,7 @@ export type TipoCertificado = 'complementar' | 'extensao';
  * Interface base para representar um Certificado do Aluno.
  */
 export interface Certificado {
-  id: number; // ID numérico original do certificado do aluno
+  id: string; // ID numérico original do certificado do aluno
   grupo: string;
   categoria: string;
   categoriaKey: string;
