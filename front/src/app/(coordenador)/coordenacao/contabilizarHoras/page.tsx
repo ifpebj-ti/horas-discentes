@@ -757,11 +757,13 @@ const GerenciamentoHoras: React.FC = () => {
       // Monta os dados para o template
       const docxVars = {
         ...docxMock[0],
-        alunos: [{
-          estudante: aluno.nome,
-          matricula: aluno.matricula,
-          carga: aluno.cargaHoraria
-        }],
+        alunos: [
+          {
+            estudante: aluno.nome,
+            matricula: aluno.matricula,
+            carga: aluno.cargaHoraria
+          }
+        ],
         certs
       };
       try {
@@ -769,7 +771,10 @@ const GerenciamentoHoras: React.FC = () => {
         const response = await fetch('/docs/Coordenador-Requerimento.docx');
         const arrayBuffer = await response.arrayBuffer();
         const zip = new PizZip(arrayBuffer);
-        const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+        const doc = new Docxtemplater(zip, {
+          paragraphLoop: true,
+          linebreaks: true
+        });
         doc.setData(docxVars);
         doc.render();
         const out = doc.getZip().generate({ type: 'blob' });
@@ -780,7 +785,6 @@ const GerenciamentoHoras: React.FC = () => {
     }
     setAlunosSelecionados(new Set());
   };
-
 
   /* --------------------------------------------------------
    *  Resetar página quando filtros mudarem
