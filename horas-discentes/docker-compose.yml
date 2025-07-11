@@ -3,8 +3,7 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ./Front
-      dockerfile: Dockerfile
+      context: ./front  # Caminho onde está o Dockerfile do frontend
     ports:
       - "${PORT_MACHINE_FRONTEND}:3000"
     environment:
@@ -17,8 +16,7 @@ services:
 
   backend:
     build:
-      context: ./Back/Back.API
-      dockerfile: Dockerfile
+      context: ./Back
     ports:
       - "${PORT_MACHINE_BACKEND}:5000"
     environment:
@@ -31,7 +29,7 @@ services:
       - rede-back
     restart: unless-stopped
 
-  db: 
+  db:
     image: postgres:15
     ports:
       - "${PORT_MACHINE_DB}:5432"
