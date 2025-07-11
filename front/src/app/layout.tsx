@@ -1,10 +1,7 @@
 import type { Metadata } from 'next';
 
 import './globals.css';
-
-interface ClientProvidersProps {
-  children: React.ReactNode;
-}
+import ClientProviders from '@/components/ClientProviders';
 
 export const metadata: Metadata = {
   title: 'Horas Discentes',
@@ -16,10 +13,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const ClientProviders = ({ children }: ClientProvidersProps) => {
-    return <>{children}</>;
-  };
-
   return (
     <html lang="pt-br">
       <body>
