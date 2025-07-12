@@ -89,10 +89,10 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 // AUTH: JWT
-app.UseAuthentication(); // importante: vem antes do Authorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 
 app.MapControllers();
 
-app.Run();
+app.Run("http://0.0.0.0:8080");
