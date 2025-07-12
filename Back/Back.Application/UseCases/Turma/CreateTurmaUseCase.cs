@@ -36,7 +36,8 @@ public class CreateTurmaUseCase
             turmaCompleta.Turno!,
             turmaCompleta.PossuiExtensao,
             turmaCompleta.CursoId,
-            turmaCompleta.Curso?.Nome ?? "Curso não encontrado"
+            turmaCompleta.Curso?.Nome ?? "Curso não encontrado",
+            turmaCompleta.Alunos.Count
         );
     }
 

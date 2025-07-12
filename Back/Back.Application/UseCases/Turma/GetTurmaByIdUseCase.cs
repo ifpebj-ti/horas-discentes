@@ -21,6 +21,6 @@ public class GetTurmaByIdUseCase
         if (turma == null)
             throw new KeyNotFoundException("Turma não encontrada.");
 
-        return new TurmaResponse(turma.Id, turma.Periodo!, turma.Turno!, turma.PossuiExtensao, turma.CursoId, turma.Curso?.Nome ?? "curso não encontrado");
+        return new TurmaResponse(turma.Id, turma.Periodo!, turma.Turno!, turma.PossuiExtensao, turma.CursoId, turma.Curso?.Nome ?? "curso não encontrado", turma.Alunos.Count);
     }
 }

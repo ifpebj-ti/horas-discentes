@@ -95,6 +95,10 @@ export const authOptions: AuthOptions = {
           token.cursoId = decoded?.cursoId as string;
           token.turmaId = decoded?.turmaId as string;
         }
+        if (user.role === 'coordenador') {
+          token.entidadeId = decoded?.entidadeId as string;
+          token.cursoId = decoded?.cursoId as string;
+        }
       }
 
       return token as ExtendedToken;
@@ -113,6 +117,9 @@ export const authOptions: AuthOptions = {
       if (token.role === 'aluno') {
         (session.user as any).cursoId = token.cursoId;
         (session.user as any).turmaId = token.turmaId;
+      }
+      if (token.role === 'coordenador') {
+        (session.user as any).cursoId = token.cursoId;
       }
       return session;
     }

@@ -1,10 +1,12 @@
 ﻿using Back.Application.Interfaces.Repositories;
 using Back.Domain.Entities.Aluno;
+using Back.Domain.Entities.AlunoAtividade;
 using Back.Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Back.Infrastructure.Persistence.Repositories;
@@ -91,6 +93,14 @@ public class AlunoRepository : IAlunoRepository
             .Include(a => a.Atividades)
                 .ThenInclude(aa => aa.Atividade)
             .FirstOrDefaultAsync(a => a.IdentityUserId == identityUserId);
+    }
+    public async Task<IEnumerable<AlunoAtividade>> GetAtividadesByAlunoIdAsync(Guid alunoId)
+    {
+        return await _context.AlunoAtividades
+            .Include(a => a.Atividade)
+            .Where(a => a.AlunoId == alunoId)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
 }
