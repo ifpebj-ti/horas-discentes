@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:15
@@ -22,7 +24,7 @@ services:
     depends_on:
       - db
     ports:
-      - "5000:8080"
+      - "8080:8080"  # Porta interna exposta para o backend 
     networks:
       - rede-back
 
@@ -33,9 +35,23 @@ services:
     depends_on:
       - backend
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Porta interna exposta para o frontend
     networks:
       - rede-front
+
+  nginx:
+    image: nginx:latest
+    container_name: horas-discentes-nginx
+    ports:
+      - "80:80"  # Expondo a porta 80 do NGINX para o tráfego externo
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Mapear o arquivo nginx.conf
+    networks:
+      - rede-back
+      - rede-front
+    depends_on:
+      - frontend
+      - backend
 
 volumes:
   db_data:
