@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,12 +63,35 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
+    var maxRetries = 5;
+    var retryCount = 0;
+    var delay = TimeSpan.FromSeconds(5);
 
-    context.Database.Migrate();
-    
+    while (retryCount < maxRetries)
+    {
+        try
+        {
+            // Tenta realizar a migração do banco de dados
+            context.Database.Migrate();
+            break; // Se a migração for bem-sucedida, sai do loop
+        }
+        catch (Exception ex)
+        {
+            retryCount++;
+            if (retryCount == maxRetries)
+            {
+                // Se o número máximo de tentativas for atingido, lança a exceção
+                throw new Exception("Erro ao conectar ao banco de dados após várias tentativas.", ex);
+            }
+
+            // Aguarda antes de tentar novamente
+            Console.WriteLine($"Tentativa {retryCount} de conexão com o banco de dados falhou. Tentando novamente...");
+            Thread.Sleep(delay);
+        }
+    }
+
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
     var roles = new[] { "ALUNO", "COORDENADOR", "ADMIN" };
@@ -85,13 +109,11 @@ app.UseCors("AllowAll");
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
 app.UseHttpsRedirection();
 
 // AUTH: JWT
 app.UseAuthentication(); // importante: vem antes do Authorization
 app.UseAuthorization();
-
 
 app.MapControllers();
 
