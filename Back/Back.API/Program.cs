@@ -62,7 +62,6 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
 
@@ -85,14 +84,13 @@ app.UseCors("AllowAll");
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
 app.UseHttpsRedirection();
 
 // AUTH: JWT
-app.UseAuthentication(); 
+app.UseAuthentication(); // importante: vem antes do Authorization
 app.UseAuthorization();
-
 
 app.MapControllers();
 
+// Permitir o backend escutar em todas as interfaces e na porta 8080
 app.Run("http://0.0.0.0:8080");
