@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # Monitorando dependências do TypeScript (geralmente para frontend)
+  - package-ecosystem: "npm"
+    directory: "/front"  
+    schedule:
+      interval: "weekly"
+  
+  # Monitorando dependências do C# (geralmente para backend)
+  - package-ecosystem: "nuget"
+    directory: "/Back"  
+    schedule:
+      interval: "weekly"
