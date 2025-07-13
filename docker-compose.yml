@@ -1,7 +1,37 @@
 version: '3.8'
 
 services:
-  db:
+  frontend:
+    build:
+      context: ./Front
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT_MACHINE_FRONTEND}:3000"
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_URL}
+    depends_on:
+      - backend
+    networks:
+      - rede-front
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./Back/Back.API
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT_MACHINE_BACKEND}:5000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - ASPNETCORE_URLS=http://+:5000
+    depends_on:
+      - db
+    networks:
+      - rede-front
+      - rede-back
+    restart: unless-stopped
+
+  db: 
     image: postgres:15
     container_name: horas-discentes-db
     restart: always
@@ -16,11 +46,11 @@ services:
     networks:
       - rede-back
 
-  backend:
+  backend-api:
     build:
       context: .
       dockerfile: Back/Dockerfile
-    container_name: horas-discentes-backend
+    container_name: horas-discentes-backend-api
     depends_on:
       - db
     ports:
@@ -28,12 +58,12 @@ services:
     networks:
       - rede-back
 
-  frontend:
+  frontend-ui:
     build:
       context: ./front
-    container_name: horas-discentes-frontend
+    container_name: horas-discentes-frontend-ui
     depends_on:
-      - backend
+      - backend-api
     ports:
       - "3000:3000"  # Porta interna exposta para o frontend
     networks:
@@ -50,8 +80,8 @@ services:
       - rede-back
       - rede-front
     depends_on:
-      - frontend
-      - backend
+      - frontend-ui
+      - backend-api
 
 volumes:
   db_data:
