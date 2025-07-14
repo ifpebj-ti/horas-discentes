@@ -158,7 +158,6 @@ export default function Componentes() {
           <CertificateDetailsCard
             name={certificado.name}
             registration={certificado.registration}
-            phone={certificado.phone}
             email={certificado.email}
             activity={certificado.activity}
             category={certificado.category}
@@ -166,8 +165,6 @@ export default function Componentes() {
             location={certificado.location}
             date={certificado.date}
             workload={certificado.workload}
-            rejectionReason={rejectionReason}
-            onRejectionReasonChange={setRejectionReason}
             onReject={handleReject}
             onApprove={handleApprove}
             onViewPdf={() => Swal.fire('PDF', 'Abrindo PDF...', 'info')}
