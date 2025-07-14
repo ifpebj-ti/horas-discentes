@@ -51,7 +51,8 @@ public static class DependencyInjection
         services.AddScoped<GetCertificadosDoAlunoAutenticadoUseCase>();
         services.AddScoped<AtualizarStatusCertificadoUseCase>();
         services.AddScoped<GetCertificadoByIdUseCase>();
-
+        services.AddScoped<GetCertificadosByCursoIdUseCase>();
+        services.AddScoped<GetCertificadoAnexoUseCase>();
         //Limitehoras
         services.AddScoped<CreateLimiteHorasAlunoUseCase>();
         return services;

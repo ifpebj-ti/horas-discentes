@@ -135,7 +135,7 @@ const VisualizarTurma = () => {
                   variant="outline"
                   size="sm"
                   onClick={copyCode}
-                  className="mt-3 flex items-center space-x-2"
+                  className="mt-3 flex items-center space-x-2 cursor-pointer"
                 >
                   <FaCopy className="w-4 h-4" />
                   <span>Copiar</span>
@@ -219,6 +219,7 @@ const VisualizarTurma = () => {
                         variant={student.isAtivo ? 'destructive' : 'default'}
                         size="sm"
                         onClick={() => toggleStudentStatus(student.id)}
+                        className="cursor-pointer"
                       >
                         {student.isAtivo ? 'Desativar' : 'Ativar'}
                       </Button>
@@ -251,7 +252,7 @@ const VisualizarTurma = () => {
             <Button
               variant="outline"
               onClick={copyCode}
-              className="flex items-center space-x-2 text-blue-700 border-blue-300"
+              className="flex items-center space-x-2 text-blue-700 border-blue-300 cursor-pointer"
             >
               <FaCopy className="w-4 h-4" />
               <span>Copiar código da turma</span>

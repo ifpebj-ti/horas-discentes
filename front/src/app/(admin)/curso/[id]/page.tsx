@@ -3,8 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
-  FaEdit,
-  FaTrash,
   FaPlus,
   FaEnvelope,
   FaPaperPlane,
@@ -70,11 +68,6 @@ export default function CourseDetailPage() {
   const [coordEmail, setCoordEmail] = useState('');
   const [isCoordLoading, setIsCoordLoading] = useState(false);
 
-  // Modal Secretário
-  const [isSecModalOpen, setIsSecModalOpen] = useState(false);
-  const [secEmail, setSecEmail] = useState('');
-  const [isSecLoading, setIsSecLoading] = useState(false);
-
   // Modal Turma
   const [isTurmaModalOpen, setIsTurmaModalOpen] = useState(false);
   const [formData, setFormData] = useState<{
@@ -121,20 +114,6 @@ export default function CourseDetailPage() {
     setCourseData(mockData);
   }, []);
 
-  const confirmDelete = async (name: string, type: string) => {
-    const result = await Swal.fire({
-      title: 'Tem certeza?',
-      text: `Deseja excluir ${type} "${name}"?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sim, excluir',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
-    });
-    return result.isConfirmed;
-  };
-
   // Handlers Coordenador
   const handleAddCoordinatorClick = () => {
     setCoordEmail('');
@@ -178,52 +157,6 @@ export default function CourseDetailPage() {
       setCoordEmail('');
       setIsCoordLoading(false);
       setIsCoordModalOpen(false);
-    }, 1000);
-  };
-
-  // Handlers Secretário
-  const handleAddSecretaryClick = () => {
-    setSecEmail('');
-    setIsSecLoading(false);
-    setIsSecModalOpen(true);
-  };
-
-  const handleSecSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const confirmation = await Swal.fire({
-      title: 'Confirmar envio',
-      text: `Deseja enviar convite para ${secEmail}?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Sim, enviar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33'
-    });
-
-    if (!confirmation.isConfirmed) return;
-
-    setIsSecLoading(true);
-
-    // Simulate API call
-    setTimeout(async () => {
-      // Exemplo comentado de integração real:
-      // await fetch(`/api/curso/${courseData?.id}/secretaria`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email: secEmail }),
-      // });
-
-      await Swal.fire({
-        title: 'Convite enviado!',
-        text: `Um e-mail foi enviado para ${secEmail} com instruções para criar a conta.`,
-        icon: 'success',
-        confirmButtonColor: '#3085d6'
-      });
-      setSecEmail('');
-      setIsSecLoading(false);
-      setIsSecModalOpen(false);
     }, 1000);
   };
 
@@ -320,39 +253,9 @@ export default function CourseDetailPage() {
         {courseData.coordinator ? (
           <div className="flex justify-between items-center">
             <span>{courseData.coordinator.name}</span>
-            <div className="flex gap-2">
-              <button
-                className="px-3 py-1 rounded text-sm bg-blue-100 text-blue-800 hover:bg-blue-200"
-                onClick={() =>
-                  router.push(`/curso/${courseData.id}/coordenador/editar`)
-                }
-              >
-                <FaEdit />
-              </button>
-              <button
-                className="px-3 py-1 rounded text-sm bg-red-100 text-red-800 hover:bg-red-200"
-                onClick={async () => {
-                  const confirmed = await confirmDelete(
-                    courseData.coordinator!.name,
-                    'o coordenador'
-                  );
-                  if (confirmed) {
-                    setCourseData({ ...courseData, coordinator: null });
-                    Swal.fire({
-                      title: 'Removido!',
-                      text: 'Coordenador excluído com sucesso.',
-                      icon: 'success',
-                      confirmButtonColor: '#3085d6'
-                    });
-                  }
-                }}
-              >
-                <FaTrash />
-              </button>
-            </div>
           </div>
         ) : (
-          <div className="max-w-xs mt-4">
+          <div className="max-w-xs mt-4 cursor-pointer">
             <RoundedButton
               text="Adicionar Coordenador"
               icon={<FaPlus />}
@@ -360,62 +263,6 @@ export default function CourseDetailPage() {
             />
           </div>
         )}
-      </div>
-
-      {/* Secretarias */}
-      <div className="bg-white shadow rounded-lg p-4">
-        <h2 className="text-lg font-semibold mb-4">Secretaria</h2>
-        <ul className="space-y-2">
-          {courseData.secretaries.map((sec) => (
-            <li key={sec.id} className="flex justify-between items-center">
-              <span>{sec.name}</span>
-              <div className="flex gap-2">
-                <button
-                  className="px-3 py-1 rounded text-sm bg-blue-100 text-blue-800 hover:bg-blue-200"
-                  onClick={() =>
-                    router.push(
-                      `/curso/${courseData.id}/secretaria/${sec.id}/editar`
-                    )
-                  }
-                >
-                  <FaEdit />
-                </button>
-                <button
-                  className="px-3 py-1 rounded text-sm bg-red-100 text-red-800 hover:bg-red-200"
-                  onClick={async () => {
-                    const confirmed = await confirmDelete(
-                      sec.name,
-                      'a secretaria'
-                    );
-                    if (confirmed) {
-                      setCourseData({
-                        ...courseData,
-                        secretaries: courseData.secretaries.filter(
-                          (s) => s.id !== sec.id
-                        )
-                      });
-                      Swal.fire({
-                        title: 'Removido!',
-                        text: 'Secretaria excluída com sucesso.',
-                        icon: 'success',
-                        confirmButtonColor: '#3085d6'
-                      });
-                    }
-                  }}
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-4 max-w-xs">
-          <RoundedButton
-            text="Adicionar Secretaria"
-            icon={<FaPlus />}
-            onClick={handleAddSecretaryClick}
-          />
-        </div>
       </div>
 
       {/* Turmas */}
@@ -526,80 +373,6 @@ export default function CourseDetailPage() {
                 <ul className="text-blue-700 space-y-1 text-sm">
                   <li>
                     • O coordenador receberá um e-mail com link de ativação
-                  </li>
-                  <li>• Ele poderá criar sua conta com dados completos</li>
-                  <li>• Após ativação, terá acesso ao sistema</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de Convite por E-mail - Secretário */}
-      {isSecModalOpen && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg overflow-auto max-h-full w-full max-w-2xl p-7 relative">
-            {/* Botão de fechar */}
-            <button
-              className="absolute top-0 mt-1 mb-1 right-4 text-gray-500 hover:text-gray-700"
-              onClick={() => setIsSecModalOpen(false)}
-            >
-              <FaTimes className="w-6 h-6" />
-            </button>
-
-            <div className="max-w-2xl mx-auto space-y-8">
-              <Card>
-                <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaEnvelope className="w-8 h-8 text-green-600" />
-                  </div>
-                  <CardTitle>Convite por E-mail</CardTitle>
-                  <CardDescription>
-                    O secretário receberá um e-mail com um link para criar a
-                    conta.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSecSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="sec-email">Email do secretário</Label>
-                      <Input
-                        id="sec-email"
-                        type="email"
-                        placeholder="secretario@docente.ifpe.edu.br"
-                        value={secEmail}
-                        onChange={(e) => setSecEmail(e.target.value)}
-                        required
-                        className="text-lg"
-                      />
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={isSecLoading}
-                    >
-                      {isSecLoading ? (
-                        <>Enviando...</>
-                      ) : (
-                        <>
-                          <FaPaperPlane className="w-4 h-4 mr-2" />
-                          Enviar convite
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-
-              <div className="bg-green-50 rounded-lg p-6">
-                <h3 className="font-semibold text-green-900 mb-2">
-                  O que acontece depois?
-                </h3>
-                <ul className="text-green-700 space-y-1 text-sm">
-                  <li>
-                    • O secretário receberá um e-mail com link de ativação
                   </li>
                   <li>• Ele poderá criar sua conta com dados completos</li>
                   <li>• Após ativação, terá acesso ao sistema</li>

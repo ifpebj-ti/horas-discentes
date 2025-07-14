@@ -13,5 +13,7 @@ public interface ICertificadoRepository
     Task UpdateAsync(Certificado certificado);
     Task<IEnumerable<Certificado>> GetByAlunoAtividadeAsync(Guid alunoAtividadeId);
     Task<Certificado?> GetByIdWithAlunoAtividadeAsync(Guid id);
+    Task<IEnumerable<Certificado>> GetAllWithAlunoAtividadeAsync();
+    Task<byte[]?> GetAnexoByIdAsync(Guid certificadoId);
 
 }

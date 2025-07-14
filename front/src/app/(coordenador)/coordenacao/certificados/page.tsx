@@ -1,4 +1,6 @@
 'use client';
+
+import { useSession } from 'next-auth/react';
 import React, { useState, useEffect } from 'react';
 import {
   FaSearch,
@@ -12,119 +14,199 @@ import {
 
 import BreadCrumb from '@/components/BreadCrumb';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
-// Assumindo que este mock agora contém os dados vinculados que criamos
-import { MOCK_COORDENACAO_CERTIFICADOS } from '@/lib/coordenacaoCertificadosMock';
-import * as Types from '@/types';
-
-/* ---------- hook para detectar < 768 px ---------- */
+import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import {
+  listarCertificadosPorCurso,
+  baixarAnexoCertificado,
+  StatusCertificado,
+  CertificadoPorCursoResponse,
+  aprovarCertificado,
+  reprovarCertificado
+} from '@/services/certificadoService';
+import Swal from 'sweetalert2';
 const useIsMobile = () => {
   const [mobile, setMobile] = useState(false);
-
   useEffect(() => {
     const resize = () => setMobile(window.innerWidth < 768);
     resize();
     window.addEventListener('resize', resize);
     return () => window.removeEventListener('resize', resize);
   }, []);
-
   return mobile;
 };
 
-/* ---------- ícone de status ---------- */
-const StatusIcon: React.FC<{ status: Types.StatusCertificado }> = ({
-  status
-}) => {
+const StatusIcon: React.FC<{ status: StatusCertificado }> = ({ status }) => {
   switch (status) {
-    case 'aprovado':
+    case 'APROVADO':
       return <FaCheckCircle className="text-green-500" title="Aprovado" />;
-    case 'rejeitado':
+    case 'REPROVADO':
       return <FaTimesCircle className="text-red-500" title="Rejeitado" />;
-    case 'pendente':
+    case 'PENDENTE':
       return <FaHourglassHalf className="text-yellow-500" title="Pendente" />;
     default:
       return null;
   }
 };
 
+const formatarData = (inicio: string, fim: string): string => {
+  const dataInicio = new Date(inicio);
+  const dataFim = new Date(fim);
+
+  const options: Intl.DateTimeFormatOptions = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  };
+
+  const inicioFmt = dataInicio.toLocaleDateString('pt-BR', options);
+  const fimFmt = dataFim.toLocaleDateString('pt-BR', options);
+
+  return inicioFmt === fimFmt ? inicioFmt : `${inicioFmt} a ${fimFmt}`;
+};
+
 export default function ValidacaoCertificadosPage() {
   const isMobile = useIsMobile();
+  const { data: session } = useSession();
+  const cursoId = session?.user?.cursoId || '';
 
   const [certificados, setCertificados] = useState<
-    Types.CertificadoCoordenacao[]
-  >(MOCK_COORDENACAO_CERTIFICADOS);
-  const [filtroStatus, setFiltroStatus] = useState<
-    Types.StatusCertificado | 'todos'
-  >('pendente');
+    CertificadoPorCursoResponse[]
+  >([]);
+  const [filtroStatus, setFiltroStatus] = useState<StatusCertificado | 'todos'>(
+    StatusCertificado.PENDENTE
+  );
   const [termoBusca, setTermoBusca] = useState('');
   const [certificadoSelecionado, setCertificadoSelecionado] =
-    useState<Types.CertificadoCoordenacao | null>(null);
-  const [motivoRejeicaoInput, setMotivoRejeicaoInput] = useState('');
+    useState<CertificadoPorCursoResponse | null>(null);
 
-  /* ---------- sincroniza motivo de rejeição ---------- */
+  const { visible, show, hide } = useLoadingOverlay();
+
   useEffect(() => {
-    setMotivoRejeicaoInput(certificadoSelecionado?.motivoRejeicao ?? '');
-  }, [certificadoSelecionado]);
+    const fetchCertificados = async () => {
+      try {
+        if (!cursoId) return;
+        show();
+        const result = await listarCertificadosPorCurso(cursoId);
+        setCertificados(result);
+      } catch (error) {
+        console.error('Erro ao buscar certificados:', error);
+      } finally {
+        hide();
+      }
+    };
+    fetchCertificados();
+  }, [cursoId, show, hide]);
 
-  /* ---------- filtros ---------- */
   const certificadosFiltrados = certificados
     .filter((c) => filtroStatus === 'todos' || c.status === filtroStatus)
     .filter(
       (c) =>
         c.alunoNome.toLowerCase().includes(termoBusca.toLowerCase()) ||
-        // CORRIGIDO: 'descricaoAtividade' para 'description' e 'categoriaNome' para 'categoria'
-        c.description.toLowerCase().includes(termoBusca.toLowerCase()) ||
+        c.tituloAtividade.toLowerCase().includes(termoBusca.toLowerCase()) ||
         c.categoria.toLowerCase().includes(termoBusca.toLowerCase())
     );
 
-  /* ---------- handlers principais ---------- */
-  const handleSelectCertificado = (c: Types.CertificadoCoordenacao) =>
+  const handleSelectCertificado = (c: CertificadoPorCursoResponse) =>
     setCertificadoSelecionado(c);
 
-  const handleApprove = () => {
+  const handleApprove = async () => {
     if (!certificadoSelecionado) return;
-    const id = certificadoSelecionado.id;
-    setCertificados((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, status: 'aprovado', motivoRejeicao: '' } : c
-      )
-    );
-    setCertificadoSelecionado({
-      ...certificadoSelecionado,
-      status: 'aprovado',
-      motivoRejeicao: ''
-    });
-  };
 
-  const handleReject = () => {
-    if (!certificadoSelecionado || !motivoRejeicaoInput.trim()) {
-      alert('Por favor, forneça um motivo para a rejeição.');
-      return;
+    try {
+      show();
+      await aprovarCertificado(certificadoSelecionado.id);
+
+      setCertificados((prev) =>
+        prev.map((c) =>
+          c.id === certificadoSelecionado.id
+            ? { ...c, status: StatusCertificado.APROVADO }
+            : c
+        )
+      );
+
+      setCertificadoSelecionado({
+        ...certificadoSelecionado,
+        status: StatusCertificado.APROVADO
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Certificado aprovado com sucesso!',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Erro ao aprovar certificado:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao aprovar certificado!',
+        text: 'Tente novamente mais tarde.'
+      });
+    } finally {
+      hide();
     }
-    const id = certificadoSelecionado.id;
-    setCertificados((prev) =>
-      prev.map((c) =>
-        c.id === id
-          ? { ...c, status: 'rejeitado', motivoRejeicao: motivoRejeicaoInput }
-          : c
-      )
-    );
-    setCertificadoSelecionado({
-      ...certificadoSelecionado,
-      status: 'rejeitado',
-      motivoRejeicao: motivoRejeicaoInput
-    });
   };
 
-  const handleViewPdf = (url?: string) =>
-    url ? window.open(url, '_blank') : alert('Link do PDF não disponível.');
+  const handleReject = async () => {
+    if (!certificadoSelecionado) return;
 
-  /* ---------- flags para esconder/mostrar ---------- */
+    try {
+      show();
+      await reprovarCertificado(certificadoSelecionado.id);
+
+      setCertificados((prev) =>
+        prev.map((c) =>
+          c.id === certificadoSelecionado.id
+            ? {
+                ...c,
+                status: StatusCertificado.REPROVADO
+              }
+            : c
+        )
+      );
+
+      setCertificadoSelecionado({
+        ...certificadoSelecionado,
+        status: StatusCertificado.REPROVADO
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Certificado reprovado com sucesso!',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      console.error('Erro ao reprovar certificado:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao reprovar certificado!',
+        text: 'Tente novamente mais tarde.'
+      });
+    } finally {
+      hide();
+    }
+  };
+
+  const handleViewPdf = async (id: string) => {
+    try {
+      const blob = await baixarAnexoCertificado(id);
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Erro ao baixar PDF:', error);
+      alert('Erro ao visualizar o PDF.');
+    }
+  };
+
   const showDetailMobile = isMobile && certificadoSelecionado;
 
   return (
     <div className="flex flex-col h-screen">
-      {/* ---------- cabeçalho ---------- */}
+      <LoadingOverlay show={visible} />
+
       <div className="p-6 bg-gray-50">
         <BreadCrumb
           items={[
@@ -145,31 +227,24 @@ export default function ValidacaoCertificadosPage() {
           </div>
           <div className="w-full sm:w-auto">
             <select
-              className="w-full p-2 rounded-lg border border-black text-black shadow-sm bg-white
-             focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 rounded-lg border border-black text-black shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={filtroStatus}
               onChange={(e) =>
-                setFiltroStatus(
-                  e.target.value as Types.StatusCertificado | 'todos'
-                )
+                setFiltroStatus(e.target.value as StatusCertificado | 'todos')
               }
             >
               <option value="todos">Todos Status</option>
-              <option value="pendente">Pendentes</option>
-              <option value="aprovado">Aprovados</option>
-              <option value="rejeitado">Rejeitados</option>
+              <option value={StatusCertificado.PENDENTE}>Pendentes</option>
+              <option value={StatusCertificado.APROVADO}>Aprovados</option>
+              <option value={StatusCertificado.REPROVADO}>Rejeitados</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* ---------- conteúdo ---------- */}
       <div className="flex-grow flex overflow-hidden">
-        {/* LISTA (esconde se um item estiver aberto no mobile) */}
         <div
-          className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${
-            showDetailMobile ? 'hidden' : ''
-          }`}
+          className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${showDetailMobile ? 'hidden' : ''}`}
         >
           {certificadosFiltrados.length ? (
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
@@ -178,9 +253,8 @@ export default function ValidacaoCertificadosPage() {
                   <tr>
                     {[
                       'TURMA',
-                      'PERÍODO',
                       'CATEGORIA',
-                      'DESCRIÇÃO',
+                      'ATIVIDADE',
                       'HORAS',
                       'ALUNO',
                       'STATUS'
@@ -199,37 +273,30 @@ export default function ValidacaoCertificadosPage() {
                     <tr
                       key={c.id}
                       onClick={() => handleSelectCertificado(c)}
-                      className={`hover:bg-gray-100 cursor-pointer ${
-                        certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''
-                      }`}
+                      className={`hover:bg-gray-100 cursor-pointer ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''}`}
                     >
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.turma}
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {c.periodoTurma}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.periodo}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {c.categoria /* CORRIGIDO: de categoriaNome */}
+                      <td className="px-6 py-4 text-sm">
+                        <span className="px-2 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                          {c.categoria}
                         </span>
                       </td>
                       <td
-                        className="px-6 py-4 max-w-xs text-sm text-gray-700 truncate"
-                        title={
-                          c.description /* CORRIGIDO: de descricaoAtividade */
-                        }
+                        className="px-6 py-4 text-sm text-gray-700 truncate max-w-xs"
+                        title={c.tituloAtividade}
                       >
-                        {c.description /* CORRIGIDO: de descricaoAtividade */}
+                        {c.tituloAtividade}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {c.cargaHoraria}h {/* CORRIGIDO: de horas */}
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {c.cargaHoraria}h
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      <td className="px-6 py-4 text-sm text-gray-700">
                         {c.alunoNome}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <StatusIcon status={c.status} />
+                      <td className="px-6 py-4 text-sm">
+                        <StatusIcon status={c.status as StatusCertificado} />
                       </td>
                     </tr>
                   ))}
@@ -245,7 +312,6 @@ export default function ValidacaoCertificadosPage() {
           )}
         </div>
 
-        {/* DETALHES (desktop ➜ lateral | mobile ➜ overlay) */}
         {(certificadoSelecionado || !isMobile) && (
           <aside
             className={
@@ -258,28 +324,32 @@ export default function ValidacaoCertificadosPage() {
               <CertificateDetailsCard
                 name={certificadoSelecionado.alunoNome}
                 registration={certificadoSelecionado.alunoMatricula}
-                phone={certificadoSelecionado.alunoTelefone}
                 email={certificadoSelecionado.alunoEmail}
-                // CORRIGIDO: Mapeamento dos campos para o componente de detalhes
-                activity={certificadoSelecionado.description}
+                activity={certificadoSelecionado.tituloAtividade}
                 category={certificadoSelecionado.categoria}
-                description={certificadoSelecionado.description}
+                description={certificadoSelecionado.tituloAtividade}
                 location={certificadoSelecionado.local}
-                date={certificadoSelecionado.dataAtividade}
+                date={formatarData(
+                  certificadoSelecionado.dataInicio,
+                  certificadoSelecionado.dataFim
+                )}
                 workload={`${certificadoSelecionado.cargaHoraria} horas`}
-                rejectionReason={motivoRejeicaoInput}
-                onRejectionReasonChange={setMotivoRejeicaoInput}
-                onApprove={handleApprove}
-                onReject={handleReject}
-                onViewPdf={() =>
-                  handleViewPdf(certificadoSelecionado.anexoComprovanteURL)
+                onApprove={
+                  certificadoSelecionado?.status === StatusCertificado.PENDENTE
+                    ? handleApprove
+                    : undefined
                 }
+                onReject={
+                  certificadoSelecionado?.status === StatusCertificado.PENDENTE
+                    ? handleReject
+                    : undefined
+                }
+                onViewPdf={() => handleViewPdf(certificadoSelecionado.id)}
                 onBack={
                   isMobile ? () => setCertificadoSelecionado(null) : undefined
                 }
               />
             ) : (
-              /* Só mostra aviso quando desktop */
               !isMobile && (
                 <div className="flex flex-col items-center justify-center text-center text-gray-500 p-8 h-full">
                   <FaRegFileAlt className="text-5xl mb-4 text-gray-400" />

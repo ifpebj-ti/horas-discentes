@@ -69,6 +69,22 @@ public class CertificadoRepository : ICertificadoRepository
                 .ThenInclude(aa => aa!.Atividade)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
+    public async Task<IEnumerable<Certificado>> GetAllWithAlunoAtividadeAsync()
+    {
+        return await _context.Certificados
+            .Include(c => c.AlunoAtividade)
+                .ThenInclude(aa => aa!.Aluno)
+                    .ThenInclude(a => a.Turma)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 
+    public async Task<byte[]?> GetAnexoByIdAsync(Guid certificadoId)
+    {
+        return await _context.Certificados
+            .Where(c => c.Id == certificadoId)
+            .Select(c => c.Anexo)
+            .FirstOrDefaultAsync();
+    }
 
 }

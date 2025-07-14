@@ -163,7 +163,7 @@ export default function CursoPage() {
           <div className="bg-white rounded-lg overflow-auto max-h-full w-full max-w-2xl p-7 relative">
             {/* Close Button */}
             <button
-              className="absolute top-0 mt-1 mb-1 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-0 mt-1 mb-1 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
               onClick={() => setIsModalOpen(false)}
             >
               <FaTimes className="w-6 h-6" />
@@ -172,8 +172,8 @@ export default function CursoPage() {
             <div className="max-w-2xl mx-auto space-y-8">
               <Card>
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaGraduationCap className="w-8 h-8 text-purple-600" />
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaGraduationCap className="w-8 h-8 text-blue-600" />
                   </div>
                   <CardTitle>Adicionar Novo Curso</CardTitle>
                   <CardDescription>
@@ -193,7 +193,7 @@ export default function CursoPage() {
                         value={newCourseName}
                         onChange={(e) => setNewCourseName(e.target.value)}
                         required
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
                       />
                     </div>
 
@@ -211,7 +211,7 @@ export default function CursoPage() {
                         value={complementaryHours}
                         onChange={(e) => setComplementaryHours(e.target.value)}
                         required
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
                       />
                     </div>
 
@@ -227,7 +227,7 @@ export default function CursoPage() {
                             value="sim"
                             checked={hasExtension === true}
                             onChange={() => setHasExtension(true)}
-                            className="accent-purple-600"
+                            className="accent-blue-600"
                           />
                           <span>Sim</span>
                         </label>
@@ -238,7 +238,7 @@ export default function CursoPage() {
                             value="nao"
                             checked={hasExtension === false}
                             onChange={() => setHasExtension(false)}
-                            className="accent-purple-600"
+                            className="accent-blue-600"
                           />
                           <span>Não</span>
                         </label>
@@ -260,7 +260,7 @@ export default function CursoPage() {
                           value={extensionHours}
                           onChange={(e) => setExtensionHours(e.target.value)}
                           required
-                          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
                         />
                       </div>
                     )}
@@ -272,7 +272,7 @@ export default function CursoPage() {
                         !complementaryHours.trim() ||
                         (hasExtension && !extensionHours.trim())
                       }
-                      className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 disabled:opacity-50"
+                      className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                     >
                       Criar Curso
                     </button>
