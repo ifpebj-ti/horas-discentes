@@ -8,7 +8,8 @@
 ![Open Issues](https://img.shields.io/github/issues/ifpebj-ti/horas-discentes)
 ![Forks](https://img.shields.io/github/forks/ifpebj-ti/horas-discentes)
 ![Stars](https://img.shields.io/github/stars/ifpebj-ti/horas-discentes)
-![Vulnerabilidades](https://img.shields.io/badge/Vulnerabilidades-0-brightgreen)
+![Vulnerabilidades](./badges/vulnerabilidades.svg)
+
 
 
 
