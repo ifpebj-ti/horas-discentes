@@ -8,7 +8,7 @@
 ![Open Issues](https://img.shields.io/github/issues/ifpebj-ti/horas-discentes)
 ![Forks](https://img.shields.io/github/forks/ifpebj-ti/horas-discentes)
 ![Stars](https://img.shields.io/github/stars/ifpebj-ti/horas-discentes)
-![Vulnerabilidades](./badges/vulnerabilidades.svg)
+[![Vulnerabilidades](./badges/vulnerabilidades.svg)](https://github.com/ifpebj-ti/horas-discentes/security/dependabot)
 
 
 ---
