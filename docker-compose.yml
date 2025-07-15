@@ -17,7 +17,7 @@ services:
 
   backend:
     build:
-      context: ./Back/Back.API
+      context: ./Back
       dockerfile: Dockerfile
     ports:
       - "${PORT_MACHINE_BACKEND}:5000"
@@ -31,7 +31,7 @@ services:
       - rede-back
     restart: unless-stopped
 
-  db: 
+  db:
     image: postgres:15
     container_name: horas-discentes-db
     restart: always
@@ -45,20 +45,28 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - rede-back
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   nginx:
     image: nginx:latest
     container_name: horas-discentes-nginx
     ports:
       - "80:80"
+      - "443:443"  # Porta HTTPS
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Mapeia o arquivo nginx.conf para o contêiner
     networks:
       - rede-back
       - rede-front
     depends_on:
       - frontend
       - backend
+    restart: unless-stopped
 
 volumes:
   db_data:
