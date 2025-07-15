@@ -29,13 +29,13 @@ jobs:
         run: |
             cd Back
             cd Back.API
-            dotnet restore
+            dotnet restore Back.sln
 
       - name: 🏗️ Compilar a aplicação
         run: |
             cd Back
             cd Back.API
-            dotnet build --no-restore
+            dotnet build Back.sln --no-restore
 
       - name: ✅ Rodar testes (se tiver)
         run: |
