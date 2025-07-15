@@ -5,15 +5,13 @@ WORKDIR /src
 # Copia tudo da raiz do projeto
 COPY . .
 
-
-# Vai até onde está o .sln
-WORKDIR /src/Back
+# Vai até onde está a solução
+WORKDIR /src/Back/Back.API
 
 # Restaura a solução
 RUN dotnet restore "Back.sln"
 
-# Publica a API
-WORKDIR /src/Back/Back.API
+# Publica o projeto
 RUN dotnet publish "Back.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Etapa 2: Runtime
