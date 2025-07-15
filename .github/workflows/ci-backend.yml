@@ -26,11 +26,20 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: 🛠️ Restaurar dependências
-        run: dotnet restore Back/Back.API/Back.sln
+        run: |
+            cd Back
+            cd Back.API
+            dotnet restore
 
       - name: 🏗️ Compilar a aplicação
-        run: dotnet build Back/Back.API/Back.sln --no-restore
+        run: |
+            cd Back
+            cd Back.API
+            dotnet build --no-restore
 
       - name: ✅ Rodar testes (se tiver)
-        run: dotnet test Back/Back.API/Back.sln --no-build
+        run: |
+            cd Back
+            cd Back.API
+            dotnet test --no-build
         continue-on-error: true
