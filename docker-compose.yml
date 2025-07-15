@@ -32,7 +32,7 @@ services:
     container_name: horas-discentes-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: horas_discentes_db
+      POSTGRES_USER: horas_discentes_user
       POSTGRES_PASSWORD: 91188982
       POSTGRES_DB: postgres
     ports:
