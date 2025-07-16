@@ -119,7 +119,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./Back
-          file: Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
