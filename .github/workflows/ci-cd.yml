@@ -27,37 +27,59 @@ jobs:
       - id: tipo
         name: Extrair tipo de mudança da PR
         run: |
-          echo "${{ github.event.pull_request.body }}" > body.txt
-          tipo=""
-          if grep -q "\[x\] marco-no-projeto" body.txt; then
-            tipo="marco-no-projeto"
-          elif grep -q "\[x\] nova-feature" body.txt; then
-            tipo="nova-feature"
-          elif grep -q "\[x\] bug-fix" body.txt; then
-            tipo="bug-fix"
-          else
-            echo "Erro: Nenhum tipo de mudança foi selecionado no template do Pull Request."
-            exit 1
+          echo "Conteúdo do corpo PR:"
+          echo "${{ github.event.pull_request.body }}"
+
+          PR_BODY="${{ github.event.pull_request.body }}"
+          echo "$PR_BODY" > pr_body.txt
+
+         tipo_encontrado=""
+          if grep -q "^\s*-\s*\[x\]\s*marco-no-projeto" pr_body.txt; then
+            tipo_encontrado="marco-no-projeto"
+          elif grep -q "^\s*-\s*\[x\]\s*nova-feature" pr_body.txt; then
+            tipo_encontrado="nova-feature"
+          elif grep -q "^\s*-\s*\[x\]\s*bug-fix" pr_body.txt; then
+            tipo_encontrado="bug-fix"
           fi
-          echo "tipo=$tipo" >> "$GITHUB_OUTPUT"
+
+          if [ -z "$tipo_encontrado" ]; then 
+            echo "Erro: Nenhum tipo de mudança foi selecionado ou a detecção falhou."
+            echo "tipo=default-patch" >> "$GITHUB_OUTPUT" 
+            
+          else
+            echo "Tipo de mudança detectado: $tipo_encontrado"
+            echo "tipo=$tipo_encontrado" >> "$GITHUB_OUTPUT"
+          fi
+        shell: bash
 
       - id: ultima
         name: Obter a última tag da release
         run: |
           tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0")
           echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
+          echo "Última tag encontrada: $tag" 
 
       - id: nova_tag
         name: Calcular nova tag (SemVer)
         run: |
-          IFS='.' read -r major minor patch <<< "${{ steps.ultima.outputs.tag_atual }}"
-          case "${{ steps.tipo.outputs.tipo }}" in
+          tag_atual="${{ steps.ultima.outputs.tag_atual }}"
+          tipo="${{ steps.tipo.outputs.tipo }}"
+
+          IFS='.' read -r major minor patch <<< "$tag_atual"
+          
+          echo "Calculando nova tag com tag_atual: $tag_atual e tipo: $tipo" # Adicionado para depuração
+
+          case "$tipo" in
             bug-fix)           patch=$((patch + 1));;
             nova-feature)      minor=$((minor + 1)); patch=0;;
             marco-no-projeto)  major=$((major + 1)); minor=0; patch=0;;
+            default-patch)     patch=$((patch + 1));; # Caso o tipo não seja encontrado
+            *)                 echo "Aviso: Tipo de mudança desconhecido ou não detectado. Incrementando patch por padrão."; patch=$((patch + 1));;
           esac
+          
           nova_tag="${major}.${minor}.${patch}"
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
+          echo "Nova tag calculada: $nova_tag" 
 
   frontend:
     name: 🏗️ Frontend CI/CD
