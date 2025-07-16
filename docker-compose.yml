@@ -25,7 +25,7 @@ services:
     volumes:
       - ./nginx/certbot/certbot-data:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
-    command: certonly --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --no-eff-email -d horamais.site -d www.horamais.site --force-renewal
+    command: renew --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --no-eff-email -d horamais.site -d www.horamais.site
     networks:
       - rede-front
 
