@@ -20,7 +20,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Install GitHub CLI
         run: |
           sudo apt-get update
@@ -58,7 +57,7 @@ jobs:
           if [[ -z "$tag" ]]; then tag="0.0.0"; fi
           echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Calcular nova tag (SemVer)
         id: nova_tag
@@ -99,7 +98,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GH_TOKEN }} 
+          password: ${{ secrets.GH_TOKEN }}
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
@@ -138,7 +137,7 @@ jobs:
 
   create-release:
     name: 🚀 Criar Release
-    needs: [tag-creation, frontend, backend]
+    needs: [frontend, backend]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
