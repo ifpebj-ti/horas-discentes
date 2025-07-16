@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -13,12 +13,14 @@ import {
   CreateCoordinatorSchema
 } from '../schemas/schema';
 
-export const useCreateCoordinatorAccount = () => {
+export const useCreateCoordinatorAccount = (
+  emailFromURL: string,
+  tokenFromURL: string
+) => {
   const [loading, setLoading] = useState(false);
   const [prefilledEmail, setPrefilledEmail] = useState('');
   const [token, setToken] = useState('');
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const form = useForm<CreateCoordinatorSchema>({
     resolver: zodResolver(createCoordinatorSchema),
@@ -26,11 +28,9 @@ export const useCreateCoordinatorAccount = () => {
   });
 
   useEffect(() => {
-    const email = searchParams.get('email');
-    const tokenParam = searchParams.get('token');
-    if (email) setPrefilledEmail(decodeURIComponent(email));
-    if (tokenParam) setToken(tokenParam);
-  }, [searchParams]);
+    setPrefilledEmail(decodeURIComponent(emailFromURL || ''));
+    setToken(tokenFromURL || '');
+  }, [emailFromURL, tokenFromURL]);
 
   const handleCreateCoordinator = async (data: CreateCoordinatorSchema) => {
     setLoading(true);

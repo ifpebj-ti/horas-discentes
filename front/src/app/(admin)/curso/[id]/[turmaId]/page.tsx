@@ -101,7 +101,6 @@ const VisualizarTurma = () => {
       hide();
     }
   };
-  console.log(students);
   return (
     <div className="space-y-8 p-4 md:p-6">
       <LoadingOverlay show={visible} />

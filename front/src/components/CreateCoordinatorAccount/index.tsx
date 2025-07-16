@@ -9,13 +9,21 @@ import { RoundedButton } from '@/components/RoundedButton';
 
 import { useCreateCoordinatorAccount } from './hooks/useCreateCoordinatorAccount';
 
-export const CreateCoordinatorAccount = () => {
+interface Props {
+  emailFromURL: string;
+  tokenFromURL: string;
+}
+
+export const CreateCoordinatorAccount = ({
+  emailFromURL,
+  tokenFromURL
+}: Props) => {
   const {
     form: { register, handleSubmit, watch, formState },
     loading,
     handleCreateCoordinator,
     prefilledEmail
-  } = useCreateCoordinatorAccount();
+  } = useCreateCoordinatorAccount(emailFromURL, tokenFromURL);
 
   const { errors, isValid } = formState;
   const senha = watch('senha') || '';
@@ -86,7 +94,7 @@ export const CreateCoordinatorAccount = () => {
             )}
           </div>
 
-          {/* Email (pré-preenchido e readonly) */}
+          {/* Email (readonly) */}
           <div className="mb-4">
             <label className="block mb-1 text-sm">Email:</label>
             <Input
@@ -113,17 +121,17 @@ export const CreateCoordinatorAccount = () => {
               <li
                 className={`${/[A-Z]/.test(senha) ? 'text-green-600' : 'text-gray-500'}`}
               >
-                • Pelo menos 1 letra maiúscula (A–Z)
+                • Pelo menos 1 letra maiúscula
               </li>
               <li
                 className={`${/[a-z]/.test(senha) ? 'text-green-600' : 'text-gray-500'}`}
               >
-                • Pelo menos 1 letra minúscula (a–z)
+                • Pelo menos 1 letra minúscula
               </li>
               <li
                 className={`${/[0-9]/.test(senha) ? 'text-green-600' : 'text-gray-500'}`}
               >
-                • Pelo menos 1 número (0–9)
+                • Pelo menos 1 número
               </li>
               <li
                 className={`${/[!@#$%^&*(),.?":{}|<>_\-\]]/.test(senha) ? 'text-green-600' : 'text-gray-500'}`}
