@@ -19,6 +19,7 @@ public interface IAlunoRepository
     Task DeleteComIdentityAsync(Guid alunoId);
     Task<Aluno?> GetByIdentityUserIdWithAtividadesAsync(string identityUserId);
     Task<IEnumerable<AlunoAtividade>> GetAtividadesByAlunoIdAsync(Guid alunoId);
-
+    Task<IEnumerable<Aluno>> GetAllComTurmaEAtividadesAsync();
+    Task<IEnumerable<Aluno>> GetAlunosPorCursoComDetalhesAsync(Guid cursoId);
 
 }

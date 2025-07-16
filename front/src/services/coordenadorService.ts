@@ -19,7 +19,12 @@ export interface CoordenadorResponse {
   nome: string;
   email: string;
 }
-
+export interface CoordenadorInfoResponse {
+  nome: string;
+  curso: string;
+  numeroPortaria: string;
+  dou: string;
+}
 // Enviar convite para coordenador (apenas ADMIN)
 export const enviarConviteCoordenador = async (
   dados: ConviteCoordenadorRequest
@@ -38,3 +43,9 @@ export const cadastrarCoordenador = async (
   );
   return response.data;
 };
+// Obter dados do coordenador autenticado
+export const obterCoordenadorAutenticado =
+  async (): Promise<CoordenadorInfoResponse> => {
+    const response = await api.get<CoordenadorInfoResponse>('/coordenador/me');
+    return response.data;
+  };

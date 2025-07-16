@@ -102,5 +102,25 @@ public class AlunoRepository : IAlunoRepository
             .AsNoTracking()
             .ToListAsync();
     }
-
+    public async Task<IEnumerable<Aluno>> GetAllComTurmaEAtividadesAsync()
+    {
+        return await _context.Alunos
+            .Include(a => a.Turma)
+                .ThenInclude(t => t!.Curso) 
+            .Include(a => a.Atividades)
+                .ThenInclude(aa => aa.Atividade)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+    public async Task<IEnumerable<Aluno>> GetAlunosPorCursoComDetalhesAsync(Guid cursoId)
+    {
+        return await _context.Alunos
+            .Where(a => a.Turma != null && a.Turma.CursoId == cursoId)
+            .Include(a => a.Turma)
+                .ThenInclude(t => t!.Curso)
+            .Include(a => a.Atividades)
+                .ThenInclude(aa => aa.Atividade)
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

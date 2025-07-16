@@ -6,4 +6,6 @@ namespace Back.Application.Interfaces.Repositories;
 public interface ICoordenadorRepository
 {
     Task AddAsync(Coordenador coordenador);
+    Task<Coordenador?> GetByIdentityUserIdWithCursoAsync(string identityUserId);
+
 }

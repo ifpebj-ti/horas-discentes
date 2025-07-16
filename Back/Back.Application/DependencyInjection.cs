@@ -12,7 +12,7 @@ namespace Back.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static object AddApplication(this IServiceCollection services)
     {
 
         //curso
@@ -36,7 +36,9 @@ public static class DependencyInjection
         services.AddScoped<GetAlunoDetalhadoUseCase>();
         services.AddScoped<GetResumoHorasUseCase>();
         services.AddScoped<GetAlunoFromTokenUseCase>();
-
+        services.AddScoped<GetAlunosComHorasConcluidasUseCase>();
+        services.AddScoped<ContarPendenciasDownloadUseCase>();
+        services.AddScoped<MarcarDownloadRelatorioUseCase>();
         //auth
         services.AddScoped<LoginUseCase>();
 
@@ -44,6 +46,7 @@ public static class DependencyInjection
         services.AddScoped<EnviarConviteUseCase>();
         services.AddScoped<CriarCoordenadorUseCase>();
         services.AddScoped<GetAtividadesByCursoIdUseCase>();
+        services.AddScoped<GetCoordenadorFromTokenUseCase>();
 
         //certificado
         services.AddScoped<CreateCertificadoUseCase>();

@@ -12,13 +12,16 @@ public class CoordenadorController : ControllerBase
 {
     private readonly EnviarConviteUseCase _enviarConvite;
     private readonly CriarCoordenadorUseCase _criarCoordenador;
+    private readonly GetCoordenadorFromTokenUseCase _getFromToken;
 
     public CoordenadorController(
         EnviarConviteUseCase enviarConvite,
-        CriarCoordenadorUseCase criarCoordenador)
+        CriarCoordenadorUseCase criarCoordenador,
+        GetCoordenadorFromTokenUseCase getFromToken)
     {
         _enviarConvite = enviarConvite;
         _criarCoordenador = criarCoordenador;
+        _getFromToken = getFromToken;
     }
 
     /// <summary>
@@ -63,4 +66,14 @@ public class CoordenadorController : ControllerBase
         var result = await _criarCoordenador.ExecuteAsync(request);
         return Ok(result);
     }
+    [HttpGet("me")]
+    [Authorize(Roles = "COORDENADOR")]
+    [SwaggerOperation(Summary = "Retorna os dados do coordenador autenticado.", Tags = new[] { "Coordenadores" })]
+    [ProducesResponseType(typeof(CoordenadorInfoResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Me()
+    {
+        var info = await _getFromToken.ExecuteAsync(User);
+        return Ok(info);
+    }
+
 }
