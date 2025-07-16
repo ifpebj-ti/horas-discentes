@@ -6,20 +6,22 @@ on:
       - 'front/**'
   pull_request:
     types: [opened, synchronize, reopened]
+    branches: ["main"]
     paths:
       - 'front/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: front
 
     steps:
       - name: 🔄 Clonar repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 📦 Instalar dependências
         run: npm install
@@ -33,6 +35,3 @@ jobs:
       - name: ✅ Testes (opcional)
         run: npm test
         continue-on-error: true
-
-
-
