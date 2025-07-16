@@ -2,9 +2,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ./ /src/Back
+COPY . /src/
 
-WORKDIR /src/Back/Back.API
+WORKDIR /src/Back.API
 
 RUN dotnet restore "Back.sln"
 

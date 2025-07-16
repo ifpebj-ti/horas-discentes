@@ -122,7 +122,7 @@ jobs:
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./Back
           file: Back/Dockerfile
           push: true
           tags: |
