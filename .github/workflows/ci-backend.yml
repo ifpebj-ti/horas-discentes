@@ -7,10 +7,9 @@ on:
       - '**.csproj'
       - '**.sln'
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
-      - '**.cs'
-      - '**.csproj'
-      - '**.sln'
+      - 'Back/**'
 
 jobs:
   build:
