@@ -152,7 +152,7 @@ jobs:
 
   create-release:
     name: 🚀 Criar Release
-    needs: [frontend, backend]
+    needs: [tag-creation, frontend, backend]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
