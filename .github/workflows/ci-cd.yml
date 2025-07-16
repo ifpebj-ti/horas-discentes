@@ -8,130 +8,160 @@ on:
 permissions:
   contents: write
   packages: write
-
+  
 jobs:
-  prepare-tag:
+  tag-creation:
     name: 🏷️ Preparar nova tag
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
-      tipo:    ${{ steps.tipo.outputs.tipo }}
+      tipo: ${{ steps.tipo.outputs.tipo }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
 
-      - id: tipo
-        name: Extrair tipo de mudança da PR
+      - name: Extrair tipo de mudança da PR
+        id: tipo
         run: |
           echo "${{ github.event.pull_request.body }}" > body.txt
-          tipo=""
-          if grep -q "\[x\] marco-no-projeto" body.txt; then
-            tipo="marco-no-projeto"
-          elif grep -q "\[x\] nova-feature" body.txt; then
-            tipo="nova-feature"
-          elif grep -q "\[x\] bug-fix" body.txt; then
-            tipo="bug-fix"
-          else
-            echo "Erro: Nenhum tipo de mudança foi selecionado no template do Pull Request."
-            exit 1
+          
+          tipo_encontrado=""
+          # Corrigido: Agora a lógica é mais robusta e flexível para os nomes de tipo
+          if grep -q "^\s*-\s*\[x\]\s*novo-marco" body.txt; then
+            tipo_encontrado="novo-marco"
+          elif grep -q "^\s*-\s*\[x\]\s*nova-feature" body.txt; then # Corrigido para 'nova-feature'
+            tipo_encontrado="nova-feature"
+          elif grep -q "^\s*-\s*\[x\]\s*nova-feature-refactor" body.txt; then
+            tipo_encontrado="nova-feature-refactor"
+          elif grep -q "^\s*-\s*\[x\]\s*bug-fix" body.txt; then
+            tipo_encontrado="bug-fix"
+          elif grep -q "^\s*-\s*\[x\]\s*outros" body.txt; then
+            tipo_encontrado="outros"
           fi
-          echo "tipo=$tipo" >> "$GITHUB_OUTPUT"
 
-      - id: ultima
-        name: Obter a última tag da release
-        run: |
-          tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "0.0.0")
-          echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
+          if [ -z "$tipo_encontrado" ]; then
+            echo "tipo=default-patch" >> "$GITHUB_OUTPUT"
+          else
+            echo "tipo=$tipo_encontrado" >> "$GITHUB_OUTPUT"
+          fi
+        shell: bash
 
-      - id: nova_tag
-        name: Calcular nova tag (SemVer)
+      - name: Obter a última tag da release
+        id: ultima
         run: |
-          IFS='.' read -r major minor patch <<< "${{ steps.ultima.outputs.tag_atual }}"
-          case "${{ steps.tipo.outputs.tipo }}" in
+          # Corrigido: Usa git describe que é mais confiável e robusto com a tag padrão 'v0.0.0'
+          tag=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]*" 2>/dev/null || echo "v0.0.0")
+          echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Calcular nova tag (SemVer)
+        id: nova_tag
+        run: |
+          tag_atual="${{ steps.ultima.outputs.last_tag }}"
+          tipo="${{ steps.tipo.outputs.tipo }}"
+          
+          # Garante que a tag atual não está vazia, tratando o caso do primeiro release
+          if [ -z "$tag_atual" ]; then
+            tag_atual="v0.0.0"
+          fi
+
+          tag_limpa=$(echo "$tag_atual" | sed 's/^v//')
+          IFS='.' read -r major minor patch <<< "$tag_limpa"
+
+          # Corrigido: Inicializa major, minor e patch com 0 para evitar erros
+          major=${major:-0}
+          minor=${minor:-0}
+          patch=${patch:-0}
+          
+          case "$tipo" in
             bug-fix)           patch=$((patch + 1));;
             nova-feature)      minor=$((minor + 1)); patch=0;;
-            marco-no-projeto)  major=$((major + 1)); minor=0; patch=0;;
+            nova-feature-refactor) minor=$((minor + 1)); patch=0;;
+            novo-marco)        major=$((major + 1)); minor=0; patch=0;;
+            default-patch)     patch=$((patch + 1));;
+            outros)            patch=$((patch + 1));;
+            *)                 patch=$((patch + 1));;
           esac
-          nova_tag="${major}.${minor}.${patch}"
+
+          nova_tag_calculada="${major}.${minor}.${patch}"
+          nova_tag="v${nova_tag_calculada}"
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
 
-  frontend:
-    name: 🏗️ Frontend CI/CD
-    needs: prepare-tag
+  backend:
+    name: 🏗️ Backend CI/CD
+    needs: tag-creation
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
+      security-events: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
       - name: Docker Login
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GH_TOKEN }}
+      - name: Build and push Backend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Back
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
 
+  frontend:
+    name: 🏗️ Frontend CI/CD
+    needs: tag-creation
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./front
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.prepare-tag.outputs.new_tag }}
+            ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.tag-creation.outputs.new_tag }}
             ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
-
-  backend:
-    name: 🏗️ Backend CI/CD
-    needs: prepare-tag
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Docker Login
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Backend Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Back/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
 
   create-release:
     name: 🚀 Criar Release
-    needs: [frontend, backend]
+    needs: [tag-creation, frontend, backend]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
-      NEW_TAG: ${{ needs.prepare-tag.outputs.new_tag }}
-      TIPO:    ${{ needs.prepare-tag.outputs.tipo }}
+      NEW_TAG: ${{ needs.tag-creation.outputs.new_tag }}
+      TIPO:    ${{ needs.tag-creation.outputs.tipo }}
     permissions:
       contents: write
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Publicar release
         uses: softprops/action-gh-release@v1
         with:
@@ -142,4 +172,4 @@ jobs:
             Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
             Tipo de mudança: ${{ env.TIPO }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
