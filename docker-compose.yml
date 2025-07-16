@@ -4,20 +4,19 @@ services:
     container_name: horas-discentes-nginx
     ports:
       - "80:80"
-     # - "443:443"
+      - "443:443"
     volumes:
-      - ./nginx/certbot/default-challenge.conf:/etc/nginx/conf.d/default.conf:ro
-     # - ./nginx/certbot/default-ssl.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certbot/default-ssl.conf:/etc/nginx/conf.d/default.conf:ro
       - ./nginx/certbot/certbot-data:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
-     # - ./nginx/certbot/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
-     # - ./nginx/certbot/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf:ro
+      - ./nginx/certbot/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
+      - ./nginx/certbot/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf:ro
     networks:
       - rede-back
       - rede-front
-   # depends_on:
-    #  - frontend
-    #  - backend
+    depends_on:
+      - frontend
+      - backend
     restart: unless-stopped
 
   certbot:
@@ -26,7 +25,7 @@ services:
     volumes:
       - ./nginx/certbot/certbot-data:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
-    command: certonly --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --no-eff-email -d horamais.site -d www.horamais.site --force-renewal
+    command: renew --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --no-eff-email -d horamais.site -d www.horamais.site
     networks:
       - rede-front
 
