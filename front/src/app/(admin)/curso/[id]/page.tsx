@@ -1,15 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   FaPlus,
   FaEnvelope,
   FaPaperPlane,
   FaTimes,
-  FaGraduationCap
+  FaGraduationCap,
+  FaHome
 } from 'react-icons/fa';
 
+import BreadCrumb from '@/components/BreadCrumb';
+import LoadingOverlay from '@/components/LoadingOverlay';
 import { RoundedButton } from '@/components/RoundedButton';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,51 +33,31 @@ import {
   SelectItem
 } from '@/components/ui/select';
 
+import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import {
+  enviarConviteCoordenador,
+  obterCoordenadorPorCurso
+} from '@/services/coordenadorService';
+import { obterTurmasPorCurso, criarTurma } from '@/services/turmaService';
 import Swal from 'sweetalert2';
-
-// Tipagens
-interface Coordinator {
-  id: string;
-  name: string;
-}
-
-interface Secretary {
-  id: string;
-  name: string;
-}
-
-interface ClassGroup {
-  id: string;
-  period: string;
-  shift: string;
-  students: number;
-}
-
-interface CourseDetails {
-  id: string;
-  name: string;
-  coordinator: Coordinator | null;
-  secretaries: Secretary[];
-  classes: ClassGroup[];
-}
 
 export default function CourseDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const cursoId = typeof params.id === 'string' ? params.id : '';
+  const { visible, show, hide } = useLoadingOverlay();
 
-  const [courseData, setCourseData] = useState<CourseDetails | null>(null);
+  const [courseName, setCourseName] = useState('');
+  const [coordinator, setCoordinator] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [classes, setClasses] = useState<any[]>([]);
 
-  // Modal Coordenador
   const [isCoordModalOpen, setIsCoordModalOpen] = useState(false);
   const [coordEmail, setCoordEmail] = useState('');
   const [isCoordLoading, setIsCoordLoading] = useState(false);
 
-  // Modal Turma
   const [isTurmaModalOpen, setIsTurmaModalOpen] = useState(false);
-  const [formData, setFormData] = useState<{
-    periodo: string;
-    cargaHorariaExtensao: string;
-    turno: string;
-  }>({
+  const [formData, setFormData] = useState({
     periodo: '',
     cargaHorariaExtensao: '',
     turno: ''
@@ -82,39 +65,34 @@ export default function CourseDetailPage() {
   const [isTurmaLoading, setIsTurmaLoading] = useState(false);
 
   useEffect(() => {
-    const mockData: CourseDetails = {
-      id: '1',
-      name: 'Engenharia de Software',
-      coordinator: { id: 'c1', name: 'Ana Lima' },
-      secretaries: [
-        { id: 's1', name: 'Carlos Mendes' },
-        { id: 's2', name: 'Joana Ribeiro' }
-      ],
-      classes: [
-        {
-          id: '2025.1',
-          period: '2025.1',
-          shift: 'Noturno',
-          students: 40
-        },
-        {
-          id: '2025.2',
-          period: '2025.2',
-          shift: 'Noturno',
-          students: 35
-        },
-        {
-          id: '2025.3',
-          period: '2025.3',
-          shift: 'Noturno',
-          students: 38
-        }
-      ]
-    };
-    setCourseData(mockData);
-  }, []);
+    const loadData = async () => {
+      if (!cursoId) return;
+      try {
+        show();
+        const [coordenador, turmas] = await Promise.all([
+          obterCoordenadorPorCurso(cursoId),
+          obterTurmasPorCurso(cursoId)
+        ]);
 
-  // Handlers Coordenador
+        setCoordinator(coordenador?.nome || null);
+        setClasses(
+          turmas.map((t) => ({
+            id: t.id,
+            period: t.periodo,
+            shift: t.turno,
+            students: t.quantidadeAlunos
+          }))
+        );
+        setCourseName(turmas[0]?.cursoNome || 'Curso');
+      } catch (error) {
+        console.error('Erro ao carregar dados do curso:', error);
+      } finally {
+        hide();
+      }
+    };
+    loadData();
+  }, [cursoId, show, hide]);
+
   const handleAddCoordinatorClick = () => {
     setCoordEmail('');
     setIsCoordLoading(false);
@@ -123,7 +101,6 @@ export default function CourseDetailPage() {
 
   const handleCoordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const confirmation = await Swal.fire({
       title: 'Confirmar envio',
       text: `Deseja enviar convite para ${coordEmail}?`,
@@ -137,37 +114,26 @@ export default function CourseDetailPage() {
 
     if (!confirmation.isConfirmed) return;
 
-    setIsCoordLoading(true);
-
-    // Simulate API call
-    setTimeout(async () => {
-      // Exemplo comentado de integração real:
-      // await fetch(`/api/curso/${courseData?.id}/coordenador`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email: coordEmail }),
-      // });
-
+    try {
+      setIsCoordLoading(true);
+      await enviarConviteCoordenador({ email: coordEmail, cursoId });
       await Swal.fire({
         title: 'Convite enviado!',
         text: `Um e-mail foi enviado para ${coordEmail} com instruções para criar a conta.`,
         icon: 'success',
         confirmButtonColor: '#3085d6'
       });
-      setCoordEmail('');
-      setIsCoordLoading(false);
       setIsCoordModalOpen(false);
-    }, 1000);
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Erro', 'Não foi possível enviar o convite.', 'error');
+    } finally {
+      setIsCoordLoading(false);
+    }
   };
 
-  // Handlers Turma
   const handleAddTurmaClick = () => {
-    setFormData({
-      periodo: '',
-      cargaHorariaExtensao: '',
-      turno: ''
-    });
-    setIsTurmaLoading(false);
+    setFormData({ periodo: '', cargaHorariaExtensao: '', turno: '' });
     setIsTurmaModalOpen(true);
   };
 
@@ -177,6 +143,15 @@ export default function CourseDetailPage() {
 
   const handleTurmaSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (
+      !formData.periodo ||
+      !formData.turno ||
+      !formData.cargaHorariaExtensao
+    ) {
+      Swal.fire('Erro', 'Preencha todos os campos corretamente.', 'error');
+      return;
+    }
 
     const confirmation = await Swal.fire({
       title: 'Confirmar criação',
@@ -191,68 +166,70 @@ export default function CourseDetailPage() {
 
     if (!confirmation.isConfirmed) return;
 
-    setIsTurmaLoading(true);
-
-    // Simulate API call to backend, which returns the new turma ID
     try {
-      // Exemplo comentado de integração real:
-      // const response = await fetch(`/api/curso/${courseData?.id}/turmas`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     period: formData.periodo,
-      //     turno: formData.turno,
-      //     cargaHorariaExtensao: formData.cargaHorariaExtensao === 'sim'
-      //   })
-      // });
-      // const data = await response.json();
-      // const turmaId = data.id;
+      setIsTurmaLoading(true);
+      await criarTurma({
+        periodo: formData.periodo,
+        turno: formData.turno,
+        possuiExtensao: formData.cargaHorariaExtensao === 'sim',
+        cursoId
+      });
 
-      // Enquanto aguarda resposta do backend, apenas simula com timeout
-      setTimeout(async () => {
-        // Suponha que back retornou algo como: { id: 'turma-123xyz' }
-        const turmaId = 'turma-123xyz'; // será substituído pela resposta real
-
-        await Swal.fire({
-          title: 'Turma criada!',
-          text: `Turma ${formData.periodo} (${formData.turno}) foi criada. Código: ${turmaId}`,
-          icon: 'success',
-          confirmButtonColor: '#3085d6'
-        });
-
-        setIsTurmaLoading(false);
-        setIsTurmaModalOpen(false);
-
-        // Redirecionamento desabilitado por enquanto:
-        // router.push(`/curso/${courseData?.id}/${turmaId}`);
-      }, 1000);
-    } catch (error) {
-      console.error(error);
-      Swal.fire({
-        title: 'Erro',
-        text: 'Não foi possível criar a turma. Tente novamente.',
-        icon: 'error',
+      await Swal.fire({
+        title: 'Turma criada!',
+        text: `Turma ${formData.periodo} (${formData.turno}) foi criada.`,
+        icon: 'success',
         confirmButtonColor: '#3085d6'
       });
+
+      const turmasAtualizadas = await obterTurmasPorCurso(cursoId);
+      setClasses(
+        turmasAtualizadas.map((t) => ({
+          id: t.id,
+          period: t.periodo,
+          shift: t.turno,
+          students: t.quantidadeAlunos
+        }))
+      );
+      setIsTurmaModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Erro', 'Não foi possível criar a turma.', 'error');
+    } finally {
       setIsTurmaLoading(false);
     }
   };
-
-  if (!courseData) return <p className="p-6">Carregando...</p>;
-
   return (
     <div className="p-6 space-y-6">
+      <LoadingOverlay show={visible} />
+      <div className="mb-6">
+        <BreadCrumb
+          items={[
+            {
+              icon: <FaHome />,
+              label: 'Início',
+              href: '/curso'
+            },
+            {
+              icon: <FaGraduationCap />,
+              label: 'Turmas',
+              href: `/curso/${cursoId}`
+            }
+          ]}
+        />
+      </div>
       <div>
-        <h1 className="text-2xl font-bold">{courseData.name}</h1>
+        <h1 className="text-2xl font-bold">{courseName}</h1>
         <p className="text-gray-500">Gerenciamento do curso</p>
       </div>
 
       {/* Coordenador */}
+      {/* Coordenador */}
       <div className="bg-white shadow rounded-lg p-4">
         <h2 className="text-lg font-semibold mb-4">Coordenador</h2>
-        {courseData.coordinator ? (
+        {coordinator ? (
           <div className="flex justify-between items-center">
-            <span>{courseData.coordinator.name}</span>
+            <span>{coordinator}</span>
           </div>
         ) : (
           <div className="max-w-xs mt-4 cursor-pointer">
@@ -288,7 +265,7 @@ export default function CourseDetailPage() {
             </tr>
           </thead>
           <tbody>
-            {courseData.classes.map((cls) => (
+            {classes.map((cls) => (
               <tr key={cls.id} className="border-b last:border-none">
                 <td className="py-2">{cls.period}</td>
                 <td>{cls.shift}</td>
@@ -296,9 +273,7 @@ export default function CourseDetailPage() {
                 <td className="text-right">
                   <button
                     className="text-sm text-blue-600 border border-blue-600 px-3 py-1 rounded-full hover:bg-blue-50"
-                    onClick={() =>
-                      router.push(`/curso/${courseData.id}/${cls.id}`)
-                    }
+                    onClick={() => router.push(`/curso/${cursoId}/${cls.id}`)}
                   >
                     Visualizar turma
                   </button>

@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddScoped<CreateCursoUseCase>();
         services.AddScoped<GetAllCursosUseCase>();
         services.AddScoped<GetCursoByIdUseCase>();
+        services.AddScoped<GetResumoCursosUseCase>();
 
         //turma
         services.AddScoped<CreateTurmaUseCase>();
@@ -47,7 +48,7 @@ public static class DependencyInjection
         services.AddScoped<CriarCoordenadorUseCase>();
         services.AddScoped<GetAtividadesByCursoIdUseCase>();
         services.AddScoped<GetCoordenadorFromTokenUseCase>();
-
+        services.AddScoped<GetCoordenadorByCursoIdUseCase>();
         //certificado
         services.AddScoped<CreateCertificadoUseCase>();
         services.AddScoped<GetCertificadosUseCase>();
@@ -58,6 +59,8 @@ public static class DependencyInjection
         services.AddScoped<GetCertificadoAnexoUseCase>();
         //Limitehoras
         services.AddScoped<CreateLimiteHorasAlunoUseCase>();
+        //atividade
+        services.AddScoped<CreateAtividadeUseCase>();
         return services;
     }
 }

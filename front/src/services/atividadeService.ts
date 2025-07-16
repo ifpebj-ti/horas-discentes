@@ -4,9 +4,20 @@ export interface AtividadeResponse {
   id: string;
   nome: string;
   cursoId: string;
-  tipo: 'COMPLEMENTAR' | 'EXTENSAO';
+  tipo: 'EXTENSAO' | 'COMPLEMENTAR';
   grupo: string;
   categoria: string;
+}
+
+export interface CreateAtividadeRequest {
+  nome?: string;
+  grupo?: string;
+  categoria?: string;
+  categoriaKey?: string;
+  cargaMaximaSemestral: number;
+  cargaMaximaCurso: number;
+  tipo: 'EXTENSAO' | 'COMPLEMENTAR';
+  cursoId: string;
 }
 
 export const listarAtividadesPorCurso = async (
@@ -15,5 +26,12 @@ export const listarAtividadesPorCurso = async (
   const response = await api.get<AtividadeResponse[]>(
     `/atividade/curso/${cursoId}`
   );
+  return response.data;
+};
+
+export const criarAtividade = async (
+  dados: CreateAtividadeRequest
+): Promise<{ atividadeId: string }> => {
+  const response = await api.post(`/atividade`, dados);
   return response.data;
 };

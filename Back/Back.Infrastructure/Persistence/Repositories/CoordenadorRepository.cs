@@ -2,6 +2,7 @@
 using Back.Domain.Entities.Coordenador;
 using Back.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace Back.Infrastructure.Persistence.Repositories;
@@ -27,4 +28,11 @@ public class CoordenadorRepository : ICoordenadorRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.IdentityUserId == identityUserId);
     }
+    public async Task<Coordenador?> GetByCursoIdAsync(Guid cursoId)
+    {
+        return await _context.Coordenadores
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.CursoId == cursoId);
+    }
+
 }

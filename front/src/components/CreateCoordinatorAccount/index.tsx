@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect } from 'react';
 import { FaUser, FaIdCard, FaRegNewspaper } from 'react-icons/fa';
 
 import { Input } from '@/components/Input';
@@ -15,18 +14,11 @@ export const CreateCoordinatorAccount = () => {
     form: { register, handleSubmit, watch, formState },
     loading,
     handleCreateCoordinator,
-    prefilledEmail,
-    setPrefilledEmail
+    prefilledEmail
   } = useCreateCoordinatorAccount();
 
   const { errors, isValid } = formState;
   const senha = watch('senha') || '';
-
-  useEffect(() => {
-    // Mock do email a partir do token
-    const mockedEmail = 'coordenador@example.com';
-    setPrefilledEmail(mockedEmail);
-  }, [setPrefilledEmail]);
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">

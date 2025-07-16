@@ -10,15 +10,15 @@ const getTitleFromPath = (path: string): string => {
   const last = path.split('/').filter(Boolean).pop() ?? '';
   switch (last) {
     case 'curso':
-      return 'Cursos';
-    case 'usuarios':
-      return 'Gerenciar Usuários';
+      return 'Administração Cursos';
+    case 'curso/[id]':
+      return 'Gerenciar Curso';
     case 'relatorios':
       return 'Relatórios';
     case 'configuracoes':
       return 'Configurações';
     default:
-      return 'Início';
+      return 'Administração';
   }
 };
 

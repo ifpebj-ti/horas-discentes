@@ -21,5 +21,6 @@ public interface IAlunoRepository
     Task<IEnumerable<AlunoAtividade>> GetAtividadesByAlunoIdAsync(Guid alunoId);
     Task<IEnumerable<Aluno>> GetAllComTurmaEAtividadesAsync();
     Task<IEnumerable<Aluno>> GetAlunosPorCursoComDetalhesAsync(Guid cursoId);
+    Task<IEnumerable<Aluno>> GetByCursoIdAsync(Guid cursoId);
 
 }
