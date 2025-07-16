@@ -7,9 +7,12 @@
 [![Open PRs](https://img.shields.io/github/issues-pr/ifpebj-ti/horas-discentes)](https://github.com/ifpebj-ti/horas-discentes/pulls)
 ![Forks](https://img.shields.io/github/forks/ifpebj-ti/horas-discentes)
 ![Stars](https://img.shields.io/github/stars/ifpebj-ti/horas-discentes)
+<<<<<<< HEAD
+=======
 [![CI/CD Backend](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/ci-backend.yml/badge.svg)](https://github.com/ifpebj-ti/horas-discentes/actions?query=workflow%3A%22Backend+CI+%28.NET%29%22)
 [![CI/CD Frontend](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/ci-frontend.yml/badge.svg)](https://github.com/ifpebj-ti/horas-discentes/actions?query=workflow%3A%22Frontend+CI%22)
 [![CI/CD Produção](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ifpebj-ti/horas-discentes/actions?query=workflow%3A%22Production+CI%2FCD%22)
+>>>>>>> 34eaa9e6d3805fa6423c69d59773c71f1f88a190
 [![Vulnerabilidades](./badges/vulnerabilidades.svg)](https://github.com/ifpebj-ti/horas-discentes/security/dependabot)
 
 # 📘 Horas Discentes
