@@ -1,66 +1,16 @@
-version: '3.8'
-
 services:
-  frontend:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
-    ports:
-      - "${PORT_MACHINE_FRONTEND}:3000"
-    environment:
-      - NEXT_PUBLIC_BACKEND_URL=${NEXT_URL}
-    depends_on:
-      - backend
-    networks:
-      - rede-front
-    restart: unless-stopped
-
-  backend:
-    build:
-      context: ./Back
-      dockerfile: Dockerfile
-    ports:
-      - "${PORT_MACHINE_BACKEND}:5000"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - ASPNETCORE_URLS=http://+:5000
-    depends_on:
-      - db
-    networks:
-      - rede-front
-      - rede-back
-    restart: unless-stopped
-
-  db:
-    image: postgres:15
-    container_name: horas-discentes-db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 91188982
-      POSTGRES_DB: horas_discentes_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      - rede-back
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
   nginx:
     image: nginx:latest
     container_name: horas-discentes-nginx
     ports:
       - "80:80"
-      - "443:443"  # Porta HTTPS
+      - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro 
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certbot/default-ssl.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certbot/certbot-data:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
+      - ./nginx/certbot/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf:ro
     networks:
       - rede-back
       - rede-front
@@ -69,8 +19,72 @@ services:
       - backend
     restart: unless-stopped
 
+  certbot:
+    image: certbot/certbot
+    container_name: horas-discentes-certbot
+    volumes:
+      - ./nginx/certbot/certbot-data:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    command: certonly --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --no-eff-email -d horamais.site -d www.horamais.site --force-renewal
+    networks:
+      - rede-front
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT_MACHINE_FRONTEND}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+    networks:
+      - rede-front
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./Back
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT_MACHINE_BACKEND}:5000"
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=${DATABASE_URL}
+    volumes:
+      - backend_data_protection_keys:/root/.aspnet/DataProtection-Keys
+    networks:
+      - rede-back
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: horas-discentes-db
+    ports:
+      - "${PORT_MACHINE_DB}:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - rede-back
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
-  db_data:
+  pgdata:
+  backend_data_protection_keys:
 
 networks:
   rede-back:
