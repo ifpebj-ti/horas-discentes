@@ -33,7 +33,7 @@ jobs:
           tipo_encontrado=""
           if grep -q "^\s*-\s*\[x\]\s*marco-no-projeto" pr_body.txt; then
             tipo_encontrado="marco-no-projeto"
-          elif grep -q "^\s*-\s*\[x\]\s*nova-feature" pr_body.txt; then
+          elif grep -q "^\s*-\s*\[x\]\s*nova-feature" pr_body.dxt; then
             tipo_encontrado="nova-feature"
           elif grep -q "^\s*-\s*\[x\]\s*bug-fix" pr_body.txt; then
             tipo_encontrado="bug-fix"
@@ -127,10 +127,8 @@ jobs:
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: Dockerfile
-          workdir: ./Back.API
-          push: true 
+          context: ./Back 
+          file: Dockerfile 
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
