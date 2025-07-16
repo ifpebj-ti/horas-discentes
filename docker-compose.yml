@@ -56,10 +56,11 @@ services:
     image: nginx:latest
     container_name: horas-discentes-nginx
     ports:
-      - "80:80"
+      - "8080:80"
       - "443:443"  # Porta HTTPS
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Mapeia o arquivo nginx.conf para o contêiner
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf 
+      - ./nginx/conf.d:/etc/nginx/conf.d
     networks:
       - rede-back
       - rede-front
