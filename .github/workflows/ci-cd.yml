@@ -8,29 +8,26 @@ on:
 permissions:
   contents: write
   packages: write
-  
+
 jobs:
   tag-creation:
     name: 🏷️ Preparar nova tag
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
-      new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
+      new_tag: ${{ steps.nova_tag.outputs.new_tag }}
       tipo: ${{ steps.tipo.outputs.tipo }}
-
     steps:
       - uses: actions/checkout@v4
       - name: Install GitHub CLI
         run: |
           sudo apt-get update
           sudo apt-get install -y gh
-
       - name: Extrair tipo de mudança da PR
         id: tipo
         run: |
           PR_BODY="${{ github.event.pull_request.body }}"
           echo "$PR_BODY" > body.txt
-          
           tipo_encontrado=""
           if grep -q "^\s*-\s*\[x\]\s*novo-marco" body.txt; then
             tipo_encontrado="novo-marco"
@@ -41,14 +38,12 @@ jobs:
           elif grep -q "^\s*-\s*\[x\]\s*outros" body.txt; then
             tipo_encontrado="outros"
           fi
-
           if [ -z "$tipo_encontrado" ]; then
             echo "tipo=default-patch" >> "$GITHUB_OUTPUT"
           else
             echo "tipo=$tipo_encontrado" >> "$GITHUB_OUTPUT"
           fi
         shell: bash
-
       - name: Obter a última tag da release
         id: ultima
         run: |
@@ -58,7 +53,6 @@ jobs:
           echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
       - name: Calcular nova tag (SemVer)
         id: nova_tag
         run: |
@@ -67,11 +61,11 @@ jobs:
           tag_limpa=$(echo "$tag_atual" | sed 's/^v//')
           IFS='.' read -r major minor patch <<< "$tag_limpa"
           case "$tipo" in
-            bug-fix)           patch=$((patch + 1));;
+            bug-fix) patch=$((patch + 1));;
             nova-feature-refactor) minor=$((minor + 1)); patch=0;;
-            novo-marco)  major=$((major + 1)); minor=0; patch=0;;
-            default-patch)     patch=$((patch + 1));;
-            *)                 patch=$((patch + 1));;
+            novo-marco) major=$((major + 1)); minor=0; patch=0;;
+            default-patch) patch=$((patch + 1));;
+            *) patch=$((patch + 1));;
           esac
           nova_tag_calculada="${major}.${minor}.${patch}"
           nova_tag="v${nova_tag_calculada}"
@@ -100,15 +94,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
       - name: Build and push Backend Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./Back
-          file: Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
-
+        run: |
+          /usr/bin/docker buildx build --file Back/Dockerfile --push \
+          -t ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }} \
+          -t ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest ./Back
   frontend:
     name: 🏗️ Frontend CI/CD
     needs: tag-creation
