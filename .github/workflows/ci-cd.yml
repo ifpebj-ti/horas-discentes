@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
   packages: write
-
+  
 jobs:
   tag-creation:
     name: 🏷️ Preparar nova tag
@@ -20,6 +20,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Install GitHub CLI
         run: |
           sudo apt-get update
@@ -29,16 +30,16 @@ jobs:
         id: tipo
         run: |
           PR_BODY="${{ github.event.pull_request.body }}"
-          echo "$PR_BODY" > pr_body.txt
+          echo "$PR_BODY" > body.txt
           
           tipo_encontrado=""
-          if grep -q "^\s*-\s*\[x\]\s*marco-no-projeto" pr_body.txt; then
-            tipo_encontrado="marco-no-projeto"
-          elif grep -q "^\s*-\s*\[x\]\s*nova-feature-refactor" pr_body.txt; then
+          if grep -q "^\s*-\s*\[x\]\s*novo-marco" body.txt; then
+            tipo_encontrado="novo-marco"
+          elif grep -q "^\s*-\s*\[x\]\s*nova-feature-refactor" body.txt; then
             tipo_encontrado="nova-feature-refactor"
-          elif grep -q "^\s*-\s*\[x\]\s*bug-fix" pr_body.txt; then
+          elif grep -q "^\s*-\s*\[x\]\s*bug-fix" body.txt; then
             tipo_encontrado="bug-fix"
-          elif grep -q "^\s*-\s*\[x\]\s*outros" pr_body.txt; then
+          elif grep -q "^\s*-\s*\[x\]\s*outros" body.txt; then
             tipo_encontrado="outros"
           fi
 
@@ -55,9 +56,9 @@ jobs:
           gh auth setup-git
           tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
           if [[ -z "$tag" ]]; then tag="0.0.0"; fi
-          echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
+          echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} 
 
       - name: Calcular nova tag (SemVer)
         id: nova_tag
@@ -67,11 +68,11 @@ jobs:
           tag_limpa=$(echo "$tag_atual" | sed 's/^v//')
           IFS='.' read -r major minor patch <<< "$tag_limpa"
           case "$tipo" in
-            bug-fix) patch=$((patch + 1));;
+            bug-fix)           patch=$((patch + 1));;
             nova-feature-refactor) minor=$((minor + 1)); patch=0;;
-            marco-no-projeto) major=$((major + 1)); minor=0; patch=0;;
-            default-patch) patch=$((patch + 1));;
-            *) patch=$((patch + 1));;
+            novo-marco)  major=$((major + 1)); minor=0; patch=0;;
+            default-patch)     patch=$((patch + 1));;
+            *)                 patch=$((patch + 1));;
           esac
           nova_tag_calculada="${major}.${minor}.${patch}"
           nova_tag="v${nova_tag_calculada}"
@@ -98,7 +99,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ secrets.GH_TOKEN }} 
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
@@ -125,7 +126,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ secrets.GH_TOKEN }}
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v5
         with:
@@ -157,4 +158,4 @@ jobs:
             Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
             Tipo de mudança: ${{ env.TIPO }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
