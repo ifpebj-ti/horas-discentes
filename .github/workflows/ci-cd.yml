@@ -7,34 +7,30 @@ on:
 
 permissions:
   contents: write
-  packages: write 
+  packages: write
 
 jobs:
   prepare-tag:
     name: 🏷️ Preparar nova tag
-    if: github.event.pull_request.merged == true 
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
-      tipo:    ${{ steps.tipo.outputs.tipo }}
+      tipo: ${{ steps.tipo.outputs.tipo }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - id: tipo
         name: Extrair tipo de mudança da PR
         run: |
-          echo "Conteúdo do corpo do PR:"
-          echo "${{ github.event.pull_request.body }}" # Exibe o corpo do PR para depuração
-
           PR_BODY="${{ github.event.pull_request.body }}"
-          echo "$PR_BODY" > pr_body.txt # Salva o corpo do PR em um arquivo para grep
+          echo "$PR_BODY" > pr_body.txt
           
           tipo_encontrado=""
-          # Ajuste nas regex para serem mais robustas com espaços e traços
           if grep -q "^\s*-\s*\[x\]\s*marco-no-projeto" pr_body.txt; then
             tipo_encontrado="marco-no-projeto"
           elif grep -q "^\s*-\s*\[x\]\s*nova-feature" pr_body.txt; then
@@ -43,55 +39,40 @@ jobs:
             tipo_encontrado="bug-fix"
           fi
 
-          if [ -z "$tipo_encontrado" ]; then # Se nenhum tipo for encontrado
-            echo "Erro: Nenhum tipo de mudança foi selecionado no template do Pull Request."
-            echo "tipo=default-patch" >> "$GITHUB_OUTPUT" # Define um tipo padrão para não quebrar o pipeline
+          if [ -z "$tipo_encontrado" ]; then
+            echo "tipo=default-patch" >> "$GITHUB_OUTPUT"
           else
-            echo "Tipo de mudança detectado: $tipo_encontrado"
             echo "tipo=$tipo_encontrado" >> "$GITHUB_OUTPUT"
           fi
-        shell: bash 
+        shell: bash
 
       - id: ultima
         name: Obter a última tag da release
         run: |
-          # Obtém a última tag SemVer ou "0.0.0" se não houver tags
           tag=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]*" 2>/dev/null || echo "0.0.0")
           echo "tag_atual=$tag" >> "$GITHUB_OUTPUT"
-          echo "Última tag encontrada: $tag"
 
       - id: nova_tag
         name: Calcular nova tag (SemVer)
         run: |
           tag_atual="${{ steps.ultima.outputs.tag_atual }}"
-          tipo="${{ steps.tipo.outputs.tipo }}" # Pega o tipo do step anterior
-
-          # Remove o 'v' inicial se existir, para manipular apenas os números
+          tipo="${{ steps.tipo.outputs.tipo }}"
           tag_limpa=$(echo "$tag_atual" | sed 's/^v//')
-          
           IFS='.' read -r major minor patch <<< "$tag_limpa"
-          
-          echo "Calculando nova tag com tag_atual: $tag_atual (limpa: $tag_limpa) e tipo: $tipo"
-
           case "$tipo" in
             bug-fix)           patch=$((patch + 1));;
             nova-feature)      minor=$((minor + 1)); patch=0;;
             marco-no-projeto)  major=$((major + 1)); minor=0; patch=0;;
-            default-patch)     patch=$((patch + 1));; # Caso o tipo não seja encontrado, incrementa patch
-            *)                 echo "Aviso: Tipo de mudança desconhecido. Incrementando patch por padrão."; patch=$((patch + 1));;
+            default-patch)     patch=$((patch + 1));;
+            *)                 patch=$((patch + 1));;
           esac
-          
           nova_tag_calculada="${major}.${minor}.${patch}"
-          
-          # Prefixe com 'v' para a tag final
           nova_tag="v${nova_tag_calculada}"
-          
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
-          echo "Nova tag calculada: $nova_tag"
 
   frontend:
     name: 🏗️ Frontend CI/CD
-    needs: prepare-tag 
+    needs: prepare-tag
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -112,7 +93,7 @@ jobs:
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./front # Contexto de build para o frontend
+          context: ./front
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.prepare-tag.outputs.new_tag }}
@@ -120,7 +101,7 @@ jobs:
 
   backend:
     name: 🏗️ Backend CI/CD
-    needs: prepare-tag 
+    needs: prepare-tag
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -131,13 +112,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug - Verificar Dockerfile do Backend
+        run: |
+          ls -la Back/
+          cat Back/Dockerfile
+        working-directory: ${{ github.workspace }}
+
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4 
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
       - name: Docker Login
-        uses: docker/login-action@v3 
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -146,8 +133,8 @@ jobs:
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./Back 
-          file: Dockerfile 
+          context: ./Back
+          file: Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.prepare-tag.outputs.new_tag }}
@@ -155,31 +142,26 @@ jobs:
 
   create-release:
     name: 🚀 Criar Release
-    needs: [frontend, backend] 
+    needs: [frontend, backend]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
       NEW_TAG: ${{ needs.prepare-tag.outputs.new_tag }}
       TIPO:    ${{ needs.prepare-tag.outputs.tipo }}
     permissions:
-      contents: write # Necessário para criar a release e a tag Git
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Debug - Verificar tag recebida
-        run: |
-          echo "Tag recebida no job 'create-release' (env.NEW_TAG): ${{ env.NEW_TAG }}"
-          echo "Tag recebida no job 'create-release' (needs.prepare-tag.outputs.new_tag): ${{ needs.prepare-tag.outputs.new_tag }}"
-
       - name: Publicar release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.NEW_TAG }} # Usa a tag calculada
+          tag_name: ${{ env.NEW_TAG }}
           name: Release ${{ env.NEW_TAG }}
           generate_release_notes: true
           body: |
             Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
             Tipo de mudança: ${{ env.TIPO }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
