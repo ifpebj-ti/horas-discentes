@@ -173,3 +173,4 @@ jobs:
             Tipo de mudança: ${{ env.TIPO }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  
