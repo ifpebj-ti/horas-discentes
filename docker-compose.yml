@@ -30,9 +30,7 @@ services:
       - rede-front
 
   frontend:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
+    image: ghcr.io/ifpebj-ti/horas-discentes-frontend:latest
     ports:
       - "${PORT_MACHINE_FRONTEND}:3000"
     environment:
@@ -45,9 +43,7 @@ services:
       - backend
 
   backend:
-    build:
-      context: ./Back
-      dockerfile: Dockerfile
+    image: ghcr.io/ifpebj-ti/horas-discentes-backend:latest
     ports:
       - "${PORT_MACHINE_BACKEND}:5000"
     environment:
