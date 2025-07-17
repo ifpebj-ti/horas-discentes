@@ -7,7 +7,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
-      - ./nginx/certbot/certbot-data:/etc/letsencrypt
+      - ./nginx/certbot/certbot-data/live/:/etc/letsencrypt/live
+      - ./nginx/certbot/certbot-data/archive/:/etc/letsencrypt/archive
       - ./nginx/certbot/www:/var/www/certbot
       - ./nginx/certbot/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
       - ./nginx/certbot/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf:ro
@@ -23,9 +24,10 @@ services:
     image: certbot/certbot
     container_name: horas-discentes-certbot
     volumes:
-      - ./nginx/certbot/certbot-data:/etc/letsencrypt
+      - ./nginx/certbot/certbot-data/live/:/etc/letsencrypt/live
+      - ./nginx/certbot/certbot-data/archive/:/etc/letsencrypt/archive
       - ./nginx/certbot/www:/var/www/certbot
-    command: renew --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --no-eff-email -d horamais.site -d www.horamais.site
+    command: certonly --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --expand -d horamais.site -d www.horamais.site -d api.horamais.site
     networks:
       - rede-front
 
