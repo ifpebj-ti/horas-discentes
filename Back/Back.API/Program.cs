@@ -10,29 +10,41 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Threading;
 
+// Carrega variáveis do .env
+DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Add appsettings.json + .env como IConfiguration
+builder.Configuration.AddEnvironmentVariables();
+
+// Add services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerConfig();
 builder.Services.AddCorsConfig();
 
-// Identity + EF Core Context
+// Banco de Dados
+var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new Exception("Connection string não definida. Verifique o .env");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
-
+// Identity
 builder.Services
     .AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// JWT Authentication
-var jwtConfig = builder.Configuration.GetSection("Jwt");
-var jwtKey = jwtConfig["Key"];
-var jwtIssuer = jwtConfig["Issuer"];
-var jwtAudience = jwtConfig["Audience"];
+// JWT
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+if (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.Length < 16)
+    throw new Exception("JWT Key não configurada corretamente.");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -52,7 +64,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
 
@@ -61,98 +73,66 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
+// Executa migração + seed admin
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-    var maxRetries = 5;
-    var retryCount = 0;
-    var delay = TimeSpan.FromSeconds(5);
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-    while (retryCount < maxRetries)
+    // Verifica se precisa aplicar migration
+    if ((await context.Database.GetPendingMigrationsAsync()).Any())
     {
-        try
-        {
-            // Tenta realizar a migraÃ§Ã£o do banco de dados
-            context.Database.Migrate();
-            break; // Se a migraÃ§Ã£o for bem-sucedida, sai do loop
-        }
-        catch (Exception ex)
-        {
-            retryCount++;
-            if (retryCount == maxRetries)
-            {
-                // Se o nÃºmero mÃ¡ximo de tentativas for atingido, lanÃ§a a exceÃ§Ã£o
-                throw new Exception("Erro ao conectar ao banco de dados apÃ³s vÃ¡rias tentativas.", ex);
-            }
-
-            // Aguarda antes de tentar novamente
-            Console.WriteLine($"Tentativa {retryCount} de conexÃ£o com o banco de dados falhou. Tentando novamente...");
-            Thread.Sleep(delay);
-        }
+        Console.WriteLine(" Aplicando migrations...");
+        context.Database.Migrate();
     }
 
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
+    // Cria roles se não existirem
     var roles = new[] { "ALUNO", "COORDENADOR", "ADMIN" };
-
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
     }
+
+    // Executa seed de admin
+    Console.WriteLine(" Rodando seed de admin...");
+    await AdminSeeder.SeedAsync(context, userManager);
 }
 
 app.UseCors("AllowAll");
-
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
-
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
-//seedando os dados iniciais no banco de dados para Atividades
-//using (var scope = app.Services.CreateScope())
-//{
-//    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-//    //  Substitua esse Guid pelo ID real do curso que você já cadastrou
-//    var cursoId = new Guid("c77b9418-8892-41c4-899b-e25d399c088b");
-
-//    await AtividadeSeeder.SeedAsync(db, cursoId);
-
-//    Console.WriteLine("Atividades seedadas com sucesso.");
-//}
-
-//para rodar usar (dotnet run --project Back.API -- --seed)
+// Rodar manualmente só o seed com --seed
 if (args.Contains("--seed"))
 {
     await SeedDatabaseAsync(app);
     return;
 }
+
 app.Run();
+
+// Seed manual
 async Task SeedDatabaseAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
-
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
     var roles = new[] { "ALUNO", "COORDENADOR", "ADMIN" };
-
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 
-    await Back.Infrastructure.Seeders.AdminSeeder.SeedAsync(context, userManager);
-
-    Console.WriteLine("Seed executado com sucesso.");
+    await AdminSeeder.SeedAsync(context, userManager);
+    Console.WriteLine(" Seed executado com sucesso.");
 }

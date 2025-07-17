@@ -12,14 +12,15 @@ public class AdminSeeder
 {
     public static async Task SeedAsync(ApplicationDbContext context, UserManager<IdentityUser> userManager)
     {
-        var email = "erison7596e@gmail.com";
-        var senha = "Senha@123";
+        var email = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
+        var senha = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
 
-        // Se já existe, não cria novamente
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(senha))
+            throw new Exception("ADMIN_EMAIL ou ADMIN_PASSWORD não configurado no .env");
+
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser != null) return;
 
-        // Criar IdentityUser
         var identityUser = new IdentityUser
         {
             UserName = email,
@@ -29,15 +30,10 @@ public class AdminSeeder
 
         var result = await userManager.CreateAsync(identityUser, senha);
         if (!result.Succeeded)
-        {
-            throw new Exception("Erro ao criar usuário admin: " +
-                string.Join("; ", result.Errors.Select(e => e.Description)));
-        }
+            throw new Exception("Erro ao criar admin: " + string.Join("; ", result.Errors.Select(e => e.Description)));
 
-        // Adicionar Role
         await userManager.AddToRoleAsync(identityUser, "ADMIN");
 
-        // Criar na tabela Admin (domínio)
         var admin = new AdminBuilder()
             .WithId(Guid.NewGuid())
             .WithEmail(email)
