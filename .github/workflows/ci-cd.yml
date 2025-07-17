@@ -17,24 +17,20 @@ jobs:
     outputs:
       new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
       tipo: ${{ steps.tipo.outputs.tipo }}
-
     steps:
       - uses: actions/checkout@v4
       - name: Install GitHub CLI
         run: |
           sudo apt-get update
           sudo apt-get install -y gh
-
       - name: Extrair tipo de mudança da PR
         id: tipo
         run: |
           echo "${{ github.event.pull_request.body }}" > body.txt
-          
           tipo_encontrado=""
-          # Corrigido: Agora a lógica é mais robusta e flexível para os nomes de tipo
           if grep -q "^\s*-\s*\[x\]\s*novo-marco" body.txt; then
             tipo_encontrado="novo-marco"
-          elif grep -q "^\s*-\s*\[x\]\s*nova-feature" body.txt; then # Corrigido para 'nova-feature'
+          elif grep -q "^\s*-\s*\[x\]\s*nova-feature" body.txt; then
             tipo_encontrado="nova-feature"
           elif grep -q "^\s*-\s*\[x\]\s*nova-feature-refactor" body.txt; then
             tipo_encontrado="nova-feature-refactor"
@@ -43,65 +39,53 @@ jobs:
           elif grep -q "^\s*-\s*\[x\]\s*outros" body.txt; then
             tipo_encontrado="outros"
           fi
-
           if [ -z "$tipo_encontrado" ]; then
             echo "tipo=default-patch" >> "$GITHUB_OUTPUT"
           else
             echo "tipo=$tipo_encontrado" >> "$GITHUB_OUTPUT"
           fi
         shell: bash
-
       - name: Obter a última tag da release
         id: ultima
         run: |
-          # Corrigido: Usa git describe que é mais confiável e robusto com a tag padrão 'v0.0.0'
           tag=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]*" 2>/dev/null || echo "v0.0.0")
           echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
       - name: Calcular nova tag (SemVer)
         id: nova_tag
         run: |
           tag_atual="${{ steps.ultima.outputs.last_tag }}"
           tipo="${{ steps.tipo.outputs.tipo }}"
-          
-          # Garante que a tag atual não está vazia, tratando o caso do primeiro release
           if [ -z "$tag_atual" ]; then
             tag_atual="v0.0.0"
           fi
-
           tag_limpa=$(echo "$tag_atual" | sed 's/^v//')
           IFS='.' read -r major minor patch <<< "$tag_limpa"
-
-          # Corrigido: Inicializa major, minor e patch com 0 para evitar erros
           major=${major:-0}
           minor=${minor:-0}
           patch=${patch:-0}
-          
           case "$tipo" in
-            bug-fix)           patch=$((patch + 1));;
-            nova-feature)      minor=$((minor + 1)); patch=0;;
+            bug-fix) patch=$((patch + 1));;
+            nova-feature) minor=$((minor + 1)); patch=0;;
             nova-feature-refactor) minor=$((minor + 1)); patch=0;;
-            novo-marco)        major=$((major + 1)); minor=0; patch=0;;
-            default-patch)     patch=$((patch + 1));;
-            outros)            patch=$((patch + 1));;
-            *)                 patch=$((patch + 1));;
+            novo-marco) major=$((major + 1)); minor=0; patch=0;;
+            default-patch) patch=$((patch + 1));;
+            outros) patch=$((patch + 1));;
+            *) patch=$((patch + 1));;
           esac
-
           nova_tag_calculada="${major}.${minor}.${patch}"
           nova_tag="v${nova_tag_calculada}"
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
 
   backend:
     name: 🏗️ Backend CI/CD
-    needs: tag-creation
+    needs: [tag-creation, sonar-analysis]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      security-events: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -123,10 +107,10 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
-
+  
   frontend:
     name: 🏗️ Frontend CI/CD
-    needs: tag-creation
+    needs: [tag-creation, sonar-analysis]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -157,7 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEW_TAG: ${{ needs.tag-creation.outputs.new_tag }}
-      TIPO:    ${{ needs.tag-creation.outputs.tipo }}
+      TIPO:    ${{ steps.tag-creation.outputs.tipo }}
     permissions:
       contents: write
     steps:
@@ -173,4 +157,3 @@ jobs:
             Tipo de mudança: ${{ env.TIPO }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  
