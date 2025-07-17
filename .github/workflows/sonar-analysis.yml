@@ -30,17 +30,24 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           dotnet tool install --global dotnet-sonarscanner --version 5.14.0
-          cd Back/Back.API
-          dotnet sonarscanner begin /k:"horas-discentes-backend" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
-          dotnet build Back.sln
+          cd ./Back
+          
+          dotnet sonarscanner begin \
+            /k:"horas-discentes-backend" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
+            /d:sonar.projectBaseDir="."
+          
+          dotnet build
+          
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '18'
 
-      - name: Run Frontend Analysis
+      - name: Run Frontend Dependencies, Tests, and Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -49,7 +56,8 @@ jobs:
           npm install
           npm test -- --coverage --coverageReporters=lcov --coverageDirectory=coverage
           
-          npx sonarqube-scanner \
+          npm install sonarqube-scanner
+          sonar-scanner \
             -Dsonar.projectKey=horas-discentes-frontend \
             -Dsonar.sources=. \
             -Dsonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
