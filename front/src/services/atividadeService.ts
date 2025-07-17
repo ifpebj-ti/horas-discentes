@@ -7,6 +7,9 @@ export interface AtividadeResponse {
   tipo: 'EXTENSAO' | 'COMPLEMENTAR';
   grupo: string;
   categoria: string;
+  categoriaKey: string;
+  cargaMaximaSemestral: number;
+  cargaMaximaCurso: number;
 }
 
 export interface CreateAtividadeRequest {
@@ -16,7 +19,7 @@ export interface CreateAtividadeRequest {
   categoriaKey?: string;
   cargaMaximaSemestral: number;
   cargaMaximaCurso: number;
-  tipo: 'EXTENSAO' | 'COMPLEMENTAR';
+  tipo: number; // 0 for EXTENSAO, 1 for COMPLEMENTAR
   cursoId: string;
 }
 
@@ -32,6 +35,15 @@ export const listarAtividadesPorCurso = async (
 export const criarAtividade = async (
   dados: CreateAtividadeRequest
 ): Promise<{ atividadeId: string }> => {
-  const response = await api.post(`/atividade`, dados);
-  return response.data;
+  try {
+    const response = await api.post('/atividade', dados);
+    return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error(
+      'Erro ao criar atividade:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
 };

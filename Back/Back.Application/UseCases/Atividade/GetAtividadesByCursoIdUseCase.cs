@@ -21,7 +21,7 @@ public class GetAtividadesByCursoIdUseCase
         var atividades = await _repo.GetByCursoIdAsync(cursoId);
 
         return atividades.Select(a =>
-            new AtividadeResponse(a.Id, a.Nome!, a.CursoId, a.Tipo.ToString(), a.Grupo!, a.Categoria!)
+            new AtividadeResponse(a.Id, a.Nome!, a.CursoId, a.Tipo.ToString(), a.Grupo!, a.Categoria!, a.CategoriaKey!, a.CargaMaximaSemestral, a.CargaMaximaCurso)
         );
     }
 }

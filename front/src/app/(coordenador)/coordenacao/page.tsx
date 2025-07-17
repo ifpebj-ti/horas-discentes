@@ -3,7 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaHome } from 'react-icons/fa';
-import { FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa6';
+import {
+  FaUsers,
+  FaGraduationCap,
+  FaIdCard,
+  FaBookOpen
+} from 'react-icons/fa6';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import { DashboardCard } from '@/components/DashboardCard';
@@ -66,6 +71,12 @@ export default function CoordenacaoPage() {
           label="Secretaria"
           notificationCount={pendenciasCount}
           onClick={() => router.push('/coordenacao/contabilizarHoras')}
+        />
+        <DashboardCard
+          icon={<FaBookOpen className="text-blue-600 text-3xl" />}
+          label="Atividades"
+          notificationCount={pendenciasCount}
+          onClick={() => router.push('/coordenacao/atividade')}
         />
       </div>
     </div>
