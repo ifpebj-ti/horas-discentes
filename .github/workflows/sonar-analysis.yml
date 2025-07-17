@@ -1,3 +1,5 @@
+# .github/workflows/sonar-analysis.yml
+
 name: SonarQube Analysis
 
 on:
@@ -22,18 +24,16 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # Esta é a ação que vai resolver todos os problemas de caminho
       - name: SonarQube Scan
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: sonarsource/sonarqube-scan-action@master
         with:
+          projectBaseDir: Back # Define a raiz da análise
           args: >
             -Dsonar.projectKey=horas-discentes-backend
-            -Dsonar.organization=ifpebj-ti-default # Substitua pelo seu nome de organização se tiver
+            -Dsonar.sources=Back/Back.API
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.projectBaseDir=./Back
-            -Dsonar.sources=./Back
-          build-args: "./Back/Back.API/Back.sln"
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            /d:sonar.scanner.msbuild.solutionFile="Back/Back.API/Back.sln"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -43,9 +43,6 @@ jobs:
           node-version: '18'
 
       - name: Run Frontend Analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           cd ./front
           npm install
