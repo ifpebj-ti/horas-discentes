@@ -1,3 +1,5 @@
+# .github/workflows/ci-cd.yml
+
 name: Automatic Release CI/CD
 
 on:
@@ -8,7 +10,7 @@ on:
 permissions:
   contents: write
   packages: write
-  
+
 jobs:
   tag-creation:
     name: 🏷️ Preparar nova tag
@@ -31,10 +33,9 @@ jobs:
           echo "${{ github.event.pull_request.body }}" > body.txt
           
           tipo_encontrado=""
-          # Corrigido: Agora a lógica é mais robusta e flexível para os nomes de tipo
           if grep -q "^\s*-\s*\[x\]\s*novo-marco" body.txt; then
             tipo_encontrado="novo-marco"
-          elif grep -q "^\s*-\s*\[x\]\s*nova-feature" body.txt; then # Corrigido para 'nova-feature'
+          elif grep -q "^\s*-\s*\[x\]\s*nova-feature" body.txt; then
             tipo_encontrado="nova-feature"
           elif grep -q "^\s*-\s*\[x\]\s*nova-feature-refactor" body.txt; then
             tipo_encontrado="nova-feature-refactor"
@@ -54,7 +55,6 @@ jobs:
       - name: Obter a última tag da release
         id: ultima
         run: |
-          # Corrigido: Usa git describe que é mais confiável e robusto com a tag padrão 'v0.0.0'
           tag=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]*" 2>/dev/null || echo "v0.0.0")
           echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
         env:
@@ -66,7 +66,6 @@ jobs:
           tag_atual="${{ steps.ultima.outputs.last_tag }}"
           tipo="${{ steps.tipo.outputs.tipo }}"
           
-          # Garante que a tag atual não está vazia, tratando o caso do primeiro release
           if [ -z "$tag_atual" ]; then
             tag_atual="v0.0.0"
           fi
@@ -74,19 +73,18 @@ jobs:
           tag_limpa=$(echo "$tag_atual" | sed 's/^v//')
           IFS='.' read -r major minor patch <<< "$tag_limpa"
 
-          # Corrigido: Inicializa major, minor e patch com 0 para evitar erros
           major=${major:-0}
           minor=${minor:-0}
           patch=${patch:-0}
           
           case "$tipo" in
-            bug-fix)           patch=$((patch + 1));;
-            nova-feature)      minor=$((minor + 1)); patch=0;;
+            bug-fix) patch=$((patch + 1));;
+            nova-feature) minor=$((minor + 1)); patch=0;;
             nova-feature-refactor) minor=$((minor + 1)); patch=0;;
-            novo-marco)        major=$((major + 1)); minor=0; patch=0;;
-            default-patch)     patch=$((patch + 1));;
-            outros)            patch=$((patch + 1));;
-            *)                 patch=$((patch + 1));;
+            novo-marco) major=$((major + 1)); minor=0; patch=0;;
+            default-patch) patch=$((patch + 1));;
+            outros) patch=$((patch + 1));;
+            *) patch=$((patch + 1));;
           esac
 
           nova_tag_calculada="${major}.${minor}.${patch}"
@@ -105,16 +103,33 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up .NET
+      
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+
+      - name: Install SonarScanner for .NET
+        run: |
+          dotnet tool install --global dotnet-sonarscanner --version 5.14.0
+
+      - name: Run SonarScanner for Backend
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          cd ./Back
+          dotnet sonarscanner begin /k:"horas-discentes-backend" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
+          dotnet build
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
       - name: Docker Login
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
+
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
@@ -132,15 +147,47 @@ jobs:
     permissions:
       contents: read
       packages: write
+      security-events: write 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' 
+
+      - name: Install Dependencies and SonarScanner
+        run: |
+          cd ./front
+          npm install
+
+      - name: Run Jest Tests and Generate Coverage Report
+        run: |
+          cd ./front
+          npm test -- --coverage --coverageReporters=lcov --coverageDirectory=coverage
+
+      - name: Run SonarScanner for Frontend
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          cd ./front
+          npm install sonarqube-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=horas-discentes-frontend \
+            -Dsonar.sources=. \
+            -Dsonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
+            -Dsonar.token="${{ secrets.SONAR_TOKEN }}" \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
       - name: Docker Login
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
+
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v5
         with:
@@ -157,7 +204,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEW_TAG: ${{ needs.tag-creation.outputs.new_tag }}
-      TIPO:    ${{ needs.tag-creation.outputs.tipo }}
+      TIPO:    ${{ needs.tag-creation.outputs.tipo }}
     permissions:
       contents: write
     steps:
@@ -173,4 +220,3 @@ jobs:
             Tipo de mudança: ${{ env.TIPO }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  
