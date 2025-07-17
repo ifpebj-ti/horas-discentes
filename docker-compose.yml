@@ -39,7 +39,7 @@ services:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
-      - COORDENADOR_CONVITE_LINK=${COORDENADOR_CONVITE_LINK}
+      
     networks:
       - rede-front
     depends_on:
@@ -61,6 +61,7 @@ services:
       - EMAIL__Senha=${EMAIL__Senha}
       - EMAIL__Smtp=${EMAIL__Smtp}
       - EMAIL__Porta=${EMAIL__Porta}
+      - COORDENADOR_CONVITE_LINK=${COORDENADOR_CONVITE_LINK}
 
     volumes:
       - backend_data_protection_keys:/root/.aspnet/DataProtection-Keys
