@@ -53,5 +53,5 @@ jobs:
             -Dsonar.projectKey=horas-discentes-frontend \
             -Dsonar.sources=. \
             -Dsonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
-            -Dsonar.token="${{ secrets.SONAR_TOKEN }}" \
+            -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
