@@ -11,6 +11,7 @@
 [![CI/CD Frontend](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/ci-frontend.yml/badge.svg)](https://github.com/ifpebj-ti/horas-discentes/actions?query=workflow%3A%22Frontend+CI%22)
 [![Vulnerabilidades](./badges/vulnerabilidades.svg)](https://github.com/ifpebj-ti/horas-discentes/security/dependabot)
 
+
 # 📘 Horas Discentes
 
 ---
