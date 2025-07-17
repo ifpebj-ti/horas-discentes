@@ -49,8 +49,7 @@ jobs:
           npm install
           npm test -- --coverage --coverageReporters=lcov --coverageDirectory=coverage
           
-          npm install sonarqube-scanner
-          sonar-scanner \
+          npx sonarqube-scanner \
             -Dsonar.projectKey=horas-discentes-frontend \
             -Dsonar.sources=. \
             -Dsonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
