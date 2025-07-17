@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL
+  baseURL: 'https://api.horamais.site/api'
 });
 
 // Interceptor para adicionar token da sessão se existir
