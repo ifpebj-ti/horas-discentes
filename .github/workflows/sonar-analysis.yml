@@ -17,34 +17,36 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET and Run Backend Analysis
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+
       - name: Run SonarScanner for Backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          # Instalação e execução do scanner 
           dotnet tool install --global dotnet-sonarscanner --version 5.14.0
+          
+          cd ./Back
           
           dotnet sonarscanner begin \
             /k:"horas-discentes-backend" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
-            /d:sonar.projectBaseDir="Back/Back.API"
+            /d:sonar.projectBaseDir="Back.API"
           
           dotnet build Back.API/Back.sln
           
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-      - name: Setup Node.js and Run Frontend Analysis
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install Frontend Dependencies, Tests, and Analysis
+      - name: Run Frontend Dependencies, Tests, and Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
