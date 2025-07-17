@@ -26,10 +26,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          # Instalação e execução do scanner na mesma etapa
+          # Instalação e execução do scanner 
           dotnet tool install --global dotnet-sonarscanner --version 5.14.0
           
-          cd ./Back
           dotnet sonarscanner begin \
             /k:"horas-discentes-backend" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
