@@ -56,9 +56,11 @@ export default function CursoPage() {
     fetchData();
   }, [show, hide]);
 
-  const filteredCourses = courses.filter((course) =>
-    course.nome.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredCourses = Array.isArray(courses)
+    ? courses.filter((course) =>
+        course.nome.toLowerCase().includes(search.toLowerCase())
+      )
+    : [];
 
   const handleAddCourse = async (e: React.FormEvent) => {
     e.preventDefault();
