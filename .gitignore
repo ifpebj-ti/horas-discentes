@@ -71,3 +71,5 @@ appsettings.*.json
 
 # Docker
 **/docker-compose.override.yml
+
+
