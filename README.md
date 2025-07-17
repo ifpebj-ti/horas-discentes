@@ -61,7 +61,7 @@ Esta aplicação permitirá que os estudantes cadastrem suas atividades extracur
 | Ingrid Santos     | Infra / DevSecOps  | [@ingriidssantoss](https://github.com/ingriidssantoss) |
 | Erimilson Silva   | Dev Front-End      | [@Erysilva98](https://github.com/Erysilva98) |
 | Erison Cavalcante | Dev Back-End       | [@erison7596](https://github.com/erison7596) |
-| Victoria Tiburcio | UX Designer        | [@Mavi-Tiburcio](https://github.com/Mavi-Tiburcio) |
+| Victoria Tiburcio | UX Designer        | [@Mavi-Tiburcio](https://github.com/mavitiburcio) |
 
 ---
 
