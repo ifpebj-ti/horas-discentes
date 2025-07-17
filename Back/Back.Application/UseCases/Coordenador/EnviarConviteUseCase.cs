@@ -4,6 +4,7 @@ using Back.Application.Interfaces.Repositories;
 using Back.Domain.Entities.Convite;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Back.Application.UseCases.Coordenador
 {
@@ -11,13 +12,15 @@ namespace Back.Application.UseCases.Coordenador
     {
         private readonly IConviteCoordenadorRepository _conviteRepo;
         private readonly IEmailService _emailService;
-
+        private readonly IConfiguration _config;
         public EnviarConviteUseCase(
             IConviteCoordenadorRepository conviteRepo,
-            IEmailService emailService)
+            IEmailService emailService,
+            IConfiguration config)
         {
             _conviteRepo = conviteRepo;
             _emailService = emailService;
+            _config = config;
         }
 
         public async Task ExecuteAsync(ConviteCoordenadorRequest request)
@@ -35,7 +38,10 @@ namespace Back.Application.UseCases.Coordenador
             await _conviteRepo.AddAsync(convite);
 
             var emailEncoded = Uri.EscapeDataString(request.Email);
-            var link = $"http://localhost:3000/criarContaCoordenador?token={token}&email={emailEncoded}";
+            var baseUrl = _config["COORDENADOR_CONVITE_LINK"]
+    ?? throw new Exception("Variável de ambiente COORDENADOR_CONVITE_LINK não configurada.");
+            var link = $"{baseUrl}?token={token}&email={emailEncoded}";
+
 
             var mensagem = $@"
 <!DOCTYPE html>

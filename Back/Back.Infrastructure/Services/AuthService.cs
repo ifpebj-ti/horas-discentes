@@ -114,8 +114,11 @@ public class AuthService : IAuthService
             claims.Add(new Claim("turmaId", turmaId.ToString()));
         if (role.ToUpper() == "ALUNO")
             claims.Add(new Claim("isNewPpc", isNewPpc.ToString().ToLower()));
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        var jwtKey = _config["Jwt:Key"];
+        if (string.IsNullOrWhiteSpace(jwtKey))
+            throw new Exception("A chave JWT (Jwt:Key) não foi configurada corretamente. Verifique o .env ou appsettings.");
+        Console.WriteLine("jwtkey", jwtKey);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
