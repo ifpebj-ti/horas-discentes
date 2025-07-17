@@ -29,15 +29,17 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner --version 5.14.0
           
-          cd ./Back
+          # Navega para o diretório exato onde está o arquivo de solução
+          cd Back/Back.API
           
           dotnet sonarscanner begin \
             /k:"horas-discentes-backend" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
-            /d:sonar.projectBaseDir="Back.API"
+            /d:sonar.projectBaseDir="." # O diretório base é o diretório atual
           
-          dotnet build Back.API/Back.sln
+          # Executa o build
+          dotnet build Back.sln
           
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
