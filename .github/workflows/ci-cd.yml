@@ -1,5 +1,3 @@
-# .github/workflows/ci-cd.yml
-
 name: Automatic Release CI/CD
 
 on:
@@ -19,7 +17,6 @@ jobs:
     outputs:
       new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
       tipo: ${{ steps.tipo.outputs.tipo }}
-
     steps:
       - uses: actions/checkout@v4
       - name: Install GitHub CLI
@@ -30,7 +27,6 @@ jobs:
         id: tipo
         run: |
           echo "${{ github.event.pull_request.body }}" > body.txt
-          
           tipo_encontrado=""
           if grep -q "^\s*-\s*\[x\]\s*novo-marco" body.txt; then
             tipo_encontrado="novo-marco"
@@ -82,10 +78,9 @@ jobs:
           nova_tag="v${nova_tag_calculada}"
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
 
-  
   backend:
     name: 🏗️ Backend CI/CD
-    needs: [tag-creation, sonar-analysis] 
+    needs: [tag-creation, sonar-analysis]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -115,7 +110,7 @@ jobs:
   
   frontend:
     name: 🏗️ Frontend CI/CD
-    needs: [tag-creation, sonar-analysis] # Adicionado a dependência do job de análise
+    needs: [tag-creation, sonar-analysis]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
