@@ -1,3 +1,5 @@
+# .github/workflows/sonar-analysis.yml
+
 name: SonarQube Analysis
 
 on:
@@ -17,20 +19,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      # --- Análise do Backend (.NET) ---
-      - name: SonarQube Scan
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run SonarScanner for Backend
         uses: sonarsource/sonarqube-scan-action@master
         with:
           args: >
             -Dsonar.projectKey=horas-discentes-backend
-            -Dsonar.organization=ifpebj-ti-default # Substitua pelo seu nome de organização se tiver
+            -Dsonar.organization=ifpebj-ti-default 
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-          dotnet-args: "./Back/Back.sln" # O caminho para o arquivo de solução
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-      # --- Análise do Frontend (Next.js) ---
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
