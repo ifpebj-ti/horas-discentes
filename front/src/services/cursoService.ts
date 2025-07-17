@@ -38,5 +38,7 @@ export const obterCursoPorId = async (id: string): Promise<CursoResponse> => {
 
 export const obterResumoCursos = async (): Promise<CursoResumoResponse[]> => {
   const response = await api.get('/curso/resumo');
-  return response.data;
+  const cursos = response.data?.data ?? response.data;
+
+  return Array.isArray(cursos) ? cursos : [];
 };
