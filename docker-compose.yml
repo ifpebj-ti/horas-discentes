@@ -64,9 +64,9 @@ services:
     ports:
       - "${PORT_MACHINE_DB}:5432"
     environment:
-      - POSTGRES_USER: ${POSTGRES_USER}
-      - POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      - POSTGRES_DB: ${POSTGRES_DB}
+      - POSTGRES_USER: horas-discentes-user
+      - POSTGRES_PASSWORD: 19692535
+      - POSTGRES_DB: horas_discentes_db
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
