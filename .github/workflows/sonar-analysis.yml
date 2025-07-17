@@ -17,47 +17,43 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET
+      - name: Setup .NET and Run Backend Analysis
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-
       - name: Run SonarScanner for Backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
+          # Instalação e execução do scanner na mesma etapa
+          dotnet tool install --global dotnet-sonarscanner --version 5.14.0
+          
+          cd ./Back
           dotnet sonarscanner begin \
             /k:"horas-discentes-backend" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
             /d:sonar.projectBaseDir="Back/Back.API"
           
-          dotnet build Back/Back.API/Back.sln
+          dotnet build Back.API/Back.sln
           
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-      - name: Setup Node.js
+      - name: Setup Node.js and Run Frontend Analysis
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install Frontend Dependencies
-        run: |
-          cd ./front
-          npm install
-
-      - name: Run Jest Tests and Generate Coverage Report
-        run: |
-          cd ./front
-          npm test -- --coverage --coverageReporters=lcov --coverageDirectory=coverage
-
-      - name: Run SonarScanner for Frontend
+      - name: Install Frontend Dependencies, Tests, and Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           cd ./front
+          npm install
+          npm test -- --coverage --coverageReporters=lcov --coverageDirectory=coverage
+          
           npm install sonarqube-scanner
           sonar-scanner \
             -Dsonar.projectKey=horas-discentes-frontend \
