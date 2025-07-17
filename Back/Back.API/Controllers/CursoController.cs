@@ -14,12 +14,14 @@ public class CursoController : ControllerBase
     private readonly CreateCursoUseCase _create;
     private readonly GetAllCursosUseCase _getAll;
     private readonly GetCursoByIdUseCase _getById;
+    private readonly GetResumoCursosUseCase _getResumo;
 
-    public CursoController(CreateCursoUseCase create, GetAllCursosUseCase getAll, GetCursoByIdUseCase getById)
+    public CursoController(CreateCursoUseCase create, GetAllCursosUseCase getAll, GetCursoByIdUseCase getById, GetResumoCursosUseCase getResumo)
     {
         _create = create;
         _getAll = getAll;
         _getById = getById;
+        _getResumo = getResumo;
     }
 
     /// <summary>
@@ -80,4 +82,16 @@ public class CursoController : ControllerBase
             return NotFound(new { erro = ex.Message });
         }
     }
+    /// <summary>
+    /// Retorna resumo de todos os cursos com quantidade de turmas e alunos.
+    /// </summary>
+    [HttpGet("resumo")]
+    [SwaggerOperation(Summary = "Resumo dos cursos (turmas e alunos)", Tags = new[] { "Cursos" })]
+    [ProducesResponseType(typeof(IEnumerable<CursoResumoResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> ResumoCursos()
+    {
+        var resumo = await _getResumo.ExecuteAsync();
+        return Ok(resumo);
+    }
+
 }

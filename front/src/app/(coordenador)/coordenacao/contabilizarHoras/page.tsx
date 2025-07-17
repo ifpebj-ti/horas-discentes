@@ -3,600 +3,27 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FaSearch, FaDownload, FaCheckSquare, FaSquare } from 'react-icons/fa';
 
+import LoadingOverlay from '@/components/LoadingOverlay'; // Ajuste o caminho se necessário
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import { Certificado } from '@/types';
+// Imports dos seus Services e Hooks
+import { useLoadingOverlay } from '@/hooks/useLoadingOverlay'; // Ajuste o caminho se necessário
+import {
+  listarConcluidosComplementar,
+  listarConcluidosExtensao,
+  marcarDownloadComplementar,
+  marcarDownloadExtensao,
+  AlunoComHorasConcluidasResponse
+} from '@/services/alunoService';
+import {
+  obterCoordenadorAutenticado,
+  type CoordenadorInfoResponse
+} from '@/services/coordenadorService';
 import Docxtemplater from 'docxtemplater';
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
-
-// ----------------------------------------------------------------
-// Tipos
-
-// ----------------------------------------------------------------
-interface docxData {
-  Coordenador: string;
-  curso: string;
-  Portaria: number;
-  DOU: string;
-}
-
-interface Aluno {
-  id: number;
-  nome: string;
-  matricula: string;
-  telefone: string; // <-- acrescentado
-  email: string; // <-- acrescentado
-  curso: string; // <-- acrescentado
-  certificados: Certificado[];
-  cargaHorariaFinalizada: boolean;
-  cargaHoraria: number; // <-- acrescentado
-  jaFezDownload: boolean;
-  categoria: 'horasComplementares' | 'extensao';
-}
-
-// ----------------------------------------------------------------
-// Mock de dados (mantido no front apenas para demonstração)
-// ----------------------------------------------------------------
-const docxMock: docxData[] = [
-  {
-    Coordenador: 'Teste nome do Coordenador',
-    curso: 'Curso de Teste ES',
-    Portaria: 605,
-    DOU: '2023/01/01'
-  }
-];
-
-const alunosMock: Aluno[] = [
-  {
-    id: 1,
-    nome: 'Ana Silva Santos',
-    matricula: '2023001',
-    telefone: '11999999999', // <-- acrescentado
-    email: 'ana.silva@example.com', // <-- acrescentado
-    curso: 'Engenharia de Software', // <-- acrescentado
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 120, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: false,
-    categoria: 'horasComplementares'
-  },
-  {
-    id: 2,
-    nome: 'Carlos Eduardo Lima',
-    matricula: '2023002',
-    telefone: '11999999998',
-    email: 'carlos.eduardo@example.com',
-    curso: 'Engenharia de Computação',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 300, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: true,
-    categoria: 'extensao'
-  },
-  {
-    id: 3,
-    nome: 'Maria Fernanda Costa',
-    matricula: '2023003',
-    telefone: '11999999997',
-    email: 'maria.fernanda@example.com',
-    curso: 'Ciência da Computação',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHorariaFinalizada: true,
-    jaFezDownload: false,
-    cargaHoraria: 120, // <-- acrescentado
-    categoria: 'horasComplementares'
-  },
-  {
-    id: 4,
-    nome: 'João Pedro Oliveira',
-    matricula: '2023004',
-    telefone: '11999999996',
-    email: 'joao.pedro@example.com',
-    curso: 'Sistemas de Informação',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 200, // <-- acrescentado
-    cargaHorariaFinalizada: false,
-    jaFezDownload: false,
-    categoria: 'extensao'
-  },
-  {
-    id: 5,
-    nome: 'Beatriz Almeida Rocha',
-    matricula: '2023005',
-    telefone: '11999999995',
-    email: 'beatriz.almeida@example.com',
-    curso: 'Engenharia de Produção',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 150, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: true,
-    categoria: 'horasComplementares'
-  },
-  {
-    id: 6,
-    nome: 'Rafael Santos Pereira',
-    matricula: '2023006',
-    telefone: '11999999994',
-    email: 'rafael.santos@example.com',
-    curso: 'Engenharia Civil',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 180, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: false,
-    categoria: 'extensao'
-  },
-  {
-    id: 7,
-    nome: 'Juliana Martins Silva',
-    matricula: '2023007',
-    telefone: '11999999993',
-    email: 'juliana.martins@example.com',
-    curso: 'Ciência da Computação',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 120, // <-- acrescentado
-    cargaHorariaFinalizada: false,
-    jaFezDownload: false,
-    categoria: 'horasComplementares'
-  },
-  {
-    id: 8,
-    nome: 'Pedro Henrique Souza',
-    matricula: '2023008',
-    telefone: '11999999992',
-    email: 'pedro.henrique@example.com',
-    curso: 'Engenharia Mecânica',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 150, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: false,
-    categoria: 'extensao'
-  },
-  {
-    id: 9,
-    nome: 'Camila Rodrigues Lima',
-    matricula: '2023009',
-    telefone: '11999999991',
-    email: 'camila.rodrigues@example.com',
-    curso: 'Engenharia Elétrica',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 180, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: true,
-    categoria: 'horasComplementares'
-  },
-  {
-    id: 10,
-    nome: 'Lucas Gabriel Santos',
-    matricula: '2023010',
-    telefone: '11999999990',
-    email: 'lucas.gabriel@example.com',
-    curso: 'Engenharia Química',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 120, // <-- acrescentado
-    cargaHorariaFinalizada: false,
-    jaFezDownload: false,
-    categoria: 'extensao'
-  },
-  {
-    id: 11,
-    nome: 'Amanda Cristina Alves',
-    matricula: '2023011',
-    telefone: '11999999989',
-    email: 'amanda.cristina@example.com',
-    curso: 'Engenharia de Alimentos',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 150, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: false,
-    categoria: 'horasComplementares'
-  },
-  {
-    id: 12,
-    nome: 'Gustavo Silva Ferreira',
-    matricula: '2023012',
-    telefone: '11999999988',
-    email: 'gustavo.silva@example.com',
-    curso: 'Engenharia de Controle e Automação',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 180, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: true,
-    categoria: 'extensao'
-  },
-  {
-    id: 13,
-    nome: 'Erison Silva Ferreira',
-    matricula: '2023112',
-    telefone: '11999999987',
-    email: 'erison.silva@example.com',
-    curso: 'Engenharia de Software',
-    certificados: [
-      {
-        id: '1',
-        grupo: 'I',
-        categoria: 'Categoria 2',
-        categoriaKey: 'Ensino',
-        title: 'Monitoria',
-        description: 'Monitoria',
-        cargaHoraria: 5,
-        local: 'UFPE',
-        periodoInicio: '2023-01-10',
-        periodoFim: '2023-05-10',
-        status: 'aprovado',
-        tipo: 'complementar'
-      },
-      {
-        id: '2',
-        grupo: 'II',
-        categoria: 'Categoria 1',
-        categoriaKey: 'Extensão',
-        title: 'Curso de Programação',
-        description: 'Curso de Programação Avançada',
-        cargaHoraria: 10,
-        local: 'UFPE',
-        periodoInicio: '2023-02-01',
-        periodoFim: '2023-06-01',
-        status: 'aprovado',
-        tipo: 'extensao'
-      }
-    ],
-    cargaHoraria: 120, // <-- acrescentado
-    cargaHorariaFinalizada: true,
-    jaFezDownload: false,
-    categoria: 'horasComplementares'
-  }
-];
 
 // ----------------------------------------------------------------
 // Componente Skeleton
@@ -648,6 +75,11 @@ const TabelaSkeleton: React.FC<{ rows?: number }> = ({ rows = 5 }) => {
 // Componente principal
 // ----------------------------------------------------------------
 const GerenciamentoHoras: React.FC = () => {
+  /* ------------------ Estados de dados da API ----------- */
+  const [alunos, setAlunos] = useState<AlunoComHorasConcluidasResponse[]>([]);
+  const [coordenadorInfo, setCoordenadorInfo] =
+    useState<CoordenadorInfoResponse | null>(null);
+
   /* ------------------ Estados de filtro ------------------ */
   const [filtroNome, setFiltroNome] = useState('');
   const [filtroMatricula, setFiltroMatricula] = useState('');
@@ -656,7 +88,7 @@ const GerenciamentoHoras: React.FC = () => {
   >('finalizados');
 
   /* ------------------ Estados de seleção ----------------- */
-  const [alunosSelecionados, setAlunosSelecionados] = useState<Set<number>>(
+  const [alunosSelecionados, setAlunosSelecionados] = useState<Set<string>>(
     new Set()
   );
 
@@ -671,37 +103,70 @@ const GerenciamentoHoras: React.FC = () => {
   >(null);
 
   /* ------------------ Estado de Carregamento ------------- */
-  const [isLoading, setIsLoading] = useState(true);
+  const [isTableLoading, setIsTableLoading] = useState(false);
+  const {
+    visible: isProcessing,
+    show: showProcessingOverlay,
+    hide: hideProcessingOverlay
+  } = useLoadingOverlay();
 
+  // Busca dados do coordenador ao montar o componente
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500); // Simula 1.5s de carregamento
-    return () => clearTimeout(timer);
+    const fetchCoordenador = async () => {
+      try {
+        const data = await obterCoordenadorAutenticado();
+        setCoordenadorInfo(data);
+      } catch (error) {
+        console.error('Erro ao buscar dados do coordenador:', error);
+        // Tratar erro (ex: exibir toast)
+      }
+    };
+    fetchCoordenador();
   }, []);
 
+  // Busca alunos quando uma categoria é selecionada
+  useEffect(() => {
+    const fetchAlunos = async () => {
+      if (!selectedCategory) {
+        setAlunos([]);
+        return;
+      }
+
+      setIsTableLoading(true);
+      try {
+        const data =
+          selectedCategory === 'horasComplementares'
+            ? await listarConcluidosComplementar()
+            : await listarConcluidosExtensao();
+        setAlunos(data);
+      } catch (error) {
+        console.error(`Erro ao buscar alunos de ${selectedCategory}:`, error);
+        setAlunos([]);
+      } finally {
+        setIsTableLoading(false);
+      }
+    };
+
+    fetchAlunos();
+  }, [selectedCategory]);
+
   /* ========================================================
-   *  FILTRO + PAGINAÇÃO
+   * FILTRO + PAGINAÇÃO
    * ======================================================*/
   const alunosFiltrados = useMemo(() => {
-    return alunosMock.filter((aluno) => {
-      const matchNome = aluno.nome
-        .toLowerCase()
-        .includes(filtroNome.toLowerCase());
-      const matchMatricula = aluno.matricula.includes(filtroMatricula);
-
+    return alunos.filter((aluno) => {
+      const matchNome =
+        aluno.nome?.toLowerCase().includes(filtroNome.toLowerCase()) ?? true;
+      const matchMatricula = aluno.matricula?.includes(filtroMatricula) ?? true;
       const matchStatus =
         filtroStatus === 'finalizados'
           ? aluno.cargaHorariaFinalizada && !aluno.jaFezDownload
           : aluno.jaFezDownload;
 
-      const matchCategory = selectedCategory
-        ? aluno.categoria === selectedCategory
-        : true;
-
-      return matchNome && matchMatricula && matchStatus && matchCategory;
+      // O filtro de categoria já é feito na busca da API, mas mantemos aqui por segurança
+      return matchNome && matchMatricula && matchStatus;
     });
-  }, [filtroNome, filtroMatricula, filtroStatus, selectedCategory]);
+  }, [alunos, filtroNome, filtroMatricula, filtroStatus]);
 
   const totalPaginas = Math.ceil(alunosFiltrados.length / itensPorPagina) || 1;
   const indiceInicio = (paginaAtual - 1) * itensPorPagina;
@@ -709,7 +174,7 @@ const GerenciamentoHoras: React.FC = () => {
   const alunosPaginados = alunosFiltrados.slice(indiceInicio, indiceFim);
 
   /* --------------------------------------------------------
-   *  Seleção de linhas
+   * Seleção de linhas
    * -----------------------------------------------------*/
   const toggleSelecionarTodos = () => {
     if (alunosSelecionados.size === alunosPaginados.length) {
@@ -719,7 +184,7 @@ const GerenciamentoHoras: React.FC = () => {
     }
   };
 
-  const toggleSelecionarAluno = (id: number) => {
+  const toggleSelecionarAluno = (id: string) => {
     const nova = new Set(alunosSelecionados);
     if (nova.has(id)) {
       nova.delete(id);
@@ -730,81 +195,103 @@ const GerenciamentoHoras: React.FC = () => {
   };
 
   /* --------------------------------------------------------
-   *  Download (mock)
+   * Download e atualização de Status
    * -----------------------------------------------------*/
 
   const handleDownloadAlunosSelecionados = async () => {
-    if (alunosSelecionados.size === 0) {
-      alert('Selecione pelo menos um aluno.');
+    if (
+      alunosSelecionados.size === 0 ||
+      !coordenadorInfo ||
+      !selectedCategory
+    ) {
+      alert('Selecione ao menos um aluno para o download.');
       return;
     }
 
-    // Seleciona os alunos marcados
-    const selecionados = alunosMock.filter((a) => alunosSelecionados.has(a.id));
-    if (selecionados.length === 0) return;
+    showProcessingOverlay();
+    try {
+      const selecionados = alunos.filter((a) => alunosSelecionados.has(a.id));
+      selecionados.sort((a, b) => a.nome?.localeCompare(b.nome ?? '') ?? 0);
 
-    // Ordena alfabeticamente
-    selecionados.sort((a, b) => a.nome.localeCompare(b.nome));
+      const response = await fetch('/docs/Coordenador-Requerimento.docx');
+      const templateBuffer = await response.arrayBuffer();
 
-    for (const aluno of selecionados) {
-      // Monta os certificados para o template
-      const certs = aluno.certificados.map((cert, idx) => ({
-        idx: idx + 1,
-        title: cert.title,
-        cargaHoraria: cert.cargaHoraria,
-        periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
-      }));
-      // Monta os dados para o template
-      const docxVars = {
-        ...docxMock[0],
-        alunos: [
-          {
-            estudante: aluno.nome,
-            matricula: aluno.matricula,
-            carga: aluno.cargaHoraria
-          }
-        ],
-        certs
-      };
-      try {
-        // Carrega o template DOCX (ajuste o caminho conforme necessário)
-        const response = await fetch('/docs/Coordenador-Requerimento.docx');
-        const arrayBuffer = await response.arrayBuffer();
-        const zip = new PizZip(arrayBuffer);
+      for (const aluno of selecionados) {
+        const certs = aluno.certificados.map((cert, idx) => ({
+          idx: idx + 1,
+          title: cert.titulo,
+          cargaHoraria: cert.cargaHoraria,
+          periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
+        }));
+
+        const docxVars = {
+          Coordenador: coordenadorInfo.nome,
+          curso: coordenadorInfo.curso,
+          Portaria: coordenadorInfo.numeroPortaria,
+          DOU: coordenadorInfo.dou,
+          alunos: [
+            {
+              estudante: aluno.nome,
+              matricula: aluno.matricula,
+              carga: aluno.cargaHoraria
+            }
+          ],
+          certs
+        };
+
+        const zip = new PizZip(templateBuffer);
         const doc = new Docxtemplater(zip, {
           paragraphLoop: true,
           linebreaks: true
         });
         doc.setData(docxVars);
         doc.render();
+
         const out = doc.getZip().generate({ type: 'blob' });
-        saveAs(out, `contabilizacao_${aluno.nome.replace(/\s/g, '_')}.docx`);
-      } catch (error) {
-        console.error('Erro ao gerar DOCX:', error);
+        saveAs(out, `contabilizacao_${aluno.nome?.replace(/\s/g, '_')}.docx`);
+
+        // Após o download, atualiza o status no backend
+        if (selectedCategory === 'horasComplementares') {
+          await marcarDownloadComplementar(aluno.id);
+        } else {
+          await marcarDownloadExtensao(aluno.id);
+        }
       }
+
+      // Limpa a seleção e recarrega os dados para atualizar a UI
+      setAlunosSelecionados(new Set());
+      // Força a recarga disparando o useEffect novamente
+      const currentCategory = selectedCategory;
+      setSelectedCategory(null); // reseta para forçar a mudança
+      setTimeout(() => setSelectedCategory(currentCategory), 10);
+    } catch (error) {
+      console.error('Ocorreu um erro no processo de download:', error);
+      alert(
+        'Ocorreu um erro. Verifique o console para mais detalhes e tente novamente.'
+      );
+    } finally {
+      hideProcessingOverlay();
     }
-    setAlunosSelecionados(new Set());
   };
 
   /* --------------------------------------------------------
-   *  Resetar página quando filtros mudarem
+   * Resetar página quando filtros mudarem
    * -----------------------------------------------------*/
   useEffect(() => {
     setPaginaAtual(1);
+    setAlunosSelecionados(new Set());
   }, [filtroNome, filtroMatricula, filtroStatus, selectedCategory]);
 
   const todosSelecionados =
     alunosPaginados.length > 0 &&
     alunosSelecionados.size === alunosPaginados.length;
-  const algunsSelecionados =
-    alunosSelecionados.size > 0 &&
-    alunosSelecionados.size < alunosPaginados.length;
 
   /* ========================================================
-   *  RENDERIZAÇÃO
+   * RENDERIZAÇÃO
    * ======================================================*/
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-6">
+      <LoadingOverlay show={isProcessing} />
       {/* Cabeçalho */}
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -818,7 +305,6 @@ const GerenciamentoHoras: React.FC = () => {
       {/* ============================== VISÃO: CARDS ============================== */}
       {viewMode === 'cards' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Card Horas Complementares */}
           <div
             onClick={() => {
               setSelectedCategory('horasComplementares');
@@ -833,8 +319,6 @@ const GerenciamentoHoras: React.FC = () => {
               Gerencie as horas complementares dos alunos.
             </p>
           </div>
-
-          {/* Card Extensão */}
           <div
             onClick={() => {
               setSelectedCategory('extensao');
@@ -855,15 +339,11 @@ const GerenciamentoHoras: React.FC = () => {
       {/* ============================== VISÃO: TABELA ============================= */}
       {viewMode === 'table' && (
         <>
-          {/* Botão voltar */}
           <Button
             variant="outline"
             onClick={() => {
               setViewMode('cards');
               setSelectedCategory(null);
-              setFiltroNome('');
-              setFiltroMatricula('');
-              setFiltroStatus('finalizados');
             }}
             className="mb-4"
             size="sm"
@@ -871,109 +351,55 @@ const GerenciamentoHoras: React.FC = () => {
             Voltar para Seleção de Categoria
           </Button>
 
-          {/* -------------------- FILTROS -------------------- */}
           <div className="bg-card border border-border rounded-lg shadow-sm p-4 sm:p-6 space-y-4">
             <h2 className="text-base sm:text-lg font-semibold">Filtros</h2>
-
-            {/* Busca */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label
-                  htmlFor="filtro-nome"
-                  className="block text-sm font-medium text-foreground"
-                >
-                  Nome do Aluno
-                </label>
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary w-4 h-4" />
-                  <Input
-                    id="filtro-nome"
-                    placeholder="Digite o nome do aluno"
-                    value={filtroNome}
-                    onChange={(e) => setFiltroNome(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
+              <div className="relative">
+                <FaSearch className="absolute left-3 top-2.5 text-primary w-4 h-4" />
+                <Input
+                  placeholder="Filtrar por nome..."
+                  value={filtroNome}
+                  onChange={(e) => setFiltroNome(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="filtro-matricula"
-                  className="block text-sm font-medium text-foreground"
-                >
-                  Matrícula
-                </label>
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary w-4 h-4" />
-                  <Input
-                    id="filtro-matricula"
-                    placeholder="Digite a matrícula"
-                    value={filtroMatricula}
-                    onChange={(e) => setFiltroMatricula(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
+              <div className="relative">
+                <FaSearch className="absolute left-3 top-2.5 text-primary w-4 h-4" />
+                <Input
+                  placeholder="Filtrar por matrícula..."
+                  value={filtroMatricula}
+                  onChange={(e) => setFiltroMatricula(e.target.value)}
+                  className="pl-10"
+                />
               </div>
             </div>
-
-            {/* Status */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-foreground">
-                Status
-              </label>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Button
-                  variant={
-                    filtroStatus === 'finalizados' ? 'default' : 'outline'
-                  }
-                  onClick={() => setFiltroStatus('finalizados')}
-                  size="sm"
-                  className="w-full sm:w-auto"
-                >
-                  <span className="text-xs sm:text-sm">
-                    Carga Horária Finalizada
-                  </span>
-                  <Badge variant="secondary" className="ml-2 text-xs">
-                    {
-                      alunosMock.filter(
-                        (a) =>
-                          a.cargaHorariaFinalizada &&
-                          !a.jaFezDownload &&
-                          (!selectedCategory ||
-                            a.categoria === selectedCategory)
-                      ).length
-                    }
-                  </Badge>
-                </Button>
-
-                <Button
-                  variant={
-                    filtroStatus === 'concluidos' ? 'default' : 'outline'
-                  }
-                  onClick={() => setFiltroStatus('concluidos')}
-                  size="sm"
-                  className="w-full sm:w-auto"
-                >
-                  <span className="text-xs sm:text-sm">Já Concluídos</span>
-                  <Badge variant="secondary" className="ml-2 text-xs">
-                    {
-                      alunosMock.filter(
-                        (a) =>
-                          a.jaFezDownload &&
-                          (!selectedCategory ||
-                            a.categoria === selectedCategory)
-                      ).length
-                    }
-                  </Badge>
-                </Button>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                variant={filtroStatus === 'finalizados' ? 'default' : 'outline'}
+                onClick={() => setFiltroStatus('finalizados')}
+                size="sm"
+              >
+                Pendentes de Download
+                <Badge variant="secondary" className="ml-2">
+                  {alunos.filter((a) => !a.jaFezDownload).length}
+                </Badge>
+              </Button>
+              <Button
+                variant={filtroStatus === 'concluidos' ? 'default' : 'outline'}
+                onClick={() => setFiltroStatus('concluidos')}
+                size="sm"
+              >
+                Downloads Realizados
+                <Badge variant="secondary" className="ml-2">
+                  {alunos.filter((a) => a.jaFezDownload).length}
+                </Badge>
+              </Button>
             </div>
           </div>
 
-          {/* -------------------- AÇÕES & INFO -------------------- */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div className="text-xs sm:text-sm text-muted-foreground">
-              Exibindo {indiceInicio + 1}-
+              Exibindo {alunosPaginados.length > 0 ? indiceInicio + 1 : 0}-
               {Math.min(indiceFim, alunosFiltrados.length)} de{' '}
               {alunosFiltrados.length} alunos
               {alunosSelecionados.size > 0 && (
@@ -984,17 +410,15 @@ const GerenciamentoHoras: React.FC = () => {
             </div>
             <Button
               onClick={handleDownloadAlunosSelecionados}
-              disabled={alunosSelecionados.size === 0}
+              disabled={alunosSelecionados.size === 0 || isProcessing}
               size="sm"
-              className="w-full sm:w-auto flex items-center gap-2"
             >
-              <FaDownload className="w-3 h-3" />
-              <span className="text-xs sm:text-sm">Baixar informações</span>
+              <FaDownload className="mr-2 h-3 w-3" />
+              Baixar e Concluir Selecionados
             </Button>
           </div>
 
-          {/* -------------------- TABELA -------------------- */}
-          {isLoading ? (
+          {isTableLoading ? (
             <TabelaSkeleton rows={itensPorPagina} />
           ) : (
             <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
@@ -1002,48 +426,29 @@ const GerenciamentoHoras: React.FC = () => {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="bg-muted py-3 px-2 sm:px-4 w-12">
-                        <button
-                          onClick={toggleSelecionarTodos}
-                          aria-label={
-                            todosSelecionados
-                              ? 'Desmarcar todos'
-                              : 'Selecionar todos'
-                          }
-                          className="flex items-center justify-center w-full p-1 hover:bg-muted/50 rounded"
-                        >
+                      <th className="bg-muted p-2 sm:p-4 w-12">
+                        <button onClick={toggleSelecionarTodos}>
                           {todosSelecionados ? (
                             <FaCheckSquare className="w-4 h-4 text-primary" />
-                          ) : algunsSelecionados ? (
-                            <div className="w-4 h-4 bg-primary/50 border border-primary rounded" />
                           ) : (
                             <FaSquare className="w-4 h-4 text-muted-foreground" />
                           )}
                         </button>
                       </th>
-                      <th className="bg-muted text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold">
+                      <th className="bg-muted text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold">
                         Nome do Aluno
                       </th>
-                      <th className="bg-muted text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold">
+                      <th className="bg-muted text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold">
                         Matrícula
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {alunosPaginados.map((aluno) => (
-                      <tr
-                        key={aluno.id}
-                        className="border-b border-border hover:bg-muted/30"
-                      >
-                        <td className="py-3 px-2 sm:px-4">
+                      <tr key={aluno.id} className="border-b border-border">
+                        <td className="p-2 sm:p-4 text-center">
                           <button
                             onClick={() => toggleSelecionarAluno(aluno.id)}
-                            aria-label={
-                              alunosSelecionados.has(aluno.id)
-                                ? 'Desmarcar ' + aluno.nome
-                                : 'Selecionar ' + aluno.nome
-                            }
-                            className="flex items-center justify-center w-full p-1 hover:bg-muted/50 rounded"
                           >
                             {alunosSelecionados.has(aluno.id) ? (
                               <FaCheckSquare className="w-4 h-4 text-primary" />
@@ -1052,10 +457,10 @@ const GerenciamentoHoras: React.FC = () => {
                             )}
                           </button>
                         </td>
-                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-foreground">
+                        <td className="p-2 sm:p-4 text-xs sm:text-sm">
                           {aluno.nome}
                         </td>
-                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-foreground">
+                        <td className="p-2 sm:p-4 text-xs sm:text-sm">
                           {aluno.matricula}
                         </td>
                       </tr>
@@ -1064,9 +469,9 @@ const GerenciamentoHoras: React.FC = () => {
                       <tr>
                         <td
                           colSpan={3}
-                          className="p-6 text-center text-muted-foreground text-sm"
+                          className="p-6 text-center text-muted-foreground"
                         >
-                          Nenhum aluno encontrado com os filtros aplicados.
+                          Nenhum aluno encontrado.
                         </td>
                       </tr>
                     )}
@@ -1076,9 +481,8 @@ const GerenciamentoHoras: React.FC = () => {
             </div>
           )}
 
-          {/* -------------------- PAGINAÇÃO -------------------- */}
+          {/* ... (código de paginação mantido igual) ... */}
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-            {/* Itens por página */}
             <div className="flex items-center gap-2 text-xs sm:text-sm">
               <span className="text-muted-foreground">Itens por página:</span>
               <select
@@ -1096,8 +500,6 @@ const GerenciamentoHoras: React.FC = () => {
                 ))}
               </select>
             </div>
-
-            {/* Navegação */}
             <div className="flex items-center gap-1 flex-wrap justify-center">
               <Button
                 variant="outline"
@@ -1115,7 +517,6 @@ const GerenciamentoHoras: React.FC = () => {
               >
                 {'<'}
               </Button>
-
               {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
                 let page = 1;
                 if (totalPaginas <= 5) {
@@ -1139,7 +540,6 @@ const GerenciamentoHoras: React.FC = () => {
                   </Button>
                 );
               })}
-
               <Button
                 variant="outline"
                 size="sm"

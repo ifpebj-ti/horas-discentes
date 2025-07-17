@@ -17,7 +17,8 @@ public class Aluno
     [Required(ErrorMessage = "O campo Matrícula é obrigatório.")]
     public string? Matricula { get; set; }
 
-    public bool JaBaixadoHoras { get; set; }
+    public bool JaBaixadoHorasComplementares { get; set; }
+    public bool? JaBaixadoHorasExtensao { get; set; }
 
     [Required(ErrorMessage = "O campo TurmaId é obrigatório.")]
     public Guid TurmaId { get; set; }

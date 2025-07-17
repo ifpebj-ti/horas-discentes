@@ -1,0 +1,33 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/Back.API"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    allow:
+      - dependency-type: "all"
+
+  - package-ecosystem: "nuget"
+    directory: "/Back.Application"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    allow:
+      - dependency-type: "all"
+
+  - package-ecosystem: "nuget"
+    directory: "/Back.Domain"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    allow:
+      - dependency-type: "all"
+
+  - package-ecosystem: "npm"
+    directory: "/front"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    allow:
+      - dependency-type: "all"

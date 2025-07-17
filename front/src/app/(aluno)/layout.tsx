@@ -53,7 +53,27 @@ export default function AlunoLayout({
           Jardim - PE, 55145-065
           <br />
           Telefone: (81) 3411-3200
-          <br />© 2025 Desenvolvido por Erison Cavalcante e Erimilson Silva.
+          <footer className="relative px-2 py-1 text-center text-xs text-token-text-secondary md:px-[60px]">
+            <p>
+              © 2025 Desenvolvido por{' '}
+              <a
+                href="https://github.com/erison7596"
+                target="_blank"
+                className="
+  relative font-bold text-[#1c2128] no-underline
+  transition-colors duration-300 ease-in-out
+  hover:text-[#1b2b41]
+  before:content-[''] before:absolute before:w-full before:h-[2px] before:-bottom-[2px] before:left-0
+  before:bg-[#1c2128] before:origin-left before:scale-x-0
+  before:transition-transform before:duration-300 before:ease-in-out
+  hover:before:scale-x-100
+"
+                rel="noreferrer"
+              >
+                Erison
+              </a>
+            </p>
+          </footer>
         </footer>
       </div>
     </ProtectedLayout>

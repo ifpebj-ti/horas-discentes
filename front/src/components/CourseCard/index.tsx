@@ -3,14 +3,14 @@ import { FaUsers, FaCalendarAlt } from 'react-icons/fa';
 
 interface CourseCardProps {
   courseName: string;
-  coordinators: number;
+  alunos: number;
   classes: number;
   onManageCourse: () => void;
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({
   courseName,
-  coordinators,
+  alunos,
   classes,
   onManageCourse
 }) => {
@@ -20,7 +20,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 
       <div className="text-gray-600 flex items-center mb-1">
         <FaUsers className="mr-2" />
-        {coordinators} coordenador{coordinators !== 1 ? 'es' : ''}
+        {alunos} Aluno{alunos !== 1 ? 's' : ''}
       </div>
       <div className="text-gray-600 flex items-center mb-4">
         <FaCalendarAlt className="mr-2" />

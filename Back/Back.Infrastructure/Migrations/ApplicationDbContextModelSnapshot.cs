@@ -58,7 +58,10 @@ namespace Back.Infrastructure.Migrations
                     b.Property<bool>("IsAtivo")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("JaBaixadoHoras")
+                    b.Property<bool>("JaBaixadoHorasComplementares")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("JaBaixadoHorasExtensao")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Matricula")

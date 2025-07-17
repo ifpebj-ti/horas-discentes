@@ -3,34 +3,39 @@ name: Backend CI (.NET)
 on:
   push:
     paths:
-      - '**.cs'
-      - '**.csproj'
-      - '**.sln'
+      - 'Back/**'
   pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ["main"]
     paths:
-      - '**.cs'
-      - '**.csproj'
-      - '**.sln'
+      - 'Back/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: 🔄 Clonar repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 📥 Instalar o SDK do .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
       - name: 🛠️ Restaurar dependências
-        run: dotnet restore Back/Back.API/Back.sln
+        run: |
+          cd Back/Back.API
+          dotnet restore Back.sln
 
       - name: 🏗️ Compilar a aplicação
-        run: dotnet build Back/Back.API/Back.sln --no-restore
+        run: |
+          cd Back/Back.API
+          dotnet build Back.sln --no-restore
 
-      - name: ✅ Rodar testes (se tiver)
-        run: dotnet test Back/Back.API/Back.sln --no-build
+      - name: ✅ Rodar testes e Análise (SonarQube)
+        run: |
+          cd Back/Back.API
+          dotnet test --no-build --configuration Release
         continue-on-error: true

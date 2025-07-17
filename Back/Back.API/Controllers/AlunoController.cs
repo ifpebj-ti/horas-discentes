@@ -17,7 +17,9 @@ public class AlunoController : ControllerBase
     private readonly GetAlunoDetalhadoUseCase _getDetalhado;
     private readonly GetResumoHorasUseCase _getResumo;
     private readonly GetAlunoFromTokenUseCase _getMeFromToken;
-
+    private readonly GetAlunosComHorasConcluidasUseCase _getAlunosComHorasConcluidas;
+    private readonly ContarPendenciasDownloadUseCase _contarPendenciasDownload;
+    private readonly MarcarDownloadRelatorioUseCase _marcarDownloadRelatorio;
     public AlunoController(
         CreateAlunoUseCase create,
         GetAlunoByIdUseCase getById,
@@ -25,7 +27,10 @@ public class AlunoController : ControllerBase
         ToggleAlunoStatusUseCase toggle,
         GetAlunoDetalhadoUseCase getDetalhado,
         GetResumoHorasUseCase getResumo,
-        GetAlunoFromTokenUseCase getMeFromToken)
+        GetAlunoFromTokenUseCase getMeFromToken,
+        GetAlunosComHorasConcluidasUseCase getAlunosComHorasConcluidas,
+        ContarPendenciasDownloadUseCase contarPendenciasDownload,
+        MarcarDownloadRelatorioUseCase marcarDownloadRelatorio)
     {
         _create = create;
         _getById = getById;
@@ -34,6 +39,9 @@ public class AlunoController : ControllerBase
         _getDetalhado = getDetalhado;
         _getResumo = getResumo;
         _getMeFromToken = getMeFromToken;
+        _getAlunosComHorasConcluidas = getAlunosComHorasConcluidas;
+        _contarPendenciasDownload = contarPendenciasDownload;
+        _marcarDownloadRelatorio = marcarDownloadRelatorio;
     }
 
     /// <summary>
@@ -133,5 +141,82 @@ public class AlunoController : ControllerBase
     {
         var result = await _getMeFromToken.ExecuteAsync(User);
         return Ok(result);
+    }
+    /// <summary>
+    /// Lista os alunos do curso do coordenador que concluíram 100% das horas complementares.
+    /// </summary>
+    /// <remarks>Requer permissão de COORDENADOR. A busca é filtrada pelo curso do coordenador autenticado.</remarks>
+    /// <response code="200">Alunos retornados com sucesso.</response>
+    /// <response code="401">Coordenador não autenticado ou não encontrado.</response>
+    [HttpGet("concluidos/complementar")]
+    [Authorize(Roles = "COORDENADOR")]
+    public async Task<IActionResult> ObterConcluidosComplementar()
+    {
+        // Passando o "User" (ClaimsPrincipal) para o UseCase
+        var result = await _getAlunosComHorasConcluidas.ExecuteAsync(Domain.Entities.Atividade.TipoAtividade.COMPLEMENTAR, User);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Lista os alunos do curso do coordenador que concluíram 100% das horas de extensão.
+    /// </summary>
+    /// <remarks>Requer permissão de COORDENADOR. A busca é filtrada pelo curso do coordenador autenticado.</remarks>
+    /// <response code="200">Alunos retornados com sucesso.</response>
+    /// <response code="401">Coordenador não autenticado ou não encontrado.</response>
+    [HttpGet("concluidos/extensao")]
+    [Authorize(Roles = "COORDENADOR")]
+    public async Task<IActionResult> ObterConcluidosExtensao()
+    {
+        // Passando o "User" (ClaimsPrincipal) para o UseCase
+        var result = await _getAlunosComHorasConcluidas.ExecuteAsync(Domain.Entities.Atividade.TipoAtividade.EXTENSAO, User);
+        return Ok(result);
+    }
+    /// <summary>
+    /// Conta o total de pendências de download de relatórios para alunos que concluíram as horas.
+    /// </summary>
+    /// <remarks>
+    /// Requer permissão de COORDENADOR.
+    /// Conta +1 para cada tipo de hora (Complementar/Extensão) que um aluno concluiu mas ainda não fez o download.
+    /// Um aluno pode contribuir com 0, 1 ou 2 para o total.
+    /// </remarks>
+    /// <response code="200">Contagem retornada com sucesso.</response>
+    /// <response code="401">Coordenador não autenticado ou não encontrado.</response>
+    [HttpGet("pendencias-download/contagem")]
+    [Authorize(Roles = "COORDENADOR")]
+    public async Task<IActionResult> ContarPendenciasDownload()
+    {
+        var result = await _contarPendenciasDownload.ExecuteAsync(User);
+        return Ok(result);
+    }
+    /// <summary>
+    /// Marca o status do relatório de horas complementares de um aluno como "baixado".
+    /// </summary>
+    /// <remarks>Requer permissão de COORDENADOR. Só pode ser executado em alunos do próprio curso.</remarks>
+    /// <param name="alunoId">ID do aluno a ser modificado.</param>
+    /// <response code="204">Status alterado com sucesso.</response>
+    /// <response code="401">Coordenador não autorizado.</response>
+    /// <response code="404">Aluno não encontrado.</response>
+    [HttpPatch("{alunoId:guid}/marcar-download/complementar")]
+    [Authorize(Roles = "COORDENADOR")]
+    public async Task<IActionResult> MarcarDownloadComplementar(Guid alunoId)
+    {
+        await _marcarDownloadRelatorio.ExecuteAsync(alunoId, Domain.Entities.Atividade.TipoAtividade.COMPLEMENTAR, User);
+        return NoContent(); // HTTP 204: Sucesso, sem conteúdo para retornar.
+    }
+
+    /// <summary>
+    /// Marca o status do relatório de horas de extensão de um aluno como "baixado".
+    /// </summary>
+    /// <remarks>Requer permissão de COORDENADOR. Só pode ser executado em alunos do próprio curso.</remarks>
+    /// <param name="alunoId">ID do aluno a ser modificado.</param>
+    /// <response code="204">Status alterado com sucesso.</response>
+    /// <response code="401">Coordenador não autorizado.</response>
+    /// <response code="404">Aluno não encontrado.</response>
+    [HttpPatch("{alunoId:guid}/marcar-download/extensao")]
+    [Authorize(Roles = "COORDENADOR")]
+    public async Task<IActionResult> MarcarDownloadExtensao(Guid alunoId)
+    {
+        await _marcarDownloadRelatorio.ExecuteAsync(alunoId, Domain.Entities.Atividade.TipoAtividade.EXTENSAO, User);
+        return NoContent(); // HTTP 204: Sucesso, sem conteúdo para retornar.
     }
 }

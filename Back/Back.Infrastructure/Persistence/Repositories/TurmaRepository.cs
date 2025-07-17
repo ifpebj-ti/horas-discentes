@@ -29,6 +29,7 @@ public class TurmaRepository : ITurmaRepository
     {
         return await _context.Turmas
             .Include(t => t.Curso)
+            .Include(t => t.Alunos)
             .AsNoTracking()
             .ToListAsync();
     }
@@ -37,6 +38,7 @@ public class TurmaRepository : ITurmaRepository
     {
         return await _context.Turmas
             .Include(t => t.Curso)
+            .Include(t => t.Alunos)
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Id == id);
     }
@@ -57,6 +59,7 @@ public class TurmaRepository : ITurmaRepository
     {
         return await _context.Turmas
             .Include(t => t.Curso)
+            .Include(t=> t.Alunos)
             .AsNoTracking()
             .Where(t => t.CursoId == cursoId)
             .ToListAsync();
