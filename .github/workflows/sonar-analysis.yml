@@ -34,9 +34,14 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          cd ./Back
-          dotnet sonarscanner begin /k:"horas-discentes-backend" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
-          dotnet build
+           dotnet sonarscanner begin \
+            /k:"horas-discentes-backend" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
+            /d:sonar.projectBaseDir="Back/Back.API" # Define o diretório base para a análise
+          
+          dotnet build Back/Back.API/Back.sln 
+          
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       # --- Frontend (Next.js) Analysis ---
