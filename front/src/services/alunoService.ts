@@ -58,7 +58,35 @@ export interface AlunoResumoHorasResponse {
   maximoHorasComplementar: number;
   isAtivo: boolean;
 }
+export interface CertificadoConcluidoResponse {
+  id: string;
+  grupo: string | null;
+  categoria: string | null;
+  titulo: string | null;
+  descricao: string | null;
+  cargaHoraria: number;
+  local: string | null;
+  periodoInicio: string | null;
+  periodoFim: string | null;
+  status: string;
+  tipo: string;
+}
 
+export interface AlunoComHorasConcluidasResponse {
+  id: string;
+  nome: string | null;
+  matricula: string | null;
+  email: string | null;
+  curso: string | null;
+  certificados: CertificadoConcluidoResponse[];
+  cargaHoraria: number;
+  cargaHorariaFinalizada: boolean;
+  jaFezDownload: boolean;
+  categoria: string;
+}
+export interface ContagemPendenciaDownloadResponse {
+  totalPendencias: number;
+}
 // ========== Requisições à API ==========
 
 // Criar novo aluno
@@ -112,4 +140,45 @@ export const listarResumoHoras = async (): Promise<
     '/aluno/resumo-horas'
   );
   return response.data;
+};
+export const listarConcluidosComplementar = async (): Promise<
+  AlunoComHorasConcluidasResponse[]
+> => {
+  const response = await api.get<AlunoComHorasConcluidasResponse[]>(
+    '/Aluno/concluidos/complementar'
+  );
+  return response.data;
+};
+
+// Lista alunos com 100% das horas de extensão concluídas
+export const listarConcluidosExtensao = async (): Promise<
+  AlunoComHorasConcluidasResponse[]
+> => {
+  const response = await api.get<AlunoComHorasConcluidasResponse[]>(
+    '/Aluno/concluidos/extensao'
+  );
+  return response.data;
+};
+
+// Conta total de pendências de download de certificados
+export const contarPendenciasDownload =
+  async (): Promise<ContagemPendenciaDownloadResponse> => {
+    const response = await api.get<ContagemPendenciaDownloadResponse>(
+      '/Aluno/pendencias-download/contagem'
+    );
+    return response.data;
+  };
+
+// Marca relatório de horas complementares como baixado
+export const marcarDownloadComplementar = async (
+  alunoId: string
+): Promise<void> => {
+  await api.patch(`/Aluno/${alunoId}/marcar-download/complementar`);
+};
+
+// Marca relatório de horas de extensão como baixado
+export const marcarDownloadExtensao = async (
+  alunoId: string
+): Promise<void> => {
+  await api.patch(`/Aluno/${alunoId}/marcar-download/extensao`);
 };

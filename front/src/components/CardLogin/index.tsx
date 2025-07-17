@@ -32,8 +32,8 @@ export const CardLogin = () => {
 
       <div className="flex flex-col justify-center items-center px-6 md:px-12 pb-4 md:pb-0">
         <form onSubmit={handleSubmit(submitForm)} className="w-full max-w-md">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-center text-[#1351B4] pb-2 mb-8 tracking-wide drop-shadow-sm">
-            Horas Complementares
+          <h1 className="text-3xl md:text-6xl font-extrabold text-center text-[#1351B4] pb-2 mb-8 tracking-wide drop-shadow-sm">
+            HoraMais
           </h1>
 
           <div className="mb-4">

@@ -12,13 +12,19 @@ public class CoordenadorController : ControllerBase
 {
     private readonly EnviarConviteUseCase _enviarConvite;
     private readonly CriarCoordenadorUseCase _criarCoordenador;
+    private readonly GetCoordenadorFromTokenUseCase _getFromToken;
+    private readonly GetCoordenadorByCursoIdUseCase _getByCursoId;
 
     public CoordenadorController(
         EnviarConviteUseCase enviarConvite,
-        CriarCoordenadorUseCase criarCoordenador)
+        CriarCoordenadorUseCase criarCoordenador,
+        GetCoordenadorFromTokenUseCase getFromToken,
+        GetCoordenadorByCursoIdUseCase getByCursoId)
     {
         _enviarConvite = enviarConvite;
         _criarCoordenador = criarCoordenador;
+        _getFromToken = getFromToken;
+        _getByCursoId = getByCursoId;
     }
 
     /// <summary>
@@ -62,5 +68,28 @@ public class CoordenadorController : ControllerBase
     {
         var result = await _criarCoordenador.ExecuteAsync(request);
         return Ok(result);
+    }
+    [HttpGet("me")]
+    [Authorize(Roles = "COORDENADOR")]
+    [SwaggerOperation(Summary = "Retorna os dados do coordenador autenticado.", Tags = new[] { "Coordenadores" })]
+    [ProducesResponseType(typeof(CoordenadorInfoResponse), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Me()
+    {
+        var info = await _getFromToken.ExecuteAsync(User);
+        return Ok(info);
+    }
+    [HttpGet("por-curso/{cursoId:guid}")]
+    [Authorize(Roles = "ADMIN")]
+    [SwaggerOperation(Summary = "Retorna o coordenador de um curso.", Tags = new[] { "Coordenadores" })]
+    [ProducesResponseType(typeof(CoordenadorResumoResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ObterPorCurso(Guid cursoId)
+    {
+        var coordenador = await _getByCursoId.ExecuteAsync(cursoId);
+
+        if (coordenador == null)
+            return NotFound(new { mensagem = "Nenhum coordenador encontrado para este curso." });
+
+        return Ok(coordenador);
     }
 }

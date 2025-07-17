@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Back.Application.Interfaces.Repositories;
+﻿using Back.Application.Interfaces.Repositories;
 using Back.Domain.Entities.AlunoAtividade;
+using Back.Domain.Entities.Atividade;
 using Back.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Back.Infrastructure.Persistence.Repositories;
 
@@ -33,5 +35,11 @@ public class AlunoAtividadeRepository : IAlunoAtividadeRepository
     {
         _context.AlunoAtividades.Update(alunoAtividade);
         await _context.SaveChangesAsync();
+    }
+    public async Task<int> GetTotalHorasConcluidasPorTipoAsync(Guid alunoId, TipoAtividade tipo)
+    {
+        return await _context.AlunoAtividades
+            .Where(aa => aa.AlunoId == alunoId && aa.Atividade!.Tipo == tipo)
+            .SumAsync(aa => aa.HorasConcluidas);
     }
 }

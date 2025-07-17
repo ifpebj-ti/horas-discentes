@@ -130,5 +130,32 @@ namespace Back.API.Controllers
                 return NotFound(new { erro = ex.Message });
             }
         }
+        [HttpGet("por-curso/{cursoId}")]
+        [Authorize(Roles = "ADMIN,COORDENADOR")]
+        [SwaggerOperation(Summary = "Lista os certificados por curso ID.", Tags = new[] { "Certificados" })]
+        [ProducesResponseType(typeof(IEnumerable<CertificadoPorCursoResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPorCurso(Guid cursoId, [FromServices] GetCertificadosByCursoIdUseCase useCase)
+        {
+            var result = await useCase.ExecuteAsync(cursoId);
+            return Ok(result);
+        }
+        [HttpGet("{id}/anexo")]
+        [Authorize(Roles = "ALUNO,COORDENADOR,ADMIN")]
+        [SwaggerOperation(Summary = "Retorna apenas o anexo de um certificado.", Tags = new[] { "Certificados" })]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> BaixarAnexo(Guid id, [FromServices] GetCertificadoAnexoUseCase useCase)
+        {
+            try
+            {
+                var (anexo, nomeArquivo) = await useCase.ExecuteAsync(id);
+                return File(anexo, "application/pdf", nomeArquivo);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { erro = ex.Message });
+            }
+        }
+
     }
 }

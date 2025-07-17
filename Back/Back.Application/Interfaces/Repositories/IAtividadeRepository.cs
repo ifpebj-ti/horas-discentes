@@ -8,4 +8,6 @@ namespace Back.Application.Interfaces.Repositories;
 public interface IAtividadeRepository
 {
     Task<List<Atividade>> GetByCursoIdAsync(Guid cursoId);
+    Task AddAsync(Atividade atividade);
+
 }

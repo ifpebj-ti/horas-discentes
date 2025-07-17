@@ -6,7 +6,8 @@ public class AlunoBuilder
 
     public AlunoBuilder()
     {
-        _aluno.JaBaixadoHoras = false;
+        _aluno.JaBaixadoHorasComplementares = false;
+        _aluno.JaBaixadoHorasExtensao = false;
         _aluno.IsAtivo = true;
     }
 

@@ -6,9 +6,16 @@ export interface CursoResponse {
 }
 
 export interface CreateCursoRequest {
-  nome: string;
+  nomeCurso: string;
+  maximoHorasComplementar: number;
+  maximoHorasExtensao?: number;
 }
-
+export interface CursoResumoResponse {
+  id: string;
+  nome: string;
+  quantidadeTurmas: number;
+  quantidadeAlunos: number;
+}
 // Criar novo curso
 export const criarCurso = async (
   dados: CreateCursoRequest
@@ -26,5 +33,10 @@ export const listarCursos = async (): Promise<CursoResponse[]> => {
 // Obter curso por ID
 export const obterCursoPorId = async (id: string): Promise<CursoResponse> => {
   const response = await api.get<CursoResponse>(`/curso/${id}`);
+  return response.data;
+};
+
+export const obterResumoCursos = async (): Promise<CursoResumoResponse[]> => {
+  const response = await api.get('/curso/resumo');
   return response.data;
 };

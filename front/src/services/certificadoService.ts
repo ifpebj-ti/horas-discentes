@@ -52,6 +52,23 @@ export interface CreateCertificadoRequest {
   atividadeId: string;
   tipo: TipoCertificado;
 }
+export interface CertificadoPorCursoResponse {
+  id: string;
+  grupo: string;
+  categoria: string;
+  tituloAtividade: string;
+  cargaHoraria: number;
+  local: string;
+  dataInicio: string;
+  dataFim: string;
+  status: string;
+  tipo: string;
+  alunoId: string;
+  alunoNome: string;
+  alunoEmail: string;
+  alunoMatricula: string;
+  periodoTurma: string;
+}
 
 export const enviarCertificado = async (
   form: FormData
@@ -99,5 +116,21 @@ export const listarMeusCertificados = async (): Promise<
   CertificadoResponse[]
 > => {
   const response = await api.get<CertificadoResponse[]>('/certificado/me');
+  return response.data;
+};
+
+export const listarCertificadosPorCurso = async (
+  cursoId: string
+): Promise<CertificadoPorCursoResponse[]> => {
+  const response = await api.get<CertificadoPorCursoResponse[]>(
+    `/certificado/por-curso/${cursoId}`
+  );
+  return response.data;
+};
+
+export const baixarAnexoCertificado = async (id: string): Promise<Blob> => {
+  const response = await api.get(`/certificado/${id}/anexo`, {
+    responseType: 'blob'
+  });
   return response.data;
 };

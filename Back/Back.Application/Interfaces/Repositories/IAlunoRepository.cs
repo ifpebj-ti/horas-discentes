@@ -1,4 +1,5 @@
 ﻿using Back.Domain.Entities.Aluno;
+using Back.Domain.Entities.AlunoAtividade;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,6 +18,9 @@ public interface IAlunoRepository
     Task DeleteAsync(Domain.Entities.Aluno.Aluno aluno);
     Task DeleteComIdentityAsync(Guid alunoId);
     Task<Aluno?> GetByIdentityUserIdWithAtividadesAsync(string identityUserId);
-
+    Task<IEnumerable<AlunoAtividade>> GetAtividadesByAlunoIdAsync(Guid alunoId);
+    Task<IEnumerable<Aluno>> GetAllComTurmaEAtividadesAsync();
+    Task<IEnumerable<Aluno>> GetAlunosPorCursoComDetalhesAsync(Guid cursoId);
+    Task<IEnumerable<Aluno>> GetByCursoIdAsync(Guid cursoId);
 
 }

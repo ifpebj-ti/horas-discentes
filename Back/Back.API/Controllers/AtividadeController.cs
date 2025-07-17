@@ -14,14 +14,15 @@ namespace Back.API.Controllers;
 public class AtividadeController : ControllerBase
 {
     private readonly GetAtividadesByCursoIdUseCase _getByCurso;
-
+    private readonly CreateAtividadeUseCase _create;
     /// <summary>
     /// Inicializa o controlador de atividades com as dependências necessárias.
     /// </summary>
     /// <param name="getByCurso">Caso de uso para buscar atividades por curso.</param>
-    public AtividadeController(GetAtividadesByCursoIdUseCase getByCurso)
+    public AtividadeController(GetAtividadesByCursoIdUseCase getByCurso, CreateAtividadeUseCase create)
     {
         _getByCurso = getByCurso;
+        _create = create;
     }
 
     /// <summary>
@@ -37,4 +38,13 @@ public class AtividadeController : ControllerBase
         var atividades = await _getByCurso.ExecuteAsync(cursoId);
         return Ok(atividades);
     }
+    [HttpPost]
+    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [ProducesResponseType(typeof(object), 201)]
+    public async Task<IActionResult> Criar([FromBody] CreateAtividadeRequest request)
+    {
+        var id = await _create.ExecuteAsync(request);
+        return CreatedAtAction(nameof(ListarPorCurso), new { cursoId = request.CursoId }, new { atividadeId = id });
+    }
+
 }

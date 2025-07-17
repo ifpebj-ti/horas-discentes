@@ -24,7 +24,8 @@ public class GetAllTurmasUseCase
             t.Turno!,
             t.PossuiExtensao,
             t.CursoId,
-            t.Curso?.Nome ?? "Curso não encontrado"
+            t.Curso?.Nome ?? "Curso não encontrado",
+            t.Alunos.Count
         ));
     }
 

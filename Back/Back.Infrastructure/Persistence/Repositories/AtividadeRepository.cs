@@ -25,4 +25,10 @@ public class AtividadeRepository : IAtividadeRepository
             .Where(a => a.CursoId == cursoId)
             .ToListAsync();
     }
+    public async Task AddAsync(Atividade atividade)
+    {
+        _context.Atividades.Add(atividade);
+        await _context.SaveChangesAsync();
+    }
+
 }

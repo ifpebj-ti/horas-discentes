@@ -1,12 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { FaHome, FaPlus } from 'react-icons/fa';
-import { FaGraduationCap, FaTimes } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { FaHome, FaPlus, FaGraduationCap, FaTimes } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import CourseCard from '@/components/CourseCard';
+import LoadingOverlay from '@/components/LoadingOverlay';
 import { RoundedButton } from '@/components/RoundedButton';
 import {
   Card,
@@ -16,54 +16,53 @@ import {
   CardDescription
 } from '@/components/ui/card';
 
+import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import {
+  criarCurso,
+  obterResumoCursos,
+  CursoResumoResponse,
+  CreateCursoRequest
+} from '@/services/cursoService';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
-type Course = {
-  id: string;
-  courseName: string;
-  coordinators: number;
-  classes: number;
-};
-
 export default function CursoPage() {
   const router = useRouter();
 
   const [search, setSearch] = useState('');
-  const [courses, setCourses] = useState<Course[]>([
-    { id: '1', courseName: 'Engenharia Civil', coordinators: 1, classes: 2 },
-    { id: '2', courseName: 'Administração', coordinators: 2, classes: 3 },
-    { id: '3', courseName: 'Direito', coordinators: 1, classes: 1 },
-    { id: '4', courseName: 'Medicina', coordinators: 3, classes: 5 },
-    { id: '5', courseName: 'Psicologia', coordinators: 2, classes: 2 },
-    {
-      id: '6',
-      courseName: 'Engenharia de Produção',
-      coordinators: 1,
-      classes: 2
-    },
-    { id: '7', courseName: 'Arquitetura', coordinators: 2, classes: 3 },
-    {
-      id: '8',
-      courseName: 'Ciência da Computação',
-      coordinators: 2,
-      classes: 4
-    }
-  ]);
-
+  const [courses, setCourses] = useState<CursoResumoResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
   const [complementaryHours, setComplementaryHours] = useState('');
   const [hasExtension, setHasExtension] = useState(false);
   const [extensionHours, setExtensionHours] = useState('');
 
+  const { show, hide, visible } = useLoadingOverlay();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        show();
+        const data = await obterResumoCursos();
+        setCourses(data);
+      } catch (error) {
+        console.error('Erro ao buscar cursos:', error);
+      } finally {
+        hide();
+      }
+    };
+    fetchData();
+  }, [show, hide]);
+
   const filteredCourses = courses.filter((course) =>
-    course.courseName.toLowerCase().includes(search.toLowerCase())
+    course.nome.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleAddCourse = async () => {
+  const handleAddCourse = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!newCourseName.trim()) {
       Swal.fire('Erro', 'O nome do curso é obrigatório.', 'error');
       return;
@@ -80,27 +79,36 @@ export default function CursoPage() {
     });
 
     if (result.isConfirmed) {
-      const newId = String(Date.now()); // simples ID único
-      setCourses((prev) => [
-        ...prev,
-        {
-          id: newId,
-          courseName: newCourseName,
-          coordinators: 0,
-          classes: 0
-        }
-      ]);
+      try {
+        show();
 
-      setIsModalOpen(false);
-      setNewCourseName('');
+        const payload: CreateCursoRequest = {
+          nomeCurso: newCourseName,
+          maximoHorasComplementar: Number(complementaryHours),
+          maximoHorasExtensao: hasExtension ? Number(extensionHours) : undefined
+        };
 
-      Swal.fire({
-        title: 'Curso criado!',
-        text: `O curso "${newCourseName}" foi criado com sucesso.`,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#3085d6'
-      });
+        await criarCurso(payload);
+        const atualizados = await obterResumoCursos();
+        setCourses(atualizados);
+
+        Swal.fire({
+          title: 'Curso criado!',
+          text: `O curso "${newCourseName}" foi criado com sucesso.`,
+          icon: 'success',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#3085d6'
+        });
+      } catch (error) {
+        console.error('Erro ao criar curso:', error);
+        Swal.fire('Erro', 'Não foi possível criar o curso.', 'error');
+      } finally {
+        hide();
+        setIsModalOpen(false);
+        setNewCourseName('');
+        setComplementaryHours('');
+        setExtensionHours('');
+      }
     } else {
       setIsModalOpen(false);
       setNewCourseName('');
@@ -116,6 +124,8 @@ export default function CursoPage() {
 
   return (
     <div className="p-6 w-full">
+      <LoadingOverlay show={visible} />
+
       <div className="mb-6">
         <BreadCrumb
           items={[
@@ -149,21 +159,19 @@ export default function CursoPage() {
         {filteredCourses.map((course) => (
           <CourseCard
             key={course.id}
-            courseName={course.courseName}
-            coordinators={course.coordinators}
-            classes={course.classes}
+            courseName={course.nome}
+            alunos={course.quantidadeAlunos} // Substituir quando tiver dado real
+            classes={course.quantidadeTurmas}
             onManageCourse={() => router.push(`/curso/${course.id}`)}
           />
         ))}
       </div>
 
-      {/* Modal Simples */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg overflow-auto max-h-full w-full max-w-2xl p-7 relative">
-            {/* Close Button */}
             <button
-              className="absolute top-0 mt-1 mb-1 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-0 mt-1 mb-1 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
               onClick={() => setIsModalOpen(false)}
             >
               <FaTimes className="w-6 h-6" />
@@ -172,8 +180,8 @@ export default function CursoPage() {
             <div className="max-w-2xl mx-auto space-y-8">
               <Card>
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaGraduationCap className="w-8 h-8 text-purple-600" />
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaGraduationCap className="w-8 h-8 text-blue-600" />
                   </div>
                   <CardTitle>Adicionar Novo Curso</CardTitle>
                   <CardDescription>
@@ -193,7 +201,7 @@ export default function CursoPage() {
                         value={newCourseName}
                         onChange={(e) => setNewCourseName(e.target.value)}
                         required
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
                       />
                     </div>
 
@@ -211,7 +219,7 @@ export default function CursoPage() {
                         value={complementaryHours}
                         onChange={(e) => setComplementaryHours(e.target.value)}
                         required
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
                       />
                     </div>
 
@@ -227,7 +235,7 @@ export default function CursoPage() {
                             value="sim"
                             checked={hasExtension === true}
                             onChange={() => setHasExtension(true)}
-                            className="accent-purple-600"
+                            className="accent-blue-600"
                           />
                           <span>Sim</span>
                         </label>
@@ -238,7 +246,7 @@ export default function CursoPage() {
                             value="nao"
                             checked={hasExtension === false}
                             onChange={() => setHasExtension(false)}
-                            className="accent-purple-600"
+                            className="accent-blue-600"
                           />
                           <span>Não</span>
                         </label>
@@ -260,7 +268,7 @@ export default function CursoPage() {
                           value={extensionHours}
                           onChange={(e) => setExtensionHours(e.target.value)}
                           required
-                          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
                         />
                       </div>
                     )}
@@ -272,7 +280,7 @@ export default function CursoPage() {
                         !complementaryHours.trim() ||
                         (hasExtension && !extensionHours.trim())
                       }
-                      className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 disabled:opacity-50"
+                      className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                     >
                       Criar Curso
                     </button>
