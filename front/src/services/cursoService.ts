@@ -37,8 +37,28 @@ export const obterCursoPorId = async (id: string): Promise<CursoResponse> => {
 };
 
 export const obterResumoCursos = async (): Promise<CursoResumoResponse[]> => {
-  const response = await api.get('/curso/resumo');
-  const cursos = response.data?.data ?? response.data;
+  try {
+    const response = await api.get('/curso/resumo');
 
-  return Array.isArray(cursos) ? cursos : [];
+    console.log(' Resposta bruta da API:', response);
+
+    const data = response?.data;
+
+    // Caso a API siga o padrão { data: [...] }
+    if (Array.isArray(data?.data)) {
+      return data.data;
+    }
+
+    // Caso a API retorne diretamente um array
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    // Caso a resposta não seja um array — log e retorna array vazio
+    console.warn(' Resposta inesperada do backend em /curso/resumo:', data);
+    return [];
+  } catch (error) {
+    console.error(' Erro ao buscar cursos em /curso/resumo:', error);
+    return [];
+  }
 };
