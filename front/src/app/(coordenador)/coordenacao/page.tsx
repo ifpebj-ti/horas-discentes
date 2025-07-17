@@ -75,7 +75,6 @@ export default function CoordenacaoPage() {
         <DashboardCard
           icon={<FaBookOpen className="text-blue-600 text-3xl" />}
           label="Atividades"
-          notificationCount={pendenciasCount}
           onClick={() => router.push('/coordenacao/atividade')}
         />
       </div>
