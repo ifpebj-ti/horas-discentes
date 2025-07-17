@@ -3,6 +3,7 @@ using Back.Domain.Entities.LimiteHorasAluno;
 using Back.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Back.Infrastructure.Persistence.Repositories;
@@ -26,5 +27,9 @@ public class LimiteHorasAlunoRepository : ILimiteHorasAlunoRepository
     {
         _context.LimitesHoras.Add(limite);
         await _context.SaveChangesAsync();
+    }
+    public async Task<IEnumerable<LimiteHorasAluno>> GetAllAsync()
+    {
+        return await _context.LimitesHoras.AsNoTracking().ToListAsync();
     }
 }

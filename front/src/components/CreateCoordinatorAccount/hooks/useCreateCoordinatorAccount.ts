@@ -1,32 +1,47 @@
-import { useState } from 'react';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { cadastrarCoordenador } from '@/services/coordenadorService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
 import {
   createCoordinatorSchema,
   CreateCoordinatorSchema
-} from '..//schemas/schema';
+} from '../schemas/schema';
 
-export const useCreateCoordinatorAccount = () => {
+export const useCreateCoordinatorAccount = (
+  emailFromURL: string,
+  tokenFromURL: string
+) => {
   const [loading, setLoading] = useState(false);
   const [prefilledEmail, setPrefilledEmail] = useState('');
+  const [token, setToken] = useState('');
+  const router = useRouter();
 
   const form = useForm<CreateCoordinatorSchema>({
     resolver: zodResolver(createCoordinatorSchema),
     mode: 'onChange'
   });
 
+  useEffect(() => {
+    setPrefilledEmail(decodeURIComponent(emailFromURL || ''));
+    setToken(tokenFromURL || '');
+  }, [emailFromURL, tokenFromURL]);
+
   const handleCreateCoordinator = async (data: CreateCoordinatorSchema) => {
     setLoading(true);
     try {
-      // Simulação de integração com backend:
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log('Dados do coordenador:', {
-        ...data,
-        email: prefilledEmail
+      await cadastrarCoordenador({
+        nome: data.nome,
+        numeroPortaria: data.portaria,
+        dou: data.dou,
+        email: prefilledEmail,
+        senha: data.senha,
+        token
       });
 
       await Swal.fire({
@@ -36,17 +51,16 @@ export const useCreateCoordinatorAccount = () => {
         confirmButtonColor: '#1351B4'
       });
 
-      // Se quiser redirecionar após sucesso:
-      // router.push('/login');
+      router.push('/');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      console.error(err);
       await Swal.fire({
         icon: 'error',
         title: 'Erro ao criar conta',
-        text: err.message || 'Tente novamente.',
+        text: err?.response?.data?.message || 'Tente novamente.',
         confirmButtonColor: '#f87171'
       });
-      console.error(err);
     } finally {
       setLoading(false);
     }

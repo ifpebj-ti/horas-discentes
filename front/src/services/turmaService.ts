@@ -14,6 +14,7 @@ export interface TurmaResponse {
   possuiExtensao: boolean;
   cursoId: string;
   cursoNome: string;
+  quantidadeAlunos: number;
 }
 
 export interface TurmaAlunoResponse {
@@ -29,6 +30,19 @@ export interface AlunoPorTurmaResponse {
   nome: string;
   email: string;
   matricula: string;
+}
+
+export interface AlunoPorTurmaDetalhadoResponse {
+  id: string;
+  nome: string;
+  email: string;
+  matricula: string;
+  isAtivo: boolean;
+  totalHorasExtensao: number;
+  totalHorasComplementar: number;
+  maximoHorasExtensao: number;
+  maximoHorasComplementar: number;
+  porcentagemConclusao: number;
 }
 
 // Cria nova turma
@@ -62,8 +76,10 @@ export const verificarTurmaExiste = async (id: string): Promise<boolean> => {
 // Lista alunos da turma
 export const listarAlunosPorTurma = async (
   id: string
-): Promise<TurmaAlunoResponse[]> => {
-  const response = await api.get<TurmaAlunoResponse[]>(`/turma/${id}/alunos`);
+): Promise<AlunoPorTurmaDetalhadoResponse[]> => {
+  const response = await api.get<AlunoPorTurmaDetalhadoResponse[]>(
+    `/turma/${id}/alunos`
+  );
   return response.data;
 };
 

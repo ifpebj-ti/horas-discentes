@@ -12,13 +12,14 @@ namespace Back.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static object AddApplication(this IServiceCollection services)
     {
 
         //curso
         services.AddScoped<CreateCursoUseCase>();
         services.AddScoped<GetAllCursosUseCase>();
         services.AddScoped<GetCursoByIdUseCase>();
+        services.AddScoped<GetResumoCursosUseCase>();
 
         //turma
         services.AddScoped<CreateTurmaUseCase>();
@@ -36,7 +37,9 @@ public static class DependencyInjection
         services.AddScoped<GetAlunoDetalhadoUseCase>();
         services.AddScoped<GetResumoHorasUseCase>();
         services.AddScoped<GetAlunoFromTokenUseCase>();
-
+        services.AddScoped<GetAlunosComHorasConcluidasUseCase>();
+        services.AddScoped<ContarPendenciasDownloadUseCase>();
+        services.AddScoped<MarcarDownloadRelatorioUseCase>();
         //auth
         services.AddScoped<LoginUseCase>();
 
@@ -44,16 +47,20 @@ public static class DependencyInjection
         services.AddScoped<EnviarConviteUseCase>();
         services.AddScoped<CriarCoordenadorUseCase>();
         services.AddScoped<GetAtividadesByCursoIdUseCase>();
-
+        services.AddScoped<GetCoordenadorFromTokenUseCase>();
+        services.AddScoped<GetCoordenadorByCursoIdUseCase>();
         //certificado
         services.AddScoped<CreateCertificadoUseCase>();
         services.AddScoped<GetCertificadosUseCase>();
         services.AddScoped<GetCertificadosDoAlunoAutenticadoUseCase>();
         services.AddScoped<AtualizarStatusCertificadoUseCase>();
         services.AddScoped<GetCertificadoByIdUseCase>();
-
+        services.AddScoped<GetCertificadosByCursoIdUseCase>();
+        services.AddScoped<GetCertificadoAnexoUseCase>();
         //Limitehoras
         services.AddScoped<CreateLimiteHorasAlunoUseCase>();
+        //atividade
+        services.AddScoped<CreateAtividadeUseCase>();
         return services;
     }
 }

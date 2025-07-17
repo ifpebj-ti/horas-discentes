@@ -34,23 +34,24 @@ public class AtualizarStatusCertificadoUseCase
 
         if (novoStatus == StatusCertificado.APROVADO)
         {
-            var certificadosAprovados = await _repo.GetByAlunoAtividadeAsync(certificado.AlunoAtividadeId);
-            certificadosAprovados = certificadosAprovados
-                .Where(c => c.Status == StatusCertificado.APROVADO && c.Id != certificado.Id)
-                .ToList();
-
             int maxTipo = atividade.Tipo == TipoAtividade.EXTENSAO
                 ? limite?.MaximoHorasExtensao ?? int.MaxValue
                 : limite?.MaximoHorasComplementar ?? int.MaxValue;
 
-            int horasTipoConcluidas = certificadosAprovados
-                .Where(c => c.Tipo == certificado.Tipo)
-                .Sum(c => c.CargaHoraria);
+            int horasTotaisAcumuladasDoTipo = await _alunoAtividadeRepo.GetTotalHorasConcluidasPorTipoAsync(alunoAtividade.AlunoId, atividade.Tipo);
 
-            int horasCursoConcluidas = alunoAtividade.HorasConcluidas;
+            int restanteTipo = Math.Max(0, maxTipo - horasTotaisAcumuladasDoTipo);
 
-            int restanteTipo = maxTipo - horasTipoConcluidas;
-            int restanteCurso = atividade.CargaMaximaCurso - horasCursoConcluidas;
+            if (restanteTipo <= 0)
+            {
+                certificado.Status = novoStatus; 
+                await _repo.UpdateAsync(certificado);
+                return true; 
+            }
+
+            var certificadosAprovados = (await _repo.GetByAlunoAtividadeAsync(certificado.AlunoAtividadeId))
+                .Where(c => c.Status == StatusCertificado.APROVADO && c.Id != certificado.Id)
+                .ToList();
 
             int horasPorPeriodo = certificado.CargaHoraria / certificado.TotalPeriodos;
             int totalPermitido = 0;
@@ -61,21 +62,32 @@ public class AtualizarStatusCertificadoUseCase
                     .Where(c => c.Grupo == certificado.Grupo && c.PeriodoLetivo == certificado.PeriodoLetivo)
                     .Sum(c => c.CargaHoraria);
 
-                int restanteSemestre = atividade.CargaMaximaSemestral - horasMesmoPeriodo;
+                int restanteSemestre = Math.Max(0, atividade.CargaMaximaSemestral - horasMesmoPeriodo);
+                int restanteCurso = Math.Max(0, atividade.CargaMaximaCurso - alunoAtividade.HorasConcluidas - totalPermitido);
 
-                int permitidoNestePeriodo = Math.Min(horasPorPeriodo,
-                    Math.Min(restanteSemestre, Math.Min(restanteCurso, restanteTipo)));
+                // O valor permitido é o menor entre:
+                // - A carga horária do período atual do certificado
+                // - O limite restante do semestre para a atividade
+                // - O limite restante do curso para a atividade
+                // - O limite GLOBAL restante do TIPO para o ALUNO (a correção principal)
+                int permitidoNestePeriodo = Math.Min(
+                    horasPorPeriodo,
+                    Math.Min(restanteSemestre, Math.Min(restanteCurso, restanteTipo))
+                );
+
 
                 if (permitidoNestePeriodo <= 0)
                     break;
 
                 totalPermitido += permitidoNestePeriodo;
-                restanteCurso -= permitidoNestePeriodo;
                 restanteTipo -= permitidoNestePeriodo;
             }
 
-            alunoAtividade.HorasConcluidas += totalPermitido;
-            await _alunoAtividadeRepo.UpdateAsync(alunoAtividade);
+            if (totalPermitido > 0)
+            {
+                alunoAtividade.HorasConcluidas += totalPermitido;
+                await _alunoAtividadeRepo.UpdateAsync(alunoAtividade);
+            }
         }
 
         certificado.Status = novoStatus;

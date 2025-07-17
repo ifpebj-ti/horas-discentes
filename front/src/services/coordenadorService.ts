@@ -19,7 +19,17 @@ export interface CoordenadorResponse {
   nome: string;
   email: string;
 }
+export interface CoordenadorInfoResponse {
+  nome: string;
+  curso: string;
+  numeroPortaria: string;
+  dou: string;
+}
 
+export interface CoordenadorResumoResponse {
+  id: string;
+  nome: string;
+}
 // Enviar convite para coordenador (apenas ADMIN)
 export const enviarConviteCoordenador = async (
   dados: ConviteCoordenadorRequest
@@ -37,4 +47,30 @@ export const cadastrarCoordenador = async (
     dados
   );
   return response.data;
+};
+// Obter dados do coordenador autenticado
+export const obterCoordenadorAutenticado =
+  async (): Promise<CoordenadorInfoResponse> => {
+    const response = await api.get<CoordenadorInfoResponse>('/coordenador/me');
+    return response.data;
+  };
+
+export const obterCoordenadorPorCurso = async (
+  cursoId: string
+): Promise<CoordenadorResumoResponse | null> => {
+  try {
+    const response = await api.get<CoordenadorResumoResponse>(
+      `/coordenador/por-curso/${cursoId}`
+    );
+    return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      // Nenhum coordenador encontrado para o curso
+      return null;
+    }
+
+    console.error('Erro ao obter coordenador por curso:', error);
+    return null;
+  }
 };
