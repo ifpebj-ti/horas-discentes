@@ -80,7 +80,7 @@ jobs:
 
   backend:
     name: 🏗️ Backend CI/CD
-    needs: [tag-creation, sonar-analysis]
+    needs: [tag-creation]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -110,7 +110,7 @@ jobs:
   
   frontend:
     name: 🏗️ Frontend CI/CD
-    needs: [tag-creation, sonar-analysis]
+    needs: [tag-creation]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -141,7 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEW_TAG: ${{ needs.tag-creation.outputs.new_tag }}
-      TIPO:    ${{ steps.tag-creation.outputs.tipo }}
+      TIPO:    ${{ needs.tag-creation.outputs.tipo }}
     permissions:
       contents: write
     steps:
