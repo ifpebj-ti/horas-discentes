@@ -19,10 +19,12 @@ jobs:
       tipo: ${{ steps.tipo.outputs.tipo }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Install GitHub CLI
         run: |
           sudo apt-get update
           sudo apt-get install -y gh
+
       - name: Extrair tipo de mudança da PR
         id: tipo
         run: |
@@ -45,6 +47,7 @@ jobs:
             echo "tipo=$tipo_encontrado" >> "$GITHUB_OUTPUT"
           fi
         shell: bash
+
       - name: Obter a última tag da release
         id: ultima
         run: |
@@ -52,6 +55,7 @@ jobs:
           echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
       - name: Calcular nova tag (SemVer)
         id: nova_tag
         run: |
@@ -77,6 +81,13 @@ jobs:
           nova_tag_calculada="${major}.${minor}.${patch}"
           nova_tag="v${nova_tag_calculada}"
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Criar e enviar a nova tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.nova_tag.outputs.nova_tag }}
+          git push origin ${{ steps.nova_tag.outputs.nova_tag }}
 
   backend:
     name: 🏗️ Backend CI/CD
