@@ -87,8 +87,19 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ steps.nova_tag.outputs.nova_tag }}
-          git push origin ${{ steps.nova_tag.outputs.nova_tag }}
+          TAG=${{ steps.nova_tag.outputs.nova_tag }}
+
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "⚠️ A tag $TAG já existe localmente, não será recriada."
+          else
+            git tag $TAG
+          fi
+
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG"; then
+            echo "⚠️ A tag $TAG já existe no remoto, não será enviada."
+          else
+            git push origin $TAG
+          fi
 
   backend:
     name: 🏗️ Backend CI/CD
