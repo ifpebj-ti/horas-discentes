@@ -160,4 +160,4 @@ jobs:
             Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
             Tipo de mudança: ${{ env.TIPO }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
