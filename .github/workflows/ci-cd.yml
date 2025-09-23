@@ -30,8 +30,8 @@ jobs:
         run: |
           echo "${{ github.event.pull_request.body }}" > body.txt
           tipo_encontrado=""
-          if grep -q "^\s*-\s*\[x\]\s*novo-marco" body.txt; then
-            tipo_encontrado="novo-marco"
+          if grep -q "^\s*-\s*\[x\]\s*marco-no-projeto" body.txt; then
+            tipo_encontrado="marco-no-projeto"
           elif grep -q "^\s*-\s*\[x\]\s*nova-feature" body.txt; then
             tipo_encontrado="nova-feature"
           elif grep -q "^\s*-\s*\[x\]\s*nova-feature-refactor" body.txt; then
