@@ -4,6 +4,7 @@ on:
   pull_request:
     types: [closed]
     branches: ["main"]
+  workflow_dispatch: 
 
 permissions:
   contents: write
@@ -101,9 +102,38 @@ jobs:
             git push origin $TAG
           fi
 
+  backend-tests:
+    name: ✅ Testes do Backend
+    runs-on: ubuntu-latest
+    needs: tag-creation
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restaurar dependências
+        run: cd Back/Back.API && dotnet restore
+      - name: Rodar testes
+        run: cd Back/Back.API && dotnet test --no-build --verbosity normal
+
+  frontend-tests:
+    name: ✅ Testes do Frontend
+    runs-on: ubuntu-latest
+    needs: tag-creation
+    defaults:
+      run:
+        working-directory: front
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar dependências
+        run: npm ci
+      - name: Rodar testes
+        run: npm test -- --watchAll=false
+
   backend:
     name: 🏗️ Backend CI/CD
-    needs: [tag-creation]
+    needs: [tag-creation, backend-tests]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -122,20 +152,35 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
-      - name: Build and push Backend Docker image
+      - name: Build Backend Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./Back
-          push: true
+          push: false
           build-args: |
             VERSION=${{ needs.tag-creation.outputs.new_tag }}
+            REVISION=${{ github.sha }}
+            BUILDTIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
-  
+
+      - name: 🔍 Scan de vulnerabilidades Backend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
+          format: table
+          exit-code: 1
+          severity: CRITICAL,HIGH
+
+      - name: Push Backend Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
+          docker tag ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }} ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
+
   frontend:
     name: 🏗️ Frontend CI/CD
-    needs: [tag-creation]
+    needs: [tag-creation, frontend-tests]
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
@@ -150,16 +195,31 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
-      - name: Build and push Frontend Docker image
+      - name: Build Frontend Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./front
-          push: true
+          push: false
           build-args: |
             VERSION=${{ needs.tag-creation.outputs.new_tag }}
+            REVISION=${{ github.sha }}
+            BUILDTIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           tags: |
             ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.tag-creation.outputs.new_tag }}
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
+
+      - name: 🔍 Scan de vulnerabilidades Frontend
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.tag-creation.outputs.new_tag }}
+          format: table
+          exit-code: 1
+          severity: CRITICAL,HIGH
+
+      - name: Push Frontend Docker image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.tag-creation.outputs.new_tag }}
+          docker tag ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.tag-creation.outputs.new_tag }} ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
 
   create-release:
     name: 🚀 Criar Release
@@ -168,7 +228,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEW_TAG: ${{ needs.tag-creation.outputs.new_tag }}
-      TIPO:    ${{ needs.tag-creation.outputs.tipo }}
+      TIPO:    ${{ needs.tag-creation.outputs.tipo }}
     permissions:
       contents: write
     steps:
