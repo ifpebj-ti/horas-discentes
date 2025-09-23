@@ -26,7 +26,7 @@
     "front": "file:",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.511.0",
-    "next": "15.2.4",
+    "next": "15.5.3",
     "next-auth": "^4.24.11",
     "pizzip": "^3.2.0",
     "react": "^19.0.0",
