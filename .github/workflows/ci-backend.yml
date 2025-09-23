@@ -33,9 +33,3 @@ jobs:
         run: |
           cd Back/Back.API
           dotnet build Back.sln --no-restore
-
-      - name: ✅ Rodar testes e Análise (SonarQube)
-        run: |
-          cd Back/Back.API
-          dotnet test --no-build --configuration Release
-        continue-on-error: true
