@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://4.228.65.139:5000/api'
+  baseURL: process.env.NEXT_PUBLIC_API_URL
 });
 
 // Interceptor para adicionar token da sessão se existir
