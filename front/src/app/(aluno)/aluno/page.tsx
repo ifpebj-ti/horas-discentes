@@ -260,8 +260,7 @@ export default function Aluno() {
     };
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [status, loadingOverlay]); // ✅ adicionado loadingOverlay
 
   if (status === 'loading' || loadingOverlay.visible || !userData) {
     return <LoadingOverlay show={true} />;

@@ -102,6 +102,7 @@ function CertificadosPageContent() {
     const matchesCategory =
       selectedCategory === 'all' ||
       cert.categoriaKey.toLowerCase() === selectedCategory.toLowerCase();
+
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
@@ -252,8 +253,7 @@ export default function Certificados() {
     };
 
     fetchCertificados();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadingOverlay]); // ✅ Agora o ESLint não reclama
 
   return (
     <>
