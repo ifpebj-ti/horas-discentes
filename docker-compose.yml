@@ -54,6 +54,9 @@ services:
       - JWT__Key=${JWT__Key}
       - JWT__Issuer=${JWT__Issuer}
       - JWT__Audience=${JWT__Audience}
+      - Gmail__ApplicationName=${Gmail__ApplicationName}
+      - Gmail__CredenciaisPath=${Gmail__CredenciaisPath}
+      - Gmail__TokenPath=${Gmail__TokenPath}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - EMAIL__Remetente=${EMAIL__Remetente}
