@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # Back.API
   - package-ecosystem: "nuget"
     directory: "/Back.API"
     schedule:
@@ -7,7 +8,12 @@ updates:
     open-pull-requests-limit: 5
     allow:
       - dependency-type: "all"
+    groups:
+      dependencias-back-api:
+        patterns:
+          - "*"
 
+  # Back.Application
   - package-ecosystem: "nuget"
     directory: "/Back.Application"
     schedule:
@@ -15,7 +21,12 @@ updates:
     open-pull-requests-limit: 5
     allow:
       - dependency-type: "all"
+    groups:
+      dependencias-back-application:
+        patterns:
+          - "*"
 
+  # Back.Domain
   - package-ecosystem: "nuget"
     directory: "/Back.Domain"
     schedule:
@@ -23,7 +34,12 @@ updates:
     open-pull-requests-limit: 5
     allow:
       - dependency-type: "all"
+    groups:
+      dependencias-back-domain:
+        patterns:
+          - "*"
 
+  # Frontend
   - package-ecosystem: "npm"
     directory: "/front"
     schedule:
@@ -31,3 +47,7 @@ updates:
     open-pull-requests-limit: 5
     allow:
       - dependency-type: "all"
+    groups:
+      dependencias-front:
+        patterns:
+          - "*"

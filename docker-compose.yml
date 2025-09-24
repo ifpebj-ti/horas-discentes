@@ -27,7 +27,7 @@ services:
       - ./nginx/certbot/certbot-data/live/:/etc/letsencrypt/live
       - ./nginx/certbot/certbot-data/archive/:/etc/letsencrypt/archive
       - ./nginx/certbot/www:/var/www/certbot
-    command: certonly --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --expand -d horamais.site -d www.horamais.site -d api.horamais.site
+    command: certonly --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --expand -d horamais.app -d www.horamais.app -d api.horamais.app
     networks:
       - rede-front
 
@@ -38,7 +38,7 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
     networks:
       - rede-front
     depends_on:
@@ -90,11 +90,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: horas-discentes-portainer
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: unless-stopped
+    networks:
+      - rede-front
 volumes:
   pgdata:
   backend_data_protection_keys:
-
+  portainer_data:
 networks:
   rede-back:
   rede-front:

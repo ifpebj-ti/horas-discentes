@@ -14,6 +14,10 @@ RUN dotnet publish "Back.API.csproj" -c Release -o /app/publish /p:UseAppHost=fa
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
+#Versionamento no runtime
+ARG VERSION=dev
+ENV APP_VERSION=$VERSION
+
 COPY --from=build /app/publish .
 
 ENTRYPOINT ["dotnet", "Back.API.dll"]
