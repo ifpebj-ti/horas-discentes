@@ -42,16 +42,16 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+          
 
           const response = await axios.post<BackendUser>(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
               email: credentials?.email,
               senha: credentials?.password
-            },
-            { httpsAgent }
+            }
           );
+
 
           const user = response.data;
           const userRole = user.role.toLowerCase();
