@@ -1,4 +1,3 @@
-// src/app/aluno/page.tsx
 'use client';
 
 import { useSession } from 'next-auth/react';
@@ -24,6 +23,7 @@ import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';
 
 const CertificadosContext = createContext<Types.Certificado[]>([]);
+
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
   const link = document.createElement('a');
   link.href = `data:application/pdf;base64,${base64}`;
@@ -43,6 +43,7 @@ function AlunoPageContent({
   const certificados = useContext(CertificadosContext);
   const [categoriaKeySelecionada, setCategoriaKeySelecionada] =
     useState<string>();
+
   const handleVerCertificado = async (id: string) => {
     try {
       const detalhes = await obterCertificadoPorId(id);
@@ -259,12 +260,13 @@ export default function Aluno() {
     };
 
     fetchData();
-  }, [status]);
+  }, [status, loadingOverlay]); // ✅ adicionado loadingOverlay
 
   if (status === 'loading' || loadingOverlay.visible || !userData) {
     return <LoadingOverlay show={true} />;
   }
   if (!session?.user) return null;
+
   const user: Types.Usuario = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     id: (session.user as any).entidadeId,
