@@ -39,12 +39,14 @@ const breadcrumbItems = [
     href: '/aluno/certificado'
   }
 ];
+
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
   const link = document.createElement('a');
   link.href = `data:application/pdf;base64,${base64}`;
   link.download = nomeArquivo;
   link.click();
 }
+
 function CertificadosPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -102,6 +104,7 @@ function CertificadosPageContent() {
       cert.categoriaKey.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesStatus && matchesCategory;
   });
+
   const handleVerCertificado = async (id: string) => {
     try {
       const detalhes = await obterCertificadoPorId(id);
@@ -126,6 +129,7 @@ function CertificadosPageContent() {
       });
     }
   };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
       <main className="flex-1 w-full">
@@ -248,6 +252,7 @@ export default function Certificados() {
     };
 
     fetchCertificados();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
