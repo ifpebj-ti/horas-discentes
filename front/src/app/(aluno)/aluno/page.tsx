@@ -82,7 +82,7 @@ function AlunoPageContent({
                 Bem-vindo ao Horas Discentes. Acompanhe seu progresso aqui.
               </p>
             </div>
-            <NovoCertificadoButton />
+            <NovoCertificadoButton user={user} />
           </div>
 
           <BreadCrumb
