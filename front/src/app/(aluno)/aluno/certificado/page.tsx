@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
   useState,
@@ -24,7 +25,6 @@ import {
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';
-import { useSession } from 'next-auth/react';
 
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
@@ -48,9 +48,7 @@ function baixarPDFBase64(base64: string, nomeArquivo: string) {
   link.click();
 }
 
-
-function CertificadosPageContent( { user }: { user: Types.Usuario }) {
-
+function CertificadosPageContent({ user }: { user: Types.Usuario }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
@@ -224,73 +222,68 @@ function CertificadosPageContent( { user }: { user: Types.Usuario }) {
 }
 
 export default function Certificados() {
-    const { data: session, status } = useSession();
-    const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
-    const loadingOverlay = useLoadingOverlay(true);
+  const { data: session, status } = useSession();
+  const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
+  const loadingOverlay = useLoadingOverlay(true);
 
-    const [userData, setUserData] = useState<any>(null);
+  useEffect(() => {
+    if (status !== 'authenticated') return;
 
-    useEffect(() => {
-      if (status !== 'authenticated') return;
-
-
-      const fetchData = async () => {
-        try {
-          loadingOverlay.show();
-          const certData = await listarMeusCertificados();
-          const mapped = certData.map((cert) => ({
-            id: cert.id,
-            title: cert.tituloAtividade,
-            local: cert.local,
-            description: cert.descricao || '',
-            cargaHoraria: cert.cargaHoraria,
-            periodoInicio: cert.dataInicio,
-            periodoFim: cert.dataFim,
-            categoria: cert.categoria,
-            grupo: cert.grupo,
-            categoriaKey: cert.categoriaKey,
-            tipo: mapTipoCertificado(cert.tipo),
-            status: mapStatusCertificado(cert.status)
-          }));
-          setCertificados(mapped);
-        } catch (error) {
-          console.error('Erro ao buscar certificados:', error);
-        } finally {
-          loadingOverlay.hide();
-        }
-      };
-
-
-      fetchData();
-    }, [status]);
-
-    if (status === 'loading' || loadingOverlay.visible) {
-      return <LoadingOverlay show={true} />;
-    }
-    if (!session?.user) return null;
-
-    // 🔑 monta o user só com os dados básicos da sessão
-    const user: Types.Usuario = {
-      id: (session.user as any).entidadeId,
-      name: session.user.name,
-      email: session.user.email,
-      role: session.user.role,
-      isNewPPC: session.user.isNewPpc === true,
-      totalHorasExtensao: 0,
-      maximoHorasExtensao: 0,
-      totalHorasComplementar: 0,
-      maximoHorasComplementar: 0
+    const fetchData = async () => {
+      try {
+        loadingOverlay.show();
+        const certData = await listarMeusCertificados();
+        const mapped = certData.map((cert) => ({
+          id: cert.id,
+          title: cert.tituloAtividade,
+          local: cert.local,
+          description: cert.descricao || '',
+          cargaHoraria: cert.cargaHoraria,
+          periodoInicio: cert.dataInicio,
+          periodoFim: cert.dataFim,
+          categoria: cert.categoria,
+          grupo: cert.grupo,
+          categoriaKey: cert.categoriaKey,
+          tipo: mapTipoCertificado(cert.tipo),
+          status: mapStatusCertificado(cert.status)
+        }));
+        setCertificados(mapped);
+      } catch (error) {
+        console.error('Erro ao buscar certificados:', error);
+      } finally {
+        loadingOverlay.hide();
+      }
     };
 
-    return (
-        <>
-            <LoadingOverlay show={loadingOverlay.visible} />
-            <CertificadosContext.Provider value={certificados}>
-                <Suspense fallback={<div>Carregando certificados...</div>}>
-                    <CertificadosPageContent user={user} />
-                </Suspense>
-            </CertificadosContext.Provider>
-        </>
-    );
-}
+    fetchData();
+  }, [status, loadingOverlay]);
 
+  if (status === 'loading' || loadingOverlay.visible) {
+    return <LoadingOverlay show={true} />;
+  }
+  if (!session?.user) return null;
+
+  // 🔑 monta o user só com os dados básicos da sessão
+  const user: Types.Usuario = {
+    id: session.user.entidadeId!,
+    name: session.user.name,
+    email: session.user.email,
+    role: session.user.role,
+    isNewPPC: session.user.isNewPpc === true,
+    totalHorasExtensao: 0,
+    maximoHorasExtensao: 0,
+    totalHorasComplementar: 0,
+    maximoHorasComplementar: 0
+  };
+
+  return (
+    <>
+      <LoadingOverlay show={loadingOverlay.visible} />
+      <CertificadosContext.Provider value={certificados}>
+        <Suspense fallback={<div>Carregando certificados...</div>}>
+          <CertificadosPageContent user={user} />
+        </Suspense>
+      </CertificadosContext.Provider>
+    </>
+  );
+}

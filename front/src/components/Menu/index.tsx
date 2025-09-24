@@ -10,7 +10,7 @@ import {
   FaSignOutAlt,
   FaClipboard,
   FaGraduationCap,
-  FaBookOpen,
+  FaBookOpen
 } from 'react-icons/fa';
 
 type Props = {
@@ -66,7 +66,7 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
     <nav className="absolute w-full bg-white shadow-md z-30">
       <div className="flex flex-col">
         {/* MENU DO ADMINISTRADOR */}
-        {(role === 'admin') && (
+        {role === 'admin' && (
           <>
             <CustomNavLink href="/curso" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />
@@ -75,7 +75,7 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
         )}
 
         {/* MENU DO COORDENADOR */}
-        {(role === 'coordenador') && (
+        {role === 'coordenador' && (
           <>
             <CustomNavLink href="/coordenacao" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />

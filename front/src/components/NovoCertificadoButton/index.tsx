@@ -1,10 +1,14 @@
 'use client';
 import Link from 'next/link';
+import * as Types from '@/types';
 import { useState } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
-import * as Types from '@/types';
 
-export default function NovoCertificadoButton({ user }: { user: Types.Usuario }) {
+export default function NovoCertificadoButton({
+  user
+}: {
+  user: Types.Usuario;
+}) {
   const [open, setOpen] = useState(false);
   const extensao = user.isNewPPC === true;
 
