@@ -14,6 +14,8 @@ RUN dotnet publish "Back.API.csproj" -c Release -o /app/publish /p:UseAppHost=fa
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
 #Versionamento no runtime
 ARG VERSION=dev
 ENV APP_VERSION=$VERSION
