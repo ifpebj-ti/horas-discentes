@@ -24,6 +24,7 @@ import {
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';
+import { useSession } from 'next-auth/react';
 
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
@@ -45,7 +46,8 @@ function baixarPDFBase64(base64: string, nomeArquivo: string) {
   link.download = nomeArquivo;
   link.click();
 }
-function CertificadosPageContent() {
+
+function CertificadosPageContent( { user }: { user: Types.Usuario }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
@@ -140,7 +142,7 @@ function CertificadosPageContent() {
                   Gerencie seus certificados e acompanhe o status de cada um.
                 </p>
               </div>
-              <NovoCertificadoButton />
+              <NovoCertificadoButton user={user} />
             </div>
             <BreadCrumb items={breadcrumbItems} />
           </div>
@@ -216,48 +218,71 @@ function CertificadosPageContent() {
 }
 
 export default function Certificados() {
-  const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
-  const loadingOverlay = useLoadingOverlay(true);
+    const { data: session, status } = useSession();
+    const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
+    const loadingOverlay = useLoadingOverlay(true);
 
-  useEffect(() => {
-    const fetchCertificados = async () => {
-      try {
-        loadingOverlay.show();
-        const data = await listarMeusCertificados();
-        const mapped = data.map((cert) => ({
-          id: cert.id,
-          title: cert.tituloAtividade,
-          local: cert.local,
-          description: cert.descricao || '',
-          cargaHoraria: cert.cargaHoraria,
-          periodoInicio: cert.dataInicio,
-          periodoFim: cert.dataFim,
-          categoria: cert.categoria,
-          grupo: cert.grupo,
-          categoriaKey: cert.categoriaKey,
-          tipo: mapTipoCertificado(cert.tipo),
-          status: mapStatusCertificado(cert.status)
-        }));
+    const [userData, setUserData] = useState<any>(null);
 
-        setCertificados(mapped);
-      } catch (error) {
-        console.error('Erro ao buscar certificados:', error);
-      } finally {
-        loadingOverlay.hide();
-      }
+    useEffect(() => {
+      if (status !== 'authenticated') return;
+
+      const fetchData = async () => {
+        try {
+          loadingOverlay.show();
+          const certData = await listarMeusCertificados();
+          const mapped = certData.map((cert) => ({
+            id: cert.id,
+            title: cert.tituloAtividade,
+            local: cert.local,
+            description: cert.descricao || '',
+            cargaHoraria: cert.cargaHoraria,
+            periodoInicio: cert.dataInicio,
+            periodoFim: cert.dataFim,
+            categoria: cert.categoria,
+            grupo: cert.grupo,
+            categoriaKey: cert.categoriaKey,
+            tipo: mapTipoCertificado(cert.tipo),
+            status: mapStatusCertificado(cert.status)
+          }));
+          setCertificados(mapped);
+        } catch (error) {
+          console.error('Erro ao buscar certificados:', error);
+        } finally {
+          loadingOverlay.hide();
+        }
+      };
+
+      fetchData();
+    }, [status]);
+
+    if (status === 'loading' || loadingOverlay.visible) {
+      return <LoadingOverlay show={true} />;
+    }
+    if (!session?.user) return null;
+
+    // 🔑 monta o user só com os dados básicos da sessão
+    const user: Types.Usuario = {
+      id: (session.user as any).entidadeId,
+      name: session.user.name,
+      email: session.user.email,
+      role: session.user.role,
+      isNewPPC: session.user.isNewPpc === true,
+      totalHorasExtensao: 0,
+      maximoHorasExtensao: 0,
+      totalHorasComplementar: 0,
+      maximoHorasComplementar: 0
     };
 
-    fetchCertificados();
-  }, []);
-
-  return (
-    <>
-      <LoadingOverlay show={loadingOverlay.visible} />
-      <CertificadosContext.Provider value={certificados}>
-        <Suspense fallback={<div>Carregando certificados...</div>}>
-          <CertificadosPageContent />
-        </Suspense>
-      </CertificadosContext.Provider>
-    </>
-  );
+    return (
+        <>
+            <LoadingOverlay show={loadingOverlay.visible} />
+            <CertificadosContext.Provider value={certificados}>
+                <Suspense fallback={<div>Carregando certificados...</div>}>
+                    <CertificadosPageContent user={user} />
+                </Suspense>
+            </CertificadosContext.Provider>
+        </>
+    );
 }
+
