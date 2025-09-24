@@ -6,7 +6,7 @@
 
 Tipo:
 
-- [ ] marco-no-projeto
+- [ ] novo-marco
 - [ ] nova-feature
 - [ ] bug-fix
 

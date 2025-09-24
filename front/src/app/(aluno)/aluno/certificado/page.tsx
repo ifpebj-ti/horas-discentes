@@ -40,6 +40,7 @@ const breadcrumbItems = [
     href: '/aluno/certificado'
   }
 ];
+
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
   const link = document.createElement('a');
   link.href = `data:application/pdf;base64,${base64}`;
@@ -47,7 +48,9 @@ function baixarPDFBase64(base64: string, nomeArquivo: string) {
   link.click();
 }
 
+
 function CertificadosPageContent( { user }: { user: Types.Usuario }) {
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
@@ -102,8 +105,10 @@ function CertificadosPageContent( { user }: { user: Types.Usuario }) {
     const matchesCategory =
       selectedCategory === 'all' ||
       cert.categoriaKey.toLowerCase() === selectedCategory.toLowerCase();
+
     return matchesSearch && matchesStatus && matchesCategory;
   });
+
   const handleVerCertificado = async (id: string) => {
     try {
       const detalhes = await obterCertificadoPorId(id);
@@ -128,6 +133,7 @@ function CertificadosPageContent( { user }: { user: Types.Usuario }) {
       });
     }
   };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
       <main className="flex-1 w-full">
@@ -227,6 +233,7 @@ export default function Certificados() {
     useEffect(() => {
       if (status !== 'authenticated') return;
 
+
       const fetchData = async () => {
         try {
           loadingOverlay.show();
@@ -252,6 +259,7 @@ export default function Certificados() {
           loadingOverlay.hide();
         }
       };
+
 
       fetchData();
     }, [status]);
