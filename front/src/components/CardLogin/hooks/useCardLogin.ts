@@ -7,20 +7,20 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
-import { mySchema, typeMyschema } from '../schemas/schema';
+import { loginSchema, type LoginSchemaType } from '../schemas/schema';
 
 export function useCardLogin() {
   const router = useRouter();
 
-  const form = useForm<typeMyschema>({
-    resolver: zodResolver(mySchema),
+  const form = useForm<LoginSchemaType>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: ''
     }
   });
 
-  const submitForm: SubmitHandler<typeMyschema> = async (data) => {
+  const submitForm: SubmitHandler<LoginSchemaType> = async (data) => {
     const res = await signIn('credentials', {
       email: data.email,
       password: data.password,

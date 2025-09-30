@@ -9,3 +9,6 @@ export const loginSchema = z.object({
     .string()
     .nonempty("Campo obrigatório"),
 });
+
+// 👉 Exporta o tipo inferido do schema
+export type LoginSchemaType = z.infer<typeof loginSchema>;
