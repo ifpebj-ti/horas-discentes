@@ -25,17 +25,29 @@ export interface ResetPasswordResponse {
   message: string;
 }
 
-export const forgotPassword = async (data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> => {
-  const res = await api.post<ForgotPasswordResponse>('/auth/forgot-password', data);
+export const forgotPassword = async (
+  data: ForgotPasswordRequest
+): Promise<ForgotPasswordResponse> => {
+  const res = await api.post<ForgotPasswordResponse>(
+    '/auth/forgot-password',
+    data
+  );
   return res.data;
 };
 
-export const validateResetCode = async (data: ValidateCodeRequest): Promise<ValidateCodeResponse> => {
+export const validateResetCode = async (
+  data: ValidateCodeRequest
+): Promise<ValidateCodeResponse> => {
   const res = await api.post<ValidateCodeResponse>('/auth/validate-code', data);
   return res.data;
 };
 
-export const resetPassword = async (data: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
-  const res = await api.post<ResetPasswordResponse>('/auth/reset-password', data);
+export const resetPassword = async (
+  data: ResetPasswordRequest
+): Promise<ResetPasswordResponse> => {
+  const res = await api.post<ResetPasswordResponse>(
+    '/auth/reset-password',
+    data
+  );
   return res.data;
 };

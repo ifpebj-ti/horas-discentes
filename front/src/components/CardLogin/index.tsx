@@ -80,7 +80,6 @@ export const CardLogin = () => {
               href="esqueciSenha"
               className="text-sm text-[#0a0b0b] hover:underline cursor-pointer"
             >
-
               Esqueceu a senha?
             </a>
           </div>

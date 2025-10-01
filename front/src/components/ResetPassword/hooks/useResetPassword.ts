@@ -1,9 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+
+import {
+  forgotPassword,
+  validateResetCode,
+  resetPassword as resetPasswordApi
+} from '@/services/authRecovery';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
+
 import { resetPasswordSchema, ResetPasswordSchema } from '../schemas/schema';
-import { forgotPassword, validateResetCode, resetPassword as resetPasswordApi } from '@/services/authRecovery';
 
 export const useResetPassword = () => {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1); // 4 = sucesso
@@ -75,7 +82,11 @@ export const useResetPassword = () => {
     if (!codeValidated || !submittedEmail || !code) return;
     setLoading(true);
     try {
-      await resetPasswordApi({ email: submittedEmail, code, newPassword: data.senha });
+      await resetPasswordApi({
+        email: submittedEmail,
+        code,
+        newPassword: data.senha
+      });
       setStep(4);
     } catch (err: any) {
       Swal.fire({
