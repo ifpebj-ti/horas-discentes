@@ -46,19 +46,23 @@ export default function CursoPage() {
       try {
         show();
         const data = await obterResumoCursos();
+        console.log(' Cursos carregados:', data);
         setCourses(data);
       } catch (error) {
-        console.error('Erro ao buscar cursos:', error);
+        console.error(' Erro ao buscar cursos:', error);
       } finally {
         hide();
       }
     };
+
     fetchData();
   }, [show, hide]);
 
   const filteredCourses = Array.isArray(courses)
-    ? courses.filter((course) =>
-        course.nome.toLowerCase().includes(search.toLowerCase())
+    ? courses.filter(
+        (course) =>
+          typeof course.nome === 'string' &&
+          course.nome.toLowerCase().includes(search.toLowerCase())
       )
     : [];
 

@@ -1,16 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Back.Domain.Entities.Curso;
-using Back.Domain.Entities.Turma;
+﻿using Back.Domain.Entities.Admin;
 using Back.Domain.Entities.Aluno;
-using Back.Domain.Entities.Admin;
-using Back.Domain.Entities.Coordenador;
-using Back.Domain.Entities.Certificado;
-using Back.Domain.Entities.Atividade;
-using Back.Domain.Entities.LimiteHorasAluno;
-using Back.Domain.Entities.Convite;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Back.Domain.Entities.AlunoAtividade;
+using Back.Domain.Entities.Atividade;
+using Back.Domain.Entities.Auth;
+using Back.Domain.Entities.Certificado;
+using Back.Domain.Entities.Convite;
+using Back.Domain.Entities.Coordenador;
+using Back.Domain.Entities.Curso;
+using Back.Domain.Entities.LimiteHorasAluno;
+using Back.Domain.Entities.Turma;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Back.Infrastructure.Persistence.Context;
 
@@ -31,6 +32,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<LimiteHorasAluno> LimitesHoras { get; set; }
     public DbSet<ConviteCoordenador> Convites { get; set; }
     public DbSet<AlunoAtividade> AlunoAtividades { get; set; }
+    public DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,7 +66,13 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .Property(c => c.Anexo)
             .HasColumnType("bytea");
 
-
+        modelBuilder.Entity<ResetPasswordCode>(cfg =>
+        {
+            cfg.ToTable("ResetPasswordCodes");
+            cfg.HasIndex(x => new { x.IdentityUserId, x.Code, x.Used });
+            cfg.Property(x => x.Code).IsRequired().HasMaxLength(6);
+            cfg.Property(x => x.IdentityResetToken).IsRequired();
+        });
 
     }
 }

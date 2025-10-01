@@ -1,12 +1,8 @@
 import { z } from 'zod';
 
-export const mySchema = z
-  .object({
-    email: z
-      .string({ required_error: 'Campo obrigatório' })
-      .email('Email Inválido'),
-    password: z.string({ required_error: 'Campo obrigatório' })
-  })
-  .required();
+export const loginSchema = z.object({
+  email: z.string().nonempty('Campo obrigatório').email('Email Inválido'),
+  password: z.string().nonempty('Campo obrigatório')
+});
 
-export type typeMyschema = z.infer<typeof mySchema>;
+export type LoginSchemaType = z.infer<typeof loginSchema>;

@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
   useState,
@@ -39,13 +40,15 @@ const breadcrumbItems = [
     href: '/aluno/certificado'
   }
 ];
+
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
   const link = document.createElement('a');
   link.href = `data:application/pdf;base64,${base64}`;
   link.download = nomeArquivo;
   link.click();
 }
-function CertificadosPageContent() {
+
+function CertificadosPageContent({ user }: { user: Types.Usuario }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
@@ -100,8 +103,10 @@ function CertificadosPageContent() {
     const matchesCategory =
       selectedCategory === 'all' ||
       cert.categoriaKey.toLowerCase() === selectedCategory.toLowerCase();
+
     return matchesSearch && matchesStatus && matchesCategory;
   });
+
   const handleVerCertificado = async (id: string) => {
     try {
       const detalhes = await obterCertificadoPorId(id);
@@ -126,6 +131,7 @@ function CertificadosPageContent() {
       });
     }
   };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
       <main className="flex-1 w-full">
@@ -140,7 +146,7 @@ function CertificadosPageContent() {
                   Gerencie seus certificados e acompanhe o status de cada um.
                 </p>
               </div>
-              <NovoCertificadoButton />
+              <NovoCertificadoButton user={user} />
             </div>
             <BreadCrumb items={breadcrumbItems} />
           </div>
@@ -216,15 +222,18 @@ function CertificadosPageContent() {
 }
 
 export default function Certificados() {
+  const { data: session, status } = useSession();
   const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
   const loadingOverlay = useLoadingOverlay(true);
 
   useEffect(() => {
-    const fetchCertificados = async () => {
+    if (status !== 'authenticated') return;
+
+    const fetchData = async () => {
       try {
         loadingOverlay.show();
-        const data = await listarMeusCertificados();
-        const mapped = data.map((cert) => ({
+        const certData = await listarMeusCertificados();
+        const mapped = certData.map((cert) => ({
           id: cert.id,
           title: cert.tituloAtividade,
           local: cert.local,
@@ -238,7 +247,6 @@ export default function Certificados() {
           tipo: mapTipoCertificado(cert.tipo),
           status: mapStatusCertificado(cert.status)
         }));
-
         setCertificados(mapped);
       } catch (error) {
         console.error('Erro ao buscar certificados:', error);
@@ -247,15 +255,33 @@ export default function Certificados() {
       }
     };
 
-    fetchCertificados();
-  }, []);
+    fetchData();
+  }, [status, loadingOverlay]);
+
+  if (status === 'loading' || loadingOverlay.visible) {
+    return <LoadingOverlay show={true} />;
+  }
+  if (!session?.user) return null;
+
+  // 🔑 monta o user só com os dados básicos da sessão
+  const user: Types.Usuario = {
+    id: session.user.entidadeId!,
+    name: session.user.name,
+    email: session.user.email,
+    role: session.user.role,
+    isNewPPC: session.user.isNewPpc === true,
+    totalHorasExtensao: 0,
+    maximoHorasExtensao: 0,
+    totalHorasComplementar: 0,
+    maximoHorasComplementar: 0
+  };
 
   return (
     <>
       <LoadingOverlay show={loadingOverlay.visible} />
       <CertificadosContext.Provider value={certificados}>
         <Suspense fallback={<div>Carregando certificados...</div>}>
-          <CertificadosPageContent />
+          <CertificadosPageContent user={user} />
         </Suspense>
       </CertificadosContext.Provider>
     </>

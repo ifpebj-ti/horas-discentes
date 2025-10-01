@@ -4,7 +4,6 @@ import type { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 import axios from 'axios';
-import https from 'https';
 import jwt_decode from 'jsonwebtoken';
 
 interface BackendUser {
@@ -42,15 +41,12 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-
           const response = await axios.post<BackendUser>(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
               email: credentials?.email,
               senha: credentials?.password
-            },
-            { httpsAgent }
+            }
           );
 
           const user = response.data;

@@ -1,10 +1,18 @@
 'use client';
+
 import Link from 'next/link';
 import { useState } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
 
-export default function NovoCertificadoButton() {
+import * as Types from '@/types';
+
+export default function NovoCertificadoButton({
+  user
+}: {
+  user: Types.Usuario;
+}) {
   const [open, setOpen] = useState(false);
+  const extensao = user.isNewPPC === true;
 
   function toggleDropdown(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -47,13 +55,15 @@ export default function NovoCertificadoButton() {
             >
               Horas Complementares
             </Link>
-            <Link
-              href="/aluno/certificado/novo?tipo=horas-extensao"
-              className="block px-4 py-2 text-sm text-gray-900 hover:bg-blue-500 hover:text-white"
-              onClick={closeDropdown}
-            >
-              Horas de Extensão
-            </Link>
+            {extensao && (
+              <Link
+                href="/aluno/certificado/novo?tipo=horas-extensao"
+                className="block px-4 py-2 text-sm text-gray-900 hover:bg-blue-500 hover:text-white"
+                onClick={closeDropdown}
+              >
+                Horas de Extensão
+              </Link>
+            )}
           </div>
         </div>
       )}
