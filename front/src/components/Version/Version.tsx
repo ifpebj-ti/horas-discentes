@@ -12,10 +12,34 @@ type VersionProps = {
   disableUpdateCheck?: boolean;
 };
 
+const resolveBuildTime = (value?: string | null) => {
+  if (value) {
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+      return value;
+    }
+  }
+
+  return new Date().toISOString();
+};
+
+const formatBuildDate = (date: string) => {
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) {
+    return 'Data indisponivel';
+  }
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  };
+
+  return new Intl.DateTimeFormat('pt-BR', options).format(parsed);
+};
+
 export default function Version({ disableUpdateCheck = false }: VersionProps) {
-  const buildTime = process.env.NEXT_PUBLIC_BUILDTIME?.length
-    ? process.env.NEXT_PUBLIC_BUILDTIME
-    : new Date().toISOString();
+  const buildTime = resolveBuildTime(process.env.NEXT_PUBLIC_BUILDTIME);
 
   const revision = process.env.NEXT_PUBLIC_REVISION?.length
     ? process.env.NEXT_PUBLIC_REVISION
@@ -24,15 +48,6 @@ export default function Version({ disableUpdateCheck = false }: VersionProps) {
   const version = process.env.NEXT_PUBLIC_VERSION?.length
     ? process.env.NEXT_PUBLIC_VERSION
     : 'dev';
-
-  const formatDate = (date: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    };
-    return new Intl.DateTimeFormat('pt-BR', options).format(new Date(date));
-  };
 
   let latestRelease = cache.get(LATEST_RELEASE_CACHE_KEY);
 
@@ -50,7 +65,7 @@ export default function Version({ disableUpdateCheck = false }: VersionProps) {
       <span className="text-xs text-gray-600 dark:text-gray-300">
         {version === 'main' || version === 'dev' || version === 'nightly' ? (
           <>
-            {version} ({revision.substring(0, 7)}, {formatDate(buildTime)})
+            {version} ({revision.substring(0, 7)}, {formatBuildDate(buildTime)})
           </>
         ) : (
           <a
@@ -59,7 +74,7 @@ export default function Version({ disableUpdateCheck = false }: VersionProps) {
             rel="noopener noreferrer"
             className="ml-2 text-xs text-gray-600 dark:text-gray-300 flex flex-row items-center"
           >
-            {version} ({revision.substring(0, 7)}, {formatDate(buildTime)})
+            {version} ({revision.substring(0, 7)}, {formatBuildDate(buildTime)})
           </a>
         )}
       </span>
@@ -74,7 +89,7 @@ export default function Version({ disableUpdateCheck = false }: VersionProps) {
             rel="noopener noreferrer"
             className="ml-2 text-xs text-red-500 flex flex-row items-center"
           >
-            <MdNewReleases className="mr-1" /> Atualização disponível
+            <MdNewReleases className="mr-1" /> Atualizacao disponivel
           </a>
         )}
     </div>

@@ -35,7 +35,13 @@ export default function VerCertificado({
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) {
+      return 'Data indisponivel';
+    }
     const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) {
+      return 'Data indisponivel';
+    }
     return date.toLocaleDateString('pt-BR');
   };
 
