@@ -1,12 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import {
+  forgotPassword,
+  validateResetCode,
+  resetPassword as resetPasswordApi
+} from '@/services/authRecovery';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
 import { resetPasswordSchema, ResetPasswordSchema } from '../schemas/schema';
+
 export const useResetPassword = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1); // 4 = sucesso
   const [email, setEmail] = useState('');
   const [submittedEmail, setSubmittedEmail] = useState('');
   const [code, setCode] = useState('');
@@ -19,17 +26,23 @@ export const useResetPassword = () => {
   });
 
   const handleSendCode = async () => {
+    if (!email) return;
     setLoading(true);
     try {
-      // Simula envio de email
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await forgotPassword({ email });
       setSubmittedEmail(email);
       setStep(2);
-    } catch (err) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Código enviado',
+        text: 'Verifique sua caixa de entrada e spam.',
+        confirmButtonColor: '#1351B4'
+      });
+    } catch (err: any) {
       Swal.fire({
         icon: 'error',
-        title: `Erro ao enviar código ${String(err)}`,
-        text: 'Verifique se o email está correto.',
+        title: 'Erro ao enviar código',
+        text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
         confirmButtonColor: '#f87171'
       });
     } finally {
@@ -38,51 +51,48 @@ export const useResetPassword = () => {
   };
 
   const handleValidateCode = async () => {
+    if (!code || !submittedEmail) return;
     setLoading(true);
     try {
-      // Simula validação
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      if (code === '123456') {
+      const res = await validateResetCode({ email: submittedEmail, code });
+      if (res.valid) {
         setCodeValidated(true);
         setStep(3);
       } else {
         Swal.fire({
           icon: 'error',
           title: 'Código inválido',
-          text: 'Verifique o código enviado para o seu email.',
+          text: res.message ?? 'Verifique o código e tente novamente.',
           confirmButtonColor: '#f87171'
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       Swal.fire({
         icon: 'error',
-        title: `Erro ao validar código ${String(err)}`,
-        text: 'Tente novamente mais tarde.',
+        title: 'Erro ao validar código',
+        text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
         confirmButtonColor: '#f87171'
       });
-      alert('Erro na validação');
     } finally {
       setLoading(false);
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleResetPassword = async (data: ResetPasswordSchema) => {
+    if (!codeValidated || !submittedEmail || !code) return;
     setLoading(true);
     try {
-      // Simula envio da nova senha
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      Swal.fire({
-        icon: 'success',
-        title: 'Senha redefinida com sucesso!',
-        text: 'Você pode fazer login agora.',
-        confirmButtonColor: '#1351B4'
+      await resetPasswordApi({
+        email: submittedEmail,
+        code,
+        newPassword: data.senha
       });
-    } catch (err) {
+      setStep(4);
+    } catch (err: any) {
       Swal.fire({
         icon: 'error',
-        title: `Erro ao redefinir a senha ${String(err)}`,
-        text: 'Tente novamente mais tarde.',
+        title: 'Erro ao redefinir senha',
+        text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
         confirmButtonColor: '#f87171'
       });
     } finally {
@@ -102,6 +112,7 @@ export const useResetPassword = () => {
     handleSendCode,
     handleValidateCode,
     handleResetPassword,
-    codeValidated
+    codeValidated,
+    setStep
   };
 };

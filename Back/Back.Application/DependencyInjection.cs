@@ -42,6 +42,9 @@ public static class DependencyInjection
         services.AddScoped<MarcarDownloadRelatorioUseCase>();
         //auth
         services.AddScoped<LoginUseCase>();
+        services.AddScoped<ForgotPasswordUseCase>();
+        services.AddScoped<ValidateResetCodeUseCase>();
+        services.AddScoped<ResetPasswordUseCase>();
 
         //coordenador
         services.AddScoped<EnviarConviteUseCase>();

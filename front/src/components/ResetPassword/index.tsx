@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { FaEnvelope, FaKey } from 'react-icons/fa';
+import Link from 'next/link';
+import { FaEnvelope, FaKey, FaArrowLeft } from 'react-icons/fa';
 
 import { Input } from '../Input';
 import { InputPassword } from '../InputPassword';
@@ -21,7 +22,8 @@ export const ResetPassword = () => {
     handleSendCode,
     handleValidateCode,
     handleResetPassword,
-    codeValidated
+    codeValidated,
+    setStep
   } = useResetPassword();
 
   const {
@@ -33,145 +35,261 @@ export const ResetPassword = () => {
 
   const senha = watch('senha') || '';
   const confirmarSenha = watch('confirmarSenha') || '';
-
   const senhasIguais = senha === confirmarSenha && confirmarSenha.length > 0;
 
-  return (
-    <div className="min-h-screen grid md:grid-cols-2 w-full">
-      <div className="flex items-start md:items-center justify-center bg-white pt-4 pb-0">
-        <Image
-          src="/login.svg"
-          alt="Redefinir Senha"
-          width={400}
-          height={400}
-          className="w-auto h-auto max-w-[300px] md:max-w-[400px]"
+  const StepsDots = ({ active }: { active: number }) => (
+    <div className="flex items-center justify-center gap-3 my-4">
+      {[1, 2, 3].map((i) => (
+        <span
+          key={i}
+          className={`h-2 w-6 rounded-full transition-all ${active === i ? 'bg-[#0B2A66]' : 'bg-slate-300'}`}
         />
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 w-full">
+      <div className="flex flex-col items-center justify-center  p-8">
+        <div className="max-w-[460px] w-full">
+          <Image
+            src="/login.svg"
+            alt="Recuperação Segura"
+            width={420}
+            height={420}
+            className="mx-auto mb-6"
+          />
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 text-center">
+            Recuperação Segura
+          </h2>
+          <p className="text-slate-500 text-center mt-2">
+            Siga os passos para redefinir sua senha de forma segura e rápida no
+            sistema HoraMais.
+          </p>
+        </div>
       </div>
 
-      <div className="flex flex-col justify-center items-center px-6 md:px-12 pb-4 md:pb-0">
-        <div className="w-full max-w-md">
-          <h1 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">
-            Redefinir Senha
-          </h1>
+      <div className="flex items-center justify-center p-6 md:p-10 bg-white">
+        <div className="w-full max-w-xl">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-extrabold text-[#0B2A66]">HoraMais</h1>
+            <p className="text-slate-500 -mt-1">Sistema de Gestão de Tempo</p>
+          </div>
 
-          {step === 1 && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSendCode();
-              }}
-            >
-              <label className="block mb-1 text-sm">Email:</label>
-              <Input
-                placeholder="Digite seu email institucional"
-                icon={FaEnvelope}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <p className="mt-2" />
-              <RoundedButton
-                text={loading ? 'Enviando...' : 'Enviar Código'}
-                type="submit"
-                disabled={loading || !email}
-                bgColor="bg-[#1351B4]"
-                textColor="text-white"
-              />
-            </form>
-          )}
+          <div className="bg-white/90 backdrop-blur rounded-2xl shadow-[0_20px_60px_rgba(2,6,23,0.12)] p-6 md:p-8">
+            {step === 1 && (
+              <>
+                <h2 className="text-xl font-bold text-center text-slate-800 mb-1">
+                  Recuperar Senha
+                </h2>
+                <p className="text-slate-500 text-center">
+                  Digite seu e-mail institucional para receber o código de
+                  recuperação
+                </p>
+                <StepsDots active={1} />
 
-          {step === 2 && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleValidateCode();
-              }}
-            >
-              <p className="text-sm text-gray-600 mb-2 text-center">
-                Enviamos um código para: <strong>{submittedEmail}</strong>
-              </p>
-              <label className="block mb-1 text-sm">Código:</label>
-              <Input
-                placeholder="Digite o código"
-                icon={FaKey}
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-              />
-              <p className="mt-2" />
-              <RoundedButton
-                text={loading ? 'Validando...' : 'Continuar'}
-                type="submit"
-                disabled={loading || !code}
-                bgColor="bg-[#1351B4]"
-                textColor="text-white"
-              />
-            </form>
-          )}
+                <form
+                  className="mt-4"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSendCode();
+                  }}
+                >
+                  <label className="block mb-1 text-sm text-slate-600">
+                    E-mail
+                  </label>
+                  <Input
+                    placeholder="seuemail@discente.ifpe.edu.br"
+                    icon={FaEnvelope}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <div className="mt-6">
+                    <RoundedButton
+                      text={loading ? 'Enviando...' : 'Enviar Código'}
+                      type="submit"
+                      disabled={loading || !email}
+                      bgColor="bg-[#0B2A66]"
+                      textColor="text-white"
+                    />
+                  </div>
+                </form>
 
-          {step === 3 && codeValidated && (
-            <form onSubmit={handleSubmit(handleResetPassword)}>
-              <div className="mb-4">
-                <label className="block mb-1 text-sm">Nova Senha:</label>
-                <InputPassword
-                  placeholder="Nova senha"
-                  {...register('senha')}
-                />
-                <ul className="mt-2 space-y-1 text-sm">
-                  <li
-                    className={`${senha.length >= 8 ? 'text-green-600' : 'text-gray-500'}`}
-                  >
-                    • Mínimo de 8 caracteres
-                  </li>
-                  <li
-                    className={`${/[A-Z]/.test(senha) ? 'text-green-600' : 'text-gray-500'}`}
-                  >
-                    • Pelo menos 1 letra maiúscula
-                  </li>
-                  <li
-                    className={`${/[a-z]/.test(senha) ? 'text-green-600' : 'text-gray-500'}`}
-                  >
-                    • Pelo menos 1 letra minúscula
-                  </li>
-                  <li
-                    className={`${/[0-9]/.test(senha) ? 'text-green-600' : 'text-gray-500'}`}
-                  >
-                    • Pelo menos 1 número
-                  </li>
-                  <li
-                    className={`${/[!@#$%^&*(),.?":{}|<>]/.test(senha) ? 'text-green-600' : 'text-gray-500'}`}
-                  >
-                    • Pelo menos 1 caractere especial
-                  </li>
-                </ul>
-                {errors.senha && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.senha.message}
+                <p className="text-center text-sm text-slate-500 mt-6">
+                  Lembrou da senha?{' '}
+                  <Link href="/" className="text-[#0B2A66] font-semibold">
+                    Fazer login
+                  </Link>
+                </p>
+              </>
+            )}
+
+            {step === 2 && (
+              <>
+                <h2 className="text-xl font-bold text-center text-slate-800 mb-1">
+                  Validar Código
+                </h2>
+                <p className="text-slate-500 text-center">
+                  Digite o código de 6 dígitos enviado para seu e-mail
+                </p>
+                <StepsDots active={2} />
+
+                <form
+                  className="mt-4"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleValidateCode();
+                  }}
+                >
+                  <p className="text-sm text-slate-600 mb-2 text-center">
+                    Código enviado para{' '}
+                    <span className="font-semibold">{submittedEmail}</span>
                   </p>
-                )}
+                  <label className="block mb-1 text-sm text-slate-600">
+                    Código
+                  </label>
+                  <Input
+                    placeholder="000000"
+                    icon={FaKey}
+                    value={code}
+                    onChange={(e) =>
+                      setCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+                    }
+                  />
+                  <div className="flex items-center gap-3 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="flex items-center gap-2 px-4 py-3 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50"
+                    >
+                      <FaArrowLeft /> Voltar
+                    </button>
+                    <div className="flex-1">
+                      <RoundedButton
+                        text={loading ? 'Validando...' : 'Validar Código'}
+                        type="submit"
+                        disabled={loading || code.length !== 6}
+                        bgColor="bg-[#0B2A66]"
+                        textColor="text-white"
+                      />
+                    </div>
+                  </div>
+                </form>
+              </>
+            )}
+
+            {step === 3 && codeValidated && (
+              <>
+                <h2 className="text-xl font-bold text-center text-slate-800 mb-1">
+                  Nova Senha
+                </h2>
+                <p className="text-slate-500 text-center">
+                  Crie uma nova senha segura para sua conta
+                </p>
+                <StepsDots active={3} />
+
+                <form
+                  className="mt-4"
+                  onSubmit={handleSubmit(handleResetPassword)}
+                >
+                  <div className="mb-4">
+                    <label className="block mb-1 text-sm text-slate-600">
+                      Nova senha
+                    </label>
+                    <InputPassword
+                      placeholder="Nova senha"
+                      {...register('senha')}
+                    />
+                    <ul className="mt-2 space-y-1 text-sm">
+                      <li
+                        className={`${senha.length >= 8 ? 'text-green-600' : 'text-slate-500'}`}
+                      >
+                        • Mínimo de 8 caracteres
+                      </li>
+                      <li
+                        className={`${/[A-Z]/.test(senha) ? 'text-green-600' : 'text-slate-500'}`}
+                      >
+                        • Pelo menos uma letra maiúscula
+                      </li>
+                      <li
+                        className={`${/[a-z]/.test(senha) ? 'text-green-600' : 'text-slate-500'}`}
+                      >
+                        • Pelo menos uma letra minúscula
+                      </li>
+                      <li
+                        className={`${/[0-9]/.test(senha) ? 'text-green-600' : 'text-slate-500'}`}
+                      >
+                        • Pelo menos um número
+                      </li>
+                      <li
+                        className={`${/[!@#$%^&*(),.?":{}|<>]/.test(senha) ? 'text-green-600' : 'text-slate-500'}`}
+                      >
+                        • Pelo menos um caractere especial
+                      </li>
+                    </ul>
+                    {errors.senha && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.senha.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mb-6">
+                    <label className="block mb-1 text-sm text-slate-600">
+                      Confirmar senha
+                    </label>
+                    <InputPassword
+                      placeholder="Confirmar senha"
+                      {...register('confirmarSenha')}
+                    />
+                    {errors.confirmarSenha && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.confirmarSenha.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setStep(2)}
+                      className="flex items-center gap-2 px-4 py-3 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50"
+                    >
+                      <FaArrowLeft /> Voltar
+                    </button>
+                    <div className="flex-1">
+                      <RoundedButton
+                        type="submit"
+                        text={loading ? 'Salvando...' : 'Salvar Nova Senha'}
+                        disabled={loading || !isValid || !senhasIguais}
+                        bgColor="bg-[#0B2A66]"
+                        textColor="text-white"
+                      />
+                    </div>
+                  </div>
+                </form>
+              </>
+            )}
+
+            {step === 4 && (
+              <div className="text-center py-8">
+                <h2 className="text-2xl font-extrabold text-emerald-600">
+                  Sucesso!
+                </h2>
+                <p className="text-slate-500 mt-2">
+                  Sua senha foi redefinida com sucesso!
+                </p>
+                <div className="mt-8">
+                  <Link
+                    href="/"
+                    className="inline-block bg-[#0B2A66] text-white px-6 py-3 rounded-xl shadow hover:brightness-110"
+                  >
+                    Ir para Login
+                  </Link>
+                </div>
               </div>
-
-              <div className="mb-4">
-                <label className="block mb-1 text-sm">Confirmar Senha:</label>
-                <InputPassword
-                  placeholder="Confirmar Senha"
-                  {...register('confirmarSenha')}
-                />
-
-                {errors.confirmarSenha && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.confirmarSenha.message}
-                  </p>
-                )}
-              </div>
-
-              <RoundedButton
-                type="submit"
-                text={loading ? 'Salvando...' : 'Finalizar'}
-                disabled={loading || !isValid || !senhasIguais}
-                bgColor="bg-[#1351B4]"
-                textColor="text-white"
-              />
-            </form>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
