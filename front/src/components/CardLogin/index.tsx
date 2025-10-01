@@ -76,12 +76,13 @@ export const CardLogin = () => {
           </p>
 
           <div className="text-right mb-4">
-            <button
-              type="button"
-              className="text-sm text-[#0a0b0b] hover:underline"
+            <a
+              href="esqueciSenha"
+              className="text-sm text-[#0a0b0b] hover:underline cursor-pointer"
             >
+
               Esqueceu a senha?
-            </button>
+            </a>
           </div>
 
           <div className="flex items-center mb-6">
