@@ -2,15 +2,24 @@
 FROM node:22-alpine AS builder
 WORKDIR /app
 
-# Versionamento no container final
+# Versionamento
 ARG VERSION=dev
 ARG REVISION=local
 ARG BUILDTIME=dev
 
-ENV NEXT_PUBLIC_VERSION=$VERSION
-ENV NEXT_PUBLIC_REVISION=$REVISION
-ENV NEXT_PUBLIC_BUILDTIME=$BUILDTIME
+# Variáveis públicas (entram no bundle do cliente)
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_VERSION
+ARG NEXT_PUBLIC_REVISION
+ARG NEXT_PUBLIC_BUILDTIME
 
+# Exporta para o ambiente do build antes do build do Next
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_VERSION=${NEXT_PUBLIC_VERSION:-$VERSION}
+ENV NEXT_PUBLIC_REVISION=${NEXT_PUBLIC_REVISION:-$REVISION}
+ENV NEXT_PUBLIC_BUILDTIME=${NEXT_PUBLIC_BUILDTIME:-$BUILDTIME}
+
+# Dependências e build
 COPY package*.json ./
 RUN npm install
 COPY . .
@@ -20,14 +29,22 @@ RUN npm run build
 FROM node:22-alpine AS production
 WORKDIR /app
 
+ENV NODE_ENV=production
+
+# Reexporta info de versionamento (opcional; bundle já contém os valores)
+ARG VERSION=dev
+ARG REVISION=local
+ARG BUILDTIME=dev
 ENV NEXT_PUBLIC_VERSION=$VERSION
 ENV NEXT_PUBLIC_REVISION=$REVISION
 ENV NEXT_PUBLIC_BUILDTIME=$BUILDTIME
-ENV NODE_ENV=production
 
+# Copia artefatos
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
+
+
 EXPOSE 3000
 CMD ["npm", "start"]
