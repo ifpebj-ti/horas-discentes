@@ -42,7 +42,7 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         try {
           const response = await axios.post<BackendUser>(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+            'https://api.horamais.app/api/auth/login',
             {
               email: credentials?.email,
               senha: credentials?.password
