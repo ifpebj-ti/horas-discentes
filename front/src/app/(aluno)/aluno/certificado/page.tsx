@@ -256,7 +256,8 @@ export default function Certificados() {
     };
 
     fetchData();
-  }, [status, loadingOverlay]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   if (status === 'loading' || loadingOverlay.visible) {
     return <LoadingOverlay show={true} />;

@@ -2,7 +2,8 @@
 
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useEffect, useState, createContext, useContext } from 'react';
+// Importa useMemo
+import { useEffect, useState, createContext, useContext, useMemo } from 'react';
 import { FaHome } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
@@ -25,6 +26,7 @@ import Swal from 'sweetalert2';
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
+  // ... (código da função)
   const link = document.createElement('a');
   link.href = `data:application/pdf;base64,${base64}`;
   link.download = nomeArquivo;
@@ -40,6 +42,7 @@ function AlunoPageContent({
   categoriasComplementares: Types.CategoriaProgresso[];
   categoriasExtensao: Types.CategoriaProgresso[];
 }) {
+  // ... (código do componente AlunoPageContent)
   const certificados = useContext(CertificadosContext);
   const [categoriaKeySelecionada, setCategoriaKeySelecionada] =
     useState<string>();
@@ -196,6 +199,32 @@ export default function Aluno() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [userData, setUserData] = useState<any>(null);
 
+  const { entidadeId, name, email, role, isNewPPC } =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (session?.user as any) || {};
+
+  const user: Types.Usuario = useMemo(
+    () => ({
+      id: entidadeId || '',
+      name: name || '',
+      email: email || '',
+      role: role || '',
+      isNewPPC: isNewPPC === true,
+      totalHorasExtensao: userData?.totalHorasExtensao,
+      maximoHorasExtensao: userData?.maximoHorasExtensao,
+      totalHorasComplementar: userData?.totalHorasComplementar,
+      maximoHorasComplementar: userData?.maximoHorasComplementar
+    }),
+    [
+      entidadeId,
+      name,
+      email,
+      role,
+      isNewPPC,
+      userData // 'user' depende de 'userData' e dos dados da sessão
+    ]
+  );
+
   useEffect(() => {
     if (status !== 'authenticated') return;
 
@@ -260,26 +289,15 @@ export default function Aluno() {
     };
 
     fetchData();
-  }, [status, loadingOverlay]); // ✅ adicionado loadingOverlay
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   if (status === 'loading' || loadingOverlay.visible || !userData) {
     return <LoadingOverlay show={true} />;
   }
   if (!session?.user) return null;
 
-  const user: Types.Usuario = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    id: (session.user as any).entidadeId,
-    name: session.user.name,
-    email: session.user.email,
-    role: session.user.role,
-    isNewPPC: session.user.isNewPpc === true,
-    totalHorasExtensao: userData.totalHorasExtensao,
-    maximoHorasExtensao: userData.maximoHorasExtensao,
-    totalHorasComplementar: userData.totalHorasComplementar,
-    maximoHorasComplementar: userData.maximoHorasComplementar
-  };
-
+  // O 'user' já foi calculado lá em cima pelo useMemo
   return (
     <CertificadosContext.Provider value={certificados}>
       <AlunoPageContent
