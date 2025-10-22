@@ -26,7 +26,6 @@ import Swal from 'sweetalert2';
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
-  // ... (código da função)
   const link = document.createElement('a');
   link.href = `data:application/pdf;base64,${base64}`;
   link.download = nomeArquivo;
