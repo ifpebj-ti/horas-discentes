@@ -7,7 +7,8 @@ import {
   FaMapMarkerAlt,
   FaBookOpen,
   FaBuilding,
-  FaAlignLeft
+  FaAlignLeft,
+  FaExclamationTriangle
 } from 'react-icons/fa';
 
 import { FileUploadInput } from '@components/FileUploadInput';
@@ -40,6 +41,7 @@ export default function FormRegistroHoras({
   } = useFormRegistroHoras({ categoriasComplementares, categoriasExtensao });
 
   const { register } = formMethods;
+  const [termosExpandidos, setTermosExpandidos] = React.useState(false);
 
   const categoriasAtuais =
     tipoRegistro === 'horas-extensao'
@@ -312,10 +314,66 @@ export default function FormRegistroHoras({
             </p>
           </div>
 
+          <div className="col-span-1 md:col-span-3">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <input
+                  id="aceitarTermos"
+                  type="checkbox"
+                  {...register('aceitarTermos')}
+                  className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                />
+                <label
+                  htmlFor="aceitarTermos"
+                  className="text-sm text-gray-700 cursor-pointer flex-1"
+                >
+                  <div className="flex items-start gap-2">
+                    <FaExclamationTriangle className="text-yellow-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <span>
+                        Declaro, sob as penas da lei, que todas as informações e
+                        documentos apresentados são verdadeiros e condizentes com a
+                        realidade dos fatos.{' '}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setTermosExpandidos(!termosExpandidos);
+                          }}
+                          className="text-blue-600 hover:text-blue-800 underline font-medium"
+                        >
+                          {termosExpandidos ? 'Ocultar detalhes' : 'Leia mais'}
+                        </button>
+                      </span>
+                      {termosExpandidos && (
+                        <div className="mt-2 pl-6 text-gray-700 leading-relaxed animate-fadeIn">
+                          <p className="mb-2">
+                            Estou ciente de que a falsidade nas informações ou
+                            documentos apresentados implicará em penalidades cabíveis,
+                            conforme previsto no Código Penal Brasileiro,
+                            especialmente nos artigos que tratam de crimes contra a
+                            fé pública e falsidade documental, podendo resultar na
+                            anulação do registro das horas complementares ou de
+                            extensão, bem como em medidas disciplinares pertinentes.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </label>
+              </div>
+              {errors.aceitarTermos && (
+                <p className="text-red-500 text-xs mt-2 pl-6">
+                  {errors.aceitarTermos.message}
+                </p>
+              )}
+            </div>
+          </div>
+
           <div className="col-span-1 md:col-span-3 flex justify-end pt-4">
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !formMethods.watch('aceitarTermos')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Enviando...' : 'Enviar'}

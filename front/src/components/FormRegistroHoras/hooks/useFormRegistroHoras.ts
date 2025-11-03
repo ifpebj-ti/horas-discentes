@@ -39,7 +39,8 @@ export function useFormRegistroHoras({
       dataFimAtividade: '',
       totalPeriodos: 1,
       especificacaoAtividade: '',
-      anexoComprovante: null
+      anexoComprovante: null,
+      aceitarTermos: false
     },
     mode: 'onChange'
   });
