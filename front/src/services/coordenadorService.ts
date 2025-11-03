@@ -74,3 +74,10 @@ export const obterCoordenadorPorCurso = async (
     return null;
   }
 };
+
+// Deletar coordenador por ID
+export const deletarCoordenador = async (
+  coordenadorId: string
+): Promise<void> => {
+  await api.delete(`/coordenador/${coordenadorId}`);
+};

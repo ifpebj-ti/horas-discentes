@@ -21,7 +21,8 @@ import {
   criarCurso,
   obterResumoCursos,
   CursoResumoResponse,
-  CreateCursoRequest
+  CreateCursoRequest,
+  deletarCurso
 } from '@/services/cursoService';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -60,10 +61,10 @@ export default function CursoPage() {
 
   const filteredCourses = Array.isArray(courses)
     ? courses.filter(
-        (course) =>
-          typeof course.nome === 'string' &&
-          course.nome.toLowerCase().includes(search.toLowerCase())
-      )
+      (course) =>
+        typeof course.nome === 'string' &&
+        course.nome.toLowerCase().includes(search.toLowerCase())
+    )
     : [];
 
   const handleAddCourse = async (e: React.FormEvent) => {
@@ -128,6 +129,39 @@ export default function CursoPage() {
     }
   };
 
+  const handleDeleteCourse = async (courseId: string, courseName: string) => {
+    const confirmation = await Swal.fire({
+      title: 'Confirmar exclusão',
+      text: `Deseja realmente excluir o curso "${courseName}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    });
+
+    if (!confirmation.isConfirmed) return;
+
+    try {
+      show();
+      await deletarCurso(courseId);
+      const atualizados = await obterResumoCursos();
+      setCourses(atualizados);
+      await Swal.fire({
+        title: 'Curso excluído!',
+        text: 'O curso foi excluído com sucesso.',
+        icon: 'success',
+        confirmButtonColor: '#3085d6'
+      });
+    } catch (error) {
+      console.error('Erro ao excluir curso:', error);
+      Swal.fire('Erro', 'Não foi possível excluir o curso.', 'error');
+    } finally {
+      hide();
+    }
+  };
+
   return (
     <div className="p-6 w-full">
       <LoadingOverlay show={visible} />
@@ -169,6 +203,7 @@ export default function CursoPage() {
             alunos={course.quantidadeAlunos} // Substituir quando tiver dado real
             classes={course.quantidadeTurmas}
             onManageCourse={() => router.push(`/curso/${course.id}`)}
+            onDeleteCourse={() => handleDeleteCourse(course.id, course.nome)}
           />
         ))}
       </div>

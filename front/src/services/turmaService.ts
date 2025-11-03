@@ -90,3 +90,8 @@ export const obterTurmasPorCurso = async (
   const response = await api.get<TurmaResponse[]>(`/turma/curso/${cursoId}`);
   return response.data;
 };
+
+// Deletar turma por ID
+export const deletarTurma = async (turmaId: string): Promise<void> => {
+  await api.delete(`/turma/${turmaId}`);
+};

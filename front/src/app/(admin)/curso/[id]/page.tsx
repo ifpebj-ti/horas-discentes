@@ -8,7 +8,8 @@ import {
   FaPaperPlane,
   FaTimes,
   FaGraduationCap,
-  FaHome
+  FaHome,
+  FaTrash
 } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
@@ -36,9 +37,14 @@ import {
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   enviarConviteCoordenador,
-  obterCoordenadorPorCurso
+  obterCoordenadorPorCurso,
+  deletarCoordenador
 } from '@/services/coordenadorService';
-import { obterTurmasPorCurso, criarTurma } from '@/services/turmaService';
+import {
+  obterTurmasPorCurso,
+  criarTurma,
+  deletarTurma
+} from '@/services/turmaService';
 import Swal from 'sweetalert2';
 
 export default function CourseDetailPage() {
@@ -48,7 +54,10 @@ export default function CourseDetailPage() {
   const { visible, show, hide } = useLoadingOverlay();
 
   const [courseName, setCourseName] = useState('');
-  const [coordinator, setCoordinator] = useState<string | null>(null);
+  const [coordinator, setCoordinator] = useState<{
+    id: string;
+    nome: string;
+  } | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [classes, setClasses] = useState<any[]>([]);
 
@@ -74,7 +83,11 @@ export default function CourseDetailPage() {
           obterTurmasPorCurso(cursoId)
         ]);
 
-        setCoordinator(coordenador?.nome || null);
+        setCoordinator(
+          coordenador
+            ? { id: coordenador.id, nome: coordenador.nome }
+            : null
+        );
         setClasses(
           turmas.map((t) => ({
             id: t.id,
@@ -199,6 +212,81 @@ export default function CourseDetailPage() {
       setIsTurmaLoading(false);
     }
   };
+
+  const handleDeleteCoordinator = async () => {
+    if (!coordinator) return;
+
+    const confirmation = await Swal.fire({
+      title: 'Confirmar exclusão',
+      text: `Deseja realmente excluir o coordenador ${coordinator.nome}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    });
+
+    if (!confirmation.isConfirmed) return;
+
+    try {
+      show();
+      await deletarCoordenador(coordinator.id);
+      setCoordinator(null);
+      await Swal.fire({
+        title: 'Coordenador excluído!',
+        text: 'O coordenador foi excluído com sucesso.',
+        icon: 'success',
+        confirmButtonColor: '#3085d6'
+      });
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Erro', 'Não foi possível excluir o coordenador.', 'error');
+    } finally {
+      hide();
+    }
+  };
+
+  const handleDeleteTurma = async (turmaId: string, periodo: string) => {
+    const confirmation = await Swal.fire({
+      title: 'Confirmar exclusão',
+      text: `Deseja realmente excluir a turma ${periodo}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    });
+
+    if (!confirmation.isConfirmed) return;
+
+    try {
+      show();
+      await deletarTurma(turmaId);
+      const turmasAtualizadas = await obterTurmasPorCurso(cursoId);
+      setClasses(
+        turmasAtualizadas.map((t) => ({
+          id: t.id,
+          period: t.periodo,
+          shift: t.turno,
+          students: t.quantidadeAlunos
+        }))
+      );
+      await Swal.fire({
+        title: 'Turma excluída!',
+        text: 'A turma foi excluída com sucesso.',
+        icon: 'success',
+        confirmButtonColor: '#3085d6'
+      });
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Erro', 'Não foi possível excluir a turma.', 'error');
+    } finally {
+      hide();
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
       <LoadingOverlay show={visible} />
@@ -229,7 +317,14 @@ export default function CourseDetailPage() {
         <h2 className="text-lg font-semibold mb-4">Coordenador</h2>
         {coordinator ? (
           <div className="flex justify-between items-center">
-            <span>{coordinator}</span>
+            <span>{coordinator.nome}</span>
+            <button
+              onClick={handleDeleteCoordinator}
+              className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors"
+              title="Excluir coordenador"
+            >
+              <FaTrash className="w-5 h-5" />
+            </button>
           </div>
         ) : (
           <div className="max-w-xs mt-4 cursor-pointer">
@@ -271,12 +366,21 @@ export default function CourseDetailPage() {
                 <td>{cls.shift}</td>
                 <td>{cls.students}</td>
                 <td className="text-right">
-                  <button
-                    className="text-sm text-blue-600 border border-blue-600 px-3 py-1 rounded-full hover:bg-blue-50"
-                    onClick={() => router.push(`/curso/${cursoId}/${cls.id}`)}
-                  >
-                    Visualizar turma
-                  </button>
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      className="text-sm text-blue-600 border border-blue-600 px-3 py-1 rounded-full hover:bg-blue-50"
+                      onClick={() => router.push(`/curso/${cursoId}/${cls.id}`)}
+                    >
+                      Visualizar turma
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTurma(cls.id, cls.period)}
+                      className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors"
+                      title="Excluir turma"
+                    >
+                      <FaTrash className="w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

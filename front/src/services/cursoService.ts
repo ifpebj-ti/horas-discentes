@@ -62,3 +62,8 @@ export const obterResumoCursos = async (): Promise<CursoResumoResponse[]> => {
     return [];
   }
 };
+
+// Deletar curso por ID
+export const deletarCurso = async (cursoId: string): Promise<void> => {
+  await api.delete(`/curso/${cursoId}`);
+};
