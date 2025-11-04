@@ -20,6 +20,7 @@ public class AlunoController : ControllerBase
     private readonly GetAlunosComHorasConcluidasUseCase _getAlunosComHorasConcluidas;
     private readonly ContarPendenciasDownloadUseCase _contarPendenciasDownload;
     private readonly MarcarDownloadRelatorioUseCase _marcarDownloadRelatorio;
+    private readonly UpdateAlunoUseCase _update;
     public AlunoController(
         CreateAlunoUseCase create,
         GetAlunoByIdUseCase getById,
@@ -30,7 +31,8 @@ public class AlunoController : ControllerBase
         GetAlunoFromTokenUseCase getMeFromToken,
         GetAlunosComHorasConcluidasUseCase getAlunosComHorasConcluidas,
         ContarPendenciasDownloadUseCase contarPendenciasDownload,
-        MarcarDownloadRelatorioUseCase marcarDownloadRelatorio)
+        MarcarDownloadRelatorioUseCase marcarDownloadRelatorio,
+        UpdateAlunoUseCase update)
     {
         _create = create;
         _getById = getById;
@@ -42,6 +44,7 @@ public class AlunoController : ControllerBase
         _getAlunosComHorasConcluidas = getAlunosComHorasConcluidas;
         _contarPendenciasDownload = contarPendenciasDownload;
         _marcarDownloadRelatorio = marcarDownloadRelatorio;
+        _update = update;
     }
 
     /// <summary>
@@ -72,6 +75,23 @@ public class AlunoController : ControllerBase
     {
         var aluno = await _getById.ExecuteAsync(id);
         return Ok(aluno);
+    }
+
+    /// <summary>
+    /// Atualiza os dados de um aluno.
+    /// </summary>
+    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <param name="id">ID do aluno a ser atualizado.</param>
+    /// <param name="request">Novos dados do aluno.</param>
+    /// <response code="200">Aluno atualizado com sucesso.</response>
+    /// <response code="400">Dados inválidos.</response>
+    /// <response code="404">Aluno ou Turma não encontrados.</response>
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    public async Task<IActionResult> Atualizar(Guid id, [FromBody] UpdateAlunoRequest request)
+    {
+        var result = await _update.ExecuteAsync(id, request);
+        return Ok(result);
     }
 
     /// <summary>

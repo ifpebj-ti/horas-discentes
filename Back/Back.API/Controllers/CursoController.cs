@@ -15,13 +15,22 @@ public class CursoController : ControllerBase
     private readonly GetAllCursosUseCase _getAll;
     private readonly GetCursoByIdUseCase _getById;
     private readonly GetResumoCursosUseCase _getResumo;
-
-    public CursoController(CreateCursoUseCase create, GetAllCursosUseCase getAll, GetCursoByIdUseCase getById, GetResumoCursosUseCase getResumo)
+    private readonly UpdateCursoUseCase _update;
+    private readonly DeleteCursoUseCase _delete;
+    public CursoController(
+        CreateCursoUseCase create,
+        GetAllCursosUseCase getAll,
+        GetCursoByIdUseCase getById,
+        GetResumoCursosUseCase getResumo,
+        UpdateCursoUseCase update, 
+        DeleteCursoUseCase delete)
     {
         _create = create;
         _getAll = getAll;
         _getById = getById;
         _getResumo = getResumo;
+        _update = update; 
+        _delete = delete; 
     }
 
     /// <summary>
@@ -82,6 +91,61 @@ public class CursoController : ControllerBase
             return NotFound(new { erro = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Atualiza um curso e seus limites de horas.
+    /// </summary>
+    /// <remarks>Requer perfil ADMIN.</remarks>
+    /// <param name="id">ID do curso a ser atualizado.</param>
+    /// <param name="request">Novos dados do curso e limites.</param>
+    [HttpPut("{id:guid}")]
+    [SwaggerOperation(Summary = "Atualiza um curso existente.", Tags = new[] { "Cursos" })]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Atualizar(Guid id, [FromBody] UpdateCursoComLimiteHorasRequest request)
+    {
+        try
+        {
+            await _update.ExecuteAsync(id, request);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
+        catch (InvalidOperationException ex) // Captura erro de dados inconsistentes
+        {
+            return BadRequest(new { erro = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Remove um curso e TODOS os dados associados.
+    /// </summary>
+    /// <remarks>
+    /// Requer perfil ADMIN. AÇÃO PERMANENTE E DESTRUTIVA.
+    /// Remove Turmas, Alunos, Certificados, Atividades e Coordenador deste curso.
+    /// </remarks>
+    /// <param name="id">ID do curso a ser removido.</param>
+    [HttpDelete("{id:guid}")]
+    [SwaggerOperation(Summary = "Remove um curso e todos os seus dados (Cascata).", Tags = new[] { "Cursos" })]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Deletar(Guid id)
+    {
+        try
+        {
+            await _delete.ExecuteAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
+        // Você pode querer tratar exceções de FK aqui, mas o UseCase deve
+        // lidar com a ordem correta.
+    }
+
     /// <summary>
     /// Retorna resumo de todos os cursos com quantidade de turmas e alunos.
     /// </summary>
