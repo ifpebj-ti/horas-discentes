@@ -70,6 +70,9 @@ export interface CertificadoConcluidoResponse {
   periodoFim: string | null;
   status: string;
   tipo: string;
+  instituicao: string | null;
+  periodoLetivo: string | null;
+  totalPeriodos: number;
 }
 
 export interface AlunoComHorasConcluidasResponse {

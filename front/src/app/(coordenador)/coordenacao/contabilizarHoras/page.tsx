@@ -217,12 +217,38 @@ const GerenciamentoHoras: React.FC = () => {
       const templateBuffer = await response.arrayBuffer();
 
       for (const aluno of selecionados) {
-        const certs = aluno.certificados.map((cert, idx) => ({
-          idx: idx + 1,
-          title: cert.titulo,
-          cargaHoraria: cert.cargaHoraria,
-          periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
-        }));
+        const certs = aluno.certificados.map((cert, idx) => {
+          // Função helper para garantir que valores null/undefined sejam convertidos para string vazia
+          const safeString = (value: string | null | undefined): string => {
+            return value != null ? String(value) : '';
+          };
+
+          return {
+            idx: idx + 1,
+            // Campos para o template DOCX
+            tituloAtividade: safeString(cert.titulo),
+            titulo: safeString(cert.titulo), // Alias
+            instituicao: safeString(cert.instituicao) || safeString(cert.local), // Tenta usar instituição se existir, senão usa local
+            local: safeString(cert.local),
+            categoria: safeString(cert.categoria),
+            periodoLetivo: safeString(cert.periodoLetivo), // Tenta usar periodoLetivo se existir
+            periodoLetivoFaculdade: safeString(cert.periodoLetivo), // Campo alternativo do template
+            cargaHoraria: cert.cargaHoraria || 0,
+            dataInicioAtividade: safeString(cert.periodoInicio),
+            dataFimAtividade: safeString(cert.periodoFim),
+            dataInicio: safeString(cert.periodoInicio), // Alias
+            dataFim: safeString(cert.periodoFim), // Alias
+            totalPeriodos: cert.totalPeriodos || 1, // Tenta usar totalPeriodos se existir, senão usa 1 como padrão
+            especificacaoAtividade: safeString(cert.descricao),
+            especificacao: safeString(cert.descricao), // Alias
+            // Campos adicionais para compatibilidade com o template existente
+            title: safeString(cert.titulo),
+            periodo: cert.periodoInicio && cert.periodoFim
+              ? `${safeString(cert.periodoInicio)} a ${safeString(cert.periodoFim)}`
+              : safeString(cert.periodoInicio),
+            descricao: safeString(cert.descricao) // Alias
+          };
+        });
 
         const docxVars = {
           Coordenador: coordenadorInfo.nome,
