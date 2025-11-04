@@ -96,4 +96,24 @@ public class CertificadoRepository : ICertificadoRepository
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task DeleteAsync(Certificado certificado)
+    {
+        _context.Certificados.Remove(certificado);
+        await _context.SaveChangesAsync();
+    }
+    public async Task<IEnumerable<Certificado>> GetByAlunoAtividadeIdTrackedAsync(Guid alunoAtividadeId)
+    {
+        // Sem AsNoTracking() para permitir a exclusão
+        return await _context.Certificados
+            .Where(c => c.AlunoAtividadeId == alunoAtividadeId)
+            .ToListAsync();
+    }
+
+    public async Task RemoveRangeAsync(IEnumerable<Certificado> certificados)
+    {
+        if (!certificados.Any()) return;
+        _context.Certificados.RemoveRange(certificados);
+        await _context.SaveChangesAsync();
+    }
 }

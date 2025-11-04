@@ -17,14 +17,17 @@ public class TurmaController : ControllerBase
     private readonly VerificarTurmaExisteUseCase _verifica;
     private readonly GetAlunosByTurmaUseCase _getAlunos;
     private readonly GetTurmasByCursoIdUseCase _getByCurso;
-
+    private readonly UpdateTurmaUseCase _update;
+    private readonly DeleteTurmaUseCase _delete;
     public TurmaController(
         CreateTurmaUseCase create,
         GetAllTurmasUseCase getAll,
         GetTurmaByIdUseCase getById,
         VerificarTurmaExisteUseCase verifica,
         GetAlunosByTurmaUseCase getAlunos,
-        GetTurmasByCursoIdUseCase getByCurso)
+        GetTurmasByCursoIdUseCase getByCurso,
+        UpdateTurmaUseCase update, 
+        DeleteTurmaUseCase delete)
     {
         _create = create;
         _getAll = getAll;
@@ -32,6 +35,8 @@ public class TurmaController : ControllerBase
         _verifica = verifica;
         _getAlunos = getAlunos;
         _getByCurso = getByCurso;
+        _update = update;
+        _delete = delete;
     }
 
     /// <summary>
@@ -45,6 +50,56 @@ public class TurmaController : ControllerBase
         var turma = await _create.ExecuteAsync(request);
         return CreatedAtAction(nameof(ObterPorId), new { id = turma.Id }, turma);
     }
+
+
+    /// <summary>
+    /// Atualiza os dados de uma turma.
+    /// </summary>
+    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <param name="id">ID da turma a ser atualizada.</param>
+    /// <param name="request">Novos dados da turma.</param>
+    [HttpPut("{id:guid}")]
+    [SwaggerOperation(Summary = "Atualiza uma turma", Tags = new[] { "Turmas" })]
+    [ProducesResponseType(typeof(TurmaResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Atualizar(Guid id, [FromBody] UpdateTurmaRequest request)
+    {
+        try
+        {
+            var turma = await _update.ExecuteAsync(id, request);
+            return Ok(turma);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Remove uma turma e todos os alunos (e seus dados) nela.
+    /// </summary>
+    /// <remarks>
+    /// Requer permissão de ADMIN ou COORDENADOR. AÇÃO PERMANENTE E DESTRUTIVA.
+    /// Remove a Turma, e todos os Alunos, AlunoAtividades e Certificados associados.
+    /// </remarks>
+    /// <param name="id">ID da turma a ser removida.</param>
+    [HttpDelete("{id:guid}")]
+    [SwaggerOperation(Summary = "Remove uma turma e seus alunos (Cascata)", Tags = new[] { "Turmas" })]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Deletar(Guid id)
+    {
+        try
+        {
+            await _delete.ExecuteAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
+    }
+
 
     /// <summary>
     /// Lista todas as turmas cadastradas.

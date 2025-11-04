@@ -14,17 +14,26 @@ public class CoordenadorController : ControllerBase
     private readonly CriarCoordenadorUseCase _criarCoordenador;
     private readonly GetCoordenadorFromTokenUseCase _getFromToken;
     private readonly GetCoordenadorByCursoIdUseCase _getByCursoId;
+    private readonly UpdateCoordenadorSelfUseCase _updateSelf;
+    private readonly UpdateCoordenadorAdminUseCase _updateAdmin;
+    private readonly DeleteCoordenadorUseCase _delete;
 
     public CoordenadorController(
         EnviarConviteUseCase enviarConvite,
         CriarCoordenadorUseCase criarCoordenador,
         GetCoordenadorFromTokenUseCase getFromToken,
-        GetCoordenadorByCursoIdUseCase getByCursoId)
+        GetCoordenadorByCursoIdUseCase getByCursoId,
+        UpdateCoordenadorSelfUseCase updateSelf,    
+        UpdateCoordenadorAdminUseCase updateAdmin, 
+        DeleteCoordenadorUseCase delete)           
     {
         _enviarConvite = enviarConvite;
         _criarCoordenador = criarCoordenador;
         _getFromToken = getFromToken;
         _getByCursoId = getByCursoId;
+        _updateSelf = updateSelf;     
+        _updateAdmin = updateAdmin;  
+        _delete = delete;    
     }
 
     /// <summary>
@@ -77,6 +86,55 @@ public class CoordenadorController : ControllerBase
     {
         var info = await _getFromToken.ExecuteAsync(User);
         return Ok(info);
+    }
+
+
+    /// <summary>
+    /// Atualiza os dados do próprio coordenador autenticado.
+    /// </summary>
+    /// <remarks>
+    /// Requer permissão de COORDENADOR. Não permite alterar o curso.
+    /// </remarks>
+    [HttpPut("me")]
+    [Authorize(Roles = "COORDENADOR")]
+    [SwaggerOperation(Summary = "Atualiza os dados do próprio coordenador.", Tags = new[] { "Coordenadores" })]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> AtualizarMeusDados([FromBody] UpdateCoordenadorSelfRequest request)
+    {
+        await _updateSelf.ExecuteAsync(User, request);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// (ADMIN) Atualiza os dados de um coordenador específico.
+    /// </summary>
+    /// <remarks>
+    /// Requer permissão de ADMIN. Permite alterar o curso do coordenador.
+    /// </remarks>
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "ADMIN")]
+    [SwaggerOperation(Summary = "(ADMIN) Atualiza dados de um coordenador.", Tags = new[] { "Coordenadores" })]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> AtualizarCoordenador(Guid id, [FromBody] UpdateCoordenadorAdminRequest request)
+    {
+        await _updateAdmin.ExecuteAsync(id, request);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// (ADMIN) Remove um coordenador do sistema.
+    /// </summary>
+    /// <remarks>
+    /// Requer permissão de ADMIN. Remove o coordenador e sua conta de usuário.
+    /// </remarks>
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "ADMIN")]
+    [SwaggerOperation(Summary = "(ADMIN) Remove um coordenador.", Tags = new[] { "Coordenadores" })]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeletarCoordenador(Guid id)
+    {
+        await _delete.ExecuteAsync(id);
+        return NoContent();
     }
     [HttpGet("por-curso/{cursoId:guid}")]
     [Authorize(Roles = "ADMIN")]
