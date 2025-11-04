@@ -48,5 +48,20 @@ public class CursoRepository : ICursoRepository
             .AsNoTracking()
             .ToListAsync();
     }
+    public async Task UpdateAsync(Curso curso)
+    {
+        _context.Cursos.Update(curso);
+        await _context.SaveChangesAsync();
+    }
 
+    public async Task DeleteAsync(Curso curso)
+    {
+        _context.Cursos.Remove(curso);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<Curso?> GetByIdToUpdateAsync(Guid id)
+    {
+        return await _context.Cursos.FindAsync(id);
+    }
 }

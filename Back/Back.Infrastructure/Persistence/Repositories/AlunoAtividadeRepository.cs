@@ -42,4 +42,26 @@ public class AlunoAtividadeRepository : IAlunoAtividadeRepository
             .Where(aa => aa.AlunoId == alunoId && aa.Atividade!.Tipo == tipo)
             .SumAsync(aa => aa.HorasConcluidas);
     }
+
+    public async Task<IEnumerable<AlunoAtividade>> GetByAtividadeIdAsync(Guid atividadeId)
+    {
+        return await _context.AlunoAtividades
+            .Where(aa => aa.AtividadeId == atividadeId)
+            .ToListAsync();
+        // Nota: Não usamos AsNoTracking() aqui, pois queremos que o
+        // DbContext rastreie essas entidades para poderem ser removidas.
+    }
+
+    public async Task RemoveRangeAsync(IEnumerable<AlunoAtividade> entidades)
+    {
+        _context.AlunoAtividades.RemoveRange(entidades);
+        await _context.SaveChangesAsync();
+    }
+    public async Task<IEnumerable<AlunoAtividade>> GetByAlunoIdTrackedAsync(Guid alunoId)
+    {
+        // Sem AsNoTracking() para permitir a exclusão
+        return await _context.AlunoAtividades
+            .Where(aa => aa.AlunoId == alunoId)
+            .ToListAsync();
+    }
 }

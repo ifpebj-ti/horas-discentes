@@ -12,4 +12,7 @@ public interface IAlunoAtividadeRepository
     Task<AlunoAtividade?> GetByAlunoEAtividadeAsync(Guid alunoId, Guid atividadeId);
     Task UpdateAsync(AlunoAtividade alunoAtividade);
     Task<int> GetTotalHorasConcluidasPorTipoAsync(Guid alunoId, TipoAtividade tipo);
+    Task<IEnumerable<AlunoAtividade>> GetByAtividadeIdAsync(Guid atividadeId);
+    Task RemoveRangeAsync(IEnumerable<AlunoAtividade> entidades);
+    Task<IEnumerable<AlunoAtividade>> GetByAlunoIdTrackedAsync(Guid alunoId);
 }

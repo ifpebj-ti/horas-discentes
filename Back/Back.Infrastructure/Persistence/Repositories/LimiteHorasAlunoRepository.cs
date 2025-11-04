@@ -32,4 +32,21 @@ public class LimiteHorasAlunoRepository : ILimiteHorasAlunoRepository
     {
         return await _context.LimitesHoras.AsNoTracking().ToListAsync();
     }
+    public async Task UpdateAsync(LimiteHorasAluno limite)
+    {
+        _context.LimitesHoras.Update(limite);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(LimiteHorasAluno limite)
+    {
+        _context.LimitesHoras.Remove(limite);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<LimiteHorasAluno?> GetByCursoIdToUpdateAsync(Guid cursoId)
+    {
+        return await _context.LimitesHoras
+            .FirstOrDefaultAsync(x => x.CursoId == cursoId);
+    }
 }

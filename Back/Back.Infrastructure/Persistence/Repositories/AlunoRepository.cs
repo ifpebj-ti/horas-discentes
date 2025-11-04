@@ -130,5 +130,17 @@ public class AlunoRepository : IAlunoRepository
             .AsNoTracking()
             .ToListAsync();
     }
+    public async Task<IEnumerable<Aluno>> GetByTurmaIdTrackedAsync(Guid turmaId)
+    {
+        return await _context.Alunos
+            .Where(a => a.TurmaId == turmaId)
+            .ToListAsync();
+    }
+    public async Task<IEnumerable<AlunoAtividade>> GetByAlunoIdTrackedAsync(Guid alunoId)
+    {
+        return await _context.AlunoAtividades
+            .Where(aa => aa.AlunoId == alunoId)
+            .ToListAsync();
+    }
 
 }

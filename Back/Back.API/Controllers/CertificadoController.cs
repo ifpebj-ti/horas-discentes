@@ -16,17 +16,22 @@ namespace Back.API.Controllers
         private readonly GetCertificadosUseCase _get;
         private readonly AtualizarStatusCertificadoUseCase _atualizar;
         private readonly GetCertificadoByIdUseCase _getById;
-
+        private readonly UpdateCertificadoUseCase _update; 
+        private readonly DeleteCertificadoUseCase _delete; 
         public CertificadoController(
             CreateCertificadoUseCase create,
             GetCertificadosUseCase get,
             AtualizarStatusCertificadoUseCase atualizar,
-            GetCertificadoByIdUseCase getById)
+            GetCertificadoByIdUseCase getById,
+            UpdateCertificadoUseCase update, 
+            DeleteCertificadoUseCase delete)
         {
             _create = create;
             _get = get;
             _atualizar = atualizar;
             _getById = getById;
+            _update = update;
+            _delete = delete;
         }
 
         [HttpPost]
@@ -60,6 +65,75 @@ namespace Back.API.Controllers
         {
             var certificados = await _get.ExecuteAsync(status, alunoId);
             return Ok(certificados);
+        }
+
+        /// <summary>
+        /// Atualiza os dados de um certificado (apenas PENDENTE).
+        /// </summary>
+        /// <remarks>
+        /// Requer permissão de ALUNO.
+        /// Permite ao aluno corrigir dados ou trocar o anexo de um certificado
+        /// que ainda não foi avaliado (status PENDENTE).
+        /// </remarks>
+        /// <param name="id">ID do certificado a ser atualizado.</param>
+        /// <param name="request">Novos dados do certificado.</param>
+        /// <response code="204">Certificado atualizado com sucesso.</response>
+        /// <response code="400">Dados inválidos ou certificado não está pendente.</response>
+        /// <response code="404">Certificado não encontrado.</response>
+        [HttpPut("{id}")]
+        [Authorize(Roles = "ALUNO")] // Aluno só pode editar o que é dele e está pendente
+        [Consumes("multipart/form-data")]
+        [SwaggerOperation(Summary = "Atualiza um certificado PENDENTE.", Tags = new[] { "Certificados" })]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Atualizar(Guid id, [FromForm] UpdateCertificadoRequest request)
+        {
+            // TODO: Adicionar verificação de "dono" do certificado
+            // (O Use Case já verifica se está PENDENTE)
+            try
+            {
+                await _update.ExecuteAsync(id, request);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { erro = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { erro = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Remove um certificado do sistema.
+        /// </summary>
+        /// <remarks>
+        /// Requer permissão de ADMIN ou COORDENADOR.
+        /// Se o certificado estava APROVADO, as horas do aluno serão recalculadas.
+        /// </remarks>
+        /// <param name="id">ID do certificado a ser removido.</param>
+        /// <response code="204">Certificado removido com sucesso.</response>
+        /// <response code="404">Certificado não encontrado.</response>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "ADMIN,COORDENADOR")]
+        [SwaggerOperation(Summary = "Remove um certificado (ação de Admin/Coordenador).", Tags = new[] { "Certificados" })]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Deletar(Guid id)
+        {
+            try
+            {
+                await _delete.ExecuteAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { erro = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Captura erro de "dados corrompidos" do Use Case
+                return BadRequest(new { erro = ex.Message });
+            }
         }
 
         [HttpGet("{id}")]

@@ -65,4 +65,35 @@ public class TurmaRepository : ITurmaRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Turma>> GetByCursoIdTrackedAsync(Guid cursoId)
+    {
+        return await _context.Turmas
+            .Where(t => t.CursoId == cursoId)
+            .ToListAsync();
+    }
+
+    public async Task RemoveRangeAsync(IEnumerable<Turma> turmas)
+    {
+        if (!turmas.Any()) return;
+        _context.Turmas.RemoveRange(turmas);
+        await _context.SaveChangesAsync();
+    }
+    public async Task<Turma?> GetByIdTrackedAsync(Guid id)
+    {
+        return await _context.Turmas
+            .Include(t => t.Curso)
+            .Include(t => t.Alunos)
+            .FirstOrDefaultAsync(t => t.Id == id);
+    }
+
+    public async Task UpdateAsync(Turma turma)
+    {
+        _context.Turmas.Update(turma);
+        await _context.SaveChangesAsync();
+    }
+    public async Task DeleteAsync(Turma turma)
+    {
+        _context.Turmas.Remove(turma);
+        await _context.SaveChangesAsync();
+    }
 }
