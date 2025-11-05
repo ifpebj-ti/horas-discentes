@@ -144,11 +144,20 @@ export const listarResumoHoras = async (): Promise<
   );
   return response.data;
 };
+// Atualizar aluno por ID
+export const atualizarAluno = async (
+  id: string,
+  dados: Partial<CreateAlunoRequest>
+): Promise<AlunoResponse> => {
+  const response = await api.put<AlunoResponse>(`/aluno/${id}`, dados);
+  return response.data;
+};
+
 export const listarConcluidosComplementar = async (): Promise<
   AlunoComHorasConcluidasResponse[]
 > => {
   const response = await api.get<AlunoComHorasConcluidasResponse[]>(
-    '/Aluno/concluidos/complementar'
+    '/aluno/concluidos/complementar'
   );
   return response.data;
 };
@@ -158,7 +167,7 @@ export const listarConcluidosExtensao = async (): Promise<
   AlunoComHorasConcluidasResponse[]
 > => {
   const response = await api.get<AlunoComHorasConcluidasResponse[]>(
-    '/Aluno/concluidos/extensao'
+    '/aluno/concluidos/extensao'
   );
   return response.data;
 };
@@ -167,7 +176,7 @@ export const listarConcluidosExtensao = async (): Promise<
 export const contarPendenciasDownload =
   async (): Promise<ContagemPendenciaDownloadResponse> => {
     const response = await api.get<ContagemPendenciaDownloadResponse>(
-      '/Aluno/pendencias-download/contagem'
+      '/aluno/pendencias-download/contagem'
     );
     return response.data;
   };
@@ -176,12 +185,12 @@ export const contarPendenciasDownload =
 export const marcarDownloadComplementar = async (
   alunoId: string
 ): Promise<void> => {
-  await api.patch(`/Aluno/${alunoId}/marcar-download/complementar`);
+  await api.patch(`/aluno/${alunoId}/marcar-download/complementar`);
 };
 
 // Marca relatório de horas de extensão como baixado
 export const marcarDownloadExtensao = async (
   alunoId: string
 ): Promise<void> => {
-  await api.patch(`/Aluno/${alunoId}/marcar-download/extensao`);
+  await api.patch(`/aluno/${alunoId}/marcar-download/extensao`);
 };

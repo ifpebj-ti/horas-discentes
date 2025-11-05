@@ -91,7 +91,37 @@ export const obterTurmasPorCurso = async (
   return response.data;
 };
 
+// Atualizar turma por ID
+export const atualizarTurma = async (
+  id: string,
+  dados: Partial<CreateTurmaRequest>
+): Promise<TurmaResponse> => {
+  const response = await api.put<TurmaResponse>(`/turma/${id}`, dados);
+  return response.data;
+};
+
 // Deletar turma por ID
 export const deletarTurma = async (turmaId: string): Promise<void> => {
-  await api.delete(`/turma/${turmaId}`);
+  if (!turmaId) {
+    throw new Error('ID da turma é obrigatório');
+  }
+
+  // Remove espaços e garante formato correto
+  const cleanId = turmaId.trim();
+
+  // Log para debug
+  console.log('Deletando turma:', cleanId);
+  console.log('URL completa:', `/api/turma/${cleanId}`);
+
+  try {
+    const response = await api.delete(`/turma/${cleanId}`);
+    console.log('Resposta DELETE turma:', response.status);
+    return;
+  } catch (error: any) {
+    console.error('Erro ao deletar turma:', error);
+    console.error('Status:', error?.response?.status);
+    console.error('Data:', error?.response?.data);
+    console.error('URL tentada:', error?.config?.url);
+    throw error;
+  }
 };

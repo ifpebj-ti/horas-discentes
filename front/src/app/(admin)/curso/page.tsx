@@ -130,15 +130,21 @@ export default function CursoPage() {
   };
 
   const handleDeleteCourse = async (courseId: string, courseName: string) => {
+    if (!courseId) {
+      Swal.fire('Erro', 'ID do curso inválido.', 'error');
+      return;
+    }
+
     const confirmation = await Swal.fire({
       title: 'Confirmar exclusão',
-      text: `Deseja realmente excluir o curso "${courseName}"?`,
+      text: `Deseja realmente excluir o curso "${courseName}"? Esta ação é PERMANENTE e irá remover TODOS os dados associados (turmas, alunos, certificados, atividades e coordenador).`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sim, excluir',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      cancelButtonColor: '#3085d6',
+      dangerMode: true
     });
 
     if (!confirmation.isConfirmed) return;
@@ -150,13 +156,18 @@ export default function CursoPage() {
       setCourses(atualizados);
       await Swal.fire({
         title: 'Curso excluído!',
-        text: 'O curso foi excluído com sucesso.',
+        text: 'O curso e todos os dados associados foram excluídos com sucesso.',
         icon: 'success',
         confirmButtonColor: '#3085d6'
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao excluir curso:', error);
-      Swal.fire('Erro', 'Não foi possível excluir o curso.', 'error');
+      const errorMessage =
+        error?.response?.data?.erro ||
+        error?.response?.data?.mensagem ||
+        error?.message ||
+        'Não foi possível excluir o curso.';
+      Swal.fire('Erro', errorMessage, 'error');
     } finally {
       hide();
     }

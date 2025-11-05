@@ -63,7 +63,34 @@ export const obterResumoCursos = async (): Promise<CursoResumoResponse[]> => {
   }
 };
 
+// Atualizar curso por ID
+export const atualizarCurso = async (
+  id: string,
+  dados: Partial<CreateCursoRequest>
+): Promise<void> => {
+  await api.put(`/curso/${id}`, dados);
+};
+
 // Deletar curso por ID
 export const deletarCurso = async (cursoId: string): Promise<void> => {
-  await api.delete(`/curso/${cursoId}`);
+  if (!cursoId) {
+    throw new Error('ID do curso é obrigatório');
+  }
+  
+  const cleanId = cursoId.trim();
+  console.log('Deletando curso:', cleanId);
+  console.log('URL completa:', `/api/curso/${cleanId}`);
+  
+  try {
+    const response = await api.delete(`/curso/${cleanId}`);
+    console.log('Resposta DELETE curso:', response.status);
+    return;
+  } catch (error: any) {
+    console.error('Erro ao deletar curso:', error);
+    console.error('Status:', error?.response?.status);
+    console.error('Data:', error?.response?.data);
+    console.error('URL tentada:', error?.config?.url);
+    console.error('Método HTTP:', error?.config?.method);
+    throw error;
+  }
 };
