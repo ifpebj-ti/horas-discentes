@@ -63,10 +63,10 @@ export default function CursoPage() {
 
   const filteredCourses = Array.isArray(courses)
     ? courses.filter(
-      (course) =>
-        typeof course.nome === 'string' &&
-        course.nome.toLowerCase().includes(search.toLowerCase())
-    )
+        (course) =>
+          typeof course.nome === 'string' &&
+          course.nome.toLowerCase().includes(search.toLowerCase())
+      )
     : [];
 
   const handleAddCourse = async (e: React.FormEvent) => {
