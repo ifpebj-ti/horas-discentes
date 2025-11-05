@@ -332,12 +332,13 @@ const GerenciamentoHoras: React.FC = () => {
       {/* ============================== VISÃO: CARDS ============================== */}
       {viewMode === 'cards' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div
+          <button
+            type="button"
             onClick={() => {
               setSelectedCategory('horasComplementares');
               setViewMode('table');
             }}
-            className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center"
+            className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <h2 className="text-xl font-semibold mb-2 text-foreground">
               Horas Complementares
@@ -345,13 +346,14 @@ const GerenciamentoHoras: React.FC = () => {
             <p className="text-muted-foreground text-sm">
               Gerencie as horas complementares dos alunos.
             </p>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             onClick={() => {
               setSelectedCategory('extensao');
               setViewMode('table');
             }}
-            className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center"
+            className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <h2 className="text-xl font-semibold mb-2 text-foreground">
               Extensão
@@ -359,7 +361,7 @@ const GerenciamentoHoras: React.FC = () => {
             <p className="text-muted-foreground text-sm">
               Gerencie as horas de extensão dos alunos.
             </p>
-          </div>
+          </button>
         </div>
       )}
 

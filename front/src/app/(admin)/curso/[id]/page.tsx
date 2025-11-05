@@ -243,7 +243,16 @@ export default function CourseDetailPage() {
     } catch (error: unknown) {
       console.error('Erro ao excluir coordenador:', error);
       const err = error as {
-        response?: { status?: number; data?: { erro?: string; mensagem?: string } };
+        response?:
+        {
+          status?: number;
+          data?:
+          {
+            erro?:
+            string;
+            mensagem?: string
+          }
+        };
         message?: string;
       };
       const errorMessage =
