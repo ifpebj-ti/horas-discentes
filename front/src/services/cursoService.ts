@@ -76,7 +76,7 @@ export const deletarCurso = async (cursoId: string): Promise<void> => {
   if (!cursoId) {
     throw new Error('ID do curso é obrigatório');
   }
-  
+
   const cleanId = cursoId.trim();
   console.log('Deletando curso:', cleanId);
   console.log('URL completa:', `/api/curso/${cleanId}`);

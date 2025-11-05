@@ -162,14 +162,8 @@ export default function CursoPage() {
     } catch (error: unknown) {
       console.error('Erro ao excluir curso:', error);
       const err = error as {
-        response?:
-        {
-          data?:
-          {
-            erro?: string;
-            mensagem?: string
-          }
-        }; message?: string
+        response?: { data?: { erro?: string; mensagem?: string } };
+        message?: string;
       };
       const errorMessage =
         err?.response?.data?.erro ||

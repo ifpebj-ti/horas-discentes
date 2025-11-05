@@ -97,7 +97,7 @@ export const deletarCoordenador = async (
   if (!coordenadorId) {
     throw new Error('ID do coordenador é obrigatório');
   }
-  
+
   const cleanId = coordenadorId.trim();
   console.log('Deletando coordenador:', cleanId);
   console.log('URL completa:', `/api/coordenador/${cleanId}`);

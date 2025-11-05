@@ -243,15 +243,9 @@ export default function CourseDetailPage() {
     } catch (error: unknown) {
       console.error('Erro ao excluir coordenador:', error);
       const err = error as {
-        response?:
-        {
+        response?: {
           status?: number;
-          data?:
-          {
-            erro?:
-            string;
-            mensagem?: string
-          }
+          data?: { erro?: string; mensagem?: string };
         };
         message?: string;
       };
@@ -306,7 +300,10 @@ export default function CourseDetailPage() {
     } catch (error: unknown) {
       console.error('Erro ao excluir turma:', error);
       const err = error as {
-        response?: { status?: number; data?: { erro?: string; mensagem?: string } };
+        response?: {
+          status?: number;
+          data?: { erro?: string; mensagem?: string };
+        };
         message?: string;
       };
       console.error('Status do erro:', err?.response?.status);
