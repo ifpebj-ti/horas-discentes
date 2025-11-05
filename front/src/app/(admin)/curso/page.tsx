@@ -143,8 +143,7 @@ export default function CursoPage() {
       confirmButtonText: 'Sim, excluir',
       cancelButtonText: 'Cancelar',
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      dangerMode: true
+      cancelButtonColor: '#3085d6'
     });
 
     if (!confirmation.isConfirmed) return;
