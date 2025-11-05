@@ -84,9 +84,7 @@ export default function CourseDetailPage() {
         ]);
 
         setCoordinator(
-          coordenador
-            ? { id: coordenador.id, nome: coordenador.nome }
-            : null
+          coordenador ? { id: coordenador.id, nome: coordenador.nome } : null
         );
         setClasses(
           turmas.map((t) => ({
@@ -214,7 +212,7 @@ export default function CourseDetailPage() {
   };
 
   const handleDeleteCoordinator = async () => {
-    if (!coordinator || !coordinator.id) {
+    if (!coordinator?.id) {
       Swal.fire('Erro', 'Coordenador não encontrado ou ID inválido.', 'error');
       return;
     }
@@ -242,12 +240,16 @@ export default function CourseDetailPage() {
         icon: 'success',
         confirmButtonColor: '#3085d6'
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erro ao excluir coordenador:', error);
+      const err = error as {
+        response?: { status?: number; data?: { erro?: string; mensagem?: string } };
+        message?: string;
+      };
       const errorMessage =
-        error?.response?.data?.erro ||
-        error?.response?.data?.mensagem ||
-        error?.message ||
+        err?.response?.data?.erro ||
+        err?.response?.data?.mensagem ||
+        err?.message ||
         'Não foi possível excluir o coordenador.';
       Swal.fire('Erro', errorMessage, 'error');
     } finally {
@@ -292,27 +294,33 @@ export default function CourseDetailPage() {
         icon: 'success',
         confirmButtonColor: '#3085d6'
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erro ao excluir turma:', error);
-      console.error('Status do erro:', error?.response?.status);
-      console.error('Dados do erro:', error?.response?.data);
+      const err = error as {
+        response?: { status?: number; data?: { erro?: string; mensagem?: string } };
+        message?: string;
+      };
+      console.error('Status do erro:', err?.response?.status);
+      console.error('Dados do erro:', err?.response?.data);
       console.error('ID da turma:', turmaId);
 
-      let errorMessage = 'Não foi possível excluir a turma.';
+      let errorMessage;
 
-      if (error?.response?.status === 405) {
-        errorMessage = 'Erro 405: Método não permitido. A rota de exclusão pode não estar configurada corretamente no servidor.';
-      } else if (error?.response?.status === 404) {
+      if (err?.response?.status === 405) {
+        errorMessage =
+          'Erro 405: Método não permitido. A rota de exclusão pode não estar configurada corretamente no servidor.';
+      } else if (err?.response?.status === 404) {
         errorMessage = 'Turma não encontrada.';
-      } else if (error?.response?.status === 401) {
+      } else if (err?.response?.status === 401) {
         errorMessage = 'Você não tem permissão para excluir esta turma.';
-      } else if (error?.response?.status === 403) {
-        errorMessage = 'Acesso negado. Você precisa ter permissão de ADMIN ou COORDENADOR.';
+      } else if (err?.response?.status === 403) {
+        errorMessage =
+          'Acesso negado. Você precisa ter permissão de ADMIN ou COORDENADOR.';
       } else {
         errorMessage =
-          error?.response?.data?.erro ||
-          error?.response?.data?.mensagem ||
-          error?.message ||
+          err?.response?.data?.erro ||
+          err?.response?.data?.mensagem ||
+          err?.message ||
           'Não foi possível excluir a turma.';
       }
 

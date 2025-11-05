@@ -8,7 +8,7 @@ import Header from '@/components/Header';
 import ProtectedLayout from '@/components/ProtectedLayout';
 
 const getTitleFromPath = (path: string): string => {
-  const last = path.split('/').filter(Boolean).pop() ?? '';
+  const last = path.split('/').findLast(Boolean) ?? '';
   switch (last) {
     case 'aluno':
       return 'Aluno';
@@ -25,9 +25,9 @@ const getTitleFromPath = (path: string): string => {
 
 export default function AlunoLayout({
   children
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const menuTitle = getTitleFromPath(pathname);
@@ -72,9 +72,21 @@ export default function AlunoLayout({
           <div className="relative px-2 py-1 text-center text-xs text-token-text-secondary md:px-[60px] no-underline ">
             <p>
               © 2025 Desenvolvido por{' '}
-              <a href="https://github.com/erison7596" target="_blank" rel="noreferrer">Erison Cavalcante</a>
+              <a
+                href="https://github.com/erison7596"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Erison Cavalcante
+              </a>
               <span> & </span>
-              <a href="https://github.com/Erysilva98" target="_blank" rel="noreferrer">Erimilson Silva</a>
+              <a
+                href="https://github.com/Erysilva98"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Erimilson Silva
+              </a>
             </p>
           </div>
         </footer>

@@ -220,7 +220,7 @@ const GerenciamentoHoras: React.FC = () => {
         const certs = aluno.certificados.map((cert, idx) => {
           // Função helper para garantir que valores null/undefined sejam convertidos para string vazia
           const safeString = (value: string | null | undefined): string => {
-            return value != null ? String(value) : '';
+            return value === null || value === undefined ? '' : String(value);
           };
 
           return {
@@ -243,9 +243,10 @@ const GerenciamentoHoras: React.FC = () => {
             especificacao: safeString(cert.descricao), // Alias
             // Campos adicionais para compatibilidade com o template existente
             title: safeString(cert.titulo),
-            periodo: cert.periodoInicio && cert.periodoFim
-              ? `${safeString(cert.periodoInicio)} a ${safeString(cert.periodoFim)}`
-              : safeString(cert.periodoInicio),
+            periodo:
+              cert.periodoInicio && cert.periodoFim
+                ? `${safeString(cert.periodoInicio)} a ${safeString(cert.periodoFim)}`
+                : safeString(cert.periodoInicio),
             descricao: safeString(cert.descricao) // Alias
           };
         });
@@ -274,7 +275,7 @@ const GerenciamentoHoras: React.FC = () => {
         doc.render();
 
         const out = doc.getZip().generate({ type: 'blob' });
-        saveAs(out, `contabilizacao_${aluno.nome?.replace(/\s/g, '_')}.docx`);
+        saveAs(out, `contabilizacao_${aluno.nome?.replaceAll(' ', '_')}.docx`);
 
         // Após o download, atualiza o status no backend
         if (selectedCategory === 'horasComplementares') {

@@ -80,12 +80,16 @@ export const deletarAtividade = async (id: string): Promise<void> => {
     const response = await api.delete(`/atividade/${cleanId}`);
     console.log('Resposta DELETE atividade:', response.status);
     return;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as {
+      response?: { status?: number; data?: unknown };
+      config?: { url?: string; method?: string };
+    };
     console.error('Erro ao deletar atividade:', error);
-    console.error('Status:', error?.response?.status);
-    console.error('Data:', error?.response?.data);
-    console.error('URL tentada:', error?.config?.url);
-    console.error('Método HTTP:', error?.config?.method);
+    console.error('Status:', err?.response?.status);
+    console.error('Data:', err?.response?.data);
+    console.error('URL tentada:', err?.config?.url);
+    console.error('Método HTTP:', err?.config?.method);
     throw error;
   }
 };

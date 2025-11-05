@@ -332,8 +332,7 @@ export default function FormRegistroHoras({
                     <div className="flex-1">
                       <span>
                         Declaro, sob as penas da lei, que todas as informações e
-                        documentos apresentados são verdadeiros e condizentes com a
-                        realidade dos fatos.{' '}
+                        documentos apresentados são verdadeiros e condizentes{' '}
                         <button
                           type="button"
                           onClick={(e) => {
@@ -343,18 +342,20 @@ export default function FormRegistroHoras({
                           className="text-blue-600 hover:text-blue-800 underline font-medium"
                         >
                           {termosExpandidos ? 'Ocultar detalhes' : 'Leia mais'}
-                        </button>
+                        </button>{' '}
+                        com a realidade dos fatos.
                       </span>
                       {termosExpandidos && (
                         <div className="mt-2 pl-6 text-gray-700 leading-relaxed animate-fadeIn">
                           <p className="mb-2">
                             Estou ciente de que a falsidade nas informações ou
-                            documentos apresentados implicará em penalidades cabíveis,
-                            conforme previsto no Código Penal Brasileiro,
-                            especialmente nos artigos que tratam de crimes contra a
-                            fé pública e falsidade documental, podendo resultar na
-                            anulação do registro das horas complementares ou de
-                            extensão, bem como em medidas disciplinares pertinentes.
+                            documentos apresentados implicará em penalidades
+                            cabíveis, conforme previsto no Código Penal
+                            Brasileiro, especialmente nos artigos que tratam de
+                            crimes contra a fé pública e falsidade documental,
+                            podendo resultar na anulação do registro das horas
+                            complementares ou de extensão, bem como em medidas
+                            disciplinares pertinentes.
                           </p>
                         </div>
                       )}

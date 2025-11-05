@@ -101,17 +101,21 @@ export const deletarCoordenador = async (
   const cleanId = coordenadorId.trim();
   console.log('Deletando coordenador:', cleanId);
   console.log('URL completa:', `/api/coordenador/${cleanId}`);
-  
+
   try {
     const response = await api.delete(`/coordenador/${cleanId}`);
     console.log('Resposta DELETE coordenador:', response.status);
     return;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as {
+      response?: { status?: number; data?: unknown };
+      config?: { url?: string; method?: string };
+    };
     console.error('Erro ao deletar coordenador:', error);
-    console.error('Status:', error?.response?.status);
-    console.error('Data:', error?.response?.data);
-    console.error('URL tentada:', error?.config?.url);
-    console.error('Método HTTP:', error?.config?.method);
+    console.error('Status:', err?.response?.status);
+    console.error('Data:', err?.response?.data);
+    console.error('URL tentada:', err?.config?.url);
+    console.error('Método HTTP:', err?.config?.method);
     throw error;
   }
 };

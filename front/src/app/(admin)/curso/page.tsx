@@ -160,12 +160,13 @@ export default function CursoPage() {
         icon: 'success',
         confirmButtonColor: '#3085d6'
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erro ao excluir curso:', error);
+      const err = error as { response?: { data?: { erro?: string; mensagem?: string } }; message?: string };
       const errorMessage =
-        error?.response?.data?.erro ||
-        error?.response?.data?.mensagem ||
-        error?.message ||
+        err?.response?.data?.erro ||
+        err?.response?.data?.mensagem ||
+        err?.message ||
         'Não foi possível excluir o curso.';
       Swal.fire('Erro', errorMessage, 'error');
     } finally {
