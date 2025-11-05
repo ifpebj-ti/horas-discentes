@@ -33,7 +33,9 @@ export default function CursoPage() {
   const router = useRouter();
 
   const [search, setSearch] = useState('');
-  const [courses, setCourses] = useState<CursoResumoResponse[]>([]);
+  const [courses, setCourses] = useState<CursoResumoResponse[]>(
+    [] as CursoResumoResponse[]
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
   const [complementaryHours, setComplementaryHours] = useState('');
