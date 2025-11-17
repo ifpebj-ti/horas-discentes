@@ -116,9 +116,6 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
             <CustomNavLink href="/aluno/certificado" onClick={closeMenu}>
               <IconText icon={FaClipboard} text="Certificados" />
             </CustomNavLink>
-            <CustomNavLink href="/aluno/certificado/novo" onClick={closeMenu}>
-              <IconText icon={FaFileAlt} text="Enviar Certificados" />
-            </CustomNavLink>
           </>
         )}
 

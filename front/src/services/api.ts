@@ -1,4 +1,5 @@
 import { getSession } from 'next-auth/react';
+
 import axios from 'axios';
 
 const api = axios.create({

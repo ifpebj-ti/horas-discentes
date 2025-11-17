@@ -134,3 +134,60 @@ export const baixarAnexoCertificado = async (id: string): Promise<Blob> => {
   });
   return response.data;
 };
+
+export interface UpdateCertificadoRequest {
+  tituloAtividade?: string;
+  instituicao?: string;
+  local?: string;
+  categoria?: string;
+  grupo?: string;
+  periodoLetivo?: string;
+  cargaHoraria?: number;
+  dataInicio?: string;
+  dataFim?: string;
+  totalPeriodos?: number;
+  descricao?: string;
+  anexo?: File;
+  atividadeId?: string;
+  tipo?: TipoCertificado;
+}
+
+// Atualizar certificado por ID (apenas PENDENTE)
+export const atualizarCertificado = async (
+  id: string,
+  form: FormData
+): Promise<void> => {
+  await api.put(`/certificado/${id}`, form, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
+
+// Deletar certificado por ID (apenas ADMIN/COORDENADOR)
+export const deletarCertificado = async (id: string): Promise<void> => {
+  if (!id) {
+    throw new Error('ID do certificado é obrigatório');
+  }
+
+  const cleanId = id.trim();
+  console.log('Deletando certificado:', cleanId);
+  console.log('URL completa:', `/api/certificado/${cleanId}`);
+
+  try {
+    const response = await api.delete(`/certificado/${cleanId}`);
+    console.log('Resposta DELETE certificado:', response.status);
+    return;
+  } catch (error: unknown) {
+    const err = error as {
+      response?: { status?: number; data?: unknown };
+      config?: { url?: string; method?: string };
+    };
+    console.error('Erro ao deletar certificado:', error);
+    console.error('Status:', err?.response?.status);
+    console.error('Data:', err?.response?.data);
+    console.error('URL tentada:', err?.config?.url);
+    console.error('Método HTTP:', err?.config?.method);
+    throw error;
+  }
+};

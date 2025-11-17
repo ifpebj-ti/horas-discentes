@@ -69,6 +69,13 @@ export const formRegistroHorasSchema = z
       .refine((file) => file && ACCEPTED_FILE_TYPES.includes(file.type), {
         message:
           'Tipo de arquivo inválido. Apenas PDF, JPG, JPEG ou PNG são aceitos.'
+      }),
+    aceitarTermos: z
+      .boolean({
+        required_error: 'Você deve aceitar os termos para continuar.'
+      })
+      .refine((value) => value === true, {
+        message: 'Você deve aceitar os termos de veracidade das informações.'
       })
   })
   .refine(

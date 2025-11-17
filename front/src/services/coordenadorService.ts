@@ -74,3 +74,48 @@ export const obterCoordenadorPorCurso = async (
     return null;
   }
 };
+
+// Atualizar dados do próprio coordenador autenticado
+export const atualizarMeusDados = async (
+  dados: Partial<CadastroCoordenadorRequest>
+): Promise<void> => {
+  await api.put('/coordenador/me', dados);
+};
+
+// Atualizar coordenador por ID (apenas ADMIN)
+export const atualizarCoordenador = async (
+  id: string,
+  dados: Partial<CadastroCoordenadorRequest>
+): Promise<void> => {
+  await api.put(`/coordenador/${id}`, dados);
+};
+
+// Deletar coordenador por ID
+export const deletarCoordenador = async (
+  coordenadorId: string
+): Promise<void> => {
+  if (!coordenadorId) {
+    throw new Error('ID do coordenador é obrigatório');
+  }
+
+  const cleanId = coordenadorId.trim();
+  console.log('Deletando coordenador:', cleanId);
+  console.log('URL completa:', `/api/coordenador/${cleanId}`);
+
+  try {
+    const response = await api.delete(`/coordenador/${cleanId}`);
+    console.log('Resposta DELETE coordenador:', response.status);
+    return;
+  } catch (error: unknown) {
+    const err = error as {
+      response?: { status?: number; data?: unknown };
+      config?: { url?: string; method?: string };
+    };
+    console.error('Erro ao deletar coordenador:', error);
+    console.error('Status:', err?.response?.status);
+    console.error('Data:', err?.response?.data);
+    console.error('URL tentada:', err?.config?.url);
+    console.error('Método HTTP:', err?.config?.method);
+    throw error;
+  }
+};
