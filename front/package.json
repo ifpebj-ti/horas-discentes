@@ -39,6 +39,7 @@
     "react-loading-indicators": "^1.0.1",
     "react-router-dom": "^7.9.1",
     "react-toastify": "^11.0.5",
+    "signal-exit": "^4.1.0",
     "sweetalert2": "^11.21.0",
     "sweetalert2-react-content": "^5.1.0",
     "swr": "^2.3.6",
