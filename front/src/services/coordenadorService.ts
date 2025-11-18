@@ -99,17 +99,23 @@ export const deletarCoordenador = async (
   }
 
   // Remove barras extras e valida formato GUID
-  const cleanId = coordenadorId.trim().replace(/^\/+|\/+$/g, '');
+  const cleanId = coordenadorId.trim().replaceAll(/(^\/+|\/+$)/g, '');
 
   // Validação básica de GUID
-  const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const guidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   if (!guidRegex.test(cleanId)) {
-    throw new Error(`ID do coordenador inválido. Formato esperado: GUID (ex: 00000000-0000-0000-0000-000000000000)`);
+    throw new Error(
+      `ID do coordenador inválido. Formato esperado: GUID (ex: 00000000-0000-0000-0000-000000000000)`
+    );
   }
 
   console.log('Deletando coordenador:', cleanId);
   console.log('Rota relativa:', `/coordenador/${cleanId}`);
-  console.log('URL completa esperada:', `https://api.horamais.app/api/coordenador/${cleanId}`);
+  console.log(
+    'URL completa esperada:',
+    `https://api.horamais.app/api/coordenador/${cleanId}`
+  );
 
   try {
     // Requisição DELETE conforme rota do backend: DELETE /api/coordenador/{id:guid}

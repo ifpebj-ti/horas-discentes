@@ -107,17 +107,23 @@ export const deletarTurma = async (turmaId: string): Promise<void> => {
   }
 
   // Remove barras extras e valida formato GUID
-  const cleanId = turmaId.trim().replace(/^\/+|\/+$/g, '');
+  const cleanId = turmaId.trim().replaceAll(/(^\/+|\/+$)/g, '');
 
   // Validação básica de GUID
-  const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const guidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   if (!guidRegex.test(cleanId)) {
-    throw new Error(`ID da turma inválido. Formato esperado: GUID (ex: 00000000-0000-0000-0000-000000000000)`);
+    throw new Error(
+      `ID da turma inválido. Formato esperado: GUID (ex: 00000000-0000-0000-0000-000000000000)`
+    );
   }
 
   console.log('Deletando turma:', cleanId);
   console.log('Rota relativa:', `/turma/${cleanId}`);
-  console.log('URL completa esperada:', `https://api.horamais.app/api/turma/${cleanId}`);
+  console.log(
+    'URL completa esperada:',
+    `https://api.horamais.app/api/turma/${cleanId}`
+  );
 
   try {
     // Requisição DELETE conforme rota do backend: DELETE /api/turma/{id:guid}

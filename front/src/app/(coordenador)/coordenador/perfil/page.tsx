@@ -1,15 +1,14 @@
 ﻿'use client';
 
-import { useSession, signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import Swal from 'sweetalert2';
-
 import { atualizarMeusDados } from '@/services/coordenadorService';
+import Swal from 'sweetalert2';
 
 export default function PerfilCoordenadorPage() {
   const { data: session } = useSession();
