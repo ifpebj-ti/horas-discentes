@@ -1,15 +1,15 @@
-'use client';
+﻿'use client';
 
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-// IMPORTANTE: necessário criar ou ajustar o service para admin.
-// import { atualizarAdmin } from '@/services/adminService';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { atualizarMeusDados } from '@/services/coordenadorService';
 import Swal from 'sweetalert2';
 
-export default function PerfilAdminPage() {
+export default function PerfilCoordenadorPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [email, setEmail] = useState(session?.user.email ?? '');
@@ -18,19 +18,19 @@ export default function PerfilAdminPage() {
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (novaSenha && novaSenha !== confirmarSenha) {
       Swal.fire({ icon: 'error', title: 'As senhas não coincidem!' });
       return;
     }
+
     setLoading(true);
     try {
-      // await atualizarAdmin({
-      //   email: email,
-      //   senha: novaSenha || undefined,
-      // });
-      await new Promise((res) => setTimeout(res, 800)); // simulação
+      await atualizarMeusDados({
+        email,
+        senha: novaSenha || undefined
+      });
       Swal.fire({
         icon: 'success',
         title: 'Dados atualizados com sucesso!',
