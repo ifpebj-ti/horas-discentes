@@ -98,24 +98,65 @@ export const deletarCoordenador = async (
     throw new Error('ID do coordenador é obrigatório');
   }
 
-  const cleanId = coordenadorId.trim();
+  // Remove barras extras e valida formato GUID
+  const cleanId = coordenadorId.trim().replace(/^\/+|\/+$/g, '');
+
+  // Validação básica de GUID
+  const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!guidRegex.test(cleanId)) {
+    throw new Error(`ID do coordenador inválido. Formato esperado: GUID (ex: 00000000-0000-0000-0000-000000000000)`);
+  }
+
   console.log('Deletando coordenador:', cleanId);
-  console.log('URL completa:', `/api/coordenador/${cleanId}`);
+  console.log('Rota relativa:', `/coordenador/${cleanId}`);
+  console.log('URL completa esperada:', `https://api.horamais.app/api/coordenador/${cleanId}`);
 
   try {
-    const response = await api.delete(`/coordenador/${cleanId}`);
+    // Requisição DELETE conforme rota do backend: DELETE /api/coordenador/{id:guid}
+    // Usando axios.request com método explícito para garantir que funcione
+    const response = await api.request({
+      method: 'DELETE',
+      url: `/coordenador/${cleanId}`
+    });
+
+    // Verificar se a resposta é 204 (No Content) conforme esperado pelo backend
+    if (response.status === 204 || response.status === 200) {
+      console.log('Coordenador deletado com sucesso. Status:', response.status);
+      return;
+    }
+
     console.log('Resposta DELETE coordenador:', response.status);
     return;
   } catch (error: unknown) {
     const err = error as {
-      response?: { status?: number; data?: unknown };
-      config?: { url?: string; method?: string };
+      response?: {
+        status?: number;
+        statusText?: string;
+        data?: unknown;
+      };
+      config?: {
+        url?: string;
+        method?: string;
+        baseURL?: string;
+      };
+      message?: string;
     };
     console.error('Erro ao deletar coordenador:', error);
     console.error('Status:', err?.response?.status);
+    console.error('Status Text:', err?.response?.statusText);
     console.error('Data:', err?.response?.data);
-    console.error('URL tentada:', err?.config?.url);
+    console.error(
+      'URL completa:',
+      `${err?.config?.baseURL ?? ''}${err?.config?.url ?? ''}`
+    );
     console.error('Método HTTP:', err?.config?.method);
+
+    if (err?.response?.status === 405) {
+      throw new Error(
+        'Método não permitido. Verifique se o endpoint DELETE está configurado corretamente no backend.'
+      );
+    }
+
     throw error;
   }
 };
