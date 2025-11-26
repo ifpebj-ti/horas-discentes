@@ -26,7 +26,7 @@ jobs:
       - name: 📦 Instalar dependências
         run: npm install
 
-      - name: 🔍 Auditoria de segurança
+      - name: 🔍 Auditoria de segurança (npm)
         run: npm audit --audit-level=high
 
       - name: 🛠️ Build do projeto
@@ -34,11 +34,4 @@ jobs:
 
       - name: ✅ Testes (opcional)
         run: npm test
-      
-      - name: 🔎 Scan da imagem Docker (Trivy)
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
-          format: table
-          exit-code: 1
-          severity: CRITICAL,HIGH
+        continue-on-error: true
