@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
   packages: write
-  
+
 jobs:
   tag-creation:
     name: 🏷️ Preparar nova tag
@@ -17,16 +17,13 @@ jobs:
     outputs:
       new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
       tipo: ${{ steps.tipo.outputs.tipo }}
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gh
-
       - name: Extrair tipo de mudança da PR
         id: tipo
+        shell: bash
         run: |
           echo "${{ github.event.pull_request.body }}" > body.txt
           tipo_encontrado=""
@@ -46,42 +43,32 @@ jobs:
           else
             echo "tipo=$tipo_encontrado" >> "$GITHUB_OUTPUT"
           fi
-        shell: bash
 
       - name: Obter a última tag da release
         id: ultima
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git fetch --tags --force
           tag=$(git tag --sort=-v:refname | head -n 1 || echo "v0.0.0")
           echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Calcular nova tag (SemVer)
         id: nova_tag
         run: |
           tag_atual="${{ steps.ultima.outputs.last_tag }}"
           tipo="${{ steps.tipo.outputs.tipo }}"
-          if [ -z "$tag_atual" ]; then
-            tag_atual="v0.0.0"
-          fi
+          [ -z "$tag_atual" ] && tag_atual="v0.0.0"
           tag_limpa=$(echo "$tag_atual" | sed 's/^v//')
           IFS='.' read -r major minor patch <<< "$tag_limpa"
-          major=${major:-0}
-          minor=${minor:-0}
-          patch=${patch:-0}
+          major=${major:-0}; minor=${minor:-0}; patch=${patch:-0}
           case "$tipo" in
-            bug-fix) patch=$((patch + 1));;
-            nova-feature) minor=$((minor + 1)); patch=0;;
-            nova-feature-refactor) minor=$((minor + 1)); patch=0;;
+            bug-fix|default-patch|outros) patch=$((patch + 1));;
+            nova-feature|nova-feature-refactor) minor=$((minor + 1)); patch=0;;
             novo-marco) major=$((major + 1)); minor=0; patch=0;;
-            default-patch) patch=$((patch + 1));;
-            outros) patch=$((patch + 1));;
             *) patch=$((patch + 1));;
           esac
-          nova_tag_calculada="${major}.${minor}.${patch}"
-          nova_tag="v${nova_tag_calculada}"
-          echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
+          echo "nova_tag=v${major}.${minor}.${patch}" >> "$GITHUB_OUTPUT"
 
       - name: Criar e enviar a nova tag
         run: |
@@ -89,16 +76,14 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           TAG=${{ steps.nova_tag.outputs.nova_tag }}
 
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "⚠️ A tag $TAG já existe localmente, não será recriada."
-          else
-            git tag $TAG
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            git tag "$TAG"
           fi
 
-          if git ls-remote --tags origin | grep -q "refs/tags/$TAG"; then
-            echo "⚠️ A tag $TAG já existe no remoto, não será enviada."
+          if ! git ls-remote --tags origin | grep -q "refs/tags/$TAG"; then
+            git push origin "$TAG"
           else
-            git push origin $TAG
+            echo "⚠️ Tag $TAG já existe no remoto."
           fi
 
   backend:
@@ -109,32 +94,46 @@ jobs:
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+
       - name: Docker Login
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
-      - name: Build and push Backend Docker image
-        uses: docker/build-push-action@v5
+
+      # 1) Build (sem push)
+      - name: 🏗️ Build Backend Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:temp ./Back
+
+      # 2) Scan (Trivy)
+      - name: 🔎 Scan da imagem Docker (Trivy)
+        uses: aquasecurity/trivy-action@master
         with:
-          context: ./Back
-          push: true
-          build-args: |
-            VERSION=${{ needs.tag-creation.outputs.new_tag }}
-            REVISION=${{ github.sha }}
-            BUILDTIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
-  
+          image-ref: ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:temp
+          format: table
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          exit-code: 1  # falha se encontrar CRITICAL/HIGH
+
+      # 3) Push (só executa se o scan passou)
+      - name: 🚀 Push Backend Docker image
+        run: |
+          docker tag ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:temp ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
+          docker tag ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:temp ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:${{ needs.tag-creation.outputs.new_tag }}
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-backend:latest
+
   frontend:
     name: 🏗️ Frontend CI/CD
     needs: [tag-creation]
@@ -143,27 +142,40 @@ jobs:
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Docker Login
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
-      - name: Build and push Frontend Docker image
-        uses: docker/build-push-action@v5
+
+      # 1) Build (sem push)
+      - name: 🏗️ Build Frontend Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:temp ./front
+
+      # 2) Scan (Trivy)
+      - name: 🔎 Scan da imagem Docker (Trivy)
+        uses: aquasecurity/trivy-action@master
         with:
-          context: ./front
-          push: true
-          build-args: |
-            VERSION=${{ needs.tag-creation.outputs.new_tag }}
-            REVISION=${{ github.sha }}
-            BUILDTIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.tag-creation.outputs.new_tag }}
-            ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
+          image-ref: ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:temp
+          format: table
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          exit-code: 1
+
+      # 3) Push
+      - name: 🚀 Push Frontend Docker image
+        run: |
+          docker tag ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:temp ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.tag-creation.outputs.new_tag }}
+          docker tag ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:temp ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:${{ needs.tag-creation.outputs.new_tag }}
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
 
   create-release:
     name: 🚀 Criar Release
@@ -175,8 +187,10 @@ jobs:
       TIPO:    ${{ needs.tag-creation.outputs.tipo }}
     permissions:
       contents: write
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Publicar release
         uses: softprops/action-gh-release@v1
         with:
@@ -187,4 +201,4 @@ jobs:
             Release gerada automaticamente a partir da Pull Request #${{ github.event.pull_request.number }}
             Tipo de mudança: ${{ env.TIPO }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
