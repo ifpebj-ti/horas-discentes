@@ -54,8 +54,7 @@ function AlunoPageContent({
     user.totalHorasExtensao !== undefined;
 
   const possuiExtensaoPorHoras =
-    (user.maximoHorasExtensao ?? 0) > 0 ||
-    (user.totalHorasExtensao ?? 0) > 0;
+    (user.maximoHorasExtensao ?? 0) > 0 || (user.totalHorasExtensao ?? 0) > 0;
 
   const mostrarExtensao = hasInfoDeHorasExtensao
     ? possuiExtensaoPorHoras

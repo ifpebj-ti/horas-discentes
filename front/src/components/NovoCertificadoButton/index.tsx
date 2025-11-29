@@ -20,8 +20,7 @@ export default function NovoCertificadoButton({
     user.totalHorasExtensao !== undefined;
 
   const possuiExtensaoPorHoras =
-    (user.maximoHorasExtensao ?? 0) > 0 ||
-    (user.totalHorasExtensao ?? 0) > 0;
+    (user.maximoHorasExtensao ?? 0) > 0 || (user.totalHorasExtensao ?? 0) > 0;
 
   const extensao = hasInfoDeHorasExtensao
     ? possuiExtensaoPorHoras

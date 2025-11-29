@@ -18,11 +18,11 @@ import VerCertificado from '@/components/VerCertificado';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
+import { obterMeusDadosDetalhados } from '@/services/alunoService';
 import {
   listarMeusCertificados,
   obterCertificadoPorId
 } from '@/services/certificadoService';
-import { obterMeusDadosDetalhados } from '@/services/alunoService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';
