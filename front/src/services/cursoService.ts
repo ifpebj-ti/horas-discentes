@@ -20,25 +20,25 @@ export interface CursoResumoResponse {
 export const criarCurso = async (
   dados: CreateCursoRequest
 ): Promise<CursoResponse> => {
-  const response = await api.post<CursoResponse>('/curso', dados);
+  const response = await api.post<CursoResponse>('/Curso', dados);
   return response.data;
 };
 
 // Listar todos os cursos
 export const listarCursos = async (): Promise<CursoResponse[]> => {
-  const response = await api.get<CursoResponse[]>('/curso');
+  const response = await api.get<CursoResponse[]>('/Curso');
   return response.data;
 };
 
 // Obter curso por ID
 export const obterCursoPorId = async (id: string): Promise<CursoResponse> => {
-  const response = await api.get<CursoResponse>(`/curso/${id}`);
+  const response = await api.get<CursoResponse>(`/Curso/${id}`);
   return response.data;
 };
 
 export const obterResumoCursos = async (): Promise<CursoResumoResponse[]> => {
   try {
-    const response = await api.get('/curso/resumo');
+    const response = await api.get('/Curso/resumo');
 
     console.log(' Resposta bruta da API:', response);
 
@@ -68,7 +68,7 @@ export const atualizarCurso = async (
   id: string,
   dados: Partial<CreateCursoRequest>
 ): Promise<void> => {
-  await api.put(`/curso/${id}`, dados);
+  await api.put(`/Curso/${id}`, dados);
 };
 
 // Deletar curso por ID
@@ -88,14 +88,14 @@ export const deletarCurso = async (cursoId: string): Promise<void> => {
   }
 
   console.log('Deletando curso:', cleanId);
-  console.log('Rota relativa:', `/curso/${cleanId}`);
+  console.log('Rota relativa:', `/Curso/${cleanId}`);
 
   try {
-    // Requisição DELETE conforme rota do backend: DELETE /api/curso/{id:guid}
+    // Requisição DELETE conforme rota do backend: DELETE /api/Curso/{id:guid}
     // Usando axios.request com método explícito para garantir que funcione
     const response = await api.request({
       method: 'DELETE',
-      url: `/curso/${cleanId}`
+      url: `/Curso/${cleanId}`
     });
 
     // Verificar se a resposta é 204 (No Content) conforme esperado pelo backend

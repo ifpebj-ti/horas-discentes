@@ -73,7 +73,7 @@ export interface CertificadoPorCursoResponse {
 export const enviarCertificado = async (
   form: FormData
 ): Promise<{ certificadoId: string }> => {
-  const response = await api.post('/certificado', form, {
+  const response = await api.post('/Certificado', form, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -90,7 +90,7 @@ export const listarCertificados = async (
   if (alunoId) params.append('alunoId', alunoId);
 
   const response = await api.get<CertificadoResponse[]>(
-    `/certificado?${params}`
+    `/Certificado?${params}`
   );
   return response.data;
 };
@@ -99,23 +99,23 @@ export const obterCertificadoPorId = async (
   id: string
 ): Promise<CertificadoDetalhadoResponse> => {
   const response = await api.get<CertificadoDetalhadoResponse>(
-    `/certificado/${id}`
+    `/Certificado/${id}`
   );
   return response.data;
 };
 
 export const aprovarCertificado = async (id: string): Promise<void> => {
-  await api.patch(`/certificado/${id}/aprovar`);
+  await api.patch(`/Certificado/${id}/aprovar`);
 };
 
 export const reprovarCertificado = async (id: string): Promise<void> => {
-  await api.patch(`/certificado/${id}/reprovar`);
+  await api.patch(`/Certificado/${id}/reprovar`);
 };
 
 export const listarMeusCertificados = async (): Promise<
   CertificadoResponse[]
 > => {
-  const response = await api.get<CertificadoResponse[]>('/certificado/me');
+  const response = await api.get<CertificadoResponse[]>('/Certificado/me');
   return response.data;
 };
 
@@ -123,13 +123,13 @@ export const listarCertificadosPorCurso = async (
   cursoId: string
 ): Promise<CertificadoPorCursoResponse[]> => {
   const response = await api.get<CertificadoPorCursoResponse[]>(
-    `/certificado/por-curso/${cursoId}`
+    `/Certificado/por-curso/${cursoId}`
   );
   return response.data;
 };
 
 export const baixarAnexoCertificado = async (id: string): Promise<Blob> => {
-  const response = await api.get(`/certificado/${id}/anexo`, {
+  const response = await api.get(`/Certificado/${id}/anexo`, {
     responseType: 'blob'
   });
   return response.data;
@@ -157,7 +157,7 @@ export const atualizarCertificado = async (
   id: string,
   form: FormData
 ): Promise<void> => {
-  await api.put(`/certificado/${id}`, form, {
+  await api.put(`/Certificado/${id}`, form, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -172,10 +172,10 @@ export const deletarCertificado = async (id: string): Promise<void> => {
 
   const cleanId = id.trim();
   console.log('Deletando certificado:', cleanId);
-  console.log('URL completa:', `/api/certificado/${cleanId}`);
+  console.log('URL completa:', `/api/Certificado/${cleanId}`);
 
   try {
-    const response = await api.delete(`/certificado/${cleanId}`);
+    const response = await api.delete(`/Certificado/${cleanId}`);
     console.log('Resposta DELETE certificado:', response.status);
     return;
   } catch (error: unknown) {

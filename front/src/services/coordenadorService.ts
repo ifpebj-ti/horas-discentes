@@ -34,7 +34,7 @@ export interface CoordenadorResumoResponse {
 export const enviarConviteCoordenador = async (
   dados: ConviteCoordenadorRequest
 ): Promise<{ mensagem: string }> => {
-  const response = await api.post('/coordenador/convite', dados);
+  const response = await api.post('/Coordenador/convite', dados);
   return response.data;
 };
 
@@ -43,7 +43,7 @@ export const cadastrarCoordenador = async (
   dados: CadastroCoordenadorRequest
 ): Promise<CoordenadorResponse> => {
   const response = await api.post<CoordenadorResponse>(
-    '/coordenador/cadastrar',
+    '/Coordenador/cadastrar',
     dados
   );
   return response.data;
@@ -51,7 +51,7 @@ export const cadastrarCoordenador = async (
 // Obter dados do coordenador autenticado
 export const obterCoordenadorAutenticado =
   async (): Promise<CoordenadorInfoResponse> => {
-    const response = await api.get<CoordenadorInfoResponse>('/coordenador/me');
+    const response = await api.get<CoordenadorInfoResponse>('/Coordenador/me');
     return response.data;
   };
 
@@ -60,7 +60,7 @@ export const obterCoordenadorPorCurso = async (
 ): Promise<CoordenadorResumoResponse | null> => {
   try {
     const response = await api.get<CoordenadorResumoResponse>(
-      `/coordenador/por-curso/${cursoId}`
+      `/Coordenador/por-curso/${cursoId}`
     );
     return response.data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,7 +79,7 @@ export const obterCoordenadorPorCurso = async (
 export const atualizarMeusDados = async (
   dados: Partial<CadastroCoordenadorRequest>
 ): Promise<void> => {
-  await api.put('/coordenador/me', dados);
+  await api.put('/Coordenador/me', dados);
 };
 
 // Atualizar coordenador por ID (apenas ADMIN)
@@ -87,7 +87,7 @@ export const atualizarCoordenador = async (
   id: string,
   dados: Partial<CadastroCoordenadorRequest>
 ): Promise<void> => {
-  await api.put(`/coordenador/${id}`, dados);
+  await api.put(`/Coordenador/${id}`, dados);
 };
 
 // Deletar coordenador por ID
@@ -111,18 +111,18 @@ export const deletarCoordenador = async (
   }
 
   console.log('Deletando coordenador:', cleanId);
-  console.log('Rota relativa:', `/coordenador/${cleanId}`);
+  console.log('Rota relativa:', `/Coordenador/${cleanId}`);
   console.log(
     'URL completa esperada:',
-    `https://api.horamais.app/api/coordenador/${cleanId}`
+    `https://api.horamais.app/api/Coordenador/${cleanId}`
   );
 
   try {
-    // Requisição DELETE conforme rota do backend: DELETE /api/coordenador/{id:guid}
+    // Requisição DELETE conforme rota do backend: DELETE /api/Coordenador/{id:guid}
     // Usando axios.request com método explícito para garantir que funcione
     const response = await api.request({
       method: 'DELETE',
-      url: `/coordenador/${cleanId}`
+      url: `/Coordenador/${cleanId}`
     });
 
     // Verificar se a resposta é 204 (No Content) conforme esperado pelo backend

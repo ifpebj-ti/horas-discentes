@@ -27,7 +27,7 @@ export const listarAtividadesPorCurso = async (
   cursoId: string
 ): Promise<AtividadeResponse[]> => {
   const response = await api.get<AtividadeResponse[]>(
-    `/atividade/curso/${cursoId}`
+    `/Atividade/curso/${cursoId}`
   );
   return response.data;
 };
@@ -36,7 +36,7 @@ export const criarAtividade = async (
   dados: CreateAtividadeRequest
 ): Promise<{ atividadeId: string }> => {
   try {
-    const response = await api.post('/atividade', dados);
+    const response = await api.post('/Atividade', dados);
     return response.data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -74,10 +74,10 @@ export const deletarAtividade = async (id: string): Promise<void> => {
 
   const cleanId = id.trim();
   console.log('Deletando atividade:', cleanId);
-  console.log('URL completa:', `/api/atividade/${cleanId}`);
+  console.log('URL completa:', `/api/Atividade/${cleanId}`);
 
   try {
-    const response = await api.delete(`/atividade/${cleanId}`);
+    const response = await api.delete(`/Atividade/${cleanId}`);
     console.log('Resposta DELETE atividade:', response.status);
     return;
   } catch (error: unknown) {

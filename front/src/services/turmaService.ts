@@ -49,26 +49,26 @@ export interface AlunoPorTurmaDetalhadoResponse {
 export const criarTurma = async (
   dados: CreateTurmaRequest
 ): Promise<TurmaResponse> => {
-  const response = await api.post<TurmaResponse>('/turma', dados);
+  const response = await api.post<TurmaResponse>('/Turma', dados);
   return response.data;
 };
 
 // Lista todas as turmas
 export const listarTodasTurmas = async (): Promise<TurmaResponse[]> => {
-  const response = await api.get<TurmaResponse[]>('/turma');
+  const response = await api.get<TurmaResponse[]>('/Turma');
   return response.data;
 };
 
 // Busca turma por ID
 export const obterTurmaPorId = async (id: string): Promise<TurmaResponse> => {
-  const response = await api.get<TurmaResponse>(`/turma/${id}`);
+  const response = await api.get<TurmaResponse>(`/Turma/${id}`);
   return response.data;
 };
 
 // Verifica se a turma existe
 export const verificarTurmaExiste = async (id: string): Promise<boolean> => {
   const response = await api.get<{ turmaExiste: boolean }>(
-    `/turma/verificar/${id}`
+    `/Turma/verificar/${id}`
   );
   return response.data.turmaExiste;
 };
@@ -78,7 +78,7 @@ export const listarAlunosPorTurma = async (
   id: string
 ): Promise<AlunoPorTurmaDetalhadoResponse[]> => {
   const response = await api.get<AlunoPorTurmaDetalhadoResponse[]>(
-    `/turma/${id}/alunos`
+    `/Turma/${id}/alunos`
   );
   return response.data;
 };
@@ -87,7 +87,7 @@ export const listarAlunosPorTurma = async (
 export const obterTurmasPorCurso = async (
   cursoId: string
 ): Promise<TurmaResponse[]> => {
-  const response = await api.get<TurmaResponse[]>(`/turma/curso/${cursoId}`);
+  const response = await api.get<TurmaResponse[]>(`/Turma/curso/${cursoId}`);
   return response.data;
 };
 
@@ -96,7 +96,7 @@ export const atualizarTurma = async (
   id: string,
   dados: Partial<CreateTurmaRequest>
 ): Promise<TurmaResponse> => {
-  const response = await api.put<TurmaResponse>(`/turma/${id}`, dados);
+  const response = await api.put<TurmaResponse>(`/Turma/${id}`, dados);
   return response.data;
 };
 
@@ -119,18 +119,18 @@ export const deletarTurma = async (turmaId: string): Promise<void> => {
   }
 
   console.log('Deletando turma:', cleanId);
-  console.log('Rota relativa:', `/turma/${cleanId}`);
+  console.log('Rota relativa:', `/Turma/${cleanId}`);
   console.log(
     'URL completa esperada:',
-    `https://api.horamais.app/api/turma/${cleanId}`
+    `https://api.horamais.app/api/Turma/${cleanId}`
   );
 
   try {
-    // Requisição DELETE conforme rota do backend: DELETE /api/turma/{id:guid}
+    // Requisição DELETE conforme rota do backend: DELETE /api/Turma/{id:guid}
     // Usando axios.request com método explícito para garantir que funcione
     const response = await api.request({
       method: 'DELETE',
-      url: `/turma/${cleanId}`
+      url: `/Turma/${cleanId}`
     });
 
     // Verificar se a resposta é 204 (No Content) conforme esperado pelo backend
