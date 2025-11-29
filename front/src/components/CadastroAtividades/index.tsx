@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   listarAtividadesPorCurso,
-  criarAtividade
+  criarAtividade,
+  deletarAtividade
 } from '@/services/atividadeService';
 import {
   CreateAtividadeRequest,
@@ -97,6 +98,43 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
     }
   };
 
+  const handleDeleteAtividade = async (id: string, nome: string) => {
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Confirmar exclusão',
+      text: `Deseja realmente excluir a atividade "${nome}"? Esta ação é permanente e removerá todos os vínculos com alunos.`,
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#4b5563'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      show();
+      await deletarAtividade(id);
+      await fetchAtividades();
+      await Swal.fire({
+        icon: 'success',
+        title: 'Atividade excluída',
+        text: 'A atividade foi removida com sucesso.',
+        confirmButtonColor: '#4f46e5'
+      });
+    } catch (error) {
+      console.error('Erro ao excluir atividade:', error);
+      await Swal.fire({
+        icon: 'error',
+        title: 'Erro ao excluir',
+        text: 'Não foi possível excluir a atividade. Tente novamente mais tarde.',
+        confirmButtonColor: '#ef4444'
+      });
+    } finally {
+      hide();
+    }
+  };
+
   const handleTabChange = (value: string) => {
     setTipoAtual(value as TipoAtividade);
     setShowForm(false);
@@ -170,7 +208,11 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {atividadesFiltradas.map((atividade) => (
-              <AtividadeCard key={atividade.id} atividade={atividade} />
+              <AtividadeCard
+                key={atividade.id}
+                atividade={atividade}
+                onDelete={handleDeleteAtividade}
+              />
             ))}
           </div>
         </TabsContent>
@@ -205,7 +247,11 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {atividadesFiltradas.map((atividade) => (
-              <AtividadeCard key={atividade.id} atividade={atividade} />
+              <AtividadeCard
+                key={atividade.id}
+                atividade={atividade}
+                onDelete={handleDeleteAtividade}
+              />
             ))}
           </div>
         </TabsContent>

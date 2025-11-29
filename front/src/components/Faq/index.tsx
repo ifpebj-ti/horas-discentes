@@ -22,21 +22,21 @@ const CARDS = [
     label: 'Aprovados',
     bg: 'bg-[#E6FFFA]',
     text: 'text-[#047857]',
-    href: '/aluno/certificado?status=approved'
+    href: '/aluno/certificado?status=aprovado'
   },
   {
     icon: <FaClock />,
     label: 'Pendentes',
     bg: 'bg-[#FFF7ED]',
     text: 'text-[#B45309]',
-    href: '/aluno/certificado?status=pending'
+    href: '/aluno/certificado?status=pendente'
   },
   {
     icon: <FaTimesCircle />,
     label: 'Rejeitados',
     bg: 'bg-[#FEE2E2]',
     text: 'text-[#B91C1C]',
-    href: '/aluno/certificado?status=rejected'
+    href: '/aluno/certificado?status=rejeitado'
   }
 ];
 

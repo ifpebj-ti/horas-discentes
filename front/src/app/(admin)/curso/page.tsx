@@ -21,7 +21,8 @@ import {
   criarCurso,
   obterResumoCursos,
   CursoResumoResponse,
-  CreateCursoRequest
+  CreateCursoRequest,
+  deletarCurso
 } from '@/services/cursoService';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -32,7 +33,9 @@ export default function CursoPage() {
   const router = useRouter();
 
   const [search, setSearch] = useState('');
-  const [courses, setCourses] = useState<CursoResumoResponse[]>([]);
+  const [courses, setCourses] = useState<CursoResumoResponse[]>(
+    [] as CursoResumoResponse[]
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCourseName, setNewCourseName] = useState('');
   const [complementaryHours, setComplementaryHours] = useState('');
@@ -128,6 +131,72 @@ export default function CursoPage() {
     }
   };
 
+  const handleDeleteCourse = async (courseId: string, courseName: string) => {
+    if (!courseId) {
+      Swal.fire('Erro', 'ID do curso inválido.', 'error');
+      return;
+    }
+
+    const confirmation = await Swal.fire({
+      title: 'Confirmar exclusão',
+      text: `Deseja realmente excluir o curso "${courseName}"? Esta ação é PERMANENTE e irá remover TODOS os dados associados (turmas, alunos, certificados, atividades e coordenador).`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    });
+
+    if (!confirmation.isConfirmed) return;
+
+    try {
+      show();
+      await deletarCurso(courseId);
+      const atualizados = await obterResumoCursos();
+      setCourses(atualizados);
+      await Swal.fire({
+        title: 'Curso excluído!',
+        text: 'O curso e todos os dados associados foram excluídos com sucesso.',
+        icon: 'success',
+        confirmButtonColor: '#3085d6'
+      });
+    } catch (error: unknown) {
+      console.error('Erro ao excluir curso:', error);
+      const err = error as {
+        response?: {
+          status?: number;
+          data?: { erro?: string; mensagem?: string };
+        };
+        message?: string;
+      };
+
+      let errorMessage = 'Não foi possível excluir o curso.';
+
+      // Mensagem específica para erro 405
+      if (err?.response?.status === 405) {
+        errorMessage =
+          'Método não permitido. O servidor não aceita requisições DELETE para este endpoint. Verifique a configuração do backend.';
+      } else if (err?.response?.status === 404) {
+        errorMessage = 'Curso não encontrado.';
+      } else if (err?.response?.status === 401) {
+        errorMessage = 'Não autorizado. Faça login novamente.';
+      } else if (err?.response?.status === 403) {
+        errorMessage = 'Acesso negado. Você não tem permissão para esta ação.';
+      } else {
+        errorMessage =
+          err?.response?.data?.erro ||
+          err?.response?.data?.mensagem ||
+          err?.message ||
+          errorMessage;
+      }
+
+      Swal.fire('Erro', errorMessage, 'error');
+    } finally {
+      hide();
+    }
+  };
+
   return (
     <div className="p-6 w-full">
       <LoadingOverlay show={visible} />
@@ -169,6 +238,7 @@ export default function CursoPage() {
             alunos={course.quantidadeAlunos} // Substituir quando tiver dado real
             classes={course.quantidadeTurmas}
             onManageCourse={() => router.push(`/curso/${course.id}`)}
+            onDeleteCourse={() => handleDeleteCourse(course.id, course.nome)}
           />
         ))}
       </div>
