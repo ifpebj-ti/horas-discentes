@@ -46,6 +46,21 @@ function AlunoPageContent({
   const [categoriaKeySelecionada, setCategoriaKeySelecionada] =
     useState<string>();
 
+  // Decide se deve exibir o bloco de Extensão:
+  // - Se o backend informar limites/horas de extensão, usa esses valores;
+  // - Caso contrário, usa o indicador legado isNewPPC.
+  const hasInfoDeHorasExtensao =
+    user.maximoHorasExtensao !== undefined ||
+    user.totalHorasExtensao !== undefined;
+
+  const possuiExtensaoPorHoras =
+    (user.maximoHorasExtensao ?? 0) > 0 ||
+    (user.totalHorasExtensao ?? 0) > 0;
+
+  const mostrarExtensao = hasInfoDeHorasExtensao
+    ? possuiExtensaoPorHoras
+    : user.isNewPPC === true;
+
   const handleVerCertificado = async (id: string) => {
     try {
       const detalhes = await obterCertificadoPorId(id);
@@ -109,7 +124,7 @@ function AlunoPageContent({
                 onCategoriaClick={setCategoriaKeySelecionada}
               />
 
-              {user.isNewPPC && (
+              {mostrarExtensao && (
                 <ProgressoGeral
                   title="Atividades de Extensão"
                   subTitle="Progressão Geral - Atividades de Extensão"
@@ -251,10 +266,17 @@ export default function Aluno() {
           status: mapStatusCertificado(cert.status)
         }));
 
-        const comp = detalhado.atividades.filter(
-          (a) => a.tipo === 'COMPLEMENTAR'
-        );
-        const ext = detalhado.atividades.filter((a) => a.tipo === 'EXTENSAO');
+        const comp = detalhado.atividades.filter((a) => {
+          const tipo = String(a.tipo ?? '').toUpperCase();
+          // Backend pode retornar "COMPLEMENTAR", "complementar" ou código numérico
+          return tipo === 'COMPLEMENTAR' || tipo === '1';
+        });
+
+        const ext = detalhado.atividades.filter((a) => {
+          const tipo = String(a.tipo ?? '').toUpperCase();
+          // Backend pode retornar "EXTENSAO", "extensao" ou código numérico
+          return tipo === 'EXTENSAO' || tipo === '0';
+        });
 
         setCategoriasComplementares(
           comp.map((a) => ({
