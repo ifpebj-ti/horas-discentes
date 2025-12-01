@@ -18,6 +18,7 @@ import VerCertificado from '@/components/VerCertificado';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
+import { obterMeusDadosDetalhados } from '@/services/alunoService';
 import {
   listarMeusCertificados,
   obterCertificadoPorId
@@ -225,6 +226,12 @@ export default function Certificados() {
   const { data: session, status } = useSession();
   const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
   const loadingOverlay = useLoadingOverlay(true);
+  const [userHoras, setUserHoras] = useState<{
+    totalHorasExtensao: number;
+    maximoHorasExtensao: number;
+    totalHorasComplementar: number;
+    maximoHorasComplementar: number;
+  } | null>(null);
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -232,7 +239,11 @@ export default function Certificados() {
     const fetchData = async () => {
       try {
         loadingOverlay.show();
-        const certData = await listarMeusCertificados();
+        const [certData, detalhado] = await Promise.all([
+          listarMeusCertificados(),
+          obterMeusDadosDetalhados()
+        ]);
+
         const mapped = certData.map((cert) => ({
           id: cert.id,
           title: cert.tituloAtividade,
@@ -247,9 +258,16 @@ export default function Certificados() {
           tipo: mapTipoCertificado(cert.tipo),
           status: mapStatusCertificado(cert.status)
         }));
+
         setCertificados(mapped);
+        setUserHoras({
+          totalHorasExtensao: detalhado.totalHorasExtensao ?? 0,
+          maximoHorasExtensao: detalhado.maximoHorasExtensao ?? 0,
+          totalHorasComplementar: detalhado.totalHorasComplementar ?? 0,
+          maximoHorasComplementar: detalhado.maximoHorasComplementar ?? 0
+        });
       } catch (error) {
-        console.error('Erro ao buscar certificados:', error);
+        console.error('Erro ao buscar certificados ou dados do aluno:', error);
       } finally {
         loadingOverlay.hide();
       }
@@ -264,17 +282,17 @@ export default function Certificados() {
   }
   if (!session?.user) return null;
 
-  // 🔑 monta o user só com os dados básicos da sessão
+  // 🔑 monta o user com dados da sessão + resumo de horas do backend
   const user: Types.Usuario = {
     id: session.user.entidadeId!,
     name: session.user.name,
     email: session.user.email,
     role: session.user.role,
     isNewPPC: session.user.isNewPpc === true,
-    totalHorasExtensao: 0,
-    maximoHorasExtensao: 0,
-    totalHorasComplementar: 0,
-    maximoHorasComplementar: 0
+    totalHorasExtensao: userHoras?.totalHorasExtensao ?? 0,
+    maximoHorasExtensao: userHoras?.maximoHorasExtensao ?? 0,
+    totalHorasComplementar: userHoras?.totalHorasComplementar ?? 0,
+    maximoHorasComplementar: userHoras?.maximoHorasComplementar ?? 0
   };
 
   return (

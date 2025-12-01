@@ -34,7 +34,7 @@ export interface CoordenadorResumoResponse {
 export const enviarConviteCoordenador = async (
   dados: ConviteCoordenadorRequest
 ): Promise<{ mensagem: string }> => {
-  const response = await api.post('/coordenador/convite', dados);
+  const response = await api.post('/Coordenador/convite', dados);
   return response.data;
 };
 
@@ -43,7 +43,7 @@ export const cadastrarCoordenador = async (
   dados: CadastroCoordenadorRequest
 ): Promise<CoordenadorResponse> => {
   const response = await api.post<CoordenadorResponse>(
-    '/coordenador/cadastrar',
+    '/Coordenador/cadastrar',
     dados
   );
   return response.data;
@@ -51,7 +51,7 @@ export const cadastrarCoordenador = async (
 // Obter dados do coordenador autenticado
 export const obterCoordenadorAutenticado =
   async (): Promise<CoordenadorInfoResponse> => {
-    const response = await api.get<CoordenadorInfoResponse>('/coordenador/me');
+    const response = await api.get<CoordenadorInfoResponse>('/Coordenador/me');
     return response.data;
   };
 
@@ -60,7 +60,7 @@ export const obterCoordenadorPorCurso = async (
 ): Promise<CoordenadorResumoResponse | null> => {
   try {
     const response = await api.get<CoordenadorResumoResponse>(
-      `/coordenador/por-curso/${cursoId}`
+      `/Coordenador/por-curso/${cursoId}`
     );
     return response.data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,7 +79,7 @@ export const obterCoordenadorPorCurso = async (
 export const atualizarMeusDados = async (
   dados: Partial<CadastroCoordenadorRequest>
 ): Promise<void> => {
-  await api.put('/coordenador/me', dados);
+  await api.put('/Coordenador/me', dados);
 };
 
 // Atualizar coordenador por ID (apenas ADMIN)
@@ -87,7 +87,7 @@ export const atualizarCoordenador = async (
   id: string,
   dados: Partial<CadastroCoordenadorRequest>
 ): Promise<void> => {
-  await api.put(`/coordenador/${id}`, dados);
+  await api.put(`/Coordenador/${id}`, dados);
 };
 
 // Deletar coordenador por ID
@@ -98,24 +98,71 @@ export const deletarCoordenador = async (
     throw new Error('ID do coordenador é obrigatório');
   }
 
-  const cleanId = coordenadorId.trim();
+  // Remove barras extras e valida formato GUID
+  const cleanId = coordenadorId.trim().replaceAll(/(^\/+|\/+$)/g, '');
+
+  // Validação básica de GUID
+  const guidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!guidRegex.test(cleanId)) {
+    throw new Error(
+      `ID do coordenador inválido. Formato esperado: GUID (ex: 00000000-0000-0000-0000-000000000000)`
+    );
+  }
+
   console.log('Deletando coordenador:', cleanId);
-  console.log('URL completa:', `/api/coordenador/${cleanId}`);
+  console.log('Rota relativa:', `/Coordenador/${cleanId}`);
+  console.log(
+    'URL completa esperada:',
+    `https://api.horamais.app/api/Coordenador/${cleanId}`
+  );
 
   try {
-    const response = await api.delete(`/coordenador/${cleanId}`);
+    // Requisição DELETE conforme rota do backend: DELETE /api/Coordenador/{id:guid}
+    // Usando axios.request com método explícito para garantir que funcione
+    const response = await api.request({
+      method: 'DELETE',
+      url: `/Coordenador/${cleanId}`
+    });
+
+    // Verificar se a resposta é 204 (No Content) conforme esperado pelo backend
+    if (response.status === 204 || response.status === 200) {
+      console.log('Coordenador deletado com sucesso. Status:', response.status);
+      return;
+    }
+
     console.log('Resposta DELETE coordenador:', response.status);
     return;
   } catch (error: unknown) {
     const err = error as {
-      response?: { status?: number; data?: unknown };
-      config?: { url?: string; method?: string };
+      response?: {
+        status?: number;
+        statusText?: string;
+        data?: unknown;
+      };
+      config?: {
+        url?: string;
+        method?: string;
+        baseURL?: string;
+      };
+      message?: string;
     };
     console.error('Erro ao deletar coordenador:', error);
     console.error('Status:', err?.response?.status);
+    console.error('Status Text:', err?.response?.statusText);
     console.error('Data:', err?.response?.data);
-    console.error('URL tentada:', err?.config?.url);
+    console.error(
+      'URL completa:',
+      `${err?.config?.baseURL ?? ''}${err?.config?.url ?? ''}`
+    );
     console.error('Método HTTP:', err?.config?.method);
+
+    if (err?.response?.status === 405) {
+      throw new Error(
+        'Método não permitido. Verifique se o endpoint DELETE está configurado corretamente no backend.'
+      );
+    }
+
     throw error;
   }
 };

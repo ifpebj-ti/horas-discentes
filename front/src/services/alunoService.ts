@@ -96,24 +96,24 @@ export interface ContagemPendenciaDownloadResponse {
 export const criarAluno = async (
   dados: CreateAlunoRequest
 ): Promise<CreateAlunoResponse> => {
-  const response = await api.post<CreateAlunoResponse>('/aluno', dados);
+  const response = await api.post<CreateAlunoResponse>('/Aluno', dados);
   return response.data;
 };
 
 // Obter aluno por ID
 export const obterAlunoPorId = async (id: string): Promise<AlunoResponse> => {
-  const response = await api.get<AlunoResponse>(`/aluno/${id}`);
+  const response = await api.get<AlunoResponse>(`/Aluno/${id}`);
   return response.data;
 };
 
 // Deletar aluno
 export const deletarAluno = async (id: string): Promise<void> => {
-  await api.delete(`/aluno/${id}`);
+  await api.delete(`/Aluno/${id}`);
 };
 
 // Ativar ou desativar aluno
 export const toggleStatusAluno = async (id: string): Promise<void> => {
-  await api.patch(`/aluno/${id}/toggle-status`);
+  await api.patch(`/Aluno/${id}/toggle-status`);
 };
 
 // Obter aluno detalhado por ID
@@ -121,7 +121,7 @@ export const obterAlunoDetalhado = async (
   id: string
 ): Promise<AlunoDetalhadoResponse> => {
   const response = await api.get<AlunoDetalhadoResponse>(
-    `/aluno/${id}/detalhado`
+    `/Aluno/${id}/detalhado`
   );
   return response.data;
 };
@@ -130,7 +130,7 @@ export const obterAlunoDetalhado = async (
 export const obterMeusDadosDetalhados =
   async (): Promise<AlunoDetalhadoResponse> => {
     const response = await api.get<AlunoDetalhadoResponse>(
-      '/aluno/meu-detalhado'
+      '/Aluno/meu-detalhado'
     );
     return response.data;
   };
@@ -140,7 +140,7 @@ export const listarResumoHoras = async (): Promise<
   AlunoResumoHorasResponse[]
 > => {
   const response = await api.get<AlunoResumoHorasResponse[]>(
-    '/aluno/resumo-horas'
+    '/Aluno/resumo-horas'
   );
   return response.data;
 };
@@ -149,7 +149,7 @@ export const atualizarAluno = async (
   id: string,
   dados: Partial<CreateAlunoRequest>
 ): Promise<AlunoResponse> => {
-  const response = await api.put<AlunoResponse>(`/aluno/${id}`, dados);
+  const response = await api.put<AlunoResponse>(`/Aluno/${id}`, dados);
   return response.data;
 };
 
@@ -157,7 +157,7 @@ export const listarConcluidosComplementar = async (): Promise<
   AlunoComHorasConcluidasResponse[]
 > => {
   const response = await api.get<AlunoComHorasConcluidasResponse[]>(
-    '/aluno/concluidos/complementar'
+    '/Aluno/concluidos/complementar'
   );
   return response.data;
 };
@@ -167,7 +167,7 @@ export const listarConcluidosExtensao = async (): Promise<
   AlunoComHorasConcluidasResponse[]
 > => {
   const response = await api.get<AlunoComHorasConcluidasResponse[]>(
-    '/aluno/concluidos/extensao'
+    '/Aluno/concluidos/extensao'
   );
   return response.data;
 };
@@ -176,7 +176,7 @@ export const listarConcluidosExtensao = async (): Promise<
 export const contarPendenciasDownload =
   async (): Promise<ContagemPendenciaDownloadResponse> => {
     const response = await api.get<ContagemPendenciaDownloadResponse>(
-      '/aluno/pendencias-download/contagem'
+      '/Aluno/pendencias-download/contagem'
     );
     return response.data;
   };
@@ -185,12 +185,12 @@ export const contarPendenciasDownload =
 export const marcarDownloadComplementar = async (
   alunoId: string
 ): Promise<void> => {
-  await api.patch(`/aluno/${alunoId}/marcar-download/complementar`);
+  await api.patch(`/Aluno/${alunoId}/marcar-download/complementar`);
 };
 
 // Marca relatório de horas de extensão como baixado
 export const marcarDownloadExtensao = async (
   alunoId: string
 ): Promise<void> => {
-  await api.patch(`/aluno/${alunoId}/marcar-download/extensao`);
+  await api.patch(`/Aluno/${alunoId}/marcar-download/extensao`);
 };

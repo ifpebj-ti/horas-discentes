@@ -11,16 +11,19 @@ public class GetAlunoDetalhadoUseCase
 {
     private readonly IAlunoRepository _alunoRepo;
     private readonly IAlunoAtividadeRepository _atividadeRepo;
+    private readonly IAtividadeRepository _atividadeCursoRepo;
     private readonly ILimiteHorasAlunoRepository _limiteRepo;
 
     public GetAlunoDetalhadoUseCase(
         IAlunoRepository alunoRepo,
         IAlunoAtividadeRepository atividadeRepo,
-        ILimiteHorasAlunoRepository limiteRepo)
+        ILimiteHorasAlunoRepository limiteRepo,
+        IAtividadeRepository atividadeCursoRepo)
     {
         _alunoRepo = alunoRepo;
         _atividadeRepo = atividadeRepo;
         _limiteRepo = limiteRepo;
+        _atividadeCursoRepo = atividadeCursoRepo;
     }
 
     public async Task<AlunoDetalhadoResponse> ExecuteAsync(Guid alunoId)
@@ -29,17 +32,30 @@ public class GetAlunoDetalhadoUseCase
         if (aluno == null)
             throw new KeyNotFoundException("Aluno não encontrado");
 
-        var atividades = aluno.Atividades.Select(a => new AtividadeAlunoResumo(
-            a.AtividadeId,
-            a.Atividade!.Nome!,
-            a.Atividade.Grupo!,
-            a.Atividade.Categoria!,
-            a.Atividade.CategoriaKey!,
-            a.Atividade.CargaMaximaSemestral,
-            a.Atividade.CargaMaximaCurso,
-            a.HorasConcluidas,
-            a.Atividade.Tipo.ToString()
-        ));
+        // Busca todas as atividades do curso e faz um "left join" com as atividades do aluno,
+        // para garantir que o aluno veja todas as atividades disponíveis (mesmo com 0 horas).
+        var atividadesCurso = await _atividadeCursoRepo.GetByCursoIdAsync(aluno.Turma!.CursoId);
+
+        var atividadesPorAluno = aluno.Atividades
+            .ToDictionary(a => a.AtividadeId, a => a);
+
+        var atividades = atividadesCurso.Select(atividade =>
+        {
+            atividadesPorAluno.TryGetValue(atividade.Id, out var alunoAtividade);
+            var horasConcluidas = alunoAtividade?.HorasConcluidas ?? 0;
+
+            return new AtividadeAlunoResumo(
+                atividade.Id,
+                atividade.Nome!,
+                atividade.Grupo!,
+                atividade.Categoria!,
+                atividade.CategoriaKey!,
+                atividade.CargaMaximaSemestral,
+                atividade.CargaMaximaCurso,
+                horasConcluidas,
+                atividade.Tipo.ToString()
+            );
+        });
 
         var limite = await _limiteRepo.GetByCursoIdAsync(aluno.Turma!.CursoId);
 
