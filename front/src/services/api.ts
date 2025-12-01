@@ -1,19 +1,35 @@
 import { getSession } from 'next-auth/react';
-import axios from 'axios';
+
+import axios, { AxiosHeaders } from 'axios';
 
 const api = axios.create({
   baseURL: 'https://api.horamais.app/api'
+  // baseURL: 'http://localhost:5000/api'
 });
 
-// Interceptor para adicionar token da sessão se existir
-api.interceptors.request.use(async (config) => {
-  const session = await getSession();
+api.interceptors.request.use(
+  async (config) => {
+    const headers = AxiosHeaders.from(config.headers ?? {});
+    const session = await getSession();
+    const token = session?.token;
 
-  if (session?.token) {
-    config.headers.Authorization = `Bearer ${session.token}`;
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    config.headers = headers;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
+);
 
-  return config;
-});
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default api;

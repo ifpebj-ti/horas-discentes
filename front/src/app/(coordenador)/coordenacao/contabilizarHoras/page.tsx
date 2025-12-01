@@ -217,12 +217,39 @@ const GerenciamentoHoras: React.FC = () => {
       const templateBuffer = await response.arrayBuffer();
 
       for (const aluno of selecionados) {
-        const certs = aluno.certificados.map((cert, idx) => ({
-          idx: idx + 1,
-          title: cert.titulo,
-          cargaHoraria: cert.cargaHoraria,
-          periodo: `${cert.periodoInicio} a ${cert.periodoFim}`
-        }));
+        const certs = aluno.certificados.map((cert, idx) => {
+          // Função helper para garantir que valores null/undefined sejam convertidos para string vazia
+          const safeString = (value: string | null | undefined): string => {
+            return value === null || value === undefined ? '' : String(value);
+          };
+
+          return {
+            idx: idx + 1,
+            // Campos para o template DOCX
+            tituloAtividade: safeString(cert.titulo),
+            titulo: safeString(cert.titulo), // Alias
+            instituicao: safeString(cert.instituicao) || safeString(cert.local), // Tenta usar instituição se existir, senão usa local
+            local: safeString(cert.local),
+            categoria: safeString(cert.categoria),
+            periodoLetivo: safeString(cert.periodoLetivo), // Tenta usar periodoLetivo se existir
+            periodoLetivoFaculdade: safeString(cert.periodoLetivo), // Campo alternativo do template
+            cargaHoraria: cert.cargaHoraria || 0,
+            dataInicioAtividade: safeString(cert.periodoInicio),
+            dataFimAtividade: safeString(cert.periodoFim),
+            dataInicio: safeString(cert.periodoInicio), // Alias
+            dataFim: safeString(cert.periodoFim), // Alias
+            totalPeriodos: cert.totalPeriodos || 1, // Tenta usar totalPeriodos se existir, senão usa 1 como padrão
+            especificacaoAtividade: safeString(cert.descricao),
+            especificacao: safeString(cert.descricao), // Alias
+            // Campos adicionais para compatibilidade com o template existente
+            title: safeString(cert.titulo),
+            periodo:
+              cert.periodoInicio && cert.periodoFim
+                ? `${safeString(cert.periodoInicio)} a ${safeString(cert.periodoFim)}`
+                : safeString(cert.periodoInicio),
+            descricao: safeString(cert.descricao) // Alias
+          };
+        });
 
         const docxVars = {
           Coordenador: coordenadorInfo.nome,
@@ -248,7 +275,7 @@ const GerenciamentoHoras: React.FC = () => {
         doc.render();
 
         const out = doc.getZip().generate({ type: 'blob' });
-        saveAs(out, `contabilizacao_${aluno.nome?.replace(/\s/g, '_')}.docx`);
+        saveAs(out, `contabilizacao_${aluno.nome?.replaceAll(' ', '_')}.docx`);
 
         // Após o download, atualiza o status no backend
         if (selectedCategory === 'horasComplementares') {
@@ -305,12 +332,13 @@ const GerenciamentoHoras: React.FC = () => {
       {/* ============================== VISÃO: CARDS ============================== */}
       {viewMode === 'cards' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div
+          <button
+            type="button"
             onClick={() => {
               setSelectedCategory('horasComplementares');
               setViewMode('table');
             }}
-            className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center"
+            className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <h2 className="text-xl font-semibold mb-2 text-foreground">
               Horas Complementares
@@ -318,13 +346,14 @@ const GerenciamentoHoras: React.FC = () => {
             <p className="text-muted-foreground text-sm">
               Gerencie as horas complementares dos alunos.
             </p>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             onClick={() => {
               setSelectedCategory('extensao');
               setViewMode('table');
             }}
-            className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center"
+            className="bg-card border border-border rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow flex flex-col items-center text-center focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <h2 className="text-xl font-semibold mb-2 text-foreground">
               Extensão
@@ -332,7 +361,7 @@ const GerenciamentoHoras: React.FC = () => {
             <p className="text-muted-foreground text-sm">
               Gerencie as horas de extensão dos alunos.
             </p>
-          </div>
+          </button>
         </div>
       )}
 

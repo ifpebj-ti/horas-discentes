@@ -20,6 +20,8 @@ public static class DependencyInjection
         services.AddScoped<GetAllCursosUseCase>();
         services.AddScoped<GetCursoByIdUseCase>();
         services.AddScoped<GetResumoCursosUseCase>();
+        services.AddScoped<DeleteCursoUseCase>();
+        services.AddScoped<UpdateCursoUseCase>();
 
         //turma
         services.AddScoped<CreateTurmaUseCase>();
@@ -28,6 +30,8 @@ public static class DependencyInjection
         services.AddScoped<VerificarTurmaExisteUseCase>();
         services.AddScoped<GetAlunosByTurmaUseCase>();
         services.AddScoped<GetTurmasByCursoIdUseCase>();
+        services.AddScoped<DeleteTurmaUseCase>();
+        services.AddScoped<UpdateTurmaUseCase>();
 
         //Aluno
         services.AddScoped<CreateAlunoUseCase>();
@@ -40,6 +44,8 @@ public static class DependencyInjection
         services.AddScoped<GetAlunosComHorasConcluidasUseCase>();
         services.AddScoped<ContarPendenciasDownloadUseCase>();
         services.AddScoped<MarcarDownloadRelatorioUseCase>();
+        services.AddScoped<DeleteAlunoUseCase>();
+        services.AddScoped<UpdateAlunoUseCase>();
         //auth
         services.AddScoped<LoginUseCase>();
         services.AddScoped<ForgotPasswordUseCase>();
@@ -52,6 +58,9 @@ public static class DependencyInjection
         services.AddScoped<GetAtividadesByCursoIdUseCase>();
         services.AddScoped<GetCoordenadorFromTokenUseCase>();
         services.AddScoped<GetCoordenadorByCursoIdUseCase>();
+        services.AddScoped<DeleteCoordenadorUseCase>();
+        services.AddScoped<UpdateCoordenadorAdminUseCase>();
+        services.AddScoped<UpdateCoordenadorSelfUseCase>();
         //certificado
         services.AddScoped<CreateCertificadoUseCase>();
         services.AddScoped<GetCertificadosUseCase>();
@@ -64,6 +73,8 @@ public static class DependencyInjection
         services.AddScoped<CreateLimiteHorasAlunoUseCase>();
         //atividade
         services.AddScoped<CreateAtividadeUseCase>();
+        services.AddScoped<DeleteAtividadeUseCase>();
+        services.AddScoped<UpdateAtividadeUseCase>();
         return services;
     }
 }

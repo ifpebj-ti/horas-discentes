@@ -12,7 +12,19 @@ export default function NovoCertificadoButton({
   user: Types.Usuario;
 }) {
   const [open, setOpen] = useState(false);
-  const extensao = user.isNewPPC === true;
+  // Regra para exibir opção de Horas de Extensão:
+  // - Preferencialmente usa os limites de horas vindos do backend (quando disponíveis);
+  // - Se não houver essas informações, cai no comportamento antigo baseado em isNewPPC.
+  const hasInfoDeHorasExtensao =
+    user.maximoHorasExtensao !== undefined ||
+    user.totalHorasExtensao !== undefined;
+
+  const possuiExtensaoPorHoras =
+    (user.maximoHorasExtensao ?? 0) > 0 || (user.totalHorasExtensao ?? 0) > 0;
+
+  const extensao = hasInfoDeHorasExtensao
+    ? possuiExtensaoPorHoras
+    : user.isNewPPC === true;
 
   function toggleDropdown(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
