@@ -16,6 +16,7 @@ public class GetAlunoDetalhadoUseCaseTests
     private readonly Mock<IAlunoRepository> _alunoRepo = new();
     private readonly Mock<IAlunoAtividadeRepository> _atividadeRepo = new();
     private readonly Mock<ILimiteHorasAlunoRepository> _limiteRepo = new();
+    private readonly Mock<IAtividadeRepository> _atividadeCursoRepo = new();
 
     private static void SetPrivateProperty<T, TValue>(T obj, string propertyName, TValue value)
     {
@@ -92,10 +93,15 @@ public class GetAlunoDetalhadoUseCaseTests
         _limiteRepo.Setup(r => r.GetByCursoIdAsync(cursoId))
             .ReturnsAsync(limite);
 
+        // MOCK EXTRA — obrigatório no construtor:
+        _atividadeCursoRepo.Setup(r => r.GetByCursoIdAsync(cursoId))
+            .ReturnsAsync(new List<DomainAtividade> { atividade });
+
         var useCase = new GetAlunoDetalhadoUseCase(
             _alunoRepo.Object,
             _atividadeRepo.Object,
-            _limiteRepo.Object
+            _limiteRepo.Object,
+            _atividadeCursoRepo.Object // AGORA SIM
         );
 
         // Act
