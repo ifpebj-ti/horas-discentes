@@ -6,12 +6,12 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+
 import {
   forgotPassword,
   validateResetCode,
   resetPassword
 } from '@/services/authRecovery';
-
 import Swal from 'sweetalert2';
 
 export default function PerfilAdminPage() {
@@ -78,7 +78,6 @@ export default function PerfilAdminPage() {
             </Button>
           ) : (
             <div className="space-y-4">
-
               {/* Passo 2: Validar código */}
               {codigoEnviado && !codigoValidado && (
                 <div className="space-y-3">
@@ -116,13 +115,11 @@ export default function PerfilAdminPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => {
-                      setCodigoEnviado(false);
-                      setCodigoReset('');
-                    }}
+                    onClick={handleSolicitarCodigo}
+                    disabled={loadingReset}
                     className="w-full"
                   >
-                    Reenviar Código
+                    {loadingReset ? 'Enviando...' : 'Reenviar Código'}
                   </Button>
                 </div>
               )}
@@ -157,9 +154,7 @@ export default function PerfilAdminPage() {
                       id="confirmar-senha-reset"
                       type="password"
                       value={confirmarSenhaReset}
-                      onChange={(e) =>
-                        setConfirmarSenhaReset(e.target.value)
-                      }
+                      onChange={(e) => setConfirmarSenhaReset(e.target.value)}
                       disabled={loadingReset}
                       placeholder="Confirme sua nova senha"
                     />

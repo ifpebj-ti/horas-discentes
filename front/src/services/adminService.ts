@@ -12,4 +12,3 @@ export const atualizarMeusDados = async (
 ): Promise<void> => {
   await api.put('/Admin/me', dados);
 };
-
