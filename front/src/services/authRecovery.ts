@@ -29,7 +29,7 @@ export const forgotPassword = async (
   data: ForgotPasswordRequest
 ): Promise<ForgotPasswordResponse> => {
   const res = await api.post<ForgotPasswordResponse>(
-    '/auth/forgot-password',
+    '/Auth/forgot-password',
     data
   );
   return res.data;
@@ -38,7 +38,7 @@ export const forgotPassword = async (
 export const validateResetCode = async (
   data: ValidateCodeRequest
 ): Promise<ValidateCodeResponse> => {
-  const res = await api.post<ValidateCodeResponse>('/auth/validate-code', data);
+  const res = await api.post<ValidateCodeResponse>('/Auth/validate-code', data);
   return res.data;
 };
 
@@ -46,7 +46,7 @@ export const resetPassword = async (
   data: ResetPasswordRequest
 ): Promise<ResetPasswordResponse> => {
   const res = await api.post<ResetPasswordResponse>(
-    '/auth/reset-password',
+    '/Auth/reset-password',
     data
   );
   return res.data;
