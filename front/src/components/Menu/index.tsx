@@ -14,6 +14,8 @@ import {
   FaUserAlt
 } from 'react-icons/fa';
 
+import Version from '@/components/Version/Version';
+
 type Props = {
   user: {
     name: string;
@@ -64,8 +66,9 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
   const role = user?.role;
 
   return (
-    <nav className="absolute w-full bg-white shadow-md z-30">
-      <div className="flex flex-col">
+    <nav className="absolute top-full left-0 w-64 max-w-[80vw] bg-white shadow-lg z-30 border-r border-gray-200 max-h-[calc(100vh-80px)] flex flex-col">
+      {/* Conteúdo do menu com scroll */}
+      <div className="flex-1 overflow-y-auto">
         {/* MENU DO ADMINISTRADOR */}
         {role === 'admin' && (
           <>
@@ -125,11 +128,16 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
 
         <button
           onClick={closeMenu}
-          className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+          className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer w-full"
         >
           <FaSignOutAlt className="mr-2 text-blue-600" />
           <span className="text-black">Sair</span>
         </button>
+      </div>
+
+      {/* Versão fixa no rodapé do menu */}
+      <div className="border-t border-gray-200 px-4 py-2 bg-gray-50">
+        <Version />
       </div>
     </nav>
   );

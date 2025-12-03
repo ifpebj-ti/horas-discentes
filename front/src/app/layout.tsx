@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 import ClientProviders from '@/components/ClientProviders';
-import Version from '@/components/Version/Version';
 
 export const metadata: Metadata = {
   title: 'Hora +',
@@ -21,11 +20,6 @@ export default function RootLayout({
         <ClientProviders>
           <main className="flex-1">{children}</main>
         </ClientProviders>
-
-        {/* Rodapé fixo com versão */}
-        <footer className="p-4 border-t text-center text-sm text-gray-600">
-          <Version />
-        </footer>
       </body>
     </html>
   );
