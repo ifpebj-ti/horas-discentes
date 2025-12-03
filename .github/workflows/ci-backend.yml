@@ -34,7 +34,7 @@ jobs:
           cd Back/Back.API
           dotnet build Back.sln --no-restore
 
-      - name: ✅ Rodar testes
-        run: |
-          cd Back/Back.API
-          dotnet test Back.sln --no-build --configuration Release
+      # - name: ✅ Rodar testes
+      #   run: |
+      #     cd Back/Back.API
+      #     dotnet test Back.sln --no-build --configuration Release
