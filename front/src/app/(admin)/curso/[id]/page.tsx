@@ -249,11 +249,27 @@ export default function CourseDetailPage() {
         };
         message?: string;
       };
-      const errorMessage =
-        err?.response?.data?.erro ||
-        err?.response?.data?.mensagem ||
-        err?.message ||
-        'Não foi possível excluir o coordenador.';
+
+      let errorMessage = 'Não foi possível excluir o coordenador.';
+
+      // Mensagem específica para erro 405
+      if (err?.response?.status === 405) {
+        errorMessage =
+          'Método não permitido. O servidor não aceita requisições DELETE para este endpoint. Verifique a configuração do backend.';
+      } else if (err?.response?.status === 404) {
+        errorMessage = 'Coordenador não encontrado.';
+      } else if (err?.response?.status === 401) {
+        errorMessage = 'Não autorizado. Faça login novamente.';
+      } else if (err?.response?.status === 403) {
+        errorMessage = 'Acesso negado. Você não tem permissão para esta ação.';
+      } else {
+        errorMessage =
+          err?.response?.data?.erro ||
+          err?.response?.data?.mensagem ||
+          err?.message ||
+          errorMessage;
+      }
+
       Swal.fire('Erro', errorMessage, 'error');
     } finally {
       hide();

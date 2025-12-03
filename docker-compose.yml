@@ -46,6 +46,10 @@ services:
 
   backend:
     image: ghcr.io/ifpebj-ti/horas-discentes-backend:latest
+    # build:
+    #   context: ./back
+    #   dockerfile: Dockerfile
+
     ports:
       - "${PORT_MACHINE_BACKEND}:5000"
     environment:
