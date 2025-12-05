@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ import {
 } from '@/services/authRecovery';
 import Swal from 'sweetalert2';
 
-export default function PerfilCoordenadorPage() {
+export default function PerfilAlunoPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [email] = useState(session?.user.email ?? '');
@@ -372,3 +372,4 @@ export default function PerfilCoordenadorPage() {
     }
   }
 }
+

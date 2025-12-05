@@ -80,6 +80,7 @@ export default function ValidacaoCertificadosPage() {
   const [termoBusca, setTermoBusca] = useState('');
   const [certificadoSelecionado, setCertificadoSelecionado] =
     useState<CertificadoPorCursoResponse | null>(null);
+  const [motivoRejeicao, setMotivoRejeicao] = useState('');
 
   const { visible, show, hide } = useLoadingOverlay();
 
@@ -108,8 +109,10 @@ export default function ValidacaoCertificadosPage() {
         c.categoria.toLowerCase().includes(termoBusca.toLowerCase())
     );
 
-  const handleSelectCertificado = (c: CertificadoPorCursoResponse) =>
+  const handleSelectCertificado = (c: CertificadoPorCursoResponse) => {
     setCertificadoSelecionado(c);
+    setMotivoRejeicao('');
+  };
 
   const handleApprove = async () => {
     if (!certificadoSelecionado) return;
@@ -152,17 +155,43 @@ export default function ValidacaoCertificadosPage() {
   const handleReject = async () => {
     if (!certificadoSelecionado) return;
 
+    // Solicitar motivo da rejeição
+    const { value: motivo } = await Swal.fire({
+      title: 'Motivo da Rejeição',
+      input: 'textarea',
+      inputLabel: 'Informe o motivo da rejeição (obrigatório)',
+      inputPlaceholder: 'Digite o motivo da rejeição...',
+      inputAttributes: {
+        'aria-label': 'Motivo da rejeição'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Rejeitar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc2626',
+      inputValidator: (value) => {
+        if (!value || value.trim().length === 0) {
+          return 'O motivo da rejeição é obrigatório!';
+        }
+        if (value.trim().length < 10) {
+          return 'O motivo deve ter no mínimo 10 caracteres!';
+        }
+        return null;
+      }
+    });
+
+    if (!motivo) return;
+
     try {
       show();
-      await reprovarCertificado(certificadoSelecionado.id);
+      await reprovarCertificado(certificadoSelecionado.id, motivo.trim());
 
       setCertificados((prev) =>
         prev.map((c) =>
           c.id === certificadoSelecionado.id
             ? {
-                ...c,
-                status: StatusCertificado.REPROVADO
-              }
+              ...c,
+              status: StatusCertificado.REPROVADO
+            }
             : c
         )
       );
@@ -171,6 +200,8 @@ export default function ValidacaoCertificadosPage() {
         ...certificadoSelecionado,
         status: StatusCertificado.REPROVADO
       });
+
+      setMotivoRejeicao('');
 
       Swal.fire({
         icon: 'success',

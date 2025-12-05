@@ -14,7 +14,6 @@ import {
   FaUserAlt
 } from 'react-icons/fa';
 
-import Version from '@/components/Version/Version';
 
 type Props = {
   user: {
@@ -84,6 +83,9 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
         {/* MENU DO COORDENADOR */}
         {role === 'coordenador' && (
           <>
+            <CustomNavLink href="/coordenador/perfil" onClick={closeMenu}>
+              <IconText icon={FaUserAlt} text="Meu Perfil" />
+            </CustomNavLink>
             <CustomNavLink href="/coordenacao" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />
             </CustomNavLink>
@@ -117,6 +119,9 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
         {/* MENU DO ALUNO */}
         {role === 'aluno' && (
           <>
+            <CustomNavLink href="/aluno/perfil" onClick={closeMenu}>
+              <IconText icon={FaUserAlt} text="Meu Perfil" />
+            </CustomNavLink>
             <CustomNavLink href="/aluno" onClick={closeMenu}>
               <IconText icon={FaHome} text="Início" />
             </CustomNavLink>
@@ -135,10 +140,6 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
         </button>
       </div>
 
-      {/* Versão fixa no rodapé do menu */}
-      <div className="border-t border-gray-200 px-4 py-2 bg-gray-50">
-        <Version />
-      </div>
     </nav>
   );
 };

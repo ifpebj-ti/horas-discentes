@@ -6,6 +6,7 @@ import { useMemo } from 'react'; // Importa o useMemo
 
 import Header from '@/components/Header';
 import ProtectedLayout from '@/components/ProtectedLayout';
+import Version from '@/components/Version/Version';
 
 const getTitleFromPath = (path: string): string => {
   const last = path.split('/').findLast(Boolean) ?? '';
@@ -54,15 +55,15 @@ export default function AlunoLayout({
 
   return (
     <ProtectedLayout allowedRoles={['aluno']}>
-      <div className="min-h-screen bg-white text-black">
-        <header className="shadow-md bg-gray-100 z-20 relative">
+      <div className="min-h-screen bg-white text-black flex flex-col">
+        <header className="shadow-md bg-gray-100 z-20 relative shrink-0">
           {/* Agora o 'user' é um objeto estável (memoizado) */}
           <Header menuTitle={menuTitle} user={user} />
         </header>
 
-        <main>{children}</main>
+        <main className="flex-1 overflow-y-auto">{children}</main>
 
-        <footer className="bg-white border-t py-4 text-center text-xs text-gray-500">
+        <footer className="bg-white border-t py-4 text-center text-xs text-gray-500 shrink-0">
           IFPE - Campus Belo Jardim
           <br />
           Endereço: Av. Sebastião Rodrigues da Costa, s/n - São Pedro, Belo
@@ -88,6 +89,9 @@ export default function AlunoLayout({
                 Erimilson Silva
               </a>
             </p>
+          </div>
+          <div className="mt-2 flex justify-center">
+            <Version />
           </div>
         </footer>
       </div>

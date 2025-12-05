@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen overflow-x-hidden">
         {/* Providers e conteúdo da página */}
         <ClientProviders>
           <main className="flex-1">{children}</main>
