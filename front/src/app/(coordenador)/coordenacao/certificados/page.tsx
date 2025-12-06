@@ -188,9 +188,9 @@ export default function ValidacaoCertificadosPage() {
         prev.map((c) =>
           c.id === certificadoSelecionado.id
             ? {
-              ...c,
-              status: StatusCertificado.REPROVADO
-            }
+                ...c,
+                status: StatusCertificado.REPROVADO
+              }
             : c
         )
       );
