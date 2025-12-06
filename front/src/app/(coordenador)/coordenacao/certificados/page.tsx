@@ -80,7 +80,6 @@ export default function ValidacaoCertificadosPage() {
   const [termoBusca, setTermoBusca] = useState('');
   const [certificadoSelecionado, setCertificadoSelecionado] =
     useState<CertificadoPorCursoResponse | null>(null);
-  const [motivoRejeicao, setMotivoRejeicao] = useState('');
 
   const { visible, show, hide } = useLoadingOverlay();
 
@@ -111,7 +110,6 @@ export default function ValidacaoCertificadosPage() {
 
   const handleSelectCertificado = (c: CertificadoPorCursoResponse) => {
     setCertificadoSelecionado(c);
-    setMotivoRejeicao('');
   };
 
   const handleApprove = async () => {
@@ -189,9 +187,9 @@ export default function ValidacaoCertificadosPage() {
         prev.map((c) =>
           c.id === certificadoSelecionado.id
             ? {
-              ...c,
-              status: StatusCertificado.REPROVADO
-            }
+                ...c,
+                status: StatusCertificado.REPROVADO
+              }
             : c
         )
       );
@@ -200,8 +198,6 @@ export default function ValidacaoCertificadosPage() {
         ...certificadoSelecionado,
         status: StatusCertificado.REPROVADO
       });
-
-      setMotivoRejeicao('');
 
       Swal.fire({
         icon: 'success',

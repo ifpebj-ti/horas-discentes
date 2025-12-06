@@ -73,71 +73,134 @@ export interface CertificadoPorCursoResponse {
 export const enviarCertificado = async (
   form: FormData
 ): Promise<{ certificadoId: string }> => {
-  const response = await api.post('/Certificado', form, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
-  return response.data;
+  try {
+    const response = await api.post('/Certificado', form, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao enviar certificado:', error);
+    throw error;
+  }
 };
 
 export const listarCertificados = async (
   status?: StatusCertificado,
   alunoId?: string
 ): Promise<CertificadoResponse[]> => {
-  const params = new URLSearchParams();
-  if (status) params.append('status', status);
-  if (alunoId) params.append('alunoId', alunoId);
+  try {
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    if (alunoId) params.append('alunoId', alunoId);
 
-  const response = await api.get<CertificadoResponse[]>(
-    `/Certificado?${params}`
-  );
-  return response.data;
+    const response = await api.get<CertificadoResponse[]>(
+      `/Certificado?${params}`
+    );
+    return response.data || [];
+  } catch (error) {
+    console.error('Erro ao listar certificados:', error);
+    return [];
+  }
 };
 
 export const obterCertificadoPorId = async (
   id: string
 ): Promise<CertificadoDetalhadoResponse> => {
-  const response = await api.get<CertificadoDetalhadoResponse>(
-    `/Certificado/${id}`
-  );
-  return response.data;
+  if (!id || id.trim() === '') {
+    throw new Error('ID do certificado é obrigatório');
+  }
+
+  try {
+    const response = await api.get<CertificadoDetalhadoResponse>(
+      `/Certificado/${id.trim()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao obter certificado por ID:', error);
+    throw error;
+  }
 };
 
 export const aprovarCertificado = async (id: string): Promise<void> => {
-  await api.patch(`/Certificado/${id}/aprovar`);
+  if (!id || id.trim() === '') {
+    throw new Error('ID do certificado é obrigatório');
+  }
+
+  try {
+    await api.patch(`/Certificado/${id.trim()}/aprovar`);
+  } catch (error) {
+    console.error('Erro ao aprovar certificado:', error);
+    throw error;
+  }
 };
 
 export const reprovarCertificado = async (
   id: string,
   motivoRejeicao?: string
 ): Promise<void> => {
-  await api.patch(`/Certificado/${id}/reprovar`, {
-    motivoRejeicao
-  });
+  if (!id || id.trim() === '') {
+    throw new Error('ID do certificado é obrigatório');
+  }
+
+  try {
+    await api.patch(`/Certificado/${id.trim()}/reprovar`, {
+      motivoRejeicao: motivoRejeicao?.trim() || undefined
+    });
+  } catch (error) {
+    console.error('Erro ao reprovar certificado:', error);
+    throw error;
+  }
 };
 
 export const listarMeusCertificados = async (): Promise<
   CertificadoResponse[]
 > => {
-  const response = await api.get<CertificadoResponse[]>('/Certificado/me');
-  return response.data;
+  try {
+    const response = await api.get<CertificadoResponse[]>('/Certificado/me');
+    return response.data || [];
+  } catch (error) {
+    console.error('Erro ao listar meus certificados:', error);
+    // Retorna array vazio em caso de erro para não quebrar a UI
+    return [];
+  }
 };
 
 export const listarCertificadosPorCurso = async (
   cursoId: string
 ): Promise<CertificadoPorCursoResponse[]> => {
-  const response = await api.get<CertificadoPorCursoResponse[]>(
-    `/Certificado/por-curso/${cursoId}`
-  );
-  return response.data;
+  if (!cursoId || cursoId.trim() === '') {
+    console.warn('cursoId não fornecido para listarCertificadosPorCurso');
+    return [];
+  }
+
+  try {
+    const response = await api.get<CertificadoPorCursoResponse[]>(
+      `/Certificado/por-curso/${cursoId.trim()}`
+    );
+    return response.data || [];
+  } catch (error) {
+    console.error('Erro ao listar certificados por curso:', error);
+    // Retorna array vazio em caso de erro para não quebrar a UI
+    return [];
+  }
 };
 
 export const baixarAnexoCertificado = async (id: string): Promise<Blob> => {
-  const response = await api.get(`/Certificado/${id}/anexo`, {
-    responseType: 'blob'
-  });
-  return response.data;
+  if (!id || id.trim() === '') {
+    throw new Error('ID do certificado é obrigatório');
+  }
+
+  try {
+    const response = await api.get(`/Certificado/${id.trim()}/anexo`, {
+      responseType: 'blob'
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao baixar anexo do certificado:', error);
+    throw error;
+  }
 };
 
 export interface UpdateCertificadoRequest {
@@ -162,11 +225,20 @@ export const atualizarCertificado = async (
   id: string,
   form: FormData
 ): Promise<void> => {
-  await api.put(`/Certificado/${id}`, form, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
+  if (!id || id.trim() === '') {
+    throw new Error('ID do certificado é obrigatório');
+  }
+
+  try {
+    await api.put(`/Certificado/${id.trim()}`, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao atualizar certificado:', error);
+    throw error;
+  }
 };
 
 // Deletar certificado por ID (apenas ADMIN/COORDENADOR)

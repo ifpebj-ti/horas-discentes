@@ -14,7 +14,6 @@ import {
   FaUserAlt
 } from 'react-icons/fa';
 
-
 type Props = {
   user: {
     name: string;
@@ -139,7 +138,6 @@ const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
           <span className="text-black">Sair</span>
         </button>
       </div>
-
     </nav>
   );
 };

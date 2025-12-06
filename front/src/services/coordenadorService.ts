@@ -34,25 +34,50 @@ export interface CoordenadorResumoResponse {
 export const enviarConviteCoordenador = async (
   dados: ConviteCoordenadorRequest
 ): Promise<{ mensagem: string }> => {
-  const response = await api.post('/Coordenador/convite', dados);
-  return response.data;
+  if (!dados.email || !dados.cursoId) {
+    throw new Error('Email e cursoId são obrigatórios');
+  }
+
+  try {
+    const response = await api.post('/Coordenador/convite', dados);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao enviar convite para coordenador:', error);
+    throw error;
+  }
 };
 
 // Criar coordenador a partir de um convite (token)
 export const cadastrarCoordenador = async (
   dados: CadastroCoordenadorRequest
 ): Promise<CoordenadorResponse> => {
-  const response = await api.post<CoordenadorResponse>(
-    '/Coordenador/cadastrar',
-    dados
-  );
-  return response.data;
+  if (!dados.token || !dados.email || !dados.senha) {
+    throw new Error('Token, email e senha são obrigatórios');
+  }
+
+  try {
+    const response = await api.post<CoordenadorResponse>(
+      '/Coordenador/cadastrar',
+      dados
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao cadastrar coordenador:', error);
+    throw error;
+  }
 };
 // Obter dados do coordenador autenticado
 export const obterCoordenadorAutenticado =
-  async (): Promise<CoordenadorInfoResponse> => {
-    const response = await api.get<CoordenadorInfoResponse>('/Coordenador/me');
-    return response.data;
+  async (): Promise<CoordenadorInfoResponse | null> => {
+    try {
+      const response =
+        await api.get<CoordenadorInfoResponse>('/Coordenador/me');
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao obter coordenador autenticado:', error);
+      // Retorna null em caso de erro para não quebrar a UI
+      return null;
+    }
   };
 
 export const obterCoordenadorPorCurso = async (
@@ -79,7 +104,12 @@ export const obterCoordenadorPorCurso = async (
 export const atualizarMeusDados = async (
   dados: Partial<CadastroCoordenadorRequest>
 ): Promise<void> => {
-  await api.put('/Coordenador/me', dados);
+  try {
+    await api.put('/Coordenador/me', dados);
+  } catch (error) {
+    console.error('Erro ao atualizar dados do coordenador:', error);
+    throw error;
+  }
 };
 
 // Atualizar coordenador por ID (apenas ADMIN)
@@ -87,7 +117,16 @@ export const atualizarCoordenador = async (
   id: string,
   dados: Partial<CadastroCoordenadorRequest>
 ): Promise<void> => {
-  await api.put(`/Coordenador/${id}`, dados);
+  if (!id || id.trim() === '') {
+    throw new Error('ID do coordenador é obrigatório');
+  }
+
+  try {
+    await api.put(`/Coordenador/${id.trim()}`, dados);
+  } catch (error) {
+    console.error('Erro ao atualizar coordenador:', error);
+    throw error;
+  }
 };
 
 // Deletar coordenador por ID
