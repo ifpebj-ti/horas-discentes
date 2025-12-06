@@ -6,6 +6,7 @@ import {
   FaSearch,
   FaCheckCircle,
   FaTimesCircle,
+  // cSpell:ignore Hourglass
   FaHourglassHalf,
   FaRegFileAlt,
   FaHome,
@@ -187,9 +188,9 @@ export default function ValidacaoCertificadosPage() {
         prev.map((c) =>
           c.id === certificadoSelecionado.id
             ? {
-                ...c,
-                status: StatusCertificado.REPROVADO
-              }
+              ...c,
+              status: StatusCertificado.REPROVADO
+            }
             : c
         )
       );
@@ -220,8 +221,8 @@ export default function ValidacaoCertificadosPage() {
   const handleViewPdf = async (id: string) => {
     try {
       const blob = await baixarAnexoCertificado(id);
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, '_blank');
+      const url = globalThis.URL.createObjectURL(blob);
+      globalThis.open(url, '_blank');
     } catch (error) {
       console.error('Erro ao baixar PDF:', error);
       alert('Erro ao visualizar o PDF.');
@@ -242,7 +243,7 @@ export default function ValidacaoCertificadosPage() {
           ]}
         />
         <div className="mt-4 flex flex-col sm:flex-row gap-4 items-center">
-          <div className="relative flex-grow w-full sm:w-auto">
+          <div className="relative grow w-full sm:w-auto">
             <input
               type="text"
               placeholder="Buscar por aluno, atividade, categoria..."
@@ -269,7 +270,7 @@ export default function ValidacaoCertificadosPage() {
         </div>
       </div>
 
-      <div className="flex-grow flex overflow-hidden">
+      <div className="grow flex overflow-hidden">
         <div
           className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${showDetailMobile ? 'hidden' : ''}`}
         >
