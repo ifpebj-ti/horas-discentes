@@ -25,6 +25,10 @@ public class CriarCoordenadorUseCase
 
     public async Task<CoordenadorResponse> ExecuteAsync(CadastroCoordenadorRequest request)
     {
+        // 0. Validar domínio do email
+        if (!request.Email.EndsWith("@docente.ifpe.edu.br", StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("Email institucional inválido.");
+
         // 1. Validar o convite
         var convite = await _conviteRepo.GetValidByTokenAsync(request.Token);
         if (convite == null)

@@ -28,6 +28,10 @@ export const CreateCoordinatorAccount = ({
   const { errors, isValid } = formState;
   const senha = watch('senha') || '';
 
+  const isEmailValid =
+    !prefilledEmail ||
+    prefilledEmail.endsWith('@docente.ifpe.edu.br');
+
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">
       {/* Imagem à esquerda */}
@@ -103,6 +107,11 @@ export const CreateCoordinatorAccount = ({
               value={prefilledEmail}
               readOnly
             />
+            {!isEmailValid && (
+              <p className="text-xs text-red-500 mt-1">
+                O email deve ser institucional (@docente.ifpe.edu.br)
+              </p>
+            )}
           </div>
 
           {/* Senha */}
@@ -164,7 +173,7 @@ export const CreateCoordinatorAccount = ({
             <RoundedButton
               type="submit"
               text={loading ? 'Criando...' : 'Criar Conta'}
-              disabled={loading || !isValid}
+              disabled={loading || !isValid || !isEmailValid}
               bgColor="bg-[#1351B4]"
               textColor="text-white"
             />
