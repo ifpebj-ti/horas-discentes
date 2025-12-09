@@ -513,6 +513,7 @@ export default function CourseDetailPage() {
                       className="w-full"
                       disabled={
                         isCoordLoading ||
+                        !coordEmail ||
                         !coordEmail.endsWith('@docente.ifpe.edu.br')
                       }
                     >

@@ -26,7 +26,7 @@ namespace Back.Application.UseCases.Coordenador
         public async Task ExecuteAsync(ConviteCoordenadorRequest request)
         {
             if (!request.Email.EndsWith("@docente.ifpe.edu.br", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("O email do coordenador deve ser institucional (@docente.ifpe.edu.br).");
+                throw new ArgumentException("Email institucional inválido.");
 
             var token = Guid.NewGuid().ToString();
 
