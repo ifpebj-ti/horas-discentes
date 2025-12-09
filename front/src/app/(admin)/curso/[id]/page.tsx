@@ -112,6 +112,16 @@ export default function CourseDetailPage() {
 
   const handleCoordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!coordEmail.endsWith('@docente.ifpe.edu.br')) {
+      Swal.fire(
+        'Erro',
+        'O email do coordenador deve ser institucional (@docente.ifpe.edu.br).',
+        'error'
+      );
+      return;
+    }
+
     const confirmation = await Swal.fire({
       title: 'Confirmar envio',
       text: `Deseja enviar convite para ${coordEmail}?`,
@@ -490,12 +500,21 @@ export default function CourseDetailPage() {
                         required
                         className="text-lg"
                       />
+                      {coordEmail &&
+                        !coordEmail.endsWith('@docente.ifpe.edu.br') && (
+                          <p className="text-sm text-red-500 font-medium">
+                            O email deve ser institucional (@docente.ifpe.edu.br)
+                          </p>
+                        )}
                     </div>
 
                     <Button
                       type="submit"
                       className="w-full"
-                      disabled={isCoordLoading}
+                      disabled={
+                        isCoordLoading ||
+                        !coordEmail.endsWith('@docente.ifpe.edu.br')
+                      }
                     >
                       {isCoordLoading ? (
                         <>Enviando...</>

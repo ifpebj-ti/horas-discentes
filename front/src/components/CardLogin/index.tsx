@@ -12,7 +12,7 @@ import { useCardLogin } from './hooks/useCardLogin';
 export const CardLogin = () => {
   useRedirectIfAuthenticated();
   const {
-    form: { register, handleSubmit, formState },
+    form: { register, handleSubmit, formState, watch },
     submitForm
   } = useCardLogin();
 
@@ -52,6 +52,13 @@ export const CardLogin = () => {
                 {errors.email.message}
               </p>
             )}
+            {watch('email') &&
+              !watch('email').endsWith('@discente.ifpe.edu.br') &&
+              !watch('email').endsWith('@docente.ifpe.edu.br') && (
+                <p className="text-xs text-red-500 mt-1 font-medium">
+                  Use seu email institucional (@discente ou @docente).
+                </p>
+              )}
           </div>
 
           <div className="mb-1">
