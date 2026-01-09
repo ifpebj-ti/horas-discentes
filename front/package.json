@@ -37,7 +37,7 @@
     "react-hook-form": "^7.63.0",
     "react-icons": "^5.5.0",
     "react-loading-indicators": "^1.0.1",
-    "react-router-dom": "^7.9.1",
+    "react-router-dom": "^7.12.0",
     "react-toastify": "^11.0.5",
     "signal-exit": "^4.1.0",
     "sweetalert2": "^11.21.0",
