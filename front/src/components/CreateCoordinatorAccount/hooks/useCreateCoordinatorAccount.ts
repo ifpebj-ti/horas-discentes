@@ -10,8 +10,9 @@ import Swal from 'sweetalert2';
 
 import {
   createCoordinatorSchema,
-  CreateCoordinatorSchema
+  type CreateCoordinatorSchema
 } from '../schemas/schema';
+import { COLORS } from '@/config/colors';
 
 export const useCreateCoordinatorAccount = (
   emailFromURL: string,
@@ -48,7 +49,7 @@ export const useCreateCoordinatorAccount = (
         icon: 'success',
         title: 'Conta criada com sucesso!',
         text: 'Agora você pode acessar o sistema.',
-        confirmButtonColor: '#1351B4'
+        confirmButtonColor: COLORS.primary
       });
 
       router.push('/');
@@ -59,7 +60,7 @@ export const useCreateCoordinatorAccount = (
         icon: 'error',
         title: 'Erro ao criar conta',
         text: err?.response?.data?.message || 'Tente novamente.',
-        confirmButtonColor: '#f87171'
+        confirmButtonColor: COLORS.danger
       });
     } finally {
       setLoading(false);

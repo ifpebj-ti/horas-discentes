@@ -3,12 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaEnvelope, FaKey, FaArrowLeft } from 'react-icons/fa';
-
 import { Input } from '@/components/ui/input';
-
 import { InputPassword } from '../InputPassword';
 import { Button } from '../ui/button';
 import { useResetPassword } from './hooks/useResetPassword';
+import { StepsDots } from './StepsDots';
 
 export const ResetPassword = () => {
   const {
@@ -37,17 +36,6 @@ export const ResetPassword = () => {
   const senha = watch('senha') || '';
   const confirmarSenha = watch('confirmarSenha') || '';
   const senhasIguais = senha === confirmarSenha && confirmarSenha.length > 0;
-
-  const StepsDots = ({ active }: { active: number }) => (
-    <div className="flex items-center justify-center gap-3 my-4">
-      {[1, 2, 3].map((i) => (
-        <span
-          key={i}
-          className={`h-2 w-6 rounded-full transition-all ${active === i ? 'bg-primary' : 'bg-slate-300'}`}
-        />
-      ))}
-    </div>
-  );
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 w-full">
