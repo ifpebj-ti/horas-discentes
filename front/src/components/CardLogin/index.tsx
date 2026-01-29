@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { FaEnvelope, FaCircleNotch } from 'react-icons/fa';
 
 import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticateduseRedirectIfAuthenticated';
-import { Input } from '../Input';
+import { Input } from '@/components/ui/input';
 import { InputPassword } from '../InputPassword';
 import { Button } from '@/components/ui/button';
 import { useCardLogin } from './hooks/useCardLogin';

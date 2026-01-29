@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaEnvelope, FaKey, FaArrowLeft } from 'react-icons/fa';
 import { Button } from '../ui/button';
-import { Input } from '../Input';
+import { Input } from '@/components/ui/input';
 import { InputPassword } from '../InputPassword';
 import { useResetPassword } from './hooks/useResetPassword';
 

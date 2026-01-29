@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { FaUser, FaIdCard, FaRegNewspaper } from 'react-icons/fa';
 
-import { Input } from '@/components/Input';
+import { Input } from '@/components/ui/input';
 import { InputPassword } from '@/components/InputPassword';
 import { Button } from '@/components/ui/button';
 
