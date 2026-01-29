@@ -1,146 +1,86 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
-import {
-  FaFileAlt,
-  FaEnvelope,
-  FaHome,
-  FaSignOutAlt,
-  FaClipboard,
-  FaGraduationCap,
-  FaBookOpen,
-  FaUserAlt
-} from 'react-icons/fa';
+import { FaSignOutAlt } from 'react-icons/fa';
 
+import {
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription
+} from '@/components/ui/sheet';
 import Version from '@/components/Version/Version';
+import { ROUTES } from '@/config/routes';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 type Props = {
   user: {
     name: string;
     role: string;
   };
-  closeMenu: () => void;
+  onLinkClick: () => void;
 };
 
-const CustomNavLink = ({
-  href,
-  children,
-  onClick
-}: {
-  href: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-}) => {
+const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
   const pathname = usePathname();
-  const isActive = pathname === href;
-  const baseClass =
-    'flex items-center px-4 py-2 text-sm hover:bg-gray-100 transition-colors';
-  const activeClass = isActive ? 'bg-gray-200 font-semibold' : '';
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className={`${baseClass} ${activeClass}`}
-    >
-      {children}
-    </Link>
-  );
-};
-
-const IconText = ({
-  icon: Icon,
-  text
-}: {
-  icon: React.ElementType;
-  text: string;
-}) => (
-  <>
-    <Icon className="mr-2 text-blue-600" />
-    <span className="text-black">{text}</span>
-  </>
-);
-
-const MobileMenu: React.FC<Props> = ({ user, closeMenu }) => {
-  const role = user?.role;
+  const role = user?.role as keyof typeof ROUTES;
+  const menuItems = ROUTES[role] || [];
 
   return (
-    <nav className="absolute top-full left-0 w-64 max-w-[80vw] bg-white shadow-lg z-30 border-r border-gray-200 max-h-[calc(100vh-80px)] flex flex-col">
-      {/* Conteúdo do menu com scroll */}
-      <div className="flex-1 overflow-y-auto">
-        {/* MENU DO ADMINISTRADOR */}
-        {role === 'admin' && (
-          <>
-            <CustomNavLink href="/admin/perfil" onClick={closeMenu}>
-              <IconText icon={FaUserAlt} text="Meu Perfil" />
-            </CustomNavLink>
-            <CustomNavLink href="/curso" onClick={closeMenu}>
-              <IconText icon={FaHome} text="Início" />
-            </CustomNavLink>
-          </>
-        )}
+    <SheetContent side="left" className="w-[300px] sm:w-[350px] flex flex-col p-0">
+      <SheetHeader className="p-6 border-b text-left">
+        <SheetTitle className="text-xl font-bold text-[#1351B4]">
+          HoraMais
+        </SheetTitle>
+        <SheetDescription>
+          Olá, <span className="font-medium text-gray-900">{user.name}</span>
+        </SheetDescription>
+      </SheetHeader>
 
-        {/* MENU DO COORDENADOR */}
-        {role === 'coordenador' && (
-          <>
-            <CustomNavLink href="/coordenacao" onClick={closeMenu}>
-              <IconText icon={FaHome} text="Início" />
-            </CustomNavLink>
-            <CustomNavLink href="/coordenacao/turma" onClick={closeMenu}>
-              <IconText icon={FaGraduationCap} text="Turma" />
-            </CustomNavLink>
-            <CustomNavLink href="/coordenacao/certificados" onClick={closeMenu}>
-              <IconText icon={FaFileAlt} text="Validação de Certificados" />
-            </CustomNavLink>
-            {/* <CustomNavLink href="/coordenacao/alunos" onClick={closeMenu}>
-              <IconText icon={FaUsers} text="Alunos" />
-            </CustomNavLink> */}
-            <CustomNavLink
-              href="/coordenacao/contabilizarHoras"
-              onClick={closeMenu}
-            >
-              <IconText icon={FaEnvelope} text="Secretaria" />
-            </CustomNavLink>
-            <CustomNavLink href="/coordenacao/atividade" onClick={closeMenu}>
-              <IconText icon={FaBookOpen} text="Atividade" />
-            </CustomNavLink>
-            {/* <CustomNavLink
-              href="/coordenacao/configuracoes"
-              onClick={closeMenu}
-            >
-              <IconText icon={FaCog} text="Configurações" />
-            </CustomNavLink> */}
-          </>
-        )}
+      <div className="flex-1 overflow-y-auto py-4">
+        <nav className="flex flex-col space-y-1">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
 
-        {/* MENU DO ALUNO */}
-        {role === 'aluno' && (
-          <>
-            <CustomNavLink href="/aluno" onClick={closeMenu}>
-              <IconText icon={FaHome} text="Início" />
-            </CustomNavLink>
-            <CustomNavLink href="/aluno/certificado" onClick={closeMenu}>
-              <IconText icon={FaClipboard} text="Certificados" />
-            </CustomNavLink>
-          </>
-        )}
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onLinkClick}
+                className={cn(
+                  'flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors hover:bg-gray-100',
+                  isActive ? 'bg-blue-50 text-blue-700 border-r-4 border-blue-700' : 'text-gray-700'
+                )}
+              >
+                <Icon className={cn('w-5 h-5', isActive ? 'text-blue-700' : 'text-gray-500')} />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
 
+      <div className="border-t p-4 bg-gray-50">
         <button
-          onClick={closeMenu}
-          className="flex items-center px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer w-full"
+          onClick={() => {
+              onLinkClick();
+              signOut({ callbackUrl: window.location.origin });
+          }}
+          className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
         >
-          <FaSignOutAlt className="mr-2 text-blue-600" />
-          <span className="text-black">Sair</span>
+          <FaSignOutAlt className="w-5 h-5" />
+          Sair
         </button>
+        <div className="mt-4 px-2">
+            <Version />
+        </div>
       </div>
-
-      {/* Versão fixa no rodapé do menu */}
-      <div className="border-t border-gray-200 px-4 py-2 bg-gray-50">
-        <Version />
-      </div>
-    </nav>
+    </SheetContent>
   );
 };
 
-export default MobileMenu;
+export default MenuContent;
