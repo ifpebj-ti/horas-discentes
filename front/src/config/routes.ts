@@ -1,3 +1,4 @@
+import { IconType } from 'react-icons';
 import {
   FaFileAlt,
   FaEnvelope,
@@ -8,54 +9,78 @@ import {
   FaUserAlt
 } from 'react-icons/fa';
 
-export const ROUTES = {
+export interface RouteItem {
+  href: string;
+  label: string;
+  icon: IconType;
+}
+
+export const PATHS = {
+  ADMIN: {
+    PROFILE: '/admin/perfil',
+    HOME: '/curso',
+  },
+  COORDINATION: {
+    HOME: '/coordenacao',
+    CLASSES: '/coordenacao/turma',
+    CERTIFICATES: '/coordenacao/certificados',
+    SECRETARY: '/coordenacao/contabilizarHoras',
+    ACTIVITIES: '/coordenacao/atividade',
+  },
+  STUDENT: {
+    HOME: '/aluno',
+    CERTIFICATES: '/aluno/certificado',
+  }
+};
+
+export const ROUTES: Record<string, RouteItem[]> = {
   admin: [
     {
-      href: '/admin/perfil',
+      href: PATHS.ADMIN.PROFILE,
       label: 'Meu Perfil',
       icon: FaUserAlt
     },
     {
-      href: '/curso',
+      href: PATHS.ADMIN.HOME,
       label: 'Início',
       icon: FaHome
     }
   ],
   coordenador: [
     {
-      href: '/coordenacao',
+      href: PATHS.COORDINATION.HOME,
       label: 'Início',
       icon: FaHome
     },
     {
-      href: '/coordenacao/turma',
+      href: PATHS.COORDINATION.CLASSES,
       label: 'Turma',
       icon: FaGraduationCap
     },
     {
-      href: '/coordenacao/certificados',
+      href: PATHS.COORDINATION.CERTIFICATES,
       label: 'Validação de Certificados',
       icon: FaFileAlt
     },
     {
-      href: '/coordenacao/contabilizarHoras',
+      href: PATHS.COORDINATION.SECRETARY,
       label: 'Secretaria',
       icon: FaEnvelope
     },
     {
-      href: '/coordenacao/atividade',
+      href: PATHS.COORDINATION.ACTIVITIES,
       label: 'Atividade',
       icon: FaBookOpen
     }
   ],
   aluno: [
     {
-      href: '/aluno',
+      href: PATHS.STUDENT.HOME,
       label: 'Início',
       icon: FaHome
     },
     {
-      href: '/aluno/certificado',
+      href: PATHS.STUDENT.CERTIFICATES,
       label: 'Certificados',
       icon: FaClipboard
     }
