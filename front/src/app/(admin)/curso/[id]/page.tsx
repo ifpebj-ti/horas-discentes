@@ -45,6 +45,7 @@ import {
   deletarTurma
 } from '@/services/turmaService';
 import Swal from 'sweetalert2';
+import { COLORS } from '@/config/colors';
 
 export default function CourseDetailPage() {
   const router = useRouter();
@@ -128,8 +129,8 @@ export default function CourseDetailPage() {
       showCancelButton: true,
       confirmButtonText: 'Sim, enviar',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33'
+      confirmButtonColor: COLORS.primary,
+      cancelButtonColor: COLORS.danger
     });
 
     if (!confirmation.isConfirmed) return;
@@ -141,7 +142,7 @@ export default function CourseDetailPage() {
         title: 'Convite enviado!',
         text: `Um e-mail foi enviado para ${coordEmail} com instruções para criar a conta.`,
         icon: 'success',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
       setIsCoordModalOpen(false);
     } catch (error) {
@@ -180,8 +181,8 @@ export default function CourseDetailPage() {
       showCancelButton: true,
       confirmButtonText: 'Sim, criar',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33'
+      confirmButtonColor: COLORS.primary,
+      cancelButtonColor: COLORS.danger
     });
 
     if (!confirmation.isConfirmed) return;
@@ -199,7 +200,7 @@ export default function CourseDetailPage() {
         title: 'Turma criada!',
         text: `Turma ${formData.periodo} (${formData.turno}) foi criada.`,
         icon: 'success',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
 
       const turmasAtualizadas = await obterTurmasPorCurso(cursoId);
@@ -233,8 +234,8 @@ export default function CourseDetailPage() {
       showCancelButton: true,
       confirmButtonText: 'Sim, excluir',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      confirmButtonColor: COLORS.danger,
+      cancelButtonColor: COLORS.primary
     });
 
     if (!confirmation.isConfirmed) return;
@@ -247,7 +248,7 @@ export default function CourseDetailPage() {
         title: 'Coordenador excluído!',
         text: 'O coordenador foi excluído com sucesso.',
         icon: 'success',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
     } catch (error: unknown) {
       console.error('Erro ao excluir coordenador:', error);
@@ -298,8 +299,8 @@ export default function CourseDetailPage() {
       showCancelButton: true,
       confirmButtonText: 'Sim, excluir',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      confirmButtonColor: COLORS.danger,
+      cancelButtonColor: COLORS.primary
     });
 
     if (!confirmation.isConfirmed) return;
@@ -320,7 +321,7 @@ export default function CourseDetailPage() {
         title: 'Turma excluída!',
         text: 'A turma foi excluída com sucesso.',
         icon: 'success',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
     } catch (error: unknown) {
       console.error('Erro ao excluir turma:', error);

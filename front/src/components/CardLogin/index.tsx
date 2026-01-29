@@ -34,7 +34,7 @@ export const CardLogin = () => {
 
       <div className="flex flex-col justify-center items-center px-6 md:px-12 pb-4 md:pb-0">
         <form onSubmit={handleSubmit(submitForm)} className="w-full max-w-md">
-          <h1 className="text-3xl md:text-6xl font-extrabold text-center text-[#1351B4] pb-2 mb-8 tracking-wide drop-shadow-sm">
+          <h1 className="text-3xl md:text-6xl font-extrabold text-center text-primary pb-2 mb-8 tracking-wide drop-shadow-sm">
             HoraMais
           </h1>
 
@@ -87,7 +87,7 @@ export const CardLogin = () => {
           <div className="text-right mb-4">
             <a
               href="esqueciSenha"
-              className="text-sm text-[#0a0b0b] hover:underline cursor-pointer"
+              className="text-sm text-foreground hover:underline cursor-pointer"
             >
               Esqueceu a senha?
             </a>
@@ -103,7 +103,7 @@ export const CardLogin = () => {
           <div className="w-full">
             <Button
               type="submit"
-              className="w-full bg-[#1351B4] hover:bg-[#1351B4]/90 text-white"
+              className="w-full"
               shape="pill"
               disabled={formState.isSubmitting}
             >
@@ -119,7 +119,7 @@ export const CardLogin = () => {
           <div className="text-center">
             <a
               href="primeiroAcesso"
-              className="text-[#1351B4] font-medium hover:underline"
+              className="text-primary font-medium hover:underline"
             >
               Primeiro Acesso?
             </a>

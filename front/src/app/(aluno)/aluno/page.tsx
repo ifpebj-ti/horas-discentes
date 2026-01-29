@@ -137,7 +137,7 @@ function AlunoPageContent({
 
               <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-[#071D41]">
+                  <h2 className="text-lg font-semibold text-primary">
                     Certificados Recentes
                   </h2>
                   <Link

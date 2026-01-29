@@ -50,7 +50,7 @@ export const CreateCoordinatorAccount = ({
           onSubmit={handleSubmit(handleCreateCoordinator)}
           className="w-full max-w-md"
         >
-          <h1 className="text-3xl md:text-4xl font-extrabold text-center text-[#1351B4] pb-2 mb-8 tracking-wide drop-shadow-sm">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-center text-primary pb-2 mb-8 tracking-wide drop-shadow-sm">
             Criar Conta de Coordenador
           </h1>
 
@@ -172,7 +172,7 @@ export const CreateCoordinatorAccount = ({
             <Button
               type="submit"
               disabled={loading || !isValid || !isEmailValid}
-              className="w-full bg-[#1351B4] hover:bg-[#1351B4]/90 text-white"
+              className="w-full"
               shape="pill"
             >
               {loading ? 'Criando...' : 'Criar Conta'}

@@ -27,7 +27,7 @@ export const FileUploadInput: React.FC<FileUploadInputProps> = ({
   };
 
   return (
-    <div className="flex flex-col text-sm text-[#1351B4]">
+    <div className="flex flex-col text-sm text-primary">
       <label
         className={`border border-dashed rounded px-4 py-2 flex items-center gap-2 cursor-pointer transition
           ${isHovered ? 'bg-blue-100' : 'bg-white'}`}
@@ -35,7 +35,7 @@ export const FileUploadInput: React.FC<FileUploadInputProps> = ({
         onMouseLeave={() => setIsHovered(false)}
         htmlFor="file-upload"
       >
-        <FaUpload className="text-[#1351B4]" />
+        <FaUpload className="text-primary" />
         <span className="italic">Selecione o arquivo</span>
         <input
           id="file-upload"
@@ -56,7 +56,7 @@ export const FileUploadInput: React.FC<FileUploadInputProps> = ({
 
       {/* File Uploaded */}
       {file && !isLoading && (
-        <div className="flex justify-between items-center mt-4 text-[#1351B4]">
+        <div className="flex justify-between items-center mt-4 text-primary">
           <span className="truncate max-w-[70%]">{file.name}</span>
           <span className="text-sm text-gray-500">
             {(file.size / 1024).toFixed(2)} KB

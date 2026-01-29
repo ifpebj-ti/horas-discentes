@@ -31,8 +31,10 @@ import {
   obterTurmasPorCurso,
   TurmaResponse,
   criarTurma
+  
 } from '@/services/turmaService';
 import Swal from 'sweetalert2';
+import { COLORS } from '@/config/colors';
 
 export default function CourseDetailPage() {
   const { data: session } = useSession();
@@ -93,8 +95,8 @@ export default function CourseDetailPage() {
       showCancelButton: true,
       confirmButtonText: 'Sim, criar',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33'
+      confirmButtonColor: COLORS.primary,
+      cancelButtonColor: COLORS.danger
     });
 
     if (!confirmation.isConfirmed) return;
@@ -113,7 +115,7 @@ export default function CourseDetailPage() {
         title: 'Turma criada!',
         text: `Turma ${novaTurma.periodo} (${novaTurma.turno}) foi criada.`,
         icon: 'success',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
 
       const turmasAtualizadas = await obterTurmasPorCurso(cursoId);
@@ -127,7 +129,7 @@ export default function CourseDetailPage() {
         title: 'Erro',
         text: 'Não foi possível criar a turma. Tente novamente.',
         icon: 'error',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
     } finally {
       setIsTurmaLoading(false);

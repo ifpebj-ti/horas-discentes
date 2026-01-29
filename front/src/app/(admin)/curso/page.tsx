@@ -26,6 +26,7 @@ import {
 } from '@/services/cursoService';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { COLORS } from '@/config/colors';
 
 const MySwal = withReactContent(Swal);
 
@@ -84,7 +85,7 @@ export default function CursoPage() {
       showCancelButton: true,
       confirmButtonText: 'Sim, criar',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6'
+      confirmButtonColor: COLORS.primary
     });
 
     if (result.isConfirmed) {
@@ -106,7 +107,7 @@ export default function CursoPage() {
           text: `O curso "${newCourseName}" foi criado com sucesso.`,
           icon: 'success',
           confirmButtonText: 'OK',
-          confirmButtonColor: '#3085d6'
+          confirmButtonColor: COLORS.primary
         });
       } catch (error) {
         console.error('Erro ao criar curso:', error);
@@ -126,7 +127,7 @@ export default function CursoPage() {
         text: 'A criação do curso foi cancelada.',
         icon: 'info',
         confirmButtonText: 'OK',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
     }
   };
@@ -144,8 +145,8 @@ export default function CursoPage() {
       showCancelButton: true,
       confirmButtonText: 'Sim, excluir',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
+      confirmButtonColor: COLORS.danger,
+      cancelButtonColor: COLORS.primary
     });
 
     if (!confirmation.isConfirmed) return;
@@ -159,7 +160,7 @@ export default function CursoPage() {
         title: 'Curso excluído!',
         text: 'O curso e todos os dados associados foram excluídos com sucesso.',
         icon: 'success',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
     } catch (error: unknown) {
       console.error('Erro ao excluir curso:', error);

@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
 import { loginSchema, type LoginSchemaType } from '../schemas/schema';
+import { COLORS } from '@/config/colors';
 
 export function useCardLogin() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export function useCardLogin() {
       await Swal.fire({
         icon: 'success',
         title: 'Login efetuado com sucesso!',
-        confirmButtonColor: '#1351B4'
+        confirmButtonColor: COLORS.primary
       });
 
       switch (role) {
@@ -57,7 +58,7 @@ export function useCardLogin() {
         icon: 'error',
         title: 'Credenciais inválidas',
         text: 'Verifique seu e-mail e senha.',
-        confirmButtonColor: '#f87171'
+        confirmButtonColor: COLORS.danger
       });
     }
   };

@@ -35,6 +35,7 @@ import {
   AlunoPorTurmaDetalhadoResponse
 } from '@/services/turmaService';
 import Swal from 'sweetalert2';
+import { COLORS } from '@/config/colors';
 
 const VisualizarTurma = () => {
   const { id } = useParams();
@@ -70,7 +71,7 @@ const VisualizarTurma = () => {
       title: 'Código copiado!',
       text: 'O código da turma foi copiado para a área de transferência.',
       icon: 'success',
-      confirmButtonColor: '#3085d6'
+      confirmButtonColor: COLORS.primary
     });
   };
 
@@ -89,7 +90,7 @@ const VisualizarTurma = () => {
         title: 'Status alterado',
         text: `${student.nome} foi ${action}.`,
         icon: 'info',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
     } catch (error) {
       console.error('Erro ao alterar status:', error);

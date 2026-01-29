@@ -36,7 +36,7 @@ const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
       className="w-[300px] sm:w-[350px] flex flex-col p-0"
     >
       <SheetHeader className="p-6 border-b text-left">
-        <SheetTitle className="text-xl font-bold text-[#1351B4]">
+        <SheetTitle className="text-xl font-bold text-primary">
           HoraMais
         </SheetTitle>
         <SheetDescription>
@@ -58,14 +58,14 @@ const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
                 className={cn(
                   'flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors hover:bg-gray-100',
                   isActive
-                    ? 'bg-blue-50 text-blue-700 border-r-4 border-blue-700'
+                    ? 'bg-primary/10 text-primary border-r-4 border-primary'
                     : 'text-gray-700'
                 )}
               >
                 <Icon
                   className={cn(
                     'w-5 h-5',
-                    isActive ? 'text-blue-700' : 'text-gray-500'
+                    isActive ? 'text-primary' : 'text-gray-500'
                   )}
                 />
                 {item.label}

@@ -61,7 +61,7 @@ export const UserCard: React.FC<UserCardProps> = ({
 
       <button
         onClick={onViewDetails}
-        className="w-full border border-[#1351B4] text-[#1351B4] py-2 rounded hover:bg-blue-50 text-sm font-semibold"
+        className="w-full border border-primary text-primary py-2 rounded hover:bg-primary/10 text-sm font-semibold"
       >
         Ver Detalhes
       </button>

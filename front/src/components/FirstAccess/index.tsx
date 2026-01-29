@@ -70,7 +70,7 @@ export const FirstAccess = () => {
 
               <Button
                 onClick={handleValidarCodigo}
-                className="w-full bg-[#1351B4] hover:bg-[#1351B4]/90 text-white"
+                className="w-full"
                 shape="pill"
               >
                 Continuar
@@ -179,7 +179,7 @@ export const FirstAccess = () => {
               <Button
                 type="submit"
                 disabled={loading || !isValid}
-                className="w-full bg-[#1351B4] hover:bg-[#1351B4]/90 text-white"
+                className="w-full"
                 shape="pill"
               >
                 {loading ? 'Finalizando...' : 'Finalizar'}

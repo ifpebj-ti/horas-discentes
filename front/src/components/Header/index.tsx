@@ -35,7 +35,7 @@ const Header = ({ menuTitle, user }: HeaderProps) => {
           <div className="flex items-center gap-2 mt-2 px-2">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
-                <button aria-label="Abrir menu" className="text-blue-600">
+                <button aria-label="Abrir menu" className="text-primary">
                   <FaBars size={20} />
                 </button>
               </SheetTrigger>
@@ -58,7 +58,7 @@ const Header = ({ menuTitle, user }: HeaderProps) => {
             setMenuOpen(false);
             signOut({ callbackUrl: window.location.origin }); // Redireciona para login após sair
           }}
-          className="text-blue-600 text-sm font-medium cursor-pointer"
+          className="text-primary text-sm font-medium cursor-pointer"
         >
           Sair
         </button>

@@ -43,7 +43,7 @@ export const ResetPassword = () => {
       {[1, 2, 3].map((i) => (
         <span
           key={i}
-          className={`h-2 w-6 rounded-full transition-all ${active === i ? 'bg-[#0B2A66]' : 'bg-slate-300'}`}
+          className={`h-2 w-6 rounded-full transition-all ${active === i ? 'bg-primary' : 'bg-slate-300'}`}
         />
       ))}
     </div>
@@ -73,7 +73,7 @@ export const ResetPassword = () => {
       <div className="flex items-center justify-center p-6 md:p-10 bg-white">
         <div className="w-full max-w-xl">
           <div className="text-center mb-6">
-            <h1 className="text-3xl font-extrabold text-[#0B2A66]">HoraMais</h1>
+            <h1 className="text-3xl font-extrabold text-primary">HoraMais</h1>
             <p className="text-slate-500 -mt-1">Sistema de Gestão de Tempo</p>
           </div>
 
@@ -106,20 +106,20 @@ export const ResetPassword = () => {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   <div className="mt-6">
-                    <Button
-                      type="submit"
-                      disabled={loading || !email}
-                      className="w-full bg-[#0B2A66] hover:bg-[#0B2A66]/90 text-white"
-                      shape="pill"
-                    >
-                      {loading ? 'Enviando...' : 'Enviar Código'}
-                    </Button>
+                      <Button
+                        type="submit"
+                        disabled={loading || !email}
+                        className="w-full"
+                        shape="pill"
+                      >
+                        {loading ? 'Enviando...' : 'Enviar Código'}
+                      </Button>
                   </div>
                 </form>
 
                 <p className="text-center text-sm text-slate-500 mt-6">
                   Lembrou da senha?{' '}
-                  <Link href="/" className="text-[#0B2A66] font-semibold">
+                  <Link href="/" className="text-primary font-semibold">
                     Fazer login
                   </Link>
                 </p>
@@ -170,7 +170,7 @@ export const ResetPassword = () => {
                       <Button
                         type="submit"
                         disabled={loading || code.length !== 6}
-                        className="w-full bg-[#0B2A66] hover:bg-[#0B2A66]/90 text-white"
+                        className="w-full"
                         shape="pill"
                       >
                         {loading ? 'Validando...' : 'Validar Código'}
@@ -264,7 +264,7 @@ export const ResetPassword = () => {
                       <Button
                         type="submit"
                         disabled={loading || !isValid || !senhasIguais}
-                        className="w-full bg-[#0B2A66] hover:bg-[#0B2A66]/90 text-white"
+                        className="w-full"
                         shape="pill"
                       >
                         {loading ? 'Salvando...' : 'Salvar Nova Senha'}
@@ -286,7 +286,7 @@ export const ResetPassword = () => {
                 <div className="mt-8">
                   <Link
                     href="/"
-                    className="inline-block bg-[#0B2A66] text-white px-6 py-3 rounded-xl shadow hover:brightness-110"
+                    className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-xl shadow hover:bg-primary/90"
                   >
                     Ir para Login
                   </Link>

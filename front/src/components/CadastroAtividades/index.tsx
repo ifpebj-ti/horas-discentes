@@ -21,6 +21,7 @@ import {
 } from '@/services/atividadeService';
 import { TipoAtividade } from '@/types/atividade';
 import Swal from 'sweetalert2';
+import { COLORS } from '@/config/colors';
 
 interface CadastroAtividadesProps {
   cursoId: string;
@@ -43,7 +44,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
         icon: 'error',
         title: 'Erro ao buscar atividades',
         text: 'Tente novamente mais tarde.',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: COLORS.danger
       });
     } finally {
       hide();
@@ -77,7 +78,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
         icon: 'success',
         title: 'Atividade cadastrada!',
         text: 'A atividade foi adicionada com sucesso.',
-        confirmButtonColor: '#4f46e5'
+        confirmButtonColor: COLORS.primary
       });
 
       setShowForm(false);
@@ -91,7 +92,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
         text:
           error?.response?.data?.message ||
           'Ocorreu um erro ao cadastrar a atividade.',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: COLORS.danger
       });
     } finally {
       hide();
@@ -106,8 +107,8 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
       showCancelButton: true,
       confirmButtonText: 'Sim, excluir',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#4b5563'
+      confirmButtonColor: COLORS.danger,
+      cancelButtonColor: COLORS.cancel
     });
 
     if (!result.isConfirmed) return;
@@ -120,7 +121,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
         icon: 'success',
         title: 'Atividade excluída',
         text: 'A atividade foi removida com sucesso.',
-        confirmButtonColor: '#4f46e5'
+        confirmButtonColor: COLORS.primary
       });
     } catch (error) {
       console.error('Erro ao excluir atividade:', error);
@@ -128,7 +129,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
         icon: 'error',
         title: 'Erro ao excluir',
         text: 'Não foi possível excluir a atividade. Tente novamente mais tarde.',
-        confirmButtonColor: '#ef4444'
+        confirmButtonColor: COLORS.danger
       });
     } finally {
       hide();
