@@ -14,7 +14,6 @@ import {
 
 import BreadCrumb from '@/components/BreadCrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -507,7 +506,8 @@ export default function CourseDetailPage() {
                       {coordEmail &&
                         !coordEmail.endsWith('@docente.ifpe.edu.br') && (
                           <p className="text-sm text-red-500 font-medium">
-                            O email deve ser institucional (@docente.ifpe.edu.br)
+                            O email deve ser institucional
+                            (@docente.ifpe.edu.br)
                           </p>
                         )}
                     </div>

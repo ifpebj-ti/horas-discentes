@@ -8,6 +8,7 @@ import { FaBars } from 'react-icons/fa';
 
 import Menu from '@/components/Menu';
 import { Sheet, SheetTrigger } from '@/components/ui/sheet';
+
 import * as Types from '@/types';
 
 interface HeaderProps {
@@ -34,10 +35,7 @@ const Header = ({ menuTitle, user }: HeaderProps) => {
           <div className="flex items-center gap-2 mt-2 px-2">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
-                <button
-                  aria-label="Abrir menu"
-                  className="text-blue-600"
-                >
+                <button aria-label="Abrir menu" className="text-blue-600">
                   <FaBars size={20} />
                 </button>
               </SheetTrigger>

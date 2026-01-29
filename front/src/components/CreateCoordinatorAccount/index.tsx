@@ -3,9 +3,9 @@
 import Image from 'next/image';
 import { FaUser, FaIdCard, FaRegNewspaper } from 'react-icons/fa';
 
-import { Input } from '@/components/ui/input';
 import { InputPassword } from '@/components/InputPassword';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 import { useCreateCoordinatorAccount } from './hooks/useCreateCoordinatorAccount';
 
@@ -29,8 +29,7 @@ export const CreateCoordinatorAccount = ({
   const senha = watch('senha') || '';
 
   const isEmailValid =
-    !prefilledEmail ||
-    prefilledEmail.endsWith('@docente.ifpe.edu.br');
+    !prefilledEmail || prefilledEmail.endsWith('@docente.ifpe.edu.br');
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">

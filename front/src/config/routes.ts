@@ -18,18 +18,18 @@ export interface RouteItem {
 export const PATHS = {
   ADMIN: {
     PROFILE: '/admin/perfil',
-    HOME: '/curso',
+    HOME: '/curso'
   },
   COORDINATION: {
     HOME: '/coordenacao',
     CLASSES: '/coordenacao/turma',
     CERTIFICATES: '/coordenacao/certificados',
     SECRETARY: '/coordenacao/contabilizarHoras',
-    ACTIVITIES: '/coordenacao/atividade',
+    ACTIVITIES: '/coordenacao/atividade'
   },
   STUDENT: {
     HOME: '/aluno',
-    CERTIFICATES: '/aluno/certificado',
+    CERTIFICATES: '/aluno/certificado'
   }
 };
 

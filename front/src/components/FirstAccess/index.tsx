@@ -6,6 +6,7 @@ import { FaCircleInfo } from 'react-icons/fa6';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+
 import { InputPassword } from '../InputPassword';
 import { useFirstAccess } from './hooks/useFirstAccess';
 

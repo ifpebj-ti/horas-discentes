@@ -1,5 +1,7 @@
 'use client';
 
+import { signOut } from 'next-auth/react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { FaSignOutAlt } from 'react-icons/fa';
@@ -11,10 +13,9 @@ import {
   SheetDescription
 } from '@/components/ui/sheet';
 import Version from '@/components/Version/Version';
+
 import { ROUTES } from '@/config/routes';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
-import { signOut } from 'next-auth/react';
 
 type Props = {
   user: {
@@ -30,7 +31,10 @@ const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
   const menuItems = ROUTES[role] || [];
 
   return (
-    <SheetContent side="left" className="w-[300px] sm:w-[350px] flex flex-col p-0">
+    <SheetContent
+      side="left"
+      className="w-[300px] sm:w-[350px] flex flex-col p-0"
+    >
       <SheetHeader className="p-6 border-b text-left">
         <SheetTitle className="text-xl font-bold text-[#1351B4]">
           HoraMais
@@ -53,10 +57,17 @@ const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
                 onClick={onLinkClick}
                 className={cn(
                   'flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors hover:bg-gray-100',
-                  isActive ? 'bg-blue-50 text-blue-700 border-r-4 border-blue-700' : 'text-gray-700'
+                  isActive
+                    ? 'bg-blue-50 text-blue-700 border-r-4 border-blue-700'
+                    : 'text-gray-700'
                 )}
               >
-                <Icon className={cn('w-5 h-5', isActive ? 'text-blue-700' : 'text-gray-500')} />
+                <Icon
+                  className={cn(
+                    'w-5 h-5',
+                    isActive ? 'text-blue-700' : 'text-gray-500'
+                  )}
+                />
                 {item.label}
               </Link>
             );
@@ -67,8 +78,8 @@ const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
       <div className="border-t p-4 bg-gray-50">
         <button
           onClick={() => {
-              onLinkClick();
-              signOut({ callbackUrl: window.location.origin });
+            onLinkClick();
+            signOut({ callbackUrl: window.location.origin });
           }}
           className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
         >
@@ -76,7 +87,7 @@ const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
           Sair
         </button>
         <div className="mt-4 px-2">
-            <Version />
+          <Version />
         </div>
       </div>
     </SheetContent>

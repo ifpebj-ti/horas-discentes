@@ -3,10 +3,11 @@
 import Image from 'next/image';
 import { FaEnvelope, FaCircleNotch } from 'react-icons/fa';
 
-import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticateduseRedirectIfAuthenticated';
-import { Input } from '@/components/ui/input';
-import { InputPassword } from '../InputPassword';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
+import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticateduseRedirectIfAuthenticated';
+import { InputPassword } from '../InputPassword';
 import { useCardLogin } from './hooks/useCardLogin';
 
 export const CardLogin = () => {
