@@ -41,8 +41,10 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
+          // No servidor Docker, usa o nome do serviço backend
+          const apiUrl = 'http://backend:5000/api';
           const response = await axios.post<BackendUser>(
-            'https://api.horamais.app/api/auth/login',
+            `${apiUrl}/auth/login`,
             {
               email: credentials?.email,
               senha: credentials?.password

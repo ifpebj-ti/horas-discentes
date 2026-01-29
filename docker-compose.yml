@@ -32,7 +32,10 @@ services:
       - rede-front
 
   frontend:
-    image: ghcr.io/ifpebj-ti/horas-discentes-frontend:latest
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    # image: ghcr.io/ifpebj-ti/horas-discentes-frontend:latest
     ports:
       - "${PORT_MACHINE_FRONTEND}:3000"
     environment:
@@ -41,6 +44,7 @@ services:
       - NEXTAUTH_URL=${NEXTAUTH_URL}
     networks:
       - rede-front
+      - rede-back
     depends_on:
       - backend
 

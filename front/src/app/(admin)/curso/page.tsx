@@ -7,7 +7,7 @@ import { FaHome, FaPlus, FaGraduationCap, FaTimes } from 'react-icons/fa';
 import BreadCrumb from '@/components/BreadCrumb';
 import CourseCard from '@/components/CourseCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import { RoundedButton } from '@/components/RoundedButton';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -222,11 +222,13 @@ export default function CursoPage() {
           className="border border-gray-300 rounded-full px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <div className="w-full md:w-auto text-nowrap min-w-auto">
-          <RoundedButton
-            text="Novo Curso"
-            icon={<FaPlus />}
+          <Button
             onClick={() => setIsModalOpen(true)}
-          />
+            shape="pill"
+            className="w-full bg-blue-700 hover:bg-blue-800 text-white"
+          >
+            <FaPlus className="mr-2" /> Novo Curso
+          </Button>
         </div>
       </div>
 

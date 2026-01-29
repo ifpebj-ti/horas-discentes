@@ -5,7 +5,7 @@ import { FaUser, FaIdCard, FaRegNewspaper } from 'react-icons/fa';
 
 import { Input } from '@/components/Input';
 import { InputPassword } from '@/components/InputPassword';
-import { RoundedButton } from '@/components/RoundedButton';
+import { Button } from '@/components/ui/button';
 
 import { useCreateCoordinatorAccount } from './hooks/useCreateCoordinatorAccount';
 
@@ -170,13 +170,14 @@ export const CreateCoordinatorAccount = ({
           </div>
 
           <div className="mb-4">
-            <RoundedButton
+            <Button
               type="submit"
-              text={loading ? 'Criando...' : 'Criar Conta'}
               disabled={loading || !isValid || !isEmailValid}
-              bgColor="bg-[#1351B4]"
-              textColor="text-white"
-            />
+              className="w-full bg-[#1351B4] hover:bg-[#1351B4]/90 text-white"
+              shape="pill"
+            >
+              {loading ? 'Criando...' : 'Criar Conta'}
+            </Button>
           </div>
         </form>
       </div>

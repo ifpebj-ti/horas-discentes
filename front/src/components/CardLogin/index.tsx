@@ -6,7 +6,7 @@ import { FaEnvelope, FaCircleNotch } from 'react-icons/fa';
 import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticateduseRedirectIfAuthenticated';
 import { Input } from '../Input';
 import { InputPassword } from '../InputPassword';
-import { RoundedButton } from '../RoundedButton';
+import { Button } from '@/components/ui/button';
 import { useCardLogin } from './hooks/useCardLogin';
 
 export const CardLogin = () => {
@@ -100,18 +100,17 @@ export const CardLogin = () => {
           </div>
 
           <div className="w-full">
-            <RoundedButton
+            <Button
               type="submit"
-              text={formState.isSubmitting ? 'Entrando...' : 'Entrar'}
-              bgColor="bg-[#1351B4]"
-              textColor="text-white"
+              className="w-full bg-[#1351B4] hover:bg-[#1351B4]/90 text-white"
+              shape="pill"
               disabled={formState.isSubmitting}
-              icon={
-                formState.isSubmitting ? (
-                  <FaCircleNotch className="animate-spin" />
-                ) : undefined
-              }
-            />
+            >
+              {formState.isSubmitting && (
+                <FaCircleNotch className="animate-spin mr-2" />
+              )}
+              {formState.isSubmitting ? 'Entrando...' : 'Entrar'}
+            </Button>
           </div>
 
           <hr className="my-6 border-t-2 border-gray-300 rounded-2xl" />

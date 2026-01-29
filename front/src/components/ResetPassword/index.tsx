@@ -3,10 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaEnvelope, FaKey, FaArrowLeft } from 'react-icons/fa';
-
+import { Button } from '../ui/button';
 import { Input } from '../Input';
 import { InputPassword } from '../InputPassword';
-import { RoundedButton } from '../RoundedButton';
 import { useResetPassword } from './hooks/useResetPassword';
 
 export const ResetPassword = () => {
@@ -105,13 +104,14 @@ export const ResetPassword = () => {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   <div className="mt-6">
-                    <RoundedButton
-                      text={loading ? 'Enviando...' : 'Enviar Código'}
-                      type="submit"
-                      disabled={loading || !email}
-                      bgColor="bg-[#0B2A66]"
-                      textColor="text-white"
-                    />
+                      <Button
+                        type="submit"
+                        disabled={loading || !email}
+                        className="w-full bg-[#0B2A66] hover:bg-[#0B2A66]/90 text-white"
+                        shape="pill"
+                      >
+                        {loading ? 'Enviando...' : 'Enviar Código'}
+                      </Button>
                   </div>
                 </form>
 
@@ -165,13 +165,14 @@ export const ResetPassword = () => {
                       <FaArrowLeft /> Voltar
                     </button>
                     <div className="flex-1">
-                      <RoundedButton
-                        text={loading ? 'Validando...' : 'Validar Código'}
+                      <Button
                         type="submit"
                         disabled={loading || code.length !== 6}
-                        bgColor="bg-[#0B2A66]"
-                        textColor="text-white"
-                      />
+                        className="w-full bg-[#0B2A66] hover:bg-[#0B2A66]/90 text-white"
+                        shape="pill"
+                      >
+                        {loading ? 'Validando...' : 'Validar Código'}
+                      </Button>
                     </div>
                   </div>
                 </form>
@@ -258,13 +259,14 @@ export const ResetPassword = () => {
                       <FaArrowLeft /> Voltar
                     </button>
                     <div className="flex-1">
-                      <RoundedButton
+                      <Button
                         type="submit"
-                        text={loading ? 'Salvando...' : 'Salvar Nova Senha'}
                         disabled={loading || !isValid || !senhasIguais}
-                        bgColor="bg-[#0B2A66]"
-                        textColor="text-white"
-                      />
+                        className="w-full bg-[#0B2A66] hover:bg-[#0B2A66]/90 text-white"
+                        shape="pill"
+                      >
+                        {loading ? 'Salvando...' : 'Salvar Nova Senha'}
+                      </Button>
                     </div>
                   </div>
                 </form>
