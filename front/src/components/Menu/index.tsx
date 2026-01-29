@@ -1,11 +1,9 @@
 'use client';
 
-import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { FaSignOutAlt } from 'react-icons/fa';
-
 import {
   SheetContent,
   SheetHeader,
@@ -13,9 +11,9 @@ import {
   SheetDescription
 } from '@/components/ui/sheet';
 import Version from '@/components/Version/Version';
-
 import { ROUTES } from '@/config/routes';
 import { cn } from '@/lib/utils';
+import { useSignOut } from '@/hooks/useSignOut';
 
 type Props = {
   user: {
@@ -25,10 +23,12 @@ type Props = {
   onLinkClick: () => void;
 };
 
+
 const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
   const pathname = usePathname();
   const role = user?.role as keyof typeof ROUTES;
   const menuItems = ROUTES[role] || [];
+  const { handleSignOut } = useSignOut();
 
   return (
     <SheetContent
@@ -79,7 +79,7 @@ const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
         <button
           onClick={() => {
             onLinkClick();
-            signOut({ callbackUrl: window.location.origin });
+            handleSignOut();
           }}
           className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
         >

@@ -1,15 +1,14 @@
 'use client';
 
-import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
-
 import Menu from '@/components/Menu';
 import { Sheet, SheetTrigger } from '@/components/ui/sheet';
-
 import * as Types from '@/types';
+import { useSignOut } from '@/hooks/useSignOut';
+
 
 interface HeaderProps {
   menuTitle: string;
@@ -18,6 +17,7 @@ interface HeaderProps {
 
 const Header = ({ menuTitle, user }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { handleSignOut } = useSignOut();
 
   return (
     <header className="bg-white border-b shadow-sm relative z-20">
@@ -56,7 +56,7 @@ const Header = ({ menuTitle, user }: HeaderProps) => {
         <button
           onClick={() => {
             setMenuOpen(false);
-            signOut({ callbackUrl: window.location.origin }); // Redireciona para login após sair
+            handleSignOut();
           }}
           className="text-primary text-sm font-medium cursor-pointer"
         >
