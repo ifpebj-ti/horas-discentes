@@ -19,6 +19,8 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@tanstack/react-query": "^5.90.20",
+    "@tanstack/react-query-devtools": "^5.91.3",
     "axios": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -43,7 +45,6 @@
     "signal-exit": "^4.1.0",
     "sweetalert2": "^11.21.0",
     "sweetalert2-react-content": "^5.1.0",
-    "swr": "^2.3.6",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.24.4"
   },
