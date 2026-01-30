@@ -1,28 +1,22 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-// Importa useMemo
-import { useEffect, useState, createContext, useContext, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { FaHome } from 'react-icons/fa';
 
+import { RecentCertificates } from './_components/RecentCertificates';
 import BreadCrumb from '@/components/BreadCrumb';
 import StatsSummary from '@/components/Faq';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import NovoCertificadoButton from '@/components/NovoCertificadoButton';
 import ProgressoGeral from '@/components/ProgressoGeral';
-import { RecentCertificates } from './_components/RecentCertificates';
 
-import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
-import { obterMeusDadosDetalhados } from '@/services/alunoService';
-import {
-  listarMeusCertificados,
-  obterCertificadoPorId
-} from '@/services/certificadoService';
+import { useMeusDadosDetalhados } from '@/hooks/useAluno';
+import { useMeusCertificados } from '@/hooks/useCertificados';
+import { obterCertificadoPorId } from '@/services/certificadoService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';
-
-const CertificadosContext = createContext<Types.Certificado[]>([]);
 
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
   const link = document.createElement('a');
@@ -34,20 +28,17 @@ function baixarPDFBase64(base64: string, nomeArquivo: string) {
 function AlunoPageContent({
   user,
   categoriasComplementares,
-  categoriasExtensao
+  categoriasExtensao,
+  certificados
 }: {
   user: Types.Usuario;
   categoriasComplementares: Types.CategoriaProgresso[];
   categoriasExtensao: Types.CategoriaProgresso[];
+  certificados: Types.Certificado[];
 }) {
-  // ... (código do componente AlunoPageContent)
-  const certificados = useContext(CertificadosContext);
   const [categoriaKeySelecionada, setCategoriaKeySelecionada] =
     useState<string>();
 
-  // Decide se deve exibir o bloco de Extensão:
-  // - Se o backend informar limites/horas de extensão, usa esses valores;
-  // - Caso contrário, usa o indicador legado isNewPPC.
   const hasInfoDeHorasExtensao =
     user.maximoHorasExtensao !== undefined ||
     user.totalHorasExtensao !== undefined;
@@ -163,16 +154,11 @@ function AlunoPageContent({
 
 export default function Aluno() {
   const { data: session, status } = useSession();
-  const loadingOverlay = useLoadingOverlay(true);
-  const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
-  const [categoriasComplementares, setCategoriasComplementares] = useState<
-    Types.CategoriaProgresso[]
-  >([]);
-  const [categoriasExtensao, setCategoriasExtensao] = useState<
-    Types.CategoriaProgresso[]
-  >([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [userData, setUserData] = useState<any>(null);
+
+  const { data: userData, isLoading: isLoadingUser } = useMeusDadosDetalhados();
+
+  const { data: certificadosData, isLoading: isLoadingCertificados } =
+    useMeusCertificados();
 
   const { entidadeId, name, email, role, isNewPPC } =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -190,103 +176,76 @@ export default function Aluno() {
       totalHorasComplementar: userData?.totalHorasComplementar,
       maximoHorasComplementar: userData?.maximoHorasComplementar
     }),
-    [
-      entidadeId,
-      name,
-      email,
-      role,
-      isNewPPC,
-      userData // 'user' depende de 'userData' e dos dados da sessão
-    ]
+    [entidadeId, name, email, role, isNewPPC, userData]
   );
 
-  useEffect(() => {
-    if (status !== 'authenticated') return;
+  const certificados: Types.Certificado[] = useMemo(() => {
+    if (!certificadosData) return [];
 
-    const fetchData = async () => {
-      try {
-        loadingOverlay.show();
+    return certificadosData.map((cert) => ({
+      id: cert.id,
+      title: cert.tituloAtividade,
+      local: cert.local,
+      description: cert.descricao || '',
+      cargaHoraria: cert.cargaHoraria,
+      periodoInicio: cert.dataInicio,
+      periodoFim: cert.dataFim,
+      categoria: cert.categoria,
+      grupo: cert.grupo,
+      categoriaKey: cert.categoriaKey,
+      tipo: mapTipoCertificado(cert.tipo),
+      status: mapStatusCertificado(cert.status)
+    }));
+  }, [certificadosData]);
 
-        const [certData, detalhado] = await Promise.all([
-          listarMeusCertificados(),
-          obterMeusDadosDetalhados()
-        ]);
+  const categoriasComplementares = useMemo(() => {
+    if (!userData) return [];
 
-        const mapped: Types.Certificado[] = certData.map((cert) => ({
-          id: cert.id,
-          title: cert.tituloAtividade,
-          local: cert.local,
-          description: cert.descricao || '',
-          cargaHoraria: cert.cargaHoraria,
-          periodoInicio: cert.dataInicio,
-          periodoFim: cert.dataFim,
-          categoria: cert.categoria,
-          grupo: cert.grupo,
-          categoriaKey: cert.categoriaKey,
-          tipo: mapTipoCertificado(cert.tipo),
-          status: mapStatusCertificado(cert.status)
-        }));
+    const comp = userData.atividades.filter((a) => {
+      const tipo = String(a.tipo ?? '').toUpperCase();
+      return tipo === 'COMPLEMENTAR' || tipo === '1';
+    });
 
-        const comp = detalhado.atividades.filter((a) => {
-          const tipo = String(a.tipo ?? '').toUpperCase();
-          // Backend pode retornar "COMPLEMENTAR", "complementar" ou código numérico
-          return tipo === 'COMPLEMENTAR' || tipo === '1';
-        });
+    return comp.map((a) => ({
+      grupo: a.grupo,
+      categoria: a.categoria,
+      nome: a.nome,
+      horas: a.horasConcluidas,
+      total: a.cargaMaximaCurso,
+      categoriaKey: a.categoriaKey
+    }));
+  }, [userData]);
 
-        const ext = detalhado.atividades.filter((a) => {
-          const tipo = String(a.tipo ?? '').toUpperCase();
-          // Backend pode retornar "EXTENSAO", "extensao" ou código numérico
-          return tipo === 'EXTENSAO' || tipo === '0';
-        });
+  const categoriasExtensao = useMemo(() => {
+    if (!userData) return [];
 
-        setCategoriasComplementares(
-          comp.map((a) => ({
-            grupo: a.grupo,
-            categoria: a.categoria,
-            nome: a.nome,
-            horas: a.horasConcluidas,
-            total: a.cargaMaximaCurso,
-            categoriaKey: a.categoriaKey
-          }))
-        );
+    const ext = userData.atividades.filter((a) => {
+      const tipo = String(a.tipo ?? '').toUpperCase();
+      return tipo === 'EXTENSAO' || tipo === '0';
+    });
 
-        setCategoriasExtensao(
-          ext.map((a) => ({
-            grupo: a.grupo,
-            categoria: a.categoria,
-            nome: a.nome,
-            horas: a.horasConcluidas,
-            total: a.cargaMaximaCurso,
-            categoriaKey: a.categoriaKey
-          }))
-        );
+    return ext.map((a) => ({
+      grupo: a.grupo,
+      categoria: a.categoria,
+      nome: a.nome,
+      horas: a.horasConcluidas,
+      total: a.cargaMaximaCurso,
+      categoriaKey: a.categoriaKey
+    }));
+  }, [userData]);
 
-        setCertificados(mapped);
-        setUserData(detalhado);
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-      } finally {
-        loadingOverlay.hide();
-      }
-    };
-
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
-
-  if (status === 'loading' || loadingOverlay.visible || !userData) {
+  if (status === 'loading' || isLoadingUser || isLoadingCertificados) {
     return <LoadingOverlay show={true} />;
   }
+
   if (!session?.user) return null;
 
-  // O 'user' já foi calculado lá em cima pelo useMemo
   return (
-    <CertificadosContext.Provider value={certificados}>
-      <AlunoPageContent
-        user={user}
-        categoriasComplementares={categoriasComplementares}
-        categoriasExtensao={categoriasExtensao}
-      />
-    </CertificadosContext.Provider>
+    <AlunoPageContent
+      user={user}
+      categoriasComplementares={categoriasComplementares}
+      categoriasExtensao={categoriasExtensao}
+      certificados={certificados}
+    />
   );
 }
