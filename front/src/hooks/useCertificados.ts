@@ -8,11 +8,14 @@ import {
 } from '@/services/certificadoService';
 import { useQuery } from '@tanstack/react-query';
 
+const FIVE_MINUTES_IN_MS = 1000 * 60 * 5;
+const ONE_MINUTE_IN_MS = 1000 * 60 * 1;
+
 export function useMeusCertificados() {
   return useQuery<CertificadoResponse[]>({
     queryKey: ['meus-certificados'],
     queryFn: listarMeusCertificados,
-    staleTime: 1000 * 60 * 1 // 1 minute
+    staleTime: ONE_MINUTE_IN_MS
   });
 }
 
@@ -21,6 +24,6 @@ export function useCertificadoDetalhes(id: string | undefined) {
     queryKey: ['certificado', id],
     queryFn: () => obterCertificadoPorId(id!),
     enabled: !!id,
-    staleTime: 1000 * 60 * 5 // 5 minutes
+    staleTime: FIVE_MINUTES_IN_MS
   });
 }

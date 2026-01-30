@@ -22,7 +22,7 @@ export const RecentCertificates = ({
         </h2>
         <Link
           href="/aluno/certificado"
-          className="text-sm font-medium text-[#0F4AA9] hover:underline"
+          className="text-sm font-medium text-primary hover:underline"
         >
           Ver todos
         </Link>

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import { CONSTANTS } from '@/config/constants';
 import { atualizarMeusDados } from '@/services/coordenadorService';
 import Swal from 'sweetalert2';
 
@@ -36,13 +37,13 @@ export default function PerfilCoordenadorPage() {
         icon: 'success',
         title: 'Dados atualizados com sucesso!',
         text: 'Faça login novamente para sua segurança.',
-        timer: 2500,
+        timer: CONSTANTS.TOAST_DURATION,
         showConfirmButton: false
       });
       setTimeout(() => {
         signOut();
         router.push('/');
-      }, 2000);
+      }, CONSTANTS.REDIRECT_DELAY);
     } catch (error) {
       console.error(error);
       Swal.fire({

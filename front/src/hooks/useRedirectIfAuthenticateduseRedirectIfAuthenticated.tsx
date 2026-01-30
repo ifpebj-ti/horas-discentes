@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Atom } from 'react-loading-indicators';
 
+import { COLORS } from '@/config/colors';
+
 export const useRedirectIfAuthenticated = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -33,7 +35,7 @@ export const useRedirectIfAuthenticated = () => {
     return (
       <div className="flex justify-center items-center h-screen">
         <Atom
-          color="#32cd32"
+          color={COLORS.success}
           size="medium"
           text="Verificando sessão..."
           textColor="#333"

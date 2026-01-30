@@ -52,6 +52,8 @@ export default function Version({ disableUpdateCheck = false }: VersionProps) {
 
   let latestRelease = cache.get(LATEST_RELEASE_CACHE_KEY);
 
+  const ONE_HOUR_IN_MS = 3600000;
+
   const { data: releaseData } = useQuery({
     queryKey: ['latestRelease'],
     queryFn: async () => {
@@ -59,12 +61,12 @@ export default function Version({ disableUpdateCheck = false }: VersionProps) {
       return response.data;
     },
     enabled: !disableUpdateCheck && !latestRelease,
-    staleTime: 3600000 // 1 hour
+    staleTime: ONE_HOUR_IN_MS
   });
 
   if (releaseData) {
     latestRelease = releaseData?.[0];
-    cache.put(LATEST_RELEASE_CACHE_KEY, latestRelease, 3600000);
+    cache.put(LATEST_RELEASE_CACHE_KEY, latestRelease, ONE_HOUR_IN_MS);
   }
 
   return (

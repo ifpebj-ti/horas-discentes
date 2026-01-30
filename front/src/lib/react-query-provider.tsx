@@ -10,6 +10,8 @@ export default function ReactQueryProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const ONE_MINUTE_IN_MS = 60 * 1000;
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -17,7 +19,7 @@ export default function ReactQueryProvider({
           queries: {
             // With SSR, we usually want to set some default staleTime
             // above 0 to avoid refetching immediately on the client
-            staleTime: 60 * 1000,
+            staleTime: ONE_MINUTE_IN_MS,
             retry: 1,
             refetchOnWindowFocus: false
           }
