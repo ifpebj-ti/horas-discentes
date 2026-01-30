@@ -3,7 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaEnvelope, FaKey, FaArrowLeft } from 'react-icons/fa';
+
 import { Input } from '@/components/ui/input';
+
 import { InputPassword } from '../InputPassword';
 import { Button } from '../ui/button';
 import { useResetPassword } from './hooks/useResetPassword';
@@ -94,14 +96,14 @@ export const ResetPassword = () => {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   <div className="mt-6">
-                      <Button
-                        type="submit"
-                        disabled={loading || !email}
-                        className="w-full"
-                        shape="pill"
-                      >
-                        {loading ? 'Enviando...' : 'Enviar Código'}
-                      </Button>
+                    <Button
+                      type="submit"
+                      disabled={loading || !email}
+                      className="w-full"
+                      shape="pill"
+                    >
+                      {loading ? 'Enviando...' : 'Enviar Código'}
+                    </Button>
                   </div>
                 </form>
 

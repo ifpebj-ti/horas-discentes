@@ -4,11 +4,11 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
+import { COLORS } from '@/config/colors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
 import { loginSchema, type LoginSchemaType } from '../schemas/schema';
-import { COLORS } from '@/config/colors';
 
 export function useCardLogin() {
   const router = useRouter();

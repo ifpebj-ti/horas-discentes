@@ -4,11 +4,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaHome, FaPlus } from 'react-icons/fa';
 
+import { CreateCourseModal } from './_components/CreateCourseModal';
 import BreadCrumb from '@/components/BreadCrumb';
 import CourseCard from '@/components/CourseCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
 
+import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterResumoCursos,
@@ -16,10 +18,6 @@ import {
   deletarCurso
 } from '@/services/cursoService';
 import Swal from 'sweetalert2';
-import { COLORS } from '@/config/colors';
-import { CreateCourseModal } from './_components/CreateCourseModal';
-
-const MySwal = Swal;
 
 export default function CursoPage() {
   const router = useRouter();

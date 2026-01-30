@@ -10,6 +10,7 @@ import {
   FaGraduationCap
 } from 'react-icons/fa';
 
+import { StudentCard } from './_components/StudentCard';
 import BreadCrumb from '@/components/BreadCrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 
+import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { toggleStatusAluno } from '@/services/alunoService';
 import {
@@ -31,8 +33,6 @@ import {
   AlunoPorTurmaDetalhadoResponse
 } from '@/services/turmaService';
 import Swal from 'sweetalert2';
-import { COLORS } from '@/config/colors';
-import { StudentCard } from './_components/StudentCard';
 
 const VisualizarTurma = () => {
   const { id } = useParams();

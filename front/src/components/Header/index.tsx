@@ -4,11 +4,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
+
 import Menu from '@/components/Menu';
 import { Sheet, SheetTrigger } from '@/components/ui/sheet';
-import * as Types from '@/types';
-import { useSignOut } from '@/hooks/useSignOut';
 
+import { useSignOut } from '@/hooks/useSignOut';
+import * as Types from '@/types';
 
 interface HeaderProps {
   menuTitle: string;

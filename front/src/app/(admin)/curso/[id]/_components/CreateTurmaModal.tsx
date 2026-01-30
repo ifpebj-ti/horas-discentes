@@ -1,16 +1,28 @@
 import React, { useState } from 'react';
 import { FaGraduationCap, FaPlus, FaTimes } from 'react-icons/fa';
-import Swal from 'sweetalert2';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 import { COLORS } from '@/config/colors';
 import { criarTurma } from '@/services/turmaService';
+import Swal from 'sweetalert2';
 
 interface CreateTurmaModalProps {
   isOpen: boolean;
@@ -158,9 +170,7 @@ export const CreateTurmaModal = ({
                   <Label htmlFor="turno">Turno</Label>
                   <Select
                     value={formData.turno}
-                    onValueChange={(value) =>
-                      handleTurmaChange('turno', value)
-                    }
+                    onValueChange={(value) => handleTurmaChange('turno', value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o turno" />
@@ -202,9 +212,7 @@ export const CreateTurmaModal = ({
             </h3>
             <ul className="text-purple-700 space-y-1 text-sm">
               <li>• Após criar a turma, você receberá um código único</li>
-              <li>
-                • Use este código para que alunos se inscrevam na turma
-              </li>
+              <li>• Use este código para que alunos se inscrevam na turma</li>
               <li>• Você poderá gerenciar alunos e acompanhar progresso</li>
             </ul>
           </div>

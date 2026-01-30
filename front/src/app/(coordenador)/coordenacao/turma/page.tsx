@@ -26,15 +26,14 @@ import {
   SelectItem
 } from '@/components/ui/select';
 
+import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterTurmasPorCurso,
   TurmaResponse,
   criarTurma
-  
 } from '@/services/turmaService';
 import Swal from 'sweetalert2';
-import { COLORS } from '@/config/colors';
 
 export default function CourseDetailPage() {
   const { data: session } = useSession();

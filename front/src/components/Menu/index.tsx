@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { FaSignOutAlt } from 'react-icons/fa';
+
 import {
   SheetContent,
   SheetHeader,
@@ -11,9 +12,10 @@ import {
   SheetDescription
 } from '@/components/ui/sheet';
 import Version from '@/components/Version/Version';
+
 import { ROUTES } from '@/config/routes';
-import { cn } from '@/lib/utils';
 import { useSignOut } from '@/hooks/useSignOut';
+import { cn } from '@/lib/utils';
 
 type Props = {
   user: {
@@ -22,7 +24,6 @@ type Props = {
   };
   onLinkClick: () => void;
 };
-
 
 const MenuContent: React.FC<Props> = ({ user, onLinkClick }) => {
   const pathname = usePathname();

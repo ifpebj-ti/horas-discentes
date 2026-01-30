@@ -2,6 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 
 import VerCertificado from '@/components/VerCertificado';
+
 import { Certificado } from '@/types';
 
 interface RecentCertificatesProps {

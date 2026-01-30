@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { FaEnvelope, FaPaperPlane, FaTimes } from 'react-icons/fa';
-import Swal from 'sweetalert2';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { COLORS } from '@/config/colors';
 import { enviarConviteCoordenador } from '@/services/coordenadorService';
+import Swal from 'sweetalert2';
 
 interface CoordinatorInviteModalProps {
   isOpen: boolean;
@@ -58,8 +64,8 @@ export const CoordinatorInviteModal = ({
         icon: 'success',
         confirmButtonColor: COLORS.primary
       });
-      onClose(); 
-      setCoordEmail(''); 
+      onClose();
+      setCoordEmail('');
     } catch (error) {
       console.error(error);
       Swal.fire('Erro', 'Não foi possível enviar o convite.', 'error');

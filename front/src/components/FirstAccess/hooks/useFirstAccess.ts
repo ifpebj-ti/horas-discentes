@@ -2,13 +2,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { COLORS } from '@/config/colors';
 import { criarAluno } from '@/services/alunoService';
 import { verificarTurmaExiste, obterTurmaPorId } from '@/services/turmaService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
 import { firstAccessSchema, FirstAccessSchema } from '../schemas/schema';
-import { COLORS } from '@/config/colors';
 
 export const useFirstAccess = () => {
   const router = useRouter();

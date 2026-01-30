@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { COLORS } from '@/config/colors';
 import {
   forgotPassword,
   validateResetCode,
@@ -10,7 +11,6 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
-import { COLORS } from '@/config/colors';
 import { resetPasswordSchema, ResetPasswordSchema } from '../schemas/schema';
 
 export const useResetPassword = () => {

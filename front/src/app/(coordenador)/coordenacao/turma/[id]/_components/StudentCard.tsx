@@ -1,15 +1,14 @@
 import React from 'react';
-import {
-  FaCheckCircle,
-  FaClock,
-  FaTimesCircle,
-  FaUser
-} from 'react-icons/fa';
+import { FaCheckCircle, FaClock, FaTimesCircle, FaUser } from 'react-icons/fa';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { AlunoPorTurmaDetalhadoResponse, TurmaResponse } from '@/services/turmaService';
+
+import {
+  AlunoPorTurmaDetalhadoResponse,
+  TurmaResponse
+} from '@/services/turmaService';
 
 interface StudentCardProps {
   student: AlunoPorTurmaDetalhadoResponse;

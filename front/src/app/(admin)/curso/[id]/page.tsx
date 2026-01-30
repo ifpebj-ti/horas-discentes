@@ -2,30 +2,22 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import {
-  FaPlus,
-  FaHome,
-  FaTrash,
-  FaGraduationCap
-} from 'react-icons/fa';
+import { FaPlus, FaHome, FaTrash, FaGraduationCap } from 'react-icons/fa';
 
+import { CoordinatorInviteModal } from './_components/CoordinatorInviteModal';
+import { CreateTurmaModal } from './_components/CreateTurmaModal';
 import BreadCrumb from '@/components/BreadCrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
 
+import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterCoordenadorPorCurso,
   deletarCoordenador
 } from '@/services/coordenadorService';
-import {
-  obterTurmasPorCurso,
-  deletarTurma
-} from '@/services/turmaService';
+import { obterTurmasPorCurso, deletarTurma } from '@/services/turmaService';
 import Swal from 'sweetalert2';
-import { COLORS } from '@/config/colors';
-import { CoordinatorInviteModal } from './_components/CoordinatorInviteModal';
-import { CreateTurmaModal } from './_components/CreateTurmaModal';
 
 export default function CourseDetailPage() {
   const router = useRouter();
@@ -80,8 +72,6 @@ export default function CourseDetailPage() {
   const handleAddCoordinatorClick = () => {
     setIsCoordModalOpen(true);
   };
-
-
 
   const handleAddTurmaClick = () => {
     setIsTurmaModalOpen(true);

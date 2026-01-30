@@ -9,6 +9,7 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   listarAtividadesPorCurso,
@@ -21,7 +22,6 @@ import {
 } from '@/services/atividadeService';
 import { TipoAtividade } from '@/types/atividade';
 import Swal from 'sweetalert2';
-import { COLORS } from '@/config/colors';
 
 interface CadastroAtividadesProps {
   cursoId: string;

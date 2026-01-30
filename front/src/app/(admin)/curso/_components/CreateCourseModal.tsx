@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { FaGraduationCap, FaTimes } from 'react-icons/fa';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+
 import { COLORS } from '@/config/colors';
 import { CreateCursoRequest, criarCurso } from '@/services/cursoService';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
@@ -54,7 +62,7 @@ export const CreateCourseModal = ({
         };
 
         await criarCurso(payload);
-        
+
         await Swal.fire({
           title: 'Curso criado!',
           text: `O curso "${newCourseName}" foi criado com sucesso.`,
@@ -77,18 +85,18 @@ export const CreateCourseModal = ({
         setLoading(false);
       }
     } else {
-        // Just close and reset if cancelled? Or keep state?
-        // Original code closed and reset and showed "Cancelled" message.
-        // I'll stick to original behavior for consistency if possible, or just close.
-        onClose();
-        setNewCourseName('');
-        Swal.fire({
-            title: 'Cancelado',
-            text: 'A criação do curso foi cancelada.',
-            icon: 'info',
-            confirmButtonText: 'OK',
-            confirmButtonColor: COLORS.primary
-        });
+      // Just close and reset if cancelled? Or keep state?
+      // Original code closed and reset and showed "Cancelled" message.
+      // I'll stick to original behavior for consistency if possible, or just close.
+      onClose();
+      setNewCourseName('');
+      Swal.fire({
+        title: 'Cancelado',
+        text: 'A criação do curso foi cancelada.',
+        icon: 'info',
+        confirmButtonText: 'OK',
+        confirmButtonColor: COLORS.primary
+      });
     }
   };
 

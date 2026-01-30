@@ -34,9 +34,7 @@ export default function BreadCrumb({ items }: Readonly<BreadCrumbProps>) {
             >
               <span
                 className={`${
-                  index === items.length - 1
-                    ? 'text-gray-500'
-                    : 'text-primary'
+                  index === items.length - 1 ? 'text-gray-500' : 'text-primary'
                 }`}
               >
                 {item.icon}
