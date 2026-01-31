@@ -41,8 +41,9 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          // No servidor Docker, usa o nome do serviço backend
-          const apiUrl = 'http://backend:5000/api';
+          // Usa a variável de ambiente ou fallback para localhost
+          const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
           const response = await axios.post<BackendUser>(
             `${apiUrl}/auth/login`,
             {
