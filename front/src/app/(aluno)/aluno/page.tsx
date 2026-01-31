@@ -88,7 +88,7 @@ function AlunoPageContent({
                 Bem-vindo ao Horas Discentes. Acompanhe seu progresso aqui.
               </p>
             </div>
-            <NovoCertificadoButton user={user} />
+            <NewCertificateButton user={user} />
           </div>
 
           <BreadCrumb
@@ -103,7 +103,7 @@ function AlunoPageContent({
 
           <div className="grid gap-10 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             <section className="space-y-8">
-              <ProgressoGeral
+              <GeneralProgress
                 title="Atividades Complementares"
                 subTitle="Progressão Geral - Atividades Complementares"
                 categorias={categoriasComplementares}
@@ -114,7 +114,7 @@ function AlunoPageContent({
               />
 
               {mostrarExtensao && (
-                <ProgressoGeral
+                <GeneralProgress
                   title="Atividades de Extensão"
                   subTitle="Progressão Geral - Atividades de Extensão"
                   categorias={categoriasExtensao}

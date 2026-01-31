@@ -147,7 +147,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                   Gerencie seus certificados e acompanhe o status de cada um.
                 </p>
               </div>
-              <NovoCertificadoButton user={user} />
+              <NewCertificateButton user={user} />
             </div>
             <BreadCrumb items={breadcrumbItems} />
           </div>
@@ -193,7 +193,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredCertificates.length > 0 ? (
                 filteredCertificates.map((cert) => (
-                  <VerCertificado
+                  <ViewCertificate
                     key={cert.id}
                     certificate={{
                       id: String(cert.id),
