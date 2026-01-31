@@ -58,7 +58,7 @@ export const CreateCourseModal = ({
         const payload: CreateCursoRequest = {
           nomeCurso: newCourseName,
           maximoHorasComplementar: Number(complementaryHours),
-          maximoHorasExtensao: hasExtension ? Number(extensionHours) : undefined
+          ...(hasExtension ? { maximoHorasExtensao: Number(extensionHours) } : {})
         };
 
         await criarCurso(payload);

@@ -88,9 +88,8 @@ export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] =
       turma: aluno.turma,
       periodo: aluno.periodo,
       dataAtividade: formatarData(cert.periodoInicio, cert.periodoFim),
-      motivoRejeicao:
-        cert.status === 'rejeitado'
-          ? 'Carga horária ou documento inválido.'
-          : undefined
+      ...(cert.status === 'rejeitado'
+        ? { motivoRejeicao: 'Carga horária ou documento inválido.' }
+        : {})
     };
   });

@@ -31,7 +31,7 @@ export default function PerfilCoordenadorPage() {
     try {
       await atualizarMeusDados({
         email,
-        senha: novaSenha || undefined
+        ...(novaSenha ? { senha: novaSenha } : {})
       });
       Swal.fire({
         icon: 'success',

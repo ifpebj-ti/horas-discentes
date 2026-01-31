@@ -109,8 +109,8 @@ function AlunoPageContent({
                 categorias={categoriasComplementares}
                 totalHoras={user.totalHorasComplementar ?? 0}
                 totalNecessarias={user.maximoHorasComplementar ?? 0}
-                categoriaKey={categoriaKeySelecionada}
                 onCategoriaClick={setCategoriaKeySelecionada}
+                {...(categoriaKeySelecionada ? { categoriaKey: categoriaKeySelecionada } : {})}
               />
 
               {mostrarExtensao && (
@@ -120,8 +120,8 @@ function AlunoPageContent({
                   categorias={categoriasExtensao}
                   totalHoras={user.totalHorasExtensao ?? 0}
                   totalNecessarias={user.maximoHorasExtensao ?? 0}
-                  categoriaKey={categoriaKeySelecionada}
                   onCategoriaClick={setCategoriaKeySelecionada}
+                  {...(categoriaKeySelecionada ? { categoriaKey: categoriaKeySelecionada } : {})}
                 />
               )}
 
@@ -171,10 +171,10 @@ export default function Aluno() {
       email: email || '',
       role: role || '',
       isNewPPC: isNewPPC === true,
-      totalHorasExtensao: userData?.totalHorasExtensao,
-      maximoHorasExtensao: userData?.maximoHorasExtensao,
-      totalHorasComplementar: userData?.totalHorasComplementar,
-      maximoHorasComplementar: userData?.maximoHorasComplementar
+      ...(userData?.totalHorasExtensao !== undefined && { totalHorasExtensao: userData.totalHorasExtensao }),
+      ...(userData?.maximoHorasExtensao !== undefined && { maximoHorasExtensao: userData.maximoHorasExtensao }),
+      ...(userData?.totalHorasComplementar !== undefined && { totalHorasComplementar: userData.totalHorasComplementar }),
+      ...(userData?.maximoHorasComplementar !== undefined && { maximoHorasComplementar: userData.maximoHorasComplementar })
     }),
     [entidadeId, name, email, role, isNewPPC, userData]
   );

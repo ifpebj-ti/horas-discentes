@@ -152,7 +152,7 @@ export default function FormRegistroHoras({
                     value: c.nome,
                     label: `${c.nome}`
                   }))}
-                  error={errors.categoria?.message}
+                  {...(errors.categoria?.message ? { error: errors.categoria.message } : {})}
                 />
               )}
             />
