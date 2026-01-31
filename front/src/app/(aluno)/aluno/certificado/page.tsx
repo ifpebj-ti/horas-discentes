@@ -13,16 +13,16 @@ import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import NovoCertificadoButton from '@/components/NovoCertificadoButton';
-import VerCertificado from '@/components/VerCertificado';
+import NewCertificateButton from '@/components/NewCertificateButton';
+import ViewCertificate from '@/components/ViewCertificate';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
-import { obterMeusDadosDetalhados } from '@/services/alunoService';
+import { obterMeusDadosDetalhados } from '@/services/studentService';
 import {
   listarMeusCertificados,
   obterCertificadoPorId
-} from '@/services/certificadoService';
+} from '@/services/certificateService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';

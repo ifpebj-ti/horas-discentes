@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-export const atividadeSchema = z.object({
+export const activitySchema = z.object({
   nome: z
     .string()
     .min(1, 'Nome é obrigatório')
@@ -18,4 +18,4 @@ export const atividadeSchema = z.object({
     .max(500, 'Máximo de 500 horas')
 });
 
-export type AtividadeFormSchema = z.infer<typeof atividadeSchema>;
+export type ActivityFormSchema = z.infer<typeof activitySchema>;

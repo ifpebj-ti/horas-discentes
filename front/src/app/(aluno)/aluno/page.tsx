@@ -8,12 +8,12 @@ import { RecentCertificates } from './_components/RecentCertificates';
 import BreadCrumb from '@/components/BreadCrumb';
 import StatsSummary from '@/components/Faq';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import NovoCertificadoButton from '@/components/NovoCertificadoButton';
-import ProgressoGeral from '@/components/ProgressoGeral';
+import NewCertificateButton from '@/components/NewCertificateButton';
+import GeneralProgress from '@/components/GeneralProgress';
 
-import { useMeusDadosDetalhados } from '@/hooks/useAluno';
-import { useMeusCertificados } from '@/hooks/useCertificados';
-import { obterCertificadoPorId } from '@/services/certificadoService';
+import { useMeusDadosDetalhados } from '@/hooks/useStudent';
+import { useMeusCertificados } from '@/hooks/useCertificates';
+import { obterCertificadoPorId } from '@/services/certificateService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';

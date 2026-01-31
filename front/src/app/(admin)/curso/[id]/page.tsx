@@ -15,8 +15,8 @@ import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterCoordenadorPorCurso,
   deletarCoordenador
-} from '@/services/coordenadorService';
-import { obterTurmasPorCurso, deletarTurma } from '@/services/turmaService';
+} from '@/services/coordinatorService';
+import { obterTurmasPorCurso, deletarTurma } from '@/services/classService';
 import Swal from 'sweetalert2';
 
 export default function CourseDetailPage() {

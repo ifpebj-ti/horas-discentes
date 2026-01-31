@@ -1,11 +1,11 @@
 import {
   listarMeusCertificados,
   obterCertificadoPorId
-} from '@/services/certificadoService';
+} from '@/services/certificateService';
 import {
   CertificadoResponse,
   CertificadoDetalhadoResponse
-} from '@/services/certificadoService';
+} from '@/services/certificateService';
 import { useQuery } from '@tanstack/react-query';
 
 const FIVE_MINUTES_IN_MS = 1000 * 60 * 5;

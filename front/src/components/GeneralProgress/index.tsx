@@ -11,7 +11,7 @@ interface Categoria {
   readonly grupo: string;
 }
 
-interface ProgressoGeralProps {
+interface GeneralProgressProps {
   readonly categorias: readonly Categoria[];
   readonly totalHoras: number;
   readonly totalNecessarias: number;
@@ -21,14 +21,14 @@ interface ProgressoGeralProps {
   readonly onCategoriaClick?: (categoriaKey: string) => void;
 }
 
-export default function ProgressoGeral({
+export default function GeneralProgress({
   categorias,
   totalHoras,
   totalNecessarias,
   title,
   subTitle,
   categoriaKey
-}: ProgressoGeralProps) {
+}: GeneralProgressProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (

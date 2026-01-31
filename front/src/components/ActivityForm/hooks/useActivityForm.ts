@@ -5,13 +5,13 @@ import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { atividadeSchema, AtividadeFormSchema } from '../schemas/schema';
+import { activitySchema, ActivityFormSchema } from '../schemas/schema';
 
 interface Props {
-  onSubmit: (data: AtividadeFormSchema) => void;
+  onSubmit: (data: ActivityFormSchema) => void;
 }
 
-export function useAtividadeForm({ onSubmit }: Props) {
+export function useActivityForm({ onSubmit }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -19,11 +19,11 @@ export function useAtividadeForm({ onSubmit }: Props) {
     handleSubmit,
     formState: { errors },
     reset
-  } = useForm<AtividadeFormSchema>({
-    resolver: zodResolver(atividadeSchema)
+  } = useForm<ActivityFormSchema>({
+    resolver: zodResolver(activitySchema)
   });
 
-  const handleFormSubmit = async (data: AtividadeFormSchema) => {
+  const handleFormSubmit = async (data: ActivityFormSchema) => {
     setIsSubmitting(true);
     try {
       await onSubmit(data);

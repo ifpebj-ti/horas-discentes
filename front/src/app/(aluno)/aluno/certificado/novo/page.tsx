@@ -5,12 +5,12 @@ import { useEffect, useState, Suspense } from 'react';
 import { FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
-import FormRegistroHoras from '@/components/FormRegistroHoras';
+import HoursRegistrationForm from '@/components/HoursRegistrationForm';
 
 import {
   listarAtividadesPorCurso,
   AtividadeResponse
-} from '@/services/atividadeService';
+} from '@/services/activityService';
 
 export default function NovoCertificado() {
   const { data: session, status } = useSession();
@@ -81,7 +81,7 @@ export default function NovoCertificado() {
 
           {/* Formulário */}
           <Suspense fallback={<div>Carregando formulário...</div>}>
-            <FormRegistroHoras
+            <HoursRegistrationForm
               categoriasComplementares={complementares}
               categoriasExtensao={extensao}
             />

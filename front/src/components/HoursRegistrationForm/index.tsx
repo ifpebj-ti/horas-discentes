@@ -14,19 +14,19 @@ import {
 import { FileUploadInput } from '@components/FileUploadInput';
 import SelectBox from '@components/ui/SelectBox';
 
-import { AtividadeResponse } from '@/services/atividadeService';
+import { AtividadeResponse } from '@/services/activityService';
 
-import { useFormRegistroHoras } from './hooks/useFormRegistroHoras';
+import { useHoursRegistrationForm } from './hooks/useHoursRegistrationForm';
 
-interface FormRegistroHorasProps {
+interface HoursRegistrationFormProps {
   categoriasComplementares: AtividadeResponse[];
   categoriasExtensao: AtividadeResponse[];
 }
 
-export default function FormRegistroHoras({
+export default function HoursRegistrationForm({
   categoriasComplementares,
   categoriasExtensao
-}: Readonly<FormRegistroHorasProps>) {
+}: Readonly<HoursRegistrationFormProps>) {
   const {
     formMethods,
     control,
@@ -38,7 +38,7 @@ export default function FormRegistroHoras({
     isLoading,
     errors,
     tipoRegistro
-  } = useFormRegistroHoras({ categoriasComplementares, categoriasExtensao });
+  } = useHoursRegistrationForm({ categoriasComplementares, categoriasExtensao });
 
   const { register } = formMethods;
   const [termosExpandidos, setTermosExpandidos] = React.useState(false);

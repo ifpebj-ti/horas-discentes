@@ -4,21 +4,21 @@ import { useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { FormRegistroHorasSchema } from '@components/FormRegistroHoras/schemas/formRegistroHorasSchema';
+import { HoursRegistrationFormSchema } from '@components/HoursRegistrationForm/schemas/hoursRegistrationFormSchema';
 
-import { AtividadeResponse } from '@/services/atividadeService';
-import { enviarCertificado } from '@/services/certificadoService';
+import { AtividadeResponse } from '@/services/activityService';
+import { enviarCertificado } from '@/services/certificateService';
 import Swal from 'sweetalert2';
 
-export interface UseFormRegistroHorasProps {
+export interface UseHoursRegistrationFormProps {
   categoriasComplementares: AtividadeResponse[];
   categoriasExtensao: AtividadeResponse[];
 }
 
-export function useFormRegistroHoras({
+export function useHoursRegistrationForm({
   categoriasComplementares,
   categoriasExtensao
-}: UseFormRegistroHorasProps) {
+}: UseHoursRegistrationFormProps) {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const router = useRouter();
@@ -27,7 +27,7 @@ export function useFormRegistroHoras({
 
   const [isUploading, setIsUploading] = useState(false);
 
-  const form = useForm<FormRegistroHorasSchema>({
+  const form = useForm<HoursRegistrationFormSchema>({
     defaultValues: {
       tituloAtividade: '',
       instituicao: '',
@@ -75,7 +75,7 @@ export function useFormRegistroHoras({
     });
   };
 
-  const submitForm: SubmitHandler<FormRegistroHorasSchema> = async (data) => {
+  const submitForm: SubmitHandler<HoursRegistrationFormSchema> = async (data) => {
     try {
       if (!session?.user?.entidadeId || !session?.user?.cursoId) {
         await Swal.fire({

@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { COLORS } from '@/config/colors';
-import { enviarConviteCoordenador } from '@/services/coordenadorService';
+import { enviarConviteCoordenador } from '@/services/coordinatorService';
 import Swal from 'sweetalert2';
 
 interface CoordinatorInviteModalProps {

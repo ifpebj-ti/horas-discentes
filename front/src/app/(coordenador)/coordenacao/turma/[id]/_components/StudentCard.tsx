@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import {
   AlunoPorTurmaDetalhadoResponse,
   TurmaResponse
-} from '@/services/turmaService';
+} from '@/services/classService';
 
 interface StudentCardProps {
   student: AlunoPorTurmaDetalhadoResponse;

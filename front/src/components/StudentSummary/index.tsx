@@ -1,6 +1,6 @@
 import { FaCheckCircle, FaClock, FaFileAlt } from 'react-icons/fa';
 
-export default function ResumoAluno() {
+export default function StudentSummary() {
   return (
     <div className="bg-white rounded-xl shadow p-6 space-y-4">
       <h2 className="text-lg font-semibold">Resumo</h2>

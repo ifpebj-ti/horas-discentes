@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { COLORS } from '@/config/colors';
-import { cadastrarCoordenador } from '@/services/coordenadorService';
+import { cadastrarCoordenador } from '@/services/coordinatorService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 

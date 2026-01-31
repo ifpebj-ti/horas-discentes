@@ -3,7 +3,7 @@ import {
   AlunoDetalhadoResponse,
   listarResumoHoras,
   AlunoResumoHorasResponse
-} from '@/services/alunoService';
+} from '@/services/studentService';
 import { useQuery } from '@tanstack/react-query';
 
 const FIVE_MINUTES_IN_MS = 1000 * 60 * 5;

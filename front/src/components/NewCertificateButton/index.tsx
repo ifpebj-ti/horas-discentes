@@ -6,7 +6,7 @@ import { FaPlusCircle } from 'react-icons/fa';
 
 import * as Types from '@/types';
 
-export default function NovoCertificadoButton({
+export default function NewCertificateButton({
   user
 }: {
   user: Types.Usuario;

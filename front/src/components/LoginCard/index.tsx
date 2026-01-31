@@ -6,16 +6,16 @@ import { FaEnvelope, FaCircleNotch } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticateduseRedirectIfAuthenticated';
+import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticated';
 import { InputPassword } from '../InputPassword';
-import { useCardLogin } from './hooks/useCardLogin';
+import { useLoginCard } from './hooks/useLoginCard';
 
-export const CardLogin = () => {
+export const LoginCard = () => {
   useRedirectIfAuthenticated();
   const {
     form: { register, handleSubmit, formState, watch },
     submitForm
-  } = useCardLogin();
+  } = useLoginCard();
 
   const { errors } = formState;
   const emailValue = watch('email');

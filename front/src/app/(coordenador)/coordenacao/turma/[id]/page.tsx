@@ -25,13 +25,13 @@ import {
 
 import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
-import { toggleStatusAluno } from '@/services/alunoService';
+import { toggleStatusAluno } from '@/services/studentService';
 import {
   listarAlunosPorTurma,
   obterTurmaPorId,
   TurmaResponse,
   AlunoPorTurmaDetalhadoResponse
-} from '@/services/turmaService';
+} from '@/services/classService';
 import Swal from 'sweetalert2';
 
 const VisualizarTurma = () => {

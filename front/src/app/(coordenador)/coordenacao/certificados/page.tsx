@@ -24,7 +24,7 @@ import {
   CertificadoPorCursoResponse,
   aprovarCertificado,
   reprovarCertificado
-} from '@/services/certificadoService';
+} from '@/services/certificateService';
 import Swal from 'sweetalert2';
 const useIsMobile = () => {
   const [mobile, setMobile] = useState(false);

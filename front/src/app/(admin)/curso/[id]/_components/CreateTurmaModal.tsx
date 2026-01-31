@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select';
 
 import { COLORS } from '@/config/colors';
-import { criarTurma } from '@/services/turmaService';
+import { criarTurma } from '@/services/classService';
 import Swal from 'sweetalert2';
 
 interface CreateTurmaModalProps {

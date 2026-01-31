@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { CONSTANTS } from '@/config/constants';
-import { atualizarMeusDados } from '@/services/coordenadorService';
+import { atualizarMeusDados } from '@/services/coordinatorService';
 import Swal from 'sweetalert2';
 
 export default function PerfilCoordenadorPage() {

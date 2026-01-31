@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card';
 
 import { COLORS } from '@/config/colors';
-import { CreateCursoRequest, criarCurso } from '@/services/cursoService';
+import { CreateCursoRequest, criarCurso } from '@/services/courseService';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 

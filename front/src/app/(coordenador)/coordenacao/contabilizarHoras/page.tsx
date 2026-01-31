@@ -16,11 +16,11 @@ import {
   marcarDownloadComplementar,
   marcarDownloadExtensao,
   AlunoComHorasConcluidasResponse
-} from '@/services/alunoService';
+} from '@/services/studentService';
 import {
   obterCoordenadorAutenticado,
   type CoordenadorInfoResponse
-} from '@/services/coordenadorService';
+} from '@/services/coordinatorService';
 import Docxtemplater from 'docxtemplater';
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';

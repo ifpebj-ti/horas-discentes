@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { COLORS } from '@/config/colors';
-import { criarAluno } from '@/services/alunoService';
-import { verificarTurmaExiste, obterTurmaPorId } from '@/services/turmaService';
+import { criarAluno } from '@/services/studentService';
+import { verificarTurmaExiste, obterTurmaPorId } from '@/services/classService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
