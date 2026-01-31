@@ -59,7 +59,7 @@ const formatarData = (inicio: string, fim: string): string => {
 export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] =
   MOCK_CERTIFICATES.map((cert, index) => {
     // Distribui os certificados entre os alunos de forma circular
-    const aluno = AlunosMock[index % AlunosMock.length];
+    const aluno = AlunosMock[index % AlunosMock.length]!;
 
     return {
       id: `coord-cert-${cert.id}`, // Cria um ID único para a visão da coordenação
