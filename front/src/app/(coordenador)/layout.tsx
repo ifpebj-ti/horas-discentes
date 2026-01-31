@@ -39,11 +39,10 @@ export default function CoordenacaoLayout({
   const menuTitle = getTitleFromPath(pathname);
 
   const user = {
-    id: session?.user.entidadeId || '',
-    name: session?.user.name || '',
-    email: session?.user.email || '',
-    role: session?.user.role || '',
-    cursoId: session?.user.cursoId || ''
+    id: session?.user?.entidadeId || '',
+    name: session?.user?.name || '',
+    email: session?.user?.email || '',
+    role: session?.user?.role || ''
   };
 
   return (

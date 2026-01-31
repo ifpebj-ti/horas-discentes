@@ -107,7 +107,6 @@ export const authOptions: AuthOptions = {
       session.user.email = token.email as string;
       session.user.role = token.role as 'admin' | 'coordenador' | 'aluno';
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (session.user as any).entidadeId = token.entidadeId;
       (session.user as any).isNewPpc = token.isNewPpc;
       (session as any).token = token.accessToken;

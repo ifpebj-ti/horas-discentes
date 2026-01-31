@@ -43,13 +43,11 @@ export default function AlunoLayout({
       name: name || '',
       email: email || '',
       role: role || '',
-      isNewPpc: isNewPpc || false,
-      cursoId: cursoId || '',
-      turmaId: turmaId || ''
+      isNewPPC: isNewPpc || false
     }),
     // O array de dependências agora usa valores primitivos (strings, booleans)
     // O objeto 'user' só será recriado se um desses valores realmente mudar.
-    [entidadeId, name, email, role, isNewPpc, cursoId, turmaId]
+    [entidadeId, name, email, role, isNewPpc]
   );
 
   return (

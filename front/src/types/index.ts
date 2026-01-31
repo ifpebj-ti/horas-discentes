@@ -88,18 +88,6 @@ export interface Usuario {
 }
 
 /**
- * Interface para representar um Usuário.
- */
-export interface Usuario {
-  id: string;
-  name: string | null | undefined;
-  email: string | null | undefined;
-  role: string;
-  isNewPPC?: boolean;
-  image?: string | null;
-}
-
-/**
  * Interface para opções de filtros (usado em selects).
  */
 export interface OpcaoFiltro {

@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 export default function PerfilAdminPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [email] = useState(session?.user.email ?? '');
+  const [email] = useState(session?.user?.email ?? '');
 
   // Estados para reset de senha via código
   const [showResetPassword, setShowResetPassword] = useState(false);
