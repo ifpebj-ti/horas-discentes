@@ -4,9 +4,10 @@ import Image from 'next/image';
 import { FaEnvelope, FaUser, FaIdBadge, FaKey } from 'react-icons/fa';
 import { FaCircleInfo } from 'react-icons/fa6';
 
-import { Input } from '../Input';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
 import { InputPassword } from '../InputPassword';
-import { RoundedButton } from '../RoundedButton';
 import { useFirstAccess } from './hooks/useFirstAccess';
 
 export const FirstAccess = () => {
@@ -67,12 +68,13 @@ export const FirstAccess = () => {
                 <span>Solicite o código ao coordenador ou a Secretária</span>
               </div>
 
-              <RoundedButton
-                text="Continuar"
+              <Button
                 onClick={handleValidarCodigo}
-                bgColor="bg-[#1351B4]"
-                textColor="text-white"
-              />
+                className="w-full"
+                shape="pill"
+              >
+                Continuar
+              </Button>
             </form>
           )}
 
@@ -174,13 +176,14 @@ export const FirstAccess = () => {
                 )}
               </div>
 
-              <RoundedButton
+              <Button
                 type="submit"
-                text={loading ? 'Finalizando...' : 'Finalizar'}
                 disabled={loading || !isValid}
-                bgColor="bg-[#1351B4]"
-                textColor="text-white"
-              />
+                className="w-full"
+                shape="pill"
+              >
+                {loading ? 'Finalizando...' : 'Finalizar'}
+              </Button>
             </form>
           )}
         </div>

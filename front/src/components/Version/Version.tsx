@@ -2,9 +2,10 @@
 
 import { MdNewReleases } from 'react-icons/md';
 
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { compareVersions, validate } from 'compare-versions';
 import cache from 'memory-cache';
-import useSWR from 'swr';
 
 const LATEST_RELEASE_CACHE_KEY = 'latestRelease';
 
@@ -51,13 +52,21 @@ export default function Version({ disableUpdateCheck = false }: VersionProps) {
 
   let latestRelease = cache.get(LATEST_RELEASE_CACHE_KEY);
 
-  const { data: releaseData } = useSWR(
-    latestRelease || disableUpdateCheck ? null : '/api/releases'
-  );
+  const ONE_HOUR_IN_MS = 3600000;
+
+  const { data: releaseData } = useQuery({
+    queryKey: ['latestRelease'],
+    queryFn: async () => {
+      const response = await axios.get('/api/releases');
+      return response.data;
+    },
+    enabled: !disableUpdateCheck && !latestRelease,
+    staleTime: ONE_HOUR_IN_MS
+  });
 
   if (releaseData) {
     latestRelease = releaseData?.[0];
-    cache.put(LATEST_RELEASE_CACHE_KEY, latestRelease, 3600000);
+    cache.put(LATEST_RELEASE_CACHE_KEY, latestRelease, ONE_HOUR_IN_MS);
   }
 
   return (

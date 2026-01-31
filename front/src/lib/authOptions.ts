@@ -41,8 +41,11 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
+          // Usa a variável de ambiente ou fallback para localhost
+          const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
           const response = await axios.post<BackendUser>(
-            'https://api.horamais.app/api/auth/login',
+            `${apiUrl}/auth/login`,
             {
               email: credentials?.email,
               senha: credentials?.password
@@ -105,7 +108,6 @@ export const authOptions: AuthOptions = {
       session.user.email = token.email as string;
       session.user.role = token.role as 'admin' | 'coordenador' | 'aluno';
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (session.user as any).entidadeId = token.entidadeId;
       (session.user as any).isNewPpc = token.isNewPpc;
       (session as any).token = token.accessToken;

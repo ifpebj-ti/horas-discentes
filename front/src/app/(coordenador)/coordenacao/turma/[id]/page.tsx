@@ -5,14 +5,12 @@ import { useEffect, useState } from 'react';
 import {
   FaCopy,
   FaUsers,
-  FaClock,
-  FaCheckCircle,
-  FaTimesCircle,
   FaUser,
   FaHome,
   FaGraduationCap
 } from 'react-icons/fa';
 
+import { StudentCard } from './_components/StudentCard';
 import BreadCrumb from '@/components/BreadCrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Badge } from '@/components/ui/badge';
@@ -24,8 +22,8 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 
+import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { toggleStatusAluno } from '@/services/alunoService';
 import {
@@ -70,7 +68,7 @@ const VisualizarTurma = () => {
       title: 'Código copiado!',
       text: 'O código da turma foi copiado para a área de transferência.',
       icon: 'success',
-      confirmButtonColor: '#3085d6'
+      confirmButtonColor: COLORS.primary
     });
   };
 
@@ -89,7 +87,7 @@ const VisualizarTurma = () => {
         title: 'Status alterado',
         text: `${student.nome} foi ${action}.`,
         icon: 'info',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
     } catch (error) {
       console.error('Erro ao alterar status:', error);
@@ -170,72 +168,12 @@ const VisualizarTurma = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {students.map((student) => (
-                <div
+                <StudentCard
                   key={student.id}
-                  className="border rounded-lg p-4 space-y-3"
-                >
-                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <FaUser className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          {student.nome}
-                        </p>
-                        {turma.possuiExtensao && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <FaClock className="w-4 h-4" />
-                            <span>
-                              {student.totalHorasExtensao} /{' '}
-                              {student.maximoHorasExtensao} horas extensão
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <FaClock className="w-4 h-4" />
-                          <span>
-                            {student.totalHorasComplementar} /{' '}
-                            {student.maximoHorasComplementar} horas comp.
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                      <Badge
-                        variant={student.isAtivo ? 'default' : 'secondary'}
-                        className="flex items-center space-x-1"
-                      >
-                        {student.isAtivo ? (
-                          <FaCheckCircle className="w-3 h-3" />
-                        ) : (
-                          <FaTimesCircle className="w-3 h-3" />
-                        )}
-                        <span>{student.isAtivo ? 'Ativo' : 'Inativo'}</span>
-                      </Badge>
-                      <Button
-                        variant={student.isAtivo ? 'destructive' : 'default'}
-                        size="sm"
-                        onClick={() => toggleStudentStatus(student.id)}
-                        className="cursor-pointer"
-                      >
-                        {student.isAtivo ? 'Desativar' : 'Ativar'}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Progresso da carga horária</span>
-                      <span>{student.porcentagemConclusao.toFixed(0)}%</span>
-                    </div>
-                    <Progress
-                      value={student.porcentagemConclusao}
-                      className="h-2"
-                    />
-                  </div>
-                </div>
+                  student={student}
+                  turma={turma}
+                  onToggleStatus={toggleStudentStatus}
+                />
               ))}
             </CardContent>
           </Card>

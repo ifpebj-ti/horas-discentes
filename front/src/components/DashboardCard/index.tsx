@@ -23,7 +23,7 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
       {/* Notificação no canto superior direito */}
       {notificationCount !== undefined && notificationCount > 0 && (
         <span
-          className="absolute top-2 right-2 bg-[#0072E3] text-white text-xs w-5 h-5 rounded-full flex
+          className="absolute top-2 right-2 bg-primary text-white text-xs w-5 h-5 rounded-full flex
         items-center justify-center shadow-lg z-10"
         >
           {notificationCount}
@@ -31,10 +31,10 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
       )}
 
       {/* Ícone centralizado */}
-      <div className="text-[#1351B4] text-3xl mb-2">{icon}</div>
+      <div className="text-primary text-3xl mb-2">{icon}</div>
 
       {/* Texto */}
-      <p className="text-sm text-[#1351B4] font-medium mt-2">{label}</p>
+      <p className="text-sm text-primary font-medium mt-2">{label}</p>
     </button>
   );
 };

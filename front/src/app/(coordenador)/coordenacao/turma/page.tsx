@@ -7,7 +7,6 @@ import { FaHome, FaGraduationCap, FaPlus, FaTimes } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import { RoundedButton } from '@/components/RoundedButton';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -27,6 +26,7 @@ import {
   SelectItem
 } from '@/components/ui/select';
 
+import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterTurmasPorCurso,
@@ -94,8 +94,8 @@ export default function CourseDetailPage() {
       showCancelButton: true,
       confirmButtonText: 'Sim, criar',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33'
+      confirmButtonColor: COLORS.primary,
+      cancelButtonColor: COLORS.danger
     });
 
     if (!confirmation.isConfirmed) return;
@@ -114,7 +114,7 @@ export default function CourseDetailPage() {
         title: 'Turma criada!',
         text: `Turma ${novaTurma.periodo} (${novaTurma.turno}) foi criada.`,
         icon: 'success',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
 
       const turmasAtualizadas = await obterTurmasPorCurso(cursoId);
@@ -128,7 +128,7 @@ export default function CourseDetailPage() {
         title: 'Erro',
         text: 'Não foi possível criar a turma. Tente novamente.',
         icon: 'error',
-        confirmButtonColor: '#3085d6'
+        confirmButtonColor: COLORS.primary
       });
     } finally {
       setIsTurmaLoading(false);
@@ -171,11 +171,13 @@ export default function CourseDetailPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Turmas</h2>
           <div className="max-w-xs">
-            <RoundedButton
-              text="Criar Nova Turma"
-              icon={<FaPlus />}
+            <Button
               onClick={handleAddTurmaClick}
-            />
+              shape="pill"
+              className="w-full bg-blue-700 hover:bg-blue-800 text-white"
+            >
+              <FaPlus className="mr-2" /> Criar Nova Turma
+            </Button>
           </div>
         </div>
 

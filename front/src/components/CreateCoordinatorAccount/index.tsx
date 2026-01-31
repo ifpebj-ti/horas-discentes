@@ -3,9 +3,9 @@
 import Image from 'next/image';
 import { FaUser, FaIdCard, FaRegNewspaper } from 'react-icons/fa';
 
-import { Input } from '@/components/Input';
 import { InputPassword } from '@/components/InputPassword';
-import { RoundedButton } from '@/components/RoundedButton';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 import { useCreateCoordinatorAccount } from './hooks/useCreateCoordinatorAccount';
 
@@ -29,8 +29,7 @@ export const CreateCoordinatorAccount = ({
   const senha = watch('senha') || '';
 
   const isEmailValid =
-    !prefilledEmail ||
-    prefilledEmail.endsWith('@docente.ifpe.edu.br');
+    !prefilledEmail || prefilledEmail.endsWith('@docente.ifpe.edu.br');
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">
@@ -51,7 +50,7 @@ export const CreateCoordinatorAccount = ({
           onSubmit={handleSubmit(handleCreateCoordinator)}
           className="w-full max-w-md"
         >
-          <h1 className="text-3xl md:text-4xl font-extrabold text-center text-[#1351B4] pb-2 mb-8 tracking-wide drop-shadow-sm">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-center text-primary pb-2 mb-8 tracking-wide drop-shadow-sm">
             Criar Conta de Coordenador
           </h1>
 
@@ -170,13 +169,14 @@ export const CreateCoordinatorAccount = ({
           </div>
 
           <div className="mb-4">
-            <RoundedButton
+            <Button
               type="submit"
-              text={loading ? 'Criando...' : 'Criar Conta'}
               disabled={loading || !isValid || !isEmailValid}
-              bgColor="bg-[#1351B4]"
-              textColor="text-white"
-            />
+              className="w-full"
+              shape="pill"
+            >
+              {loading ? 'Criando...' : 'Criar Conta'}
+            </Button>
           </div>
         </form>
       </div>

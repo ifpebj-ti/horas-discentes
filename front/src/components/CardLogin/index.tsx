@@ -3,10 +3,11 @@
 import Image from 'next/image';
 import { FaEnvelope, FaCircleNotch } from 'react-icons/fa';
 
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
 import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticateduseRedirectIfAuthenticated';
-import { Input } from '../Input';
 import { InputPassword } from '../InputPassword';
-import { RoundedButton } from '../RoundedButton';
 import { useCardLogin } from './hooks/useCardLogin';
 
 export const CardLogin = () => {
@@ -33,7 +34,7 @@ export const CardLogin = () => {
 
       <div className="flex flex-col justify-center items-center px-6 md:px-12 pb-4 md:pb-0">
         <form onSubmit={handleSubmit(submitForm)} className="w-full max-w-md">
-          <h1 className="text-3xl md:text-6xl font-extrabold text-center text-[#1351B4] pb-2 mb-8 tracking-wide drop-shadow-sm">
+          <h1 className="text-3xl md:text-6xl font-extrabold text-center text-primary pb-2 mb-8 tracking-wide drop-shadow-sm">
             HoraMais
           </h1>
 
@@ -86,7 +87,7 @@ export const CardLogin = () => {
           <div className="text-right mb-4">
             <a
               href="esqueciSenha"
-              className="text-sm text-[#0a0b0b] hover:underline cursor-pointer"
+              className="text-sm text-foreground hover:underline cursor-pointer"
             >
               Esqueceu a senha?
             </a>
@@ -100,18 +101,17 @@ export const CardLogin = () => {
           </div>
 
           <div className="w-full">
-            <RoundedButton
+            <Button
               type="submit"
-              text={formState.isSubmitting ? 'Entrando...' : 'Entrar'}
-              bgColor="bg-[#1351B4]"
-              textColor="text-white"
+              className="w-full"
+              shape="pill"
               disabled={formState.isSubmitting}
-              icon={
-                formState.isSubmitting ? (
-                  <FaCircleNotch className="animate-spin" />
-                ) : undefined
-              }
-            />
+            >
+              {formState.isSubmitting && (
+                <FaCircleNotch className="animate-spin mr-2" />
+              )}
+              {formState.isSubmitting ? 'Entrando...' : 'Entrar'}
+            </Button>
           </div>
 
           <hr className="my-6 border-t-2 border-gray-300 rounded-2xl" />
@@ -119,7 +119,7 @@ export const CardLogin = () => {
           <div className="text-center">
             <a
               href="primeiroAcesso"
-              className="text-[#1351B4] font-medium hover:underline"
+              className="text-primary font-medium hover:underline"
             >
               Primeiro Acesso?
             </a>
