@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 
 import { loginSchema, type LoginSchemaType } from '../schemas/schema';
 
-export function useCardLogin() {
+export function useLoginCard() {
   const router = useRouter();
 
   const form = useForm<LoginSchemaType>({

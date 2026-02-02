@@ -14,15 +14,15 @@ interface Certificate {
   status: string;
 }
 
-interface VerCertificadoProps {
+interface ViewCertificateProps {
   certificate: Certificate;
   onClick?: (id: string) => void; // novo
 }
 
-export default function VerCertificado({
+export default function ViewCertificate({
   certificate,
   onClick
-}: VerCertificadoProps) {
+}: ViewCertificateProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'aprovado':

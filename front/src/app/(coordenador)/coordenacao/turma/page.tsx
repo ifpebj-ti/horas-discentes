@@ -32,7 +32,7 @@ import {
   obterTurmasPorCurso,
   TurmaResponse,
   criarTurma
-} from '@/services/turmaService';
+} from '@/services/classService';
 import Swal from 'sweetalert2';
 
 export default function CourseDetailPage() {

@@ -7,19 +7,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-import { useAtividadeForm } from './hooks/useAtividadeForm';
-import { AtividadeFormSchema } from './schemas/schema';
+import { useActivityForm } from './hooks/useActivityForm';
+import { ActivityFormSchema } from './schemas/schema';
 
 interface Props {
   tipo: 'EXTENSAO' | 'COMPLEMENTAR';
-  onSubmit: (data: AtividadeFormSchema) => void;
+  onSubmit: (data: ActivityFormSchema) => void;
   onCancel: () => void;
   isVisible: boolean;
 }
 
-export function AtividadeForm({ onSubmit, onCancel, isVisible }: Props) {
+export function ActivityForm({ onSubmit, onCancel, isVisible }: Props) {
   const { isSubmitting, register, handleSubmit, errors, handleFormSubmit } =
-    useAtividadeForm({ onSubmit });
+    useActivityForm({ onSubmit });
 
   if (!isVisible) return null;
 

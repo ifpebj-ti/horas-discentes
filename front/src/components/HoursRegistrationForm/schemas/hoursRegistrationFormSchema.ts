@@ -14,7 +14,7 @@ const ACCEPTED_FILE_TYPES = [
   'image/png'
 ];
 
-export const formRegistroHorasSchema = z
+export const hoursRegistrationFormSchema = z
   .object({
     tituloAtividade: z
       .string(requiredError('Título da Atividade'))
@@ -95,4 +95,4 @@ export const formRegistroHorasSchema = z
   );
 
 // Tipo inferido a partir do schema para usar no formulário
-export type FormRegistroHorasSchema = z.infer<typeof formRegistroHorasSchema>;
+export type HoursRegistrationFormSchema = z.infer<typeof hoursRegistrationFormSchema>;

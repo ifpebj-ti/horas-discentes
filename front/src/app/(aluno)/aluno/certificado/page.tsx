@@ -13,16 +13,16 @@ import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import NovoCertificadoButton from '@/components/NovoCertificadoButton';
-import VerCertificado from '@/components/VerCertificado';
+import NewCertificateButton from '@/components/NewCertificateButton';
+import ViewCertificate from '@/components/ViewCertificate';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
-import { obterMeusDadosDetalhados } from '@/services/alunoService';
+import { obterMeusDadosDetalhados } from '@/services/studentService';
 import {
   listarMeusCertificados,
   obterCertificadoPorId
-} from '@/services/certificadoService';
+} from '@/services/certificateService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';
@@ -147,7 +147,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                   Gerencie seus certificados e acompanhe o status de cada um.
                 </p>
               </div>
-              <NovoCertificadoButton user={user} />
+              <NewCertificateButton user={user} />
             </div>
             <BreadCrumb items={breadcrumbItems} />
           </div>
@@ -193,7 +193,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredCertificates.length > 0 ? (
                 filteredCertificates.map((cert) => (
-                  <VerCertificado
+                  <ViewCertificate
                     key={cert.id}
                     certificate={{
                       id: String(cert.id),

@@ -3,14 +3,14 @@ import { FaRegClock, FaBookOpen, FaUsers, FaTrash } from 'react-icons/fa';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { AtividadeResponse } from '@/services/atividadeService';
+import { AtividadeResponse } from '@/services/activityService';
 
-interface AtividadeCardProps {
+interface ActivityCardProps {
   atividade: AtividadeResponse;
   onDelete?: (id: string, nome: string) => void;
 }
 
-export function AtividadeCard({ atividade, onDelete }: AtividadeCardProps) {
+export function ActivityCard({ atividade, onDelete }: ActivityCardProps) {
   return (
     <Card className="shadow-card hover:shadow-elegant transition-all duration-300 hover:scale-[1.02] animate-fade-in relative">
       <CardHeader>

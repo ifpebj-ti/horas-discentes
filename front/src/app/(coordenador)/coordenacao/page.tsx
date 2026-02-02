@@ -15,7 +15,7 @@ import { DashboardCard } from '@/components/DashboardCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
-import { contarPendenciasDownload } from '@/services/alunoService';
+import { contarPendenciasDownload } from '@/services/studentService';
 
 export default function CoordenacaoPage() {
   const router = useRouter();

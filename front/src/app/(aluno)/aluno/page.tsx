@@ -8,12 +8,12 @@ import { RecentCertificates } from './_components/RecentCertificates';
 import BreadCrumb from '@/components/BreadCrumb';
 import StatsSummary from '@/components/Faq';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import NovoCertificadoButton from '@/components/NovoCertificadoButton';
-import ProgressoGeral from '@/components/ProgressoGeral';
+import NewCertificateButton from '@/components/NewCertificateButton';
+import GeneralProgress from '@/components/GeneralProgress';
 
-import { useMeusDadosDetalhados } from '@/hooks/useAluno';
-import { useMeusCertificados } from '@/hooks/useCertificados';
-import { obterCertificadoPorId } from '@/services/certificadoService';
+import { useMeusDadosDetalhados } from '@/hooks/useStudent';
+import { useMeusCertificados } from '@/hooks/useCertificates';
+import { obterCertificadoPorId } from '@/services/certificateService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';
@@ -88,7 +88,7 @@ function AlunoPageContent({
                 Bem-vindo ao Horas Discentes. Acompanhe seu progresso aqui.
               </p>
             </div>
-            <NovoCertificadoButton user={user} />
+            <NewCertificateButton user={user} />
           </div>
 
           <BreadCrumb
@@ -103,25 +103,25 @@ function AlunoPageContent({
 
           <div className="grid gap-10 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             <section className="space-y-8">
-              <ProgressoGeral
+              <GeneralProgress
                 title="Atividades Complementares"
                 subTitle="Progressão Geral - Atividades Complementares"
                 categorias={categoriasComplementares}
                 totalHoras={user.totalHorasComplementar ?? 0}
                 totalNecessarias={user.maximoHorasComplementar ?? 0}
-                categoriaKey={categoriaKeySelecionada}
                 onCategoriaClick={setCategoriaKeySelecionada}
+                {...(categoriaKeySelecionada ? { categoriaKey: categoriaKeySelecionada } : {})}
               />
 
               {mostrarExtensao && (
-                <ProgressoGeral
+                <GeneralProgress
                   title="Atividades de Extensão"
                   subTitle="Progressão Geral - Atividades de Extensão"
                   categorias={categoriasExtensao}
                   totalHoras={user.totalHorasExtensao ?? 0}
                   totalNecessarias={user.maximoHorasExtensao ?? 0}
-                  categoriaKey={categoriaKeySelecionada}
                   onCategoriaClick={setCategoriaKeySelecionada}
+                  {...(categoriaKeySelecionada ? { categoriaKey: categoriaKeySelecionada } : {})}
                 />
               )}
 
@@ -171,10 +171,10 @@ export default function Aluno() {
       email: email || '',
       role: role || '',
       isNewPPC: isNewPPC === true,
-      totalHorasExtensao: userData?.totalHorasExtensao,
-      maximoHorasExtensao: userData?.maximoHorasExtensao,
-      totalHorasComplementar: userData?.totalHorasComplementar,
-      maximoHorasComplementar: userData?.maximoHorasComplementar
+      ...(userData?.totalHorasExtensao !== undefined && { totalHorasExtensao: userData.totalHorasExtensao }),
+      ...(userData?.maximoHorasExtensao !== undefined && { maximoHorasExtensao: userData.maximoHorasExtensao }),
+      ...(userData?.totalHorasComplementar !== undefined && { totalHorasComplementar: userData.totalHorasComplementar }),
+      ...(userData?.maximoHorasComplementar !== undefined && { maximoHorasComplementar: userData.maximoHorasComplementar })
     }),
     [entidadeId, name, email, role, isNewPPC, userData]
   );

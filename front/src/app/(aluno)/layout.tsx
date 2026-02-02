@@ -33,7 +33,7 @@ export default function AlunoLayout({
   const menuTitle = getTitleFromPath(pathname);
 
   // Desestrutura os dados da sessão para criar dependências primitivas
-  const { entidadeId, name, email, role, isNewPpc, cursoId, turmaId } =
+  const { entidadeId, name, email, role, isNewPpc } =
     session?.user || {};
 
   // Use useMemo para memoizar (estabilizar) o objeto user

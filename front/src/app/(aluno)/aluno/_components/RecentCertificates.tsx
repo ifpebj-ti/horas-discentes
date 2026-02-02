@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import React from 'react';
 
-import VerCertificado from '@/components/VerCertificado';
+
+import ViewCertificate from '@/components/ViewCertificate';
 
 import { Certificado } from '@/types';
 
@@ -31,7 +31,7 @@ export const RecentCertificates = ({
       {certificados.length > 0 ? (
         <div className="space-y-4">
           {certificados.slice(0, 3).map((cert) => (
-            <VerCertificado
+            <ViewCertificate
               key={cert.id}
               certificate={{
                 id: cert.id,

@@ -24,7 +24,7 @@ import {
   CertificadoPorCursoResponse,
   aprovarCertificado,
   reprovarCertificado
-} from '@/services/certificadoService';
+} from '@/services/certificateService';
 import Swal from 'sweetalert2';
 const useIsMobile = () => {
   const [mobile, setMobile] = useState(false);
@@ -334,20 +334,14 @@ export default function ValidacaoCertificadosPage() {
                   certificadoSelecionado.dataFim
                 )}
                 workload={`${certificadoSelecionado.cargaHoraria} horas`}
-                onApprove={
-                  certificadoSelecionado?.status === StatusCertificado.PENDENTE
-                    ? handleApprove
-                    : undefined
-                }
-                onReject={
-                  certificadoSelecionado?.status === StatusCertificado.PENDENTE
-                    ? handleReject
-                    : undefined
-                }
+                {...(certificadoSelecionado?.status === StatusCertificado.PENDENTE
+                  ? { onApprove: handleApprove }
+                  : {})}
+                {...(certificadoSelecionado?.status === StatusCertificado.PENDENTE
+                  ? { onReject: handleReject }
+                  : {})}
                 onViewPdf={() => handleViewPdf(certificadoSelecionado.id)}
-                onBack={
-                  isMobile ? () => setCertificadoSelecionado(null) : undefined
-                }
+                {...(isMobile ? { onBack: () => setCertificadoSelecionado(null) } : {})}
               />
             ) : (
               !isMobile && (

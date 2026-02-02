@@ -16,7 +16,7 @@ import {
   obterResumoCursos,
   CursoResumoResponse,
   deletarCurso
-} from '@/services/cursoService';
+} from '@/services/courseService';
 import Swal from 'sweetalert2';
 
 export default function CursoPage() {

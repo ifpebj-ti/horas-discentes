@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FaGraduationCap, FaUsers, FaPlus } from 'react-icons/fa';
 
-import { AtividadeCard } from '@/components/AtividadeCard';
-import { AtividadeForm } from '@/components/AtividadeForm';
+import { ActivityCard } from '@/components/ActivityCard';
+import { ActivityForm } from '@/components/ActivityForm';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,19 +15,19 @@ import {
   listarAtividadesPorCurso,
   criarAtividade,
   deletarAtividade
-} from '@/services/atividadeService';
+} from '@/services/activityService';
 import {
   CreateAtividadeRequest,
   AtividadeResponse
-} from '@/services/atividadeService';
+} from '@/services/activityService';
 import { TipoAtividade } from '@/types/atividade';
 import Swal from 'sweetalert2';
 
-interface CadastroAtividadesProps {
+interface ActivityRegistrationProps {
   cursoId: string;
 }
 
-export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
+export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
   const [atividades, setAtividades] = useState<AtividadeResponse[]>([]);
   const [tipoAtual, setTipoAtual] = useState<TipoAtividade>('COMPLEMENTAR');
   const [showForm, setShowForm] = useState(false);
@@ -199,7 +199,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
           </div>
 
           {showForm && (
-            <AtividadeForm
+            <ActivityForm
               tipo="COMPLEMENTAR"
               onSubmit={handleAddAtividade}
               onCancel={() => setShowForm(false)}
@@ -209,7 +209,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {atividadesFiltradas.map((atividade) => (
-              <AtividadeCard
+              <ActivityCard
                 key={atividade.id}
                 atividade={atividade}
                 onDelete={handleDeleteAtividade}
@@ -238,7 +238,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
           </div>
 
           {showForm && (
-            <AtividadeForm
+            <ActivityForm
               tipo="EXTENSAO"
               onSubmit={handleAddAtividade}
               onCancel={() => setShowForm(false)}
@@ -248,7 +248,7 @@ export function CadastroAtividades({ cursoId }: CadastroAtividadesProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {atividadesFiltradas.map((atividade) => (
-              <AtividadeCard
+              <ActivityCard
                 key={atividade.id}
                 atividade={atividade}
                 onDelete={handleDeleteAtividade}
