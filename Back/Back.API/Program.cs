@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Threading;
 
-// Carrega variáveis do .env
+// Carrega variï¿½veis do .env
 DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +27,7 @@ builder.Services.AddCorsConfig();
 // Banco de Dados
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 if (string.IsNullOrWhiteSpace(connectionString))
-    throw new Exception("Connection string não definida. Verifique o .env");
+    throw new Exception("Connection string nï¿½o definida. Verifique o .env");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -44,7 +44,7 @@ var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 
 if (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.Length < 16)
-    throw new Exception("JWT Key não configurada corretamente.");
+    throw new Exception("JWT Key nï¿½o configurada corretamente.");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -53,7 +53,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.RequireHttpsMetadata = true;
+    options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
     options.SaveToken = true;
 
     options.TokenValidationParameters = new TokenValidationParameters
@@ -73,7 +73,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// Executa migração + seed admin
+// Executa migraï¿½ï¿½o + seed admin
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -88,7 +88,7 @@ using (var scope = app.Services.CreateScope())
         context.Database.Migrate();
     }
 
-    // Cria roles se não existirem
+    // Cria roles se nï¿½o existirem
     var roles = new[] { "ALUNO", "COORDENADOR", "ADMIN" };
     foreach (var role in roles)
     {
@@ -99,17 +99,25 @@ using (var scope = app.Services.CreateScope())
     // Executa seed de admin
     Console.WriteLine(" Rodando seed de admin...");
     await AdminSeeder.SeedAsync(context, userManager);
+
+    // Seed de dados de desenvolvimento
+    if (app.Environment.IsDevelopment())
+    {
+        Console.WriteLine(" Rodando seed de dados de dev...");
+        await DevDataSeeder.SeedAsync(context, userManager);
+    }
 }
 
 app.UseCors("AllowAll");
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Rodar manualmente só o seed com --seed
+// Rodar manualmente sï¿½ o seed com --seed
 if (args.Contains("--seed"))
 {
     await SeedDatabaseAsync(app);
