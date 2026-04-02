@@ -1,62 +1,15 @@
-'use client';
-
-import { useSession } from 'next-auth/react';
-import { usePathname } from 'next/navigation';
-import { useMemo } from 'react'; // Importa o useMemo
-
 import Header from '@/components/Header';
 import ProtectedLayout from '@/components/ProtectedLayout';
-
-const getTitleFromPath = (path: string): string => {
-  const last = path.split('/').findLast(Boolean) ?? '';
-  switch (last) {
-    case 'aluno':
-      return 'Aluno';
-    case 'novo':
-      return 'Novo Certificado';
-    case 'certificado':
-      return 'Visualizar Certificados';
-    case 'perguntas':
-      return 'Perguntas Frequentes';
-    default:
-      return 'Início';
-  }
-};
 
 export default function AlunoLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const { data: session } = useSession();
-  const menuTitle = getTitleFromPath(pathname);
-
-  // Desestrutura os dados da sessão para criar dependências primitivas
-  const { entidadeId, name, email, role, isNewPpc } =
-    session?.user || {};
-
-  // Use useMemo para memoizar (estabilizar) o objeto user
-  const user = useMemo(
-    () => ({
-      id: entidadeId || '',
-      name: name || '',
-      email: email || '',
-      role: role || '',
-      isNewPPC: isNewPpc || false
-    }),
-    // O array de dependências agora usa valores primitivos (strings, booleans)
-    // O objeto 'user' só será recriado se um desses valores realmente mudar.
-    [entidadeId, name, email, role, isNewPpc]
-  );
-
   return (
     <ProtectedLayout allowedRoles={['aluno']}>
       <div className="min-h-screen bg-white text-black">
-        <header className="shadow-md bg-gray-100 z-20 relative">
-          {/* Agora o 'user' é um objeto estável (memoizado) */}
-          <Header menuTitle={menuTitle} user={user} />
-        </header>
+        <Header />
 
         <main>{children}</main>
 
