@@ -20,6 +20,8 @@ const Header = () => {
           />
         </Link>
 
+        <span className="text-lg font-semibold text-gray-800">Hora+</span>
+
         <button
           onClick={handleSignOut}
           className="text-primary text-sm font-medium cursor-pointer"
