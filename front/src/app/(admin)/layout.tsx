@@ -33,9 +33,9 @@ export default function AdminLayout({
 
   const user = {
     id: '',
-    name: session?.user.name || '',
-    email: session?.user.email || '',
-    role: session?.user.role || ''
+    name: session?.user?.name || '',
+    email: session?.user?.email || '',
+    role: session?.user?.role || ''
   };
 
   return (

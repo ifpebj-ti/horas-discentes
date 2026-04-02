@@ -57,9 +57,9 @@ export default function StatsSummary({
           className="relative flex items-center px-6 py-5 gap-4 sm:flex-col sm:py-6 hover:bg-gray-50 transition-colors"
         >
           {/* Balão de Notificação */}
-          {values[i] > 0 && (
+          {(values[i] ?? 0) > 0 && (
             <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full">
-              {values[i]}
+              {values[i] ?? 0}
             </div>
           )}
 

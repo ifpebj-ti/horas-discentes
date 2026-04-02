@@ -13,16 +13,16 @@ import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
 
 import BreadCrumb from '@/components/BreadCrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import NovoCertificadoButton from '@/components/NovoCertificadoButton';
-import VerCertificado from '@/components/VerCertificado';
+import NewCertificateButton from '@/components/NewCertificateButton';
+import ViewCertificate from '@/components/ViewCertificate';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
-import { obterMeusDadosDetalhados } from '@/services/alunoService';
+import { obterMeusDadosDetalhados } from '@/services/studentService';
 import {
   listarMeusCertificados,
   obterCertificadoPorId
-} from '@/services/certificadoService';
+} from '@/services/certificateService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import Swal from 'sweetalert2';
@@ -134,7 +134,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <main className="flex-1 w-full">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
           <div className="flex flex-col gap-4 mb-6">
@@ -147,7 +147,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                   Gerencie seus certificados e acompanhe o status de cada um.
                 </p>
               </div>
-              <NovoCertificadoButton user={user} />
+              <NewCertificateButton user={user} />
             </div>
             <BreadCrumb items={breadcrumbItems} />
           </div>
@@ -159,7 +159,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                 <input
                   type="text"
                   placeholder="Buscar certificados..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4AA9]"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -168,7 +168,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                 <select
                   value={selectedStatus}
                   onChange={(e) => handleStatusChange(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4AA9] bg-white text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
                 >
                   {STATUS_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -179,7 +179,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                 <select
                   value={selectedCategory}
                   onChange={(e) => handleCategoryChange(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F4AA9] bg-white text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
                 >
                   {CATEGORY_OPTIONS.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -193,7 +193,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredCertificates.length > 0 ? (
                 filteredCertificates.map((cert) => (
-                  <VerCertificado
+                  <ViewCertificate
                     key={cert.id}
                     certificate={{
                       id: String(cert.id),

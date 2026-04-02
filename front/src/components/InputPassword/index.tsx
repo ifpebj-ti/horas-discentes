@@ -25,12 +25,12 @@ export const InputPassword: React.FC<InputPasswordProps> = (props) => {
       />
       {showPassword ? (
         <FaEyeSlash
-          className="ml-2 cursor-pointer text-[#1351B4]"
+          className="ml-2 cursor-pointer text-primary"
           onClick={() => hasText && setShowPassword(false)}
         />
       ) : (
         <FaEye
-          className={`ml-2 cursor-pointer ${hasText ? 'text-[#1351B4]' : 'text-gray-400'}`}
+          className={`ml-2 cursor-pointer ${hasText ? 'text-primary' : 'text-gray-400'}`}
           onClick={() => hasText && setShowPassword(true)}
         />
       )}

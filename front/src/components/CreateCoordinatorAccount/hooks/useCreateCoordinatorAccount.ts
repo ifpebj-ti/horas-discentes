@@ -4,13 +4,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { cadastrarCoordenador } from '@/services/coordenadorService';
+import { COLORS } from '@/config/colors';
+import { cadastrarCoordenador } from '@/services/coordinatorService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
 import {
   createCoordinatorSchema,
-  CreateCoordinatorSchema
+  type CreateCoordinatorSchema
 } from '../schemas/schema';
 
 export const useCreateCoordinatorAccount = (
@@ -48,7 +49,7 @@ export const useCreateCoordinatorAccount = (
         icon: 'success',
         title: 'Conta criada com sucesso!',
         text: 'Agora você pode acessar o sistema.',
-        confirmButtonColor: '#1351B4'
+        confirmButtonColor: COLORS.primary
       });
 
       router.push('/');
@@ -59,7 +60,7 @@ export const useCreateCoordinatorAccount = (
         icon: 'error',
         title: 'Erro ao criar conta',
         text: err?.response?.data?.message || 'Tente novamente.',
-        confirmButtonColor: '#f87171'
+        confirmButtonColor: COLORS.danger
       });
     } finally {
       setLoading(false);

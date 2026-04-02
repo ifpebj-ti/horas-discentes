@@ -1,0 +1,134 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Back.Domain.Entities.Aluno;
+using Back.Domain.Entities.AlunoAtividade;
+using Back.Domain.Entities.Coordenador;
+using Back.Domain.Entities.Curso;
+using Back.Domain.Entities.Turma;
+using Back.Infrastructure.Persistence.Context;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+namespace Back.Infrastructure.Seeders;
+
+public static class DevDataSeeder
+{
+    public static async Task SeedAsync(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+    {
+        if (await context.Cursos.AnyAsync())
+            return;
+
+        // Curso
+        var cursoId = Guid.NewGuid();
+        var curso = new CursoBuilder()
+            .WithId(cursoId)
+            .WithNome("Análise e Desenvolvimento de Sistemas")
+            .Build();
+
+        context.Cursos.Add(curso);
+        await context.SaveChangesAsync();
+
+        // Atividades complementares e de extensão do curso
+        await AtividadeSeeder.SeedAsync(context, cursoId);
+
+        // Turmas
+        var turma1Id = Guid.NewGuid();
+        var turma1 = new TurmaBuilder()
+            .WithId(turma1Id)
+            .WithPeriodo("2024.1")
+            .WithTurno("Noite")
+            .WithCursoId(cursoId)
+            .WithPossuiExtensao(true)
+            .Build();
+
+        var turma2Id = Guid.NewGuid();
+        var turma2 = new TurmaBuilder()
+            .WithId(turma2Id)
+            .WithPeriodo("2024.2")
+            .WithTurno("Manhã")
+            .WithCursoId(cursoId)
+            .WithPossuiExtensao(false)
+            .Build();
+
+        context.Turmas.AddRange(turma1, turma2);
+        await context.SaveChangesAsync();
+
+        // Coordenador
+        var coordEmail = "coordenador.ads@ifpe.edu.br";
+        var coordIdentity = new IdentityUser { UserName = coordEmail, Email = coordEmail, EmailConfirmed = true };
+        var coordResult = await userManager.CreateAsync(coordIdentity, "Senha@123");
+        if (coordResult.Succeeded)
+            await userManager.AddToRoleAsync(coordIdentity, "COORDENADOR");
+
+        var coordenador = new CoordenadorBuilder()
+            .WithId(Guid.NewGuid())
+            .WithNome("Prof. Carlos Mendonça")
+            .WithNumeroPortaria("001/2024")
+            .WithDOU("2024-01-15")
+            .WithEmail(coordEmail)
+            .WithCursoId(cursoId)
+            .WithIdentityUserId(coordIdentity.Id)
+            .Build();
+
+        context.Coordenadores.Add(coordenador);
+        await context.SaveChangesAsync();
+
+        // Alunos (turma 1)
+        var alunosTurma1 = new[]
+        {
+            ("Ana Souza",    "20230001.ads@discente.ifpe.edu.br", "20230001"),
+            ("Bruno Lima",   "20230002.ads@discente.ifpe.edu.br", "20230002"),
+            ("Carlos Melo",  "20230003.ads@discente.ifpe.edu.br", "20230003"),
+        };
+
+        // Alunos (turma 2)
+        var alunosTurma2 = new[]
+        {
+            ("Diana Rocha",  "20240001.ads@discente.ifpe.edu.br", "20240001"),
+            ("Eduardo Paz",  "20240002.ads@discente.ifpe.edu.br", "20240002"),
+        };
+
+        var atividades = await context.Atividades
+            .Where(a => a.CursoId == cursoId)
+            .ToListAsync();
+
+        foreach (var (turmaId, alunos) in new[] { (turma1Id, alunosTurma1), (turma2Id, alunosTurma2) })
+        {
+            foreach (var (nome, email, matricula) in alunos)
+            {
+                var identityUser = new IdentityUser { UserName = email, Email = email, EmailConfirmed = true };
+                var result = await userManager.CreateAsync(identityUser, "Senha@123");
+                if (!result.Succeeded)
+                    continue;
+
+                await userManager.AddToRoleAsync(identityUser, "ALUNO");
+
+                var alunoId = Guid.NewGuid();
+                var aluno = new AlunoBuilder()
+                    .WithId(alunoId)
+                    .WithNome(nome)
+                    .WithEmail(email)
+                    .WithMatricula(matricula)
+                    .WithTurmaId(turmaId)
+                    .WithIdentityUserId(identityUser.Id)
+                    .Build();
+
+                context.Alunos.Add(aluno);
+
+                var alunoAtividades = atividades.Select(a => new AlunoAtividadeBuilder()
+                    .WithId(Guid.NewGuid())
+                    .WithAlunoId(alunoId)
+                    .WithAtividadeId(a.Id)
+                    .WithHorasConcluidas(0)
+                    .Build()).ToList();
+
+                context.AlunoAtividades.AddRange(alunoAtividades);
+            }
+        }
+
+        await context.SaveChangesAsync();
+        Console.WriteLine(" Dev data seed concluído.");
+    }
+}

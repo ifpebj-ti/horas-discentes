@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { COLORS } from '@/config/colors';
 import {
   forgotPassword,
   validateResetCode,
@@ -36,14 +37,14 @@ export const useResetPassword = () => {
         icon: 'success',
         title: 'Código enviado',
         text: 'Verifique sua caixa de entrada e spam.',
-        confirmButtonColor: '#1351B4'
+        confirmButtonColor: COLORS.primary
       });
     } catch (err: any) {
       Swal.fire({
         icon: 'error',
         title: 'Erro ao enviar código',
         text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
-        confirmButtonColor: '#f87171'
+        confirmButtonColor: COLORS.danger
       });
     } finally {
       setLoading(false);
@@ -63,7 +64,7 @@ export const useResetPassword = () => {
           icon: 'error',
           title: 'Código inválido',
           text: res.message ?? 'Verifique o código e tente novamente.',
-          confirmButtonColor: '#f87171'
+          confirmButtonColor: COLORS.danger
         });
       }
     } catch (err: any) {
@@ -71,7 +72,7 @@ export const useResetPassword = () => {
         icon: 'error',
         title: 'Erro ao validar código',
         text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
-        confirmButtonColor: '#f87171'
+        confirmButtonColor: COLORS.danger
       });
     } finally {
       setLoading(false);
@@ -93,7 +94,7 @@ export const useResetPassword = () => {
         icon: 'error',
         title: 'Erro ao redefinir senha',
         text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
-        confirmButtonColor: '#f87171'
+        confirmButtonColor: COLORS.danger
       });
     } finally {
       setLoading(false);

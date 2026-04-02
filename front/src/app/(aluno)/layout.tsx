@@ -33,7 +33,7 @@ export default function AlunoLayout({
   const menuTitle = getTitleFromPath(pathname);
 
   // Desestrutura os dados da sessão para criar dependências primitivas
-  const { entidadeId, name, email, role, isNewPpc, cursoId, turmaId } =
+  const { entidadeId, name, email, role, isNewPpc } =
     session?.user || {};
 
   // Use useMemo para memoizar (estabilizar) o objeto user
@@ -43,13 +43,11 @@ export default function AlunoLayout({
       name: name || '',
       email: email || '',
       role: role || '',
-      isNewPpc: isNewPpc || false,
-      cursoId: cursoId || '',
-      turmaId: turmaId || ''
+      isNewPPC: isNewPpc || false
     }),
     // O array de dependências agora usa valores primitivos (strings, booleans)
     // O objeto 'user' só será recriado se um desses valores realmente mudar.
-    [entidadeId, name, email, role, isNewPpc, cursoId, turmaId]
+    [entidadeId, name, email, role, isNewPpc]
   );
 
   return (

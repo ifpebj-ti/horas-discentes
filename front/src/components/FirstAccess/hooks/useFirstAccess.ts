@@ -2,8 +2,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { criarAluno } from '@/services/alunoService';
-import { verificarTurmaExiste, obterTurmaPorId } from '@/services/turmaService';
+import { COLORS } from '@/config/colors';
+import { criarAluno } from '@/services/studentService';
+import { verificarTurmaExiste, obterTurmaPorId } from '@/services/classService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Swal from 'sweetalert2';
 
@@ -32,7 +33,7 @@ export const useFirstAccess = () => {
           icon: 'error',
           title: 'Código inválido',
           text: 'Solicite ao coordenador ou à secretaria.',
-          confirmButtonColor: '#f87171'
+          confirmButtonColor: COLORS.danger
         });
         return;
       }
@@ -47,7 +48,7 @@ export const useFirstAccess = () => {
         icon: 'error',
         title: 'Erro ao validar código',
         text: 'Tente novamente mais tarde.',
-        confirmButtonColor: '#f87171'
+        confirmButtonColor: COLORS.danger
       });
       console.error(error);
     } finally {
@@ -69,7 +70,7 @@ export const useFirstAccess = () => {
         icon: 'success',
         title: 'Cadastro realizado com sucesso!',
         text: 'Você pode acessar o sistema agora.',
-        confirmButtonColor: '#1351B4'
+        confirmButtonColor: COLORS.primary
       }).then(() => {
         router.push('/');
       });
@@ -78,7 +79,7 @@ export const useFirstAccess = () => {
         icon: 'error',
         title: 'Erro ao cadastrar',
         text: 'Tente novamente.',
-        confirmButtonColor: '#f87171'
+        confirmButtonColor: COLORS.danger
       });
       console.error('Erro ao cadastrar:', err);
     } finally {

@@ -4,10 +4,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FaEnvelope, FaKey, FaArrowLeft } from 'react-icons/fa';
 
-import { Input } from '../Input';
+import { Input } from '@/components/ui/input';
+
 import { InputPassword } from '../InputPassword';
-import { RoundedButton } from '../RoundedButton';
+import { Button } from '../ui/button';
 import { useResetPassword } from './hooks/useResetPassword';
+import { StepsDots } from './StepsDots';
 
 export const ResetPassword = () => {
   const {
@@ -37,17 +39,6 @@ export const ResetPassword = () => {
   const confirmarSenha = watch('confirmarSenha') || '';
   const senhasIguais = senha === confirmarSenha && confirmarSenha.length > 0;
 
-  const StepsDots = ({ active }: { active: number }) => (
-    <div className="flex items-center justify-center gap-3 my-4">
-      {[1, 2, 3].map((i) => (
-        <span
-          key={i}
-          className={`h-2 w-6 rounded-full transition-all ${active === i ? 'bg-[#0B2A66]' : 'bg-slate-300'}`}
-        />
-      ))}
-    </div>
-  );
-
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 w-full">
       <div className="flex flex-col items-center justify-center  p-8">
@@ -72,7 +63,7 @@ export const ResetPassword = () => {
       <div className="flex items-center justify-center p-6 md:p-10 bg-white">
         <div className="w-full max-w-xl">
           <div className="text-center mb-6">
-            <h1 className="text-3xl font-extrabold text-[#0B2A66]">HoraMais</h1>
+            <h1 className="text-3xl font-extrabold text-primary">HoraMais</h1>
             <p className="text-slate-500 -mt-1">Sistema de Gestão de Tempo</p>
           </div>
 
@@ -105,19 +96,20 @@ export const ResetPassword = () => {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   <div className="mt-6">
-                    <RoundedButton
-                      text={loading ? 'Enviando...' : 'Enviar Código'}
+                    <Button
                       type="submit"
                       disabled={loading || !email}
-                      bgColor="bg-[#0B2A66]"
-                      textColor="text-white"
-                    />
+                      className="w-full"
+                      shape="pill"
+                    >
+                      {loading ? 'Enviando...' : 'Enviar Código'}
+                    </Button>
                   </div>
                 </form>
 
                 <p className="text-center text-sm text-slate-500 mt-6">
                   Lembrou da senha?{' '}
-                  <Link href="/" className="text-[#0B2A66] font-semibold">
+                  <Link href="/" className="text-primary font-semibold">
                     Fazer login
                   </Link>
                 </p>
@@ -165,13 +157,14 @@ export const ResetPassword = () => {
                       <FaArrowLeft /> Voltar
                     </button>
                     <div className="flex-1">
-                      <RoundedButton
-                        text={loading ? 'Validando...' : 'Validar Código'}
+                      <Button
                         type="submit"
                         disabled={loading || code.length !== 6}
-                        bgColor="bg-[#0B2A66]"
-                        textColor="text-white"
-                      />
+                        className="w-full"
+                        shape="pill"
+                      >
+                        {loading ? 'Validando...' : 'Validar Código'}
+                      </Button>
                     </div>
                   </div>
                 </form>
@@ -258,13 +251,14 @@ export const ResetPassword = () => {
                       <FaArrowLeft /> Voltar
                     </button>
                     <div className="flex-1">
-                      <RoundedButton
+                      <Button
                         type="submit"
-                        text={loading ? 'Salvando...' : 'Salvar Nova Senha'}
                         disabled={loading || !isValid || !senhasIguais}
-                        bgColor="bg-[#0B2A66]"
-                        textColor="text-white"
-                      />
+                        className="w-full"
+                        shape="pill"
+                      >
+                        {loading ? 'Salvando...' : 'Salvar Nova Senha'}
+                      </Button>
                     </div>
                   </div>
                 </form>
@@ -282,7 +276,7 @@ export const ResetPassword = () => {
                 <div className="mt-8">
                   <Link
                     href="/"
-                    className="inline-block bg-[#0B2A66] text-white px-6 py-3 rounded-xl shadow hover:brightness-110"
+                    className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-xl shadow hover:bg-primary/90"
                   >
                     Ir para Login
                   </Link>

@@ -3,8 +3,7 @@ import { getSession } from 'next-auth/react';
 import axios, { AxiosHeaders } from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://api.horamais.app/api'
-  // baseURL: 'http://localhost:5000/api'
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
 });
 
 api.interceptors.request.use(

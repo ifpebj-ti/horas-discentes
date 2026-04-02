@@ -1,0 +1,55 @@
+services:
+  backend:
+    build:
+      context: ./Back
+      dockerfile: Dockerfile
+    container_name: horas-discentes-backend-dev
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - JWT__Key=${JWT__Key}
+      - JWT__Issuer=${JWT__Issuer}
+      - JWT__Audience=${JWT__Audience}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - EMAIL__Remetente=${EMAIL__Remetente}
+      - EMAIL__Senha=${EMAIL__Senha}
+      - EMAIL__Smtp=${EMAIL__Smtp}
+      - EMAIL__Porta=${EMAIL__Porta}
+      - COORDENADOR_CONVITE_LINK=http://localhost:3000/criarContaCoordenador
+    volumes:
+      - backend_data_protection_keys_dev:/root/.aspnet/DataProtection-Keys
+    networks:
+      - rede-back-dev
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:15
+    container_name: horas-discentes-db-dev
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    networks:
+      - rede-back-dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata_dev:
+  backend_data_protection_keys_dev:
+
+networks:
+  rede-back-dev:

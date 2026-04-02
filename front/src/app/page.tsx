@@ -1,9 +1,9 @@
-import { CardLogin } from '@/components/CardLogin';
+import { LoginCard } from '@/components/LoginCard';
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex w-full">
-      <CardLogin />
+      <LoginCard />
     </div>
   );
 }

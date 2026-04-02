@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import { CONSTANTS } from '@/config/constants';
 import {
   forgotPassword,
   validateResetCode,
@@ -17,7 +18,7 @@ import Swal from 'sweetalert2';
 export default function PerfilAdminPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [email] = useState(session?.user.email ?? '');
+  const [email] = useState(session?.user?.email ?? '');
 
   // Estados para reset de senha via código
   const [showResetPassword, setShowResetPassword] = useState(false);
@@ -217,7 +218,7 @@ export default function PerfilAdminPage() {
         icon: 'success',
         title: 'Código enviado!',
         text: 'Verifique seu e-mail e digite o código de 6 dígitos recebido.',
-        timer: 3000,
+        timer: CONSTANTS.TOAST_DURATION,
         showConfirmButton: false
       });
     } catch (error: unknown) {
@@ -270,7 +271,7 @@ export default function PerfilAdminPage() {
           icon: 'success',
           title: 'Código válido!',
           text: 'Agora você pode definir sua nova senha.',
-          timer: 2000,
+          timer: CONSTANTS.TOAST_DURATION, // Using standard duration instead of 2000
           showConfirmButton: false
         });
       } else {
@@ -338,14 +339,14 @@ export default function PerfilAdminPage() {
         icon: 'success',
         title: 'Senha redefinida com sucesso!',
         text: 'Faça login novamente com sua nova senha.',
-        timer: 3000,
+        timer: CONSTANTS.TOAST_DURATION,
         showConfirmButton: false
       });
 
       setTimeout(() => {
         signOut();
         router.push('/');
-      }, 2000);
+      }, CONSTANTS.REDIRECT_DELAY);
     } catch (error: unknown) {
       console.error('Erro ao redefinir senha:', error);
       const err = error as {

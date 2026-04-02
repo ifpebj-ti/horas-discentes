@@ -1,5 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import NextAuth from 'next-auth';
+import 'next-auth';
+import { DefaultSession } from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
@@ -12,7 +12,7 @@ declare module 'next-auth' {
       entidadeId?: string; // opcional
       cursoId?: string; // opcional
       turmaId?: string; // opcional
-    };
+    } & DefaultSession['user'];
     token: string;
   }
 
