@@ -1,12 +1,9 @@
 import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
+import nextConfig from 'eslint-config-next';
 import importHelpers from 'eslint-plugin-import-helpers';
 import prettier from 'eslint-plugin-prettier';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
 import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 import path from 'node:path';
@@ -31,22 +28,15 @@ export default [
       '**/dist/'
     ]
   },
+  ...nextConfig,
   ...fixupConfigRules(
     compat.extends(
-      'eslint:recommended',
-      'plugin:@next/next/recommended',
-      'plugin:@typescript-eslint/recommended',
-      'plugin:react/recommended',
-      'plugin:react-hooks/recommended',
       'plugin:prettier/recommended',
       'plugin:@tanstack/eslint-plugin-query/recommended'
     )
   ),
   {
     plugins: {
-      '@typescript-eslint': fixupPluginRules(typescriptEslint),
-      react: fixupPluginRules(react),
-      'react-hooks': fixupPluginRules(reactHooks),
       prettier: fixupPluginRules(prettier),
       'import-helpers': fixupPluginRules(importHelpers),
       'unused-imports': fixupPluginRules(unusedImports)
@@ -58,7 +48,6 @@ export default [
         ...globals.node
       },
 
-      parser: tsParser,
       ecmaVersion: 'latest',
       sourceType: 'module',
 
