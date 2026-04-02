@@ -9,6 +9,7 @@ import BreadCrumb from '@/components/BreadCrumb';
 import CourseCard from '@/components/CourseCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
@@ -35,10 +36,9 @@ export default function CursoPage() {
       try {
         show();
         const data = await obterResumoCursos();
-        console.log(' Cursos carregados:', data);
         setCourses(data);
       } catch (error) {
-        console.error(' Erro ao buscar cursos:', error);
+        console.error('Erro ao buscar cursos:', error);
       } finally {
         hide();
       }
@@ -102,7 +102,6 @@ export default function CursoPage() {
 
       let errorMessage = 'Não foi possível excluir o curso.';
 
-      // Mensagem específica para erro 405
       if (err?.response?.status === 405) {
         errorMessage =
           'Método não permitido. O servidor não aceita requisições DELETE para este endpoint. Verifique a configuração do backend.';
@@ -130,35 +129,26 @@ export default function CursoPage() {
     <div className="p-6 w-full">
       <LoadingOverlay show={visible} />
 
-      <div className="mb-6">
+      <div className="mb-4">
         <BreadCrumb
-          items={[
-            {
-              icon: <FaHome />,
-              label: 'Início',
-              href: '/curso'
-            }
-          ]}
+          items={[{ icon: <FaHome />, label: 'Início', href: '/curso' }]}
         />
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <input
-          type="text"
+      <h1 className="md:text-4xl text-3xl font-semibold md:font-normal text-gray-800 mb-10">
+        Cursos
+      </h1>
+
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
+        <Input
           placeholder="Buscar curso..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border border-gray-300 rounded-full px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="md:max-w-sm"
         />
-        <div className="w-full md:w-auto text-nowrap min-w-auto">
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            shape="pill"
-            className="w-full bg-blue-700 hover:bg-blue-800 text-white"
-          >
-            <FaPlus className="mr-2" /> Novo Curso
-          </Button>
-        </div>
+        <Button onClick={() => setIsModalOpen(true)} className="md:w-auto w-full">
+          <FaPlus /> Novo Curso
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -166,7 +156,7 @@ export default function CursoPage() {
           <CourseCard
             key={course.id}
             courseName={course.nome}
-            alunos={course.quantidadeAlunos} // Substituir quando tiver dado real
+            alunos={course.quantidadeAlunos}
             classes={course.quantidadeTurmas}
             onManageCourse={() => router.push(`/curso/${course.id}`)}
             onDeleteCourse={() => handleDeleteCourse(course.id, course.nome)}

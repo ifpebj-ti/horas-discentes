@@ -40,40 +40,41 @@ export default function CoordenacaoPage() {
   }, [hideLoading]);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto mt-4 z-10 relative">
+    <div className="p-6 max-w-5xl mx-auto">
       <LoadingOverlay show={isLoading} />
 
-      <BreadCrumb
-        items={[
-          {
-            icon: <FaHome />,
-            label: 'Início',
-            href: '/coordenacao'
-          }
-        ]}
-      />
+      <div className="mb-4">
+        <BreadCrumb
+          items={[{ icon: <FaHome />, label: 'Início', href: '/coordenacao' }]}
+        />
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <h1 className="md:text-4xl text-3xl font-semibold md:font-normal text-gray-800 mb-10">
+        Coordenação
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <DashboardCard
-          icon={<FaGraduationCap className="text-blue-600 text-3xl" />}
+          icon={<FaGraduationCap />}
           label="Turma"
           onClick={() => router.push('/coordenacao/turma')}
         />
 
         <DashboardCard
-          icon={<FaIdCard className="text-blue-600 text-3xl" />}
+          icon={<FaIdCard />}
           label="Validação de Certificados"
           onClick={() => router.push('/coordenacao/certificados')}
         />
 
         <DashboardCard
-          icon={<FaUsers className="text-blue-600 text-3xl" />}
+          icon={<FaUsers />}
           label="Secretaria"
           notificationCount={pendenciasCount}
           onClick={() => router.push('/coordenacao/contabilizarHoras')}
         />
+
         <DashboardCard
-          icon={<FaBookOpen className="text-blue-600 text-3xl" />}
+          icon={<FaBookOpen />}
           label="Atividades"
           onClick={() => router.push('/coordenacao/atividade')}
         />

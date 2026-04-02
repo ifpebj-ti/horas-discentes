@@ -1,6 +1,8 @@
 import React from 'react';
 import { FaUsers, FaCalendarAlt, FaTrash } from 'react-icons/fa';
 
+import { Button } from '@/components/ui/button';
+
 interface CourseCardProps {
   courseName: string;
   alunos: number;
@@ -17,37 +19,40 @@ const CourseCard: React.FC<CourseCardProps> = ({
   onDeleteCourse
 }) => {
   return (
-    <div className="rounded-lg shadow-md p-4 w-full max-w-sm mx-auto hover:shadow-lg transition-shadow bg-white relative">
+    <div className="relative bg-white border border-gray-100 rounded-sm shadow-md p-6 flex flex-col hover:shadow-xl transition-shadow duration-300 ease-in-out">
       {onDeleteCourse && (
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             onDeleteCourse();
           }}
-          className="absolute top-2 right-2 text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors"
           title="Excluir curso"
+          className="absolute top-2 right-2 text-red-600 hover:text-red-800 hover:bg-red-50"
         >
           <FaTrash className="w-4 h-4" />
-        </button>
+        </Button>
       )}
-      <h2 className="text-lg font-semibold text-gray-800 mb-2 pr-8">
+
+      <h2 className="text-lg font-semibold text-gray-800 mb-3 pr-8">
         {courseName}
       </h2>
 
-      <div className="text-gray-600 flex items-center mb-1">
-        <FaUsers className="mr-2" />
-        {alunos} Aluno{alunos !== 1 ? 's' : ''}
+      <div className="flex flex-col gap-1 text-sm text-gray-600 mb-5">
+        <div className="flex items-center gap-2">
+          <FaUsers />
+          {alunos} Aluno{alunos !== 1 ? 's' : ''}
+        </div>
+        <div className="flex items-center gap-2">
+          <FaCalendarAlt />
+          {classes} turma{classes !== 1 ? 's' : ''}
+        </div>
       </div>
-      <div className="text-gray-600 flex items-center mb-4">
-        <FaCalendarAlt className="mr-2" />
-        {classes} turma{classes !== 1 ? 's' : ''}
-      </div>
-      <button
-        onClick={onManageCourse}
-        className="w-full border border-blue-600 text-blue-600 py-2 rounded hover:bg-blue-50 font-medium cursor-pointer"
-      >
+
+      <Button variant="outline" onClick={onManageCourse} className="w-full">
         Gerenciar Curso
-      </button>
+      </Button>
     </div>
   );
 };

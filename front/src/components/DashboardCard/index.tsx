@@ -16,25 +16,17 @@ export const DashboardCard: React.FC<DashboardCardProps> = ({
   return (
     <button
       onClick={onClick}
-      className="relative bg-gradient-to-br from-white to-gray-50 shadow-2xl rounded-2xl p-6 flex flex-col
-      items-center justify-center w-full h-32 hover:shadow-[0_8px_30px_rgba(0,0,0,0.2)] hover:scale-[1.02] transition-all
-      duration-300 ease-in-out border border-gray-200 cursor-pointer"
+      className="relative bg-white border border-gray-100 rounded-sm shadow-md p-10 flex flex-col items-center justify-center w-full hover:shadow-xl transition-shadow duration-300 ease-in-out cursor-pointer"
     >
-      {/* Notificação no canto superior direito */}
       {notificationCount !== undefined && notificationCount > 0 && (
-        <span
-          className="absolute top-2 right-2 bg-primary text-white text-xs w-5 h-5 rounded-full flex
-        items-center justify-center shadow-lg z-10"
-        >
+        <span className="absolute top-2 right-2 flex items-center justify-center text-sm font-semibold text-white rounded-full w-7 h-7 bg-red-500">
           {notificationCount}
         </span>
       )}
 
-      {/* Ícone centralizado */}
-      <div className="text-primary text-3xl mb-2">{icon}</div>
+      <div className="text-3xl text-[#1351B4] mb-3">{icon}</div>
 
-      {/* Texto */}
-      <p className="text-sm text-primary font-medium mt-2">{label}</p>
+      <p className="text-lg font-semibold text-[#1351B4]">{label}</p>
     </button>
   );
 };
