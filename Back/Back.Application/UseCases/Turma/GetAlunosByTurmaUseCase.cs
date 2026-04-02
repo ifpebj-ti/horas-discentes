@@ -43,17 +43,20 @@ public class GetAlunosByTurmaUseCase
             int totalHorasComplementar = atividadesComplementar.Sum(x => x.HorasConcluidas);
 
             double porcentagem = 0;
-            if (turma.PossuiExtensao)
+            if (limite != null)
             {
-                var pExt = limite!.MaximoHorasExtensao > 0 ? ((double)totalHorasExtensao / limite.MaximoHorasExtensao) * 100 : 0;
-                var pComp = limite!.MaximoHorasComplementar > 0 ? ((double)totalHorasComplementar / limite.MaximoHorasComplementar) * 100 : 0;
-                porcentagem = (double)Math.Round((double)((pExt + pComp) / 2), 2);
-            }
-            else
-            {
-                porcentagem = limite!.MaximoHorasComplementar > 0
-                    ? Math.Round((double)totalHorasComplementar / limite.MaximoHorasComplementar * 100, 2)
-                    : 0;
+                if (turma.PossuiExtensao)
+                {
+                    var pExt = limite.MaximoHorasExtensao > 0 ? ((double)totalHorasExtensao / limite.MaximoHorasExtensao!.Value) * 100 : 0;
+                    var pComp = limite.MaximoHorasComplementar > 0 ? ((double)totalHorasComplementar / limite.MaximoHorasComplementar) * 100 : 0;
+                    porcentagem = Math.Round((pExt + pComp) / 2, 2);
+                }
+                else
+                {
+                    porcentagem = limite.MaximoHorasComplementar > 0
+                        ? Math.Round((double)totalHorasComplementar / limite.MaximoHorasComplementar * 100, 2)
+                        : 0;
+                }
             }
 
             result.Add(new AlunoPorTurmaDetalhadoResponse(
