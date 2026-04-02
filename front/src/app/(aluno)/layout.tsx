@@ -20,7 +20,7 @@ export default function AlunoLayout({
           Jardim - PE, 55145-065
           <br />
           Telefone: (81) 3411-3200
-          <div className="relative px-2 py-1 text-center text-xs text-token-text-secondary md:px-[60px] no-underline ">
+          <div className="relative px-2 py-1 text-center text-xs text-gray-500 md:px-[60px]">
             <p>
               © 2025 Desenvolvido por{' '}
               <a
