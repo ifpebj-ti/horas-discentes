@@ -11,7 +11,7 @@ export default function AlunoLayout({
       <div className="min-h-screen bg-white text-black">
         <Header />
 
-        <main>{children}</main>
+        <main className="mt-6 px-5 md:px-10 pb-5">{children}</main>
 
         <footer className="bg-white border-t py-4 text-center text-xs text-gray-500">
           IFPE - Campus Belo Jardim

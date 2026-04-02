@@ -10,7 +10,7 @@ export default function CoordenacaoLayout({
     <ProtectedLayout allowedRoles={['coordenador']}>
       <div className="min-h-screen bg-white">
         <Header />
-        <main>{children}</main>
+        <main className="mt-6 px-5 md:px-10 pb-5">{children}</main>
       </div>
     </ProtectedLayout>
   );
