@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './globals.css';
 
 import ClientProviders from '@/components/ClientProviders';
+import VersionDisplay from '@/components/VersionDisplay';
 
 export const metadata: Metadata = {
   title: 'Hora+',
@@ -23,6 +24,7 @@ export default function RootLayout({
         <ClientProviders>
           <main className="flex-1">{children}</main>
         </ClientProviders>
+        <VersionDisplay />
       </body>
     </html>
   );

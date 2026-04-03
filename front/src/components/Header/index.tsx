@@ -2,35 +2,61 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
 
-import { useSignOut } from '@/hooks/useSignOut';
+import UserProfile from '@/components/UserProfile/index';
 
-const Header = () => {
-  const { handleSignOut } = useSignOut();
+const handleLogout = () => {
+  signOut({ callbackUrl: window.location.origin });
+};
+
+export default function Header() {
+  const { data: session } = useSession();
 
   return (
-    <header className="bg-white border-b shadow-sm relative z-20">
-      <div className="flex items-center justify-between px-4 py-2">
-        <Link href="/">
-          <Image
-            src="/img/logo.png"
-            alt="Logo IFPE"
-            width={130}
-            height={60}
-          />
-        </Link>
+    <header className="top-0 left-0 w-full bg-white shadow z-50">
+      <div className="mx-auto px-4 md:px-10 py-3 flex items-center justify-between gap-2 w-full">
 
-        <span className="text-lg font-semibold text-gray-800">Hora+</span>
+        {/* Logo Desktop */}
+        <div className="flex-shrink-0 hidden md:block">
+          <Link href="/">
+            <Image
+              src="/img/logo.png"
+              alt="Logo IFPE"
+              width={130}
+              height={60}
+              className="h-12 w-auto"
+              priority
+            />
+          </Link>
+        </div>
 
-        <button
-          onClick={handleSignOut}
-          className="text-primary text-sm font-medium cursor-pointer"
-        >
-          Sair
-        </button>
+        {/* Logo Mobile */}
+        <div className="flex-shrink-0 md:hidden">
+          <Link href="/">
+            <Image
+              src="/img/logo.png"
+              alt="Logo IFPE"
+              width={80}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
+          </Link>
+        </div>
+
+        {/* Título centralizado */}
+        <h1 className="md:text-xl font-semibold text-gray-800 text-center">Hora+</h1>
+
+        {/* Menu do usuário */}
+        <div className="flex-shrink-0 flex items-center gap-2">
+          {session?.user ? (
+            <UserProfile user={session.user} onLogout={handleLogout} />
+          ) : (
+            <div className="w-10 h-10" />
+          )}
+        </div>
       </div>
     </header>
   );
-};
-
-export default Header;
+}
