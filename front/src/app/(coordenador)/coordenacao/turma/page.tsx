@@ -157,23 +157,24 @@ export default function CourseDetailPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white shadow rounded-lg p-4 border border-gray-200">
-          <h2 className="text-lg font-semibold mb-4">Coordenador</h2>
-          <ul className="space-y-2">
-            <li className="flex justify-between items-center">
-              <span>{nomeCoordenador || 'N/A'}</span>
-            </li>
-          </ul>
+        <div className="bg-white shadow-sm rounded-lg py-2.5 px-3 border border-gray-200">
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">
+            Coordenador
+          </h2>
+          <p className="text-base font-bold text-gray-800">
+            {nomeCoordenador || 'N/A'}
+          </p>
         </div>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200 overflow-hidden">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Turmas</h2>
+      <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Turmas</h2>
           <div className="max-w-xs">
             <Button
               icon={faPlus}
               onClick={() => setIsTurmaModalOpen(true)}
+              size="sm"
               className="w-full bg-blue-700 hover:bg-blue-800 text-white"
             >
               Criar Nova Turma
@@ -182,40 +183,60 @@ export default function CourseDetailPage() {
         </div>
 
         {turmas.length === 0 ? (
-          <p className="text-gray-600 px-4 py-2">Nenhuma turma cadastrada.</p>
+          <p className="text-gray-600 p-8 text-center">
+            Nenhuma turma cadastrada.
+          </p>
         ) : (
-          <table className="w-full text-sm rounded-lg overflow-hidden">
-            <thead className="border-b text-gray-600">
-              <tr>
-                <th className="py-2 text-left px-4">Período</th>
-                <th className="text-center">Turno</th>
-                <th className="text-center">Alunos</th>
-                <th className="text-right px-4">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {turmas.map((turma) => (
-                <tr
-                  key={turma.id}
-                  className="border-b last:border-none even:bg-white"
-                >
-                  <td className="py-2 px-4">{turma.periodo}</td>
-                  <td className="text-center capitalize">{turma.turno}</td>
-                  <td className="text-center">{turma.quantidadeAlunos}</td>
-                  <td className="text-right px-4">
-                    <button
-                      className="text-xs px-2 py-0.5 sm:text-sm sm:px-3 sm:py-1 text-blue-600 border border-blue-600 rounded-full hover:bg-blue-600 hover:text-white cursor-pointer"
-                      onClick={() =>
-                        router.push(`/coordenacao/turma/${turma.id}`)
-                      }
-                    >
-                      Visualizar turma
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100 text-gray-500 border-b border-gray-200">
+                <tr>
+                  <th className="py-3 px-4 text-left font-bold text-[10px] uppercase tracking-wider">
+                    Período
+                  </th>
+                  <th className="py-3 px-4 text-center font-bold text-[10px] uppercase tracking-wider">
+                    Turno
+                  </th>
+                  <th className="py-3 px-4 text-center font-bold text-[10px] uppercase tracking-wider">
+                    Alunos
+                  </th>
+                  <th className="py-3 px-4 text-right font-bold text-[10px] uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {turmas.map((turma) => (
+                  <tr
+                    key={turma.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="py-3 px-4 font-medium text-gray-900">
+                      {turma.periodo}
+                    </td>
+                    <td className="py-3 px-4 text-center capitalize text-gray-600">
+                      {turma.turno}
+                    </td>
+                    <td className="py-3 px-4 text-center text-gray-600">
+                      {turma.quantidadeAlunos}
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          router.push(`/coordenacao/turma/${turma.id}`)
+                        }
+                        className="bg-gray-100 hover:bg-gray-200 text-blue-700 font-semibold"
+                      >
+                        Visualizar turma
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   FaCopy,
-  FaUsers,
   FaClock,
   FaCheckCircle,
   FaTimesCircle,
@@ -36,8 +35,6 @@ import { toast } from 'react-toastify';
 
 const VisualizarTurma = () => {
   const params = useParams();
-  //ele ta em /cursoId/ID quero pegar esse id
-  const turmaId = typeof params.id === 'string' ? params.id : '';
   const id = typeof params.turmaId === 'string' ? params.turmaId : '';
   const [turma, setTurma] = useState<TurmaResponse | null>(null);
   const [students, setStudents] = useState<AlunoPorTurmaDetalhadoResponse[]>(

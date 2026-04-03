@@ -28,9 +28,9 @@ const CourseCard: React.FC<CourseCardProps> = ({
             onDeleteCourse();
           }}
           title="Excluir curso"
-          className="absolute top-2 right-2 size-9 text-red-600 hover:text-red-800 hover:bg-red-50"
+          className="absolute top-2 right-2 w-9 h-9 flex items-center justify-center p-0 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
         >
-          <FaTrash className="w-4 h-4" />
+          <FaTrash className="w-3 h-3" />
         </Button>
       )}
 

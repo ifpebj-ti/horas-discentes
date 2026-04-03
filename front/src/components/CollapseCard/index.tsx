@@ -48,7 +48,7 @@ export function CollapseCard({
 
   return (
     <div
-      className={`border rounded-xl shadow-sm mb-3 transition-shadow relative ${isOpen ? 'z-10 shadow-lg' : 'z-0'}`}
+      className={`bg-card border border-[#E0E0E0] rounded-xl mb-3 transition-shadow relative ${isOpen ? 'z-10 shadow-elegant' : 'z-0 shadow-card'}`}
     >
       <button
         className="flex items-center justify-between w-full p-4 text-left text-gray-800 focus:outline-none hover:cursor-pointer"

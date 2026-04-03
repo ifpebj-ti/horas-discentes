@@ -29,7 +29,7 @@ export function ActivityCard({ atividade, onDelete }: ActivityCardProps) {
               e.stopPropagation();
               onDelete(atividade.id, atividade.nome);
             }}
-            className="absolute top-3 right-3 text-red-600 hover:text-red-800 p-1.5 rounded-full hover:bg-red-50 transition-colors cursor-pointer"
+            className="absolute top-3 right-3 text-gray-400 hover:text-red-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
             title="Excluir atividade"
           >
             <FaTrash className="h-3.5 w-3.5" />

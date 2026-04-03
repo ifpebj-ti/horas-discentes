@@ -109,7 +109,7 @@ export function BreadcrumbAuto({ map = {} }: { map?: Record<string, string> }) {
   // Determine home href: first meaningful segment
   const homeSegment = segments[0];
   const homeHref = homeSegment ? `/${homeSegment}` : '/';
-  const homeLabel = routeMap[homeSegment] ?? 'Início';
+  const homeLabel = (homeSegment ? routeMap[homeSegment] : undefined) ?? 'Início';
 
   return (
     <Breadcrumb className="mb-4">
@@ -123,8 +123,8 @@ export function BreadcrumbAuto({ map = {} }: { map?: Record<string, string> }) {
           const fullPath = '/' + segments.slice(0, absoluteIndex + 1).join('/');
           const isLast = absoluteIndex === segments.length - 1;
           const prevSegment = segments[absoluteIndex - 1];
-          const isDetailId = dynamicParents.has(prevSegment);
-          const label = routeMap[segment] ?? segment;
+          const isDetailId = !!prevSegment && dynamicParents.has(prevSegment);
+          const label = (segment && routeMap[segment]) ?? segment;
 
           // Skip role-root segments already shown as home (aluno, admin, coordenacao)
           if (absoluteIndex === 1 && (segment === 'aluno' || segment === 'admin' || segment === 'coordenacao' || segment === 'coordenador')) {

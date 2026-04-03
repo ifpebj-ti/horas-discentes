@@ -188,7 +188,7 @@ export default function CourseDetailPage() {
       </AlertDialog>
 
       <div className="mb-6">
-        <BreadcrumbAuto />
+        <BreadcrumbAuto map={{ [cursoId]: courseName || cursoId }} />
       </div>
       <div>
         <h1 className="text-2xl font-bold">{courseName}</h1>
@@ -196,11 +196,11 @@ export default function CourseDetailPage() {
       </div>
 
       {/* Coordenador */}
-      <div className="bg-white shadow rounded-lg p-4">
-        <h2 className="text-lg font-semibold mb-4">Coordenador</h2>
+      <div className="rounded-lg border border-gray-200 bg-white py-3 px-4">
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Coordenador</h2>
         {coordinator ? (
           <div className="flex justify-between items-center">
-            <span>{coordinator.nome}</span>
+            <span className="text-base font-bold text-gray-800">{coordinator.nome}</span>
             <button
               onClick={() =>
                 setDeleteTarget({
@@ -209,14 +209,14 @@ export default function CourseDetailPage() {
                   label: coordinator.nome
                 })
               }
-              className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors"
+              className="text-gray-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors"
               title="Excluir coordenador"
             >
-              <FontAwesomeIcon icon={faTrash} className="w-5 h-5" />
+              <FontAwesomeIcon icon={faTrash} className="w-6 h-6" />
             </button>
           </div>
         ) : (
-          <div className="max-w-xs mt-4 cursor-pointer">
+          <div className="max-w-xs cursor-pointer">
             <Button
               icon={faPlus}
               onClick={() => setIsCoordModalOpen(true)}
@@ -229,9 +229,9 @@ export default function CourseDetailPage() {
       </div>
 
       {/* Turmas */}
-      <div className="bg-white shadow rounded-lg p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Turmas</h2>
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Turmas</h2>
           <div className="max-w-xs">
             <Button
               icon={faPlus}
@@ -243,48 +243,50 @@ export default function CourseDetailPage() {
           </div>
         </div>
 
-        <table className="w-full table-auto text-sm">
-          <thead className="text-left text-gray-600 border-b">
-            <tr>
-              <th className="py-2">Período</th>
-              <th>Turno</th>
-              <th>Alunos</th>
-              <th className="text-right">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {classes.map((cls) => (
-              <tr key={cls.id} className="border-b last:border-none">
-                <td className="py-2">{cls.period}</td>
-                <td>{cls.shift}</td>
-                <td>{cls.students}</td>
-                <td className="text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      className="text-sm text-blue-600 border border-blue-600 px-3 py-1 rounded-full hover:bg-blue-50"
-                      onClick={() => router.push(`/curso/${cursoId}/${cls.id}`)}
-                    >
-                      Visualizar turma
-                    </button>
-                    <button
-                      onClick={() =>
-                        setDeleteTarget({
-                          type: 'turma',
-                          id: cls.id,
-                          label: cls.period
-                        })
-                      }
-                      className="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors"
-                      title="Excluir turma"
-                    >
-                      <FontAwesomeIcon icon={faTrash} className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
+        <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+          <table className="w-full table-auto text-sm">
+            <thead className="text-left text-gray-700 text-xs uppercase tracking-wide" style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}>
+              <tr>
+                <th className="px-4 py-3">Período</th>
+                <th className="px-4 py-3">Turno</th>
+                <th className="px-4 py-3">Alunos</th>
+                <th className="px-4 py-3 text-right">Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {classes.map((cls) => (
+                <tr key={cls.id} className="border-b last:border-none hover:bg-gray-50 transition-colors">
+                  <td className="px-4 py-3">{cls.period}</td>
+                  <td className="px-4 py-3">{cls.shift}</td>
+                  <td className="px-4 py-3">{cls.students}</td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        className="text-sm bg-gray-100 hover:bg-gray-200 text-blue-700 font-medium px-3 py-1.5 rounded-lg transition-colors"
+                        onClick={() => router.push(`/curso/${cursoId}/${cls.id}`)}
+                      >
+                        Visualizar turma
+                      </button>
+                      <button
+                        onClick={() =>
+                          setDeleteTarget({
+                            type: 'turma',
+                            id: cls.id,
+                            label: cls.period
+                          })
+                        }
+                        className="text-gray-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors"
+                        title="Excluir turma"
+                      >
+                        <FontAwesomeIcon icon={faTrash} className="w-6 h-6" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <CoordinatorInviteModal

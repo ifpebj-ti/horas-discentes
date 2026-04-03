@@ -34,7 +34,6 @@ export default function HoursRegistrationForm({
     handleSubmit,
     submitForm,
     handleFileSelect,
-    handleFileRemove,
     anexoComprovante,
     isLoading,
     errors,

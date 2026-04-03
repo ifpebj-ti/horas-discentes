@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { cn } from '@/lib/utils';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 interface CardHomeProps {
   title: string;
   icon: IconDefinition;
-  indicatorNumber?: number;
+  indicatorNumber?: number | undefined;
   indicatorColor?: string;
   className?: string;
   onClick?: () => void;

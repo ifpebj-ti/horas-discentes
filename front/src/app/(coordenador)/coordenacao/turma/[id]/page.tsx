@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   FaCopy,
-  FaUsers,
   FaUser
 } from 'react-icons/fa';
 

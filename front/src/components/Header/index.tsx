@@ -15,7 +15,7 @@ export default function Header() {
 
   return (
     <header className="top-0 left-0 w-full bg-white shadow z-50">
-      <div className="mx-auto px-4 md:px-10 py-3 flex items-center justify-between gap-2 w-full">
+      <div className="relative mx-auto px-4 md:px-10 py-3 flex items-center justify-between gap-2 w-full">
 
         {/* Logo Desktop */}
         <div className="flex-shrink-0 hidden md:block">
@@ -46,7 +46,7 @@ export default function Header() {
         </div>
 
         {/* Título centralizado */}
-        <h1 className="md:text-xl font-semibold text-gray-800 text-center">Hora+</h1>
+        <h1 className="absolute left-1/2 -translate-x-1/2 md:text-xl font-semibold text-gray-800 pointer-events-none">Hora+</h1>
 
         {/* Menu do usuário */}
         <div className="flex-shrink-0 flex items-center gap-2">
