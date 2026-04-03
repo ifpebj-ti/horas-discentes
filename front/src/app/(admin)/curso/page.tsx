@@ -2,22 +2,32 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaHome, FaPlus } from 'react-icons/fa';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import { CreateCourseModal } from './_components/CreateCourseModal';
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import CourseCard from '@/components/CourseCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 
-import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterResumoCursos,
   CursoResumoResponse,
   deletarCurso
 } from '@/services/courseService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 export default function CursoPage() {
   const router = useRouter();
@@ -27,6 +37,10 @@ export default function CursoPage() {
     [] as CursoResumoResponse[]
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    nome: string;
+  } | null>(null);
 
   const { show, hide, visible } = useLoadingOverlay();
 
@@ -35,10 +49,9 @@ export default function CursoPage() {
       try {
         show();
         const data = await obterResumoCursos();
-        console.log(' Cursos carregados:', data);
         setCourses(data);
       } catch (error) {
-        console.error(' Erro ao buscar cursos:', error);
+        console.error('Erro ao buscar cursos:', error);
       } finally {
         hide();
       }
@@ -60,36 +73,23 @@ export default function CursoPage() {
     setCourses(atualizados);
   };
 
-  const handleDeleteCourse = async (courseId: string, courseName: string) => {
+  const handleDeleteCourse = (courseId: string, courseName: string) => {
     if (!courseId) {
-      Swal.fire('Erro', 'ID do curso inválido.', 'error');
+      toast.error('ID do curso inválido.');
       return;
     }
+    setDeleteTarget({ id: courseId, nome: courseName });
+  };
 
-    const confirmation = await Swal.fire({
-      title: 'Confirmar exclusão',
-      text: `Deseja realmente excluir o curso "${courseName}"? Esta ação é PERMANENTE e irá remover TODOS os dados associados (turmas, alunos, certificados, atividades e coordenador).`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sim, excluir',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: COLORS.danger,
-      cancelButtonColor: COLORS.primary
-    });
-
-    if (!confirmation.isConfirmed) return;
+  const confirmDeleteCourse = async () => {
+    if (!deleteTarget) return;
 
     try {
       show();
-      await deletarCurso(courseId);
+      await deletarCurso(deleteTarget.id);
       const atualizados = await obterResumoCursos();
       setCourses(atualizados);
-      await Swal.fire({
-        title: 'Curso excluído!',
-        text: 'O curso e todos os dados associados foram excluídos com sucesso.',
-        icon: 'success',
-        confirmButtonColor: COLORS.primary
-      });
+      toast.success('O curso e todos os dados associados foram excluídos com sucesso.');
     } catch (error: unknown) {
       console.error('Erro ao excluir curso:', error);
       const err = error as {
@@ -102,7 +102,6 @@ export default function CursoPage() {
 
       let errorMessage = 'Não foi possível excluir o curso.';
 
-      // Mensagem específica para erro 405
       if (err?.response?.status === 405) {
         errorMessage =
           'Método não permitido. O servidor não aceita requisições DELETE para este endpoint. Verifique a configuração do backend.';
@@ -120,9 +119,10 @@ export default function CursoPage() {
           errorMessage;
       }
 
-      Swal.fire('Erro', errorMessage, 'error');
+      toast.error(errorMessage);
     } finally {
       hide();
+      setDeleteTarget(null);
     }
   };
 
@@ -130,35 +130,52 @@ export default function CursoPage() {
     <div className="p-6 w-full">
       <LoadingOverlay show={visible} />
 
-      <div className="mb-6">
-        <BreadCrumb
-          items={[
-            {
-              icon: <FaHome />,
-              label: 'Início',
-              href: '/curso'
-            }
-          ]}
-        />
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja realmente excluir o curso &quot;{deleteTarget?.nome}&quot;?
+              Esta ação é PERMANENTE e irá remover TODOS os dados associados
+              (turmas, alunos, certificados, atividades e coordenador).
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={confirmDeleteCourse}>
+              Sim, excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="mb-4">
+        <BreadcrumbAuto />
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <input
-          type="text"
+      <h1 className="md:text-4xl text-3xl font-semibold md:font-normal text-gray-800 mb-10">
+        Cursos
+      </h1>
+
+      <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
+        <Input
           placeholder="Buscar curso..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border border-gray-300 rounded-full px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="md:max-w-sm"
         />
-        <div className="w-full md:w-auto text-nowrap min-w-auto">
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            shape="pill"
-            className="w-full bg-blue-700 hover:bg-blue-800 text-white"
-          >
-            <FaPlus className="mr-2" /> Novo Curso
-          </Button>
-        </div>
+        <Button
+          icon={faPlus}
+          onClick={() => setIsModalOpen(true)}
+          className="md:w-auto w-full"
+        >
+          Novo Curso
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -166,7 +183,7 @@ export default function CursoPage() {
           <CourseCard
             key={course.id}
             courseName={course.nome}
-            alunos={course.quantidadeAlunos} // Substituir quando tiver dado real
+            alunos={course.quantidadeAlunos}
             classes={course.quantidadeTurmas}
             onManageCourse={() => router.push(`/curso/${course.id}`)}
             onDeleteCourse={() => handleDeleteCourse(course.id, course.nome)}

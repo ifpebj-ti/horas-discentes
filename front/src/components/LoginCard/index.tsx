@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { FaEnvelope, FaCircleNotch } from 'react-icons/fa';
+import { FaCircleNotch } from 'react-icons/fa';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticated';
-import { InputPassword } from '../InputPassword';
 import { useLoginCard } from './hooks/useLoginCard';
 
 export const LoginCard = () => {
@@ -34,8 +34,8 @@ export const LoginCard = () => {
 
       <div className="flex flex-col justify-center items-center px-6 md:px-12 pb-4 md:pb-0">
         <form onSubmit={handleSubmit(submitForm)} className="w-full max-w-md">
-          <h1 className="text-3xl md:text-6xl font-extrabold text-center text-primary pb-2 mb-8 tracking-wide drop-shadow-sm">
-            HoraMais
+          <h1 className="text-3xl lg:text-4xl font-medium text-center text-primary mb-8">
+            Hora+
           </h1>
 
           <div className="mb-4">
@@ -46,7 +46,7 @@ export const LoginCard = () => {
               id="email"
               type="email"
               placeholder="Digite seu email institucional."
-              icon={FaEnvelope}
+              icon={faEnvelope}
               {...register('email')}
             />
             {errors.email && (
@@ -67,8 +67,9 @@ export const LoginCard = () => {
             <label htmlFor="password" className="block mb-1 text-sm">
               Senha:
             </label>
-            <InputPassword
+            <Input
               id="password"
+              isPassword
               placeholder="Digite sua senha de segurança."
               {...register('password')}
             />
@@ -104,7 +105,7 @@ export const LoginCard = () => {
             <Button
               type="submit"
               className="w-full"
-              shape="pill"
+             
               disabled={formState.isSubmitting}
             >
               {formState.isSubmitting && (

@@ -1,13 +1,16 @@
 'use client';
 
 import Image from 'next/image';
-import { FaEnvelope, FaUser, FaIdBadge, FaKey } from 'react-icons/fa';
-import { FaCircleInfo } from 'react-icons/fa6';
+import {
+  faEnvelope,
+  faUser,
+  faIdBadge,
+  faKey
+} from '@fortawesome/free-solid-svg-icons';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import { InputPassword } from '../InputPassword';
 import { useFirstAccess } from './hooks/useFirstAccess';
 
 export const FirstAccess = () => {
@@ -59,19 +62,18 @@ export const FirstAccess = () => {
               <label className="block mb-1 text-sm">Código</label>
               <Input
                 placeholder="Código"
-                icon={FaKey}
+                icon={faKey}
                 value={codigo}
                 onChange={(e) => setCodigo(e.target.value)}
               />
               <div className="flex items-center gap-2 bg-[#1351B4] text-white text-sm p-2 rounded-md mb-6 mt-0.5">
-                <FaCircleInfo className="w-5 h-5 text-white" />
                 <span>Solicite o código ao coordenador ou a Secretária</span>
               </div>
 
               <Button
                 onClick={handleValidarCodigo}
                 className="w-full"
-                shape="pill"
+               
               >
                 Continuar
               </Button>
@@ -88,7 +90,7 @@ export const FirstAccess = () => {
                 <label className="block mb-1 text-sm">Nome:</label>
                 <Input
                   placeholder="Nome completo"
-                  icon={FaUser}
+                  icon={faUser}
                   {...register('nome')}
                 />
                 {errors.nome && (
@@ -100,7 +102,7 @@ export const FirstAccess = () => {
                 <label className="block mb-1 text-sm">Email:</label>
                 <Input
                   placeholder="Digite seu email institucional"
-                  icon={FaEnvelope}
+                  icon={faEnvelope}
                   {...register('email')}
                 />
                 {errors.email && (
@@ -112,7 +114,7 @@ export const FirstAccess = () => {
                 <label className="block mb-1 text-sm">Matrícula:</label>
                 <Input
                   placeholder="Matrícula"
-                  icon={FaIdBadge}
+                  icon={faIdBadge}
                   {...register('matricula')}
                 />
                 {errors.matricula && (
@@ -124,7 +126,8 @@ export const FirstAccess = () => {
 
               <div className="mb-4">
                 <label className="block mb-1 text-sm">Senha:</label>
-                <InputPassword
+                <Input
+                  isPassword
                   placeholder="Digite sua senha"
                   {...register('senha')}
                 />
@@ -164,7 +167,8 @@ export const FirstAccess = () => {
 
               <div className="mb-4">
                 <label className="block mb-1 text-sm">Confirmar Senha:</label>
-                <InputPassword
+                <Input
+                  isPassword
                   placeholder="Confirmar Senha"
                   {...register('confirmarSenha')}
                 />
@@ -180,7 +184,7 @@ export const FirstAccess = () => {
                 type="submit"
                 disabled={loading || !isValid}
                 className="w-full"
-                shape="pill"
+               
               >
                 {loading ? 'Finalizando...' : 'Finalizar'}
               </Button>

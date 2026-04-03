@@ -2,70 +2,61 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-import { FaBars } from 'react-icons/fa';
+import { signOut, useSession } from 'next-auth/react';
 
-import Menu from '@/components/Menu';
-import { Sheet, SheetTrigger } from '@/components/ui/sheet';
+import UserProfile from '@/components/UserProfile/index';
 
-import { useSignOut } from '@/hooks/useSignOut';
-import * as Types from '@/types';
+const handleLogout = () => {
+  signOut({ callbackUrl: window.location.origin });
+};
 
-interface HeaderProps {
-  menuTitle: string;
-  user: Types.Usuario;
-}
-
-const Header = ({ menuTitle, user }: HeaderProps) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { handleSignOut } = useSignOut();
+export default function Header() {
+  const { data: session } = useSession();
 
   return (
-    <header className="bg-white border-b shadow-sm relative z-20">
-      <div className="flex items-center justify-between px-4 py-2">
-        <div className="flex flex-col">
+    <header className="top-0 left-0 w-full bg-white shadow z-50">
+      <div className="relative mx-auto px-4 md:px-10 py-3 flex items-center justify-between gap-2 w-full">
+
+        {/* Logo Desktop */}
+        <div className="flex-shrink-0 hidden md:block">
           <Link href="/">
             <Image
               src="/img/logo.png"
               alt="Logo IFPE"
               width={130}
               height={60}
+              className="h-12 w-auto"
+              priority
             />
           </Link>
-
-          <div className="flex items-center gap-2 mt-2 px-2">
-            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-              <SheetTrigger asChild>
-                <button aria-label="Abrir menu" className="text-primary">
-                  <FaBars size={20} />
-                </button>
-              </SheetTrigger>
-              <Menu
-                user={{
-                  name: user.name || '',
-                  role: user.role
-                }}
-                onLinkClick={() => setMenuOpen(false)}
-              />
-            </Sheet>
-            <span className="text-gray-700 text-sm font-bold tracking-wide">
-              {menuTitle}
-            </span>
-          </div>
         </div>
 
-        <button
-          onClick={() => {
-            setMenuOpen(false);
-            handleSignOut();
-          }}
-          className="text-primary text-sm font-medium cursor-pointer"
-        >
-          Sair
-        </button>
+        {/* Logo Mobile */}
+        <div className="flex-shrink-0 md:hidden">
+          <Link href="/">
+            <Image
+              src="/img/logo.png"
+              alt="Logo IFPE"
+              width={80}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
+          </Link>
+        </div>
+
+        {/* Título centralizado */}
+        <h1 className="absolute left-1/2 -translate-x-1/2 md:text-xl font-semibold text-gray-800 pointer-events-none">Hora+</h1>
+
+        {/* Menu do usuário */}
+        <div className="flex-shrink-0 flex items-center gap-2">
+          {session?.user ? (
+            <UserProfile user={session.user} onLogout={handleLogout} />
+          ) : (
+            <div className="w-10 h-10" />
+          )}
+        </div>
       </div>
     </header>
   );
-};
-
-export default Header;
+}

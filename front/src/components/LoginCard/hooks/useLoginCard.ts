@@ -3,10 +3,9 @@
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
-import { COLORS } from '@/config/colors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Swal from 'sweetalert2';
 
 import { loginSchema, type LoginSchemaType } from '../schemas/schema';
 
@@ -29,16 +28,10 @@ export function useLoginCard() {
     });
 
     if (res?.ok) {
-      const session = await fetch('/api/auth/session').then((res) =>
-        res.json()
-      );
+      const session = await fetch('/api/auth/session').then((res) => res.json());
       const role = session?.user?.role;
 
-      await Swal.fire({
-        icon: 'success',
-        title: 'Login efetuado com sucesso!',
-        confirmButtonColor: COLORS.primary
-      });
+      toast.success('Login efetuado com sucesso!');
 
       switch (role) {
         case 'admin':
@@ -54,12 +47,7 @@ export function useLoginCard() {
           router.push('/');
       }
     } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Credenciais inválidas',
-        text: 'Verifique seu e-mail e senha.',
-        confirmButtonColor: COLORS.danger
-      });
+      toast.error('Credenciais inválidas. Verifique seu e-mail e senha.');
     }
   };
 

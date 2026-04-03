@@ -4,14 +4,11 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   FaCopy,
-  FaUsers,
-  FaUser,
-  FaHome,
-  FaGraduationCap
+  FaUser
 } from 'react-icons/fa';
 
 import { StudentCard } from './_components/StudentCard';
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,7 +20,6 @@ import {
   CardTitle
 } from '@/components/ui/card';
 
-import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { toggleStatusAluno } from '@/services/studentService';
 import {
@@ -32,7 +28,7 @@ import {
   TurmaResponse,
   AlunoPorTurmaDetalhadoResponse
 } from '@/services/classService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const VisualizarTurma = () => {
   const { id } = useParams();
@@ -52,7 +48,7 @@ const VisualizarTurma = () => {
         setStudents(alunosResponse);
       } catch (error) {
         console.error('Erro ao carregar dados da turma:', error);
-        Swal.fire('Erro', 'Erro ao carregar dados da turma.', 'error');
+        toast.error('Erro ao carregar dados da turma.');
       } finally {
         hide();
       }
@@ -64,12 +60,7 @@ const VisualizarTurma = () => {
   const copyCode = async () => {
     if (!turma) return;
     navigator.clipboard.writeText(turma.id);
-    await Swal.fire({
-      title: 'Código copiado!',
-      text: 'O código da turma foi copiado para a área de transferência.',
-      icon: 'success',
-      confirmButtonColor: COLORS.primary
-    });
+    toast.success('O código da turma foi copiado para a área de transferência.');
   };
 
   const toggleStudentStatus = async (studentId: string) => {
@@ -83,15 +74,10 @@ const VisualizarTurma = () => {
       setStudents(atualizados);
 
       const action = student.isAtivo ? 'desativado' : 'ativado';
-      await Swal.fire({
-        title: 'Status alterado',
-        text: `${student.nome} foi ${action}.`,
-        icon: 'info',
-        confirmButtonColor: COLORS.primary
-      });
+      toast.info(`${student.nome} foi ${action}.`);
     } catch (error) {
       console.error('Erro ao alterar status:', error);
-      Swal.fire('Erro', 'Não foi possível alterar o status.', 'error');
+      toast.error('Não foi possível alterar o status.');
     } finally {
       hide();
     }
@@ -100,21 +86,7 @@ const VisualizarTurma = () => {
     <div className="space-y-8 p-4 md:p-6">
       <LoadingOverlay show={visible} />
 
-      <BreadCrumb
-        items={[
-          { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
-          {
-            icon: <FaGraduationCap />,
-            label: 'Turmas',
-            href: '/coordenacao/turma'
-          },
-          {
-            icon: <FaUsers />,
-            label: `Turma ${turma?.id ?? ''}`,
-            href: `/coordenacao/turma/${turma?.id ?? ''}`
-          }
-        ]}
-      />
+      <BreadcrumbAuto />
 
       {turma && (
         <>

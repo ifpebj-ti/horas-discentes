@@ -1,5 +1,6 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
+
 import {
   FaClock,
   FaFileAlt,
@@ -11,7 +12,7 @@ import {
   FaExclamationTriangle
 } from 'react-icons/fa';
 
-import { FileUploadInput } from '@components/FileUploadInput';
+import { CustomFileInput } from '@/components/CustomFileInput';
 import SelectBox from '@components/ui/SelectBox';
 
 import { AtividadeResponse } from '@/services/activityService';
@@ -33,7 +34,6 @@ export default function HoursRegistrationForm({
     handleSubmit,
     submitForm,
     handleFileSelect,
-    handleFileRemove,
     anexoComprovante,
     isLoading,
     errors,
@@ -299,11 +299,10 @@ export default function HoursRegistrationForm({
               control={control}
               render={({ fieldState: { error } }) => (
                 <>
-                  <FileUploadInput
-                    file={anexoComprovante}
-                    onSelect={handleFileSelect}
-                    onRemove={handleFileRemove}
-                    isLoading={isLoading}
+                  <CustomFileInput
+                    selectedFile={anexoComprovante}
+                    onFileSelect={handleFileSelect}
+                    disabled={isLoading}
                   />
                   {error && <p className={errorClass}>{error.message}</p>}
                 </>

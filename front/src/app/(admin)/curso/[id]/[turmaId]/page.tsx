@@ -2,28 +2,12 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import {
-  FaCopy,
-  FaUsers,
-  FaClock,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaUser,
-  FaHome,
-  FaGraduationCap
-} from 'react-icons/fa';
+import { FaCopy } from 'react-icons/fa';
 
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
@@ -34,13 +18,12 @@ import {
   TurmaResponse,
   AlunoPorTurmaDetalhadoResponse
 } from '@/services/classService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const VisualizarTurma = () => {
   const params = useParams();
-  //ele ta em /cursoId/ID quero pegar esse id
-  const turmaId = typeof params.id === 'string' ? params.id : '';
   const id = typeof params.turmaId === 'string' ? params.turmaId : '';
+  const cursoId = typeof params.id === 'string' ? params.id : '';
   const [turma, setTurma] = useState<TurmaResponse | null>(null);
   const [students, setStudents] = useState<AlunoPorTurmaDetalhadoResponse[]>(
     []
@@ -57,7 +40,7 @@ const VisualizarTurma = () => {
         setStudents(alunosResponse);
       } catch (error) {
         console.error('Erro ao carregar dados da turma:', error);
-        Swal.fire('Erro', 'Erro ao carregar dados da turma.', 'error');
+        toast.error('Erro ao carregar dados da turma.');
       } finally {
         hide();
       }
@@ -69,12 +52,7 @@ const VisualizarTurma = () => {
   const copyCode = async () => {
     if (!turma) return;
     navigator.clipboard.writeText(turma.id);
-    await Swal.fire({
-      title: 'Código copiado!',
-      text: 'O código da turma foi copiado para a área de transferência.',
-      icon: 'success',
-      confirmButtonColor: '#3085d6'
-    });
+    toast.success('Código copiado para a área de transferência.');
   };
 
   const toggleStudentStatus = async (studentId: string) => {
@@ -88,177 +66,159 @@ const VisualizarTurma = () => {
       setStudents(atualizados);
 
       const action = student.isAtivo ? 'desativado' : 'ativado';
-      await Swal.fire({
-        title: 'Status alterado',
-        text: `${student.nome} foi ${action}.`,
-        icon: 'info',
-        confirmButtonColor: '#3085d6'
-      });
+      toast.info(`${student.nome} foi ${action}.`);
     } catch (error) {
       console.error('Erro ao alterar status:', error);
-      Swal.fire('Erro', 'Não foi possível alterar o status.', 'error');
+      toast.error('Não foi possível alterar o status.');
     } finally {
       hide();
     }
   };
+
   return (
-    <div className="space-y-8 p-4 md:p-6">
+    <div className="p-6 space-y-6">
       <LoadingOverlay show={visible} />
 
-      <BreadCrumb
-        items={[
-          { icon: <FaHome />, label: 'Página Inicial', href: '/curso' },
-          {
-            icon: <FaGraduationCap />,
-            label: 'Turmas',
-            href: `/curso/${turmaId}`
-          },
-          {
-            icon: <FaUsers />,
-            label: `Turma ${turma?.id ?? ''}`,
-            href: `/curso/${turmaId}/${id ?? ''}`
-          }
-        ]}
-      />
+      <BreadcrumbAuto map={{
+        [cursoId]: turma?.cursoNome || cursoId,
+        [id]: turma ? `Turma ${turma.periodo}` : id
+      }} />
 
       {turma && (
         <>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">{turma.cursoNome}</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-600">
-                  Código da Turma
+          {/* Info cards */}
+          <div>
+            <h1 className="text-2xl font-bold mb-4">{turma.cursoNome}</h1>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white border border-gray-200 rounded-lg py-3 px-4">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">
+                  Período
                 </p>
-                <p className="text-lg font-bold text-gray-900">{turma.id}</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={copyCode}
-                  className="mt-3 flex items-center space-x-2 cursor-pointer"
-                >
-                  <FaCopy className="w-4 h-4" />
-                  <span>Copiar</span>
-                </Button>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-600">Período</p>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-base font-bold text-gray-800">
                   {turma.periodo}
                 </p>
               </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-600">Turno</p>
-                <p className="text-lg font-bold text-gray-900">{turma.turno}</p>
+              <div className="bg-white border border-gray-200 rounded-lg py-3 px-4">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">
+                  Turno
+                </p>
+                <p className="text-base font-bold text-gray-800 capitalize">
+                  {turma.turno}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  <FaUser className="w-5 h-5" />
-                  <CardTitle>Alunos Matriculados</CardTitle>
+              <div className="bg-white border border-gray-200 rounded-lg py-3 px-4">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">
+                  Código da Turma
+                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-bold text-gray-800 truncate">
+                    {turma.id}
+                  </p>
+                  <button
+                    onClick={copyCode}
+                    className="text-gray-400 hover:text-blue-600 transition-colors shrink-0"
+                    title="Copiar código"
+                  >
+                    <FaCopy className="w-4 h-4" />
+                  </button>
                 </div>
-                <Badge variant="secondary" className="text-sm">
-                  {students.filter((s) => s.isAtivo).length} ativos
-                </Badge>
               </div>
-              <CardDescription>
-                {students.length} alunos cadastrados
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {students.map((student) => (
-                <div
-                  key={student.id}
-                  className="border rounded-lg p-4 space-y-3"
-                >
-                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <FaUser className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">
+            </div>
+          </div>
+
+          {/* Students table */}
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+                Alunos Matriculados
+              </h2>
+              <Badge variant="secondary">
+                {students.filter((s) => s.isAtivo).length} ativos
+              </Badge>
+            </div>
+
+            {students.length === 0 ? (
+              <p className="text-gray-500 text-sm p-8 text-center">
+                Nenhum aluno matriculado.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full table-auto text-sm">
+                  <thead
+                    className="text-left text-gray-700 text-xs uppercase tracking-wide"
+                    style={{
+                      backgroundColor: '#F2F2F2',
+                      borderBottom: '1px solid #D1D1D1'
+                    }}
+                  >
+                    <tr>
+                      <th className="px-4 py-3">Aluno</th>
+                      {turma.possuiExtensao && (
+                        <th className="px-4 py-3 text-center">Extensão</th>
+                      )}
+                      <th className="px-4 py-3 text-center">Complementar</th>
+                      <th className="px-4 py-3 text-center">Progresso</th>
+                      <th className="px-4 py-3 text-center">Status</th>
+                      <th className="px-4 py-3 text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {students.map((student) => (
+                      <tr
+                        key={student.id}
+                        className="border-b last:border-none hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-4 py-3 font-medium text-gray-900">
                           {student.nome}
-                        </p>
+                        </td>
                         {turma.possuiExtensao && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <FaClock className="w-4 h-4" />
-                            <span>
-                              {student.totalHorasExtensao} /{' '}
-                              {student.maximoHorasExtensao} horas extensão
+                          <td className="px-4 py-3 text-center text-gray-600">
+                            {student.totalHorasExtensao}/
+                            {student.maximoHorasExtensao}h
+                          </td>
+                        )}
+                        <td className="px-4 py-3 text-center text-gray-600">
+                          {student.totalHorasComplementar}/
+                          {student.maximoHorasComplementar}h
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <Progress
+                              value={student.porcentagemConclusao}
+                              className="h-1.5 flex-1 min-w-[60px]"
+                            />
+                            <span className="text-xs text-gray-500 w-8 text-right shrink-0">
+                              {student.porcentagemConclusao.toFixed(0)}%
                             </span>
                           </div>
-                        )}
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <FaClock className="w-4 h-4" />
-                          <span>
-                            {student.totalHorasComplementar} /{' '}
-                            {student.maximoHorasComplementar} horas comp.
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                      <Badge
-                        variant={student.isAtivo ? 'default' : 'secondary'}
-                        className="flex items-center space-x-1"
-                      >
-                        {student.isAtivo ? (
-                          <FaCheckCircle className="w-3 h-3" />
-                        ) : (
-                          <FaTimesCircle className="w-3 h-3" />
-                        )}
-                        <span>{student.isAtivo ? 'Ativo' : 'Inativo'}</span>
-                      </Badge>
-                      <Button
-                        variant={student.isAtivo ? 'destructive' : 'default'}
-                        size="sm"
-                        onClick={() => toggleStudentStatus(student.id)}
-                        className="cursor-pointer"
-                      >
-                        {student.isAtivo ? 'Desativar' : 'Ativar'}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Progresso da carga horária</span>
-                      <span>{student.porcentagemConclusao.toFixed(0)}%</span>
-                    </div>
-                    <Progress
-                      value={student.porcentagemConclusao}
-                      className="h-2"
-                    />
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          <div className="bg-blue-50 rounded-lg p-4 sm:p-6">
-            <h3 className="font-semibold text-blue-900 mb-2">
-              Código da Turma
-            </h3>
-            <p className="text-blue-700 text-sm mb-3">
-              Compartilhe o código <strong>{turma.id}</strong> com os alunos
-              para que eles possam se inscrever na turma.
-            </p>
-            <Button
-              variant="outline"
-              onClick={copyCode}
-              className="flex items-center space-x-2 text-blue-700 border-blue-300 cursor-pointer"
-            >
-              <FaCopy className="w-4 h-4" />
-              <span>Copiar código da turma</span>
-            </Button>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <Badge
+                            variant={
+                              student.isAtivo ? 'default' : 'secondary'
+                            }
+                          >
+                            {student.isAtivo ? 'Ativo' : 'Inativo'}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <Button
+                            variant={
+                              student.isAtivo ? 'destructive' : 'default'
+                            }
+                            size="sm"
+                            onClick={() => toggleStudentStatus(student.id)}
+                            className="cursor-pointer"
+                          >
+                            {student.isAtivo ? 'Desativar' : 'Ativar'}
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </>
       )}

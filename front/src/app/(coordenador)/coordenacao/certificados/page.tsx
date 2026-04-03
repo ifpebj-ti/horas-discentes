@@ -7,12 +7,10 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaHourglassHalf,
-  FaRegFileAlt,
-  FaHome,
-  FaIdCard
+  FaRegFileAlt
 } from 'react-icons/fa';
 
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
 
@@ -25,7 +23,7 @@ import {
   aprovarCertificado,
   reprovarCertificado
 } from '@/services/certificateService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 const useIsMobile = () => {
   const [mobile, setMobile] = useState(false);
   useEffect(() => {
@@ -131,19 +129,10 @@ export default function ValidacaoCertificadosPage() {
         status: StatusCertificado.APROVADO
       });
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Certificado aprovado com sucesso!',
-        timer: 2000,
-        showConfirmButton: false
-      });
+      toast.success('Certificado aprovado com sucesso!');
     } catch (error) {
       console.error('Erro ao aprovar certificado:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao aprovar certificado!',
-        text: 'Tente novamente mais tarde.'
-      });
+      toast.error('Erro ao aprovar certificado! Tente novamente mais tarde.');
     } finally {
       hide();
     }
@@ -172,19 +161,10 @@ export default function ValidacaoCertificadosPage() {
         status: StatusCertificado.REPROVADO
       });
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Certificado reprovado com sucesso!',
-        timer: 2000,
-        showConfirmButton: false
-      });
+      toast.success('Certificado reprovado com sucesso!');
     } catch (error) {
       console.error('Erro ao reprovar certificado:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao reprovar certificado!',
-        text: 'Tente novamente mais tarde.'
-      });
+      toast.error('Erro ao reprovar certificado! Tente novamente mais tarde.');
     } finally {
       hide();
     }
@@ -208,12 +188,7 @@ export default function ValidacaoCertificadosPage() {
       <LoadingOverlay show={visible} />
 
       <div className="p-6 bg-gray-50">
-        <BreadCrumb
-          items={[
-            { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
-            { icon: <FaIdCard />, label: 'Validar Certificados', href: '' }
-          ]}
-        />
+        <BreadcrumbAuto />
         <div className="mt-4 flex flex-col sm:flex-row gap-4 items-center">
           <div className="relative flex-grow w-full sm:w-auto">
             <input
@@ -247,55 +222,37 @@ export default function ValidacaoCertificadosPage() {
           className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${showDetailMobile ? 'hidden' : ''}`}
         >
           {certificadosFiltrados.length ? (
-            <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-100 border-b border-gray-200">
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <table className="w-full text-sm">
+                <thead
+                  className="text-left text-gray-700 text-xs uppercase tracking-wide"
+                  style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}
+                >
                   <tr>
-                    {[
-                      'TURMA',
-                      'CATEGORIA',
-                      'ATIVIDADE',
-                      'HORAS',
-                      'ALUNO',
-                      'STATUS'
-                    ].map((h) => (
-                      <th
-                        key={h}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        {h}
-                      </th>
+                    {['Turma', 'Categoria', 'Atividade', 'Horas', 'Aluno', 'Status'].map((h) => (
+                      <th key={h} className="px-4 py-3">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody>
                   {certificadosFiltrados.map((c) => (
                     <tr
                       key={c.id}
                       onClick={() => handleSelectCertificado(c)}
-                      className={`hover:bg-gray-100 cursor-pointer ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''}`}
+                      className={`border-b last:border-none cursor-pointer transition-colors ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
                     >
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {c.periodoTurma}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
+                      <td className="px-4 py-3 text-gray-700">{c.periodoTurma}</td>
+                      <td className="px-4 py-3">
                         <span className="px-2 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                           {c.categoria}
                         </span>
                       </td>
-                      <td
-                        className="px-6 py-4 text-sm text-gray-700 truncate max-w-xs"
-                        title={c.tituloAtividade}
-                      >
+                      <td className="px-4 py-3 text-gray-700 truncate max-w-xs" title={c.tituloAtividade}>
                         {c.tituloAtividade}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {c.cargaHoraria}h
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {c.alunoNome}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
+                      <td className="px-4 py-3 text-gray-700">{c.cargaHoraria}h</td>
+                      <td className="px-4 py-3 text-gray-700">{c.alunoNome}</td>
+                      <td className="px-4 py-3">
                         <StatusIcon status={c.status as StatusCertificado} />
                       </td>
                     </tr>

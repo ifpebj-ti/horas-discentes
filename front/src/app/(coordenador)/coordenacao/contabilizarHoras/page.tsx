@@ -34,33 +34,36 @@ const TabelaSkeleton: React.FC<{ rows?: number }> = ({ rows = 5 }) => {
     [rows]
   );
   return (
-    <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="bg-muted py-3 px-2 sm:px-4 w-12">
-                <div className="h-4 w-4 bg-muted-foreground/20 rounded animate-pulse" />
+          <thead
+            className="text-left text-gray-700 text-xs uppercase tracking-wide"
+            style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}
+          >
+            <tr>
+              <th className="px-4 py-3 w-12">
+                <div className="h-4 w-4 bg-gray-300 rounded animate-pulse" />
               </th>
-              <th className="bg-muted text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold">
-                <div className="h-4 w-32 bg-muted-foreground/20 rounded animate-pulse" />
+              <th className="px-4 py-3">
+                <div className="h-4 w-32 bg-gray-300 rounded animate-pulse" />
               </th>
-              <th className="bg-muted text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold">
-                <div className="h-4 w-24 bg-muted-foreground/20 rounded animate-pulse" />
+              <th className="px-4 py-3">
+                <div className="h-4 w-24 bg-gray-300 rounded animate-pulse" />
               </th>
             </tr>
           </thead>
           <tbody>
             {skeletonKeys.map((key) => (
-              <tr key={key} className="border-b border-border">
-                <td className="py-3 px-2 sm:px-4">
-                  <div className="h-4 w-4 bg-muted-foreground/20 rounded animate-pulse" />
+              <tr key={key} className="border-b border-gray-100">
+                <td className="px-4 py-3">
+                  <div className="h-4 w-4 bg-gray-200 rounded animate-pulse" />
                 </td>
-                <td className="py-3 px-2 sm:px-4">
-                  <div className="h-4 w-48 bg-muted-foreground/20 rounded animate-pulse" />
+                <td className="px-4 py-3">
+                  <div className="h-4 w-48 bg-gray-200 rounded animate-pulse" />
                 </td>
-                <td className="py-3 px-2 sm:px-4">
-                  <div className="h-4 w-20 bg-muted-foreground/20 rounded animate-pulse" />
+                <td className="px-4 py-3">
+                  <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
                 </td>
               </tr>
             ))}
@@ -450,56 +453,46 @@ const GerenciamentoHoras: React.FC = () => {
           {isTableLoading ? (
             <TabelaSkeleton rows={itensPorPagina} />
           ) : (
-            <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="bg-muted p-2 sm:p-4 w-12">
+                <table className="w-full border-collapse text-sm">
+                  <thead
+                    className="text-left text-gray-700 text-xs uppercase tracking-wide"
+                    style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}
+                  >
+                    <tr>
+                      <th className="px-4 py-3 w-12">
                         <button onClick={toggleSelecionarTodos}>
                           {todosSelecionados ? (
                             <FaCheckSquare className="w-4 h-4 text-primary" />
                           ) : (
-                            <FaSquare className="w-4 h-4 text-muted-foreground" />
+                            <FaSquare className="w-4 h-4 text-gray-400" />
                           )}
                         </button>
                       </th>
-                      <th className="bg-muted text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold">
-                        Nome do Aluno
-                      </th>
-                      <th className="bg-muted text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold">
-                        Matrícula
-                      </th>
+                      <th className="px-4 py-3">Nome do Aluno</th>
+                      <th className="px-4 py-3">Matrícula</th>
                     </tr>
                   </thead>
                   <tbody>
                     {alunosPaginados.map((aluno) => (
-                      <tr key={aluno.id} className="border-b border-border">
-                        <td className="p-2 sm:p-4 text-center">
-                          <button
-                            onClick={() => toggleSelecionarAluno(aluno.id)}
-                          >
+                      <tr key={aluno.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3 text-center">
+                          <button onClick={() => toggleSelecionarAluno(aluno.id)}>
                             {alunosSelecionados.has(aluno.id) ? (
                               <FaCheckSquare className="w-4 h-4 text-primary" />
                             ) : (
-                              <FaSquare className="w-4 h-4 text-muted-foreground" />
+                              <FaSquare className="w-4 h-4 text-gray-400" />
                             )}
                           </button>
                         </td>
-                        <td className="p-2 sm:p-4 text-xs sm:text-sm">
-                          {aluno.nome}
-                        </td>
-                        <td className="p-2 sm:p-4 text-xs sm:text-sm">
-                          {aluno.matricula}
-                        </td>
+                        <td className="px-4 py-3 text-gray-900">{aluno.nome}</td>
+                        <td className="px-4 py-3 text-gray-600">{aluno.matricula}</td>
                       </tr>
                     ))}
                     {alunosPaginados.length === 0 && (
                       <tr>
-                        <td
-                          colSpan={3}
-                          className="p-6 text-center text-muted-foreground"
-                        >
+                        <td colSpan={3} className="px-4 py-8 text-center text-gray-500">
                           Nenhum aluno encontrado.
                         </td>
                       </tr>

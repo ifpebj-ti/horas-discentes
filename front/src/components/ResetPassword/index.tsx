@@ -2,11 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaEnvelope, FaKey, FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
+import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';
 
 import { Input } from '@/components/ui/input';
-
-import { InputPassword } from '../InputPassword';
 import { Button } from '../ui/button';
 import { useResetPassword } from './hooks/useResetPassword';
 import { StepsDots } from './StepsDots';
@@ -91,7 +90,7 @@ export const ResetPassword = () => {
                   </label>
                   <Input
                     placeholder="seuemail@discente.ifpe.edu.br"
-                    icon={FaEnvelope}
+                    icon={faEnvelope}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -100,7 +99,7 @@ export const ResetPassword = () => {
                       type="submit"
                       disabled={loading || !email}
                       className="w-full"
-                      shape="pill"
+                     
                     >
                       {loading ? 'Enviando...' : 'Enviar Código'}
                     </Button>
@@ -142,7 +141,7 @@ export const ResetPassword = () => {
                   </label>
                   <Input
                     placeholder="000000"
-                    icon={FaKey}
+                    icon={faKey}
                     value={code}
                     onChange={(e) =>
                       setCode(e.target.value.replace(/\D/g, '').slice(0, 6))
@@ -161,7 +160,7 @@ export const ResetPassword = () => {
                         type="submit"
                         disabled={loading || code.length !== 6}
                         className="w-full"
-                        shape="pill"
+                       
                       >
                         {loading ? 'Validando...' : 'Validar Código'}
                       </Button>
@@ -189,7 +188,8 @@ export const ResetPassword = () => {
                     <label className="block mb-1 text-sm text-slate-600">
                       Nova senha
                     </label>
-                    <InputPassword
+                    <Input
+                      isPassword
                       placeholder="Nova senha"
                       {...register('senha')}
                     />
@@ -231,7 +231,8 @@ export const ResetPassword = () => {
                     <label className="block mb-1 text-sm text-slate-600">
                       Confirmar senha
                     </label>
-                    <InputPassword
+                    <Input
+                      isPassword
                       placeholder="Confirmar senha"
                       {...register('confirmarSenha')}
                     />
@@ -255,7 +256,7 @@ export const ResetPassword = () => {
                         type="submit"
                         disabled={loading || !isValid || !senhasIguais}
                         className="w-full"
-                        shape="pill"
+                       
                       >
                         {loading ? 'Salvando...' : 'Salvar Nova Senha'}
                       </Button>

@@ -3,12 +3,12 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
 import { HoursRegistrationFormSchema } from '@components/HoursRegistrationForm/schemas/hoursRegistrationFormSchema';
 
 import { AtividadeResponse } from '@/services/activityService';
 import { enviarCertificado } from '@/services/certificateService';
-import Swal from 'sweetalert2';
 
 export interface UseHoursRegistrationFormProps {
   categoriasComplementares: AtividadeResponse[];
@@ -56,56 +56,32 @@ export function useHoursRegistrationForm({
   const anexoComprovante = watch('anexoComprovante');
 
   const categoriasAtuais = useMemo(() => {
-    return tipoRegistro === 'horas-extensao'
-      ? categoriasExtensao
-      : categoriasComplementares;
+    return tipoRegistro === 'horas-extensao' ? categoriasExtensao : categoriasComplementares;
   }, [tipoRegistro, categoriasComplementares, categoriasExtensao]);
 
-  const handleFileSelect = (file: File) => {
-    setValue('anexoComprovante', file, {
-      shouldValidate: true,
-      shouldDirty: true
-    });
+  const handleFileSelect = (file: File | null) => {
+    setValue('anexoComprovante', file, { shouldValidate: true, shouldDirty: true });
   };
 
   const handleFileRemove = () => {
-    setValue('anexoComprovante', null, {
-      shouldValidate: true,
-      shouldDirty: true
-    });
+    setValue('anexoComprovante', null, { shouldValidate: true, shouldDirty: true });
   };
 
   const submitForm: SubmitHandler<HoursRegistrationFormSchema> = async (data) => {
     try {
       if (!session?.user?.entidadeId || !session?.user?.cursoId) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Erro de autenticação',
-          text: 'Usuário não autenticado ou curso não identificado.'
-        });
+        toast.error('Usuário não autenticado ou curso não identificado.');
         return;
       }
 
-      const atividadeSelecionada = categoriasAtuais.find(
-        (c) => c.nome === data.categoria
-      );
-
+      const atividadeSelecionada = categoriasAtuais.find((c) => c.nome === data.categoria);
       if (!atividadeSelecionada) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Categoria inválida',
-          text: 'Categoria não encontrada ou inválida.'
-        });
+        toast.error('Categoria não encontrada ou inválida.');
         return;
       }
 
-      const dataInicioUTC = new Date(
-        data.dataInicioAtividade + 'T00:00:00Z'
-      ).toISOString();
-
-      const dataFimUTC = new Date(
-        data.dataFimAtividade + 'T00:00:00Z'
-      ).toISOString();
+      const dataInicioUTC = new Date(data.dataInicioAtividade + 'T00:00:00Z').toISOString();
+      const dataFimUTC = new Date(data.dataFimAtividade + 'T00:00:00Z').toISOString();
 
       const formData = new FormData();
       formData.append('TituloAtividade', data.tituloAtividade);
@@ -131,21 +107,12 @@ export function useHoursRegistrationForm({
       setIsUploading(true);
       await enviarCertificado(formData);
 
-      await Swal.fire({
-        icon: 'success',
-        title: 'Sucesso!',
-        text: 'Certificado enviado com sucesso.'
-      });
-
+      toast.success('Certificado enviado com sucesso!');
       form.reset();
       router.push('/aluno/certificado');
     } catch (error) {
       console.error(error);
-      await Swal.fire({
-        icon: 'error',
-        title: 'Erro ao enviar',
-        text: 'Não foi possível enviar o certificado.'
-      });
+      toast.error('Não foi possível enviar o certificado.');
     } finally {
       setIsUploading(false);
     }

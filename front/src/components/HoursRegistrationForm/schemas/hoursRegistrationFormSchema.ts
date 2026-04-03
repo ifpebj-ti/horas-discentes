@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
 // Mensagem de erro padrão para campos obrigatórios
-const requiredError = (fieldName: string) => ({
-  required_error: `${fieldName} é obrigatório(a).`
-});
+const requiredError = (fieldName: string) => `${fieldName} é obrigatório(a).`;
 
 // Schema para o arquivo (comprovante)
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -72,7 +70,7 @@ export const hoursRegistrationFormSchema = z
       }),
     aceitarTermos: z
       .boolean({
-        required_error: 'Você deve aceitar os termos para continuar.'
+        message: 'Você deve aceitar os termos para continuar.'
       })
       .refine((value) => value === true, {
         message: 'Você deve aceitar os termos de veracidade das informações.'

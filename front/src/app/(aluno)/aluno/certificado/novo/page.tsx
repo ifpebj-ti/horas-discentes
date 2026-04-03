@@ -2,9 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useEffect, useState, Suspense } from 'react';
-import { FaUpload, FaHome, FaFileAlt } from 'react-icons/fa';
-
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import HoursRegistrationForm from '@/components/HoursRegistrationForm';
 
 import {
@@ -56,27 +54,7 @@ export default function NovoCertificado() {
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <BreadCrumb
-                items={[
-                  {
-                    icon: <FaHome className="text-base" />,
-                    label: 'Início',
-                    href: '/aluno'
-                  },
-                  {
-                    icon: <FaFileAlt className="text-base" />,
-                    label: 'Certificados',
-                    href: '/aluno/certificado'
-                  },
-                  {
-                    icon: <FaUpload className="text-base" />,
-                    label: 'Novo Certificado',
-                    href: '/aluno/certificado/novo'
-                  }
-                ]}
-              />
-            </div>
+            <BreadcrumbAuto />
           </div>
 
           {/* Formulário */}

@@ -13,7 +13,7 @@ import {
   validateResetCode,
   resetPassword
 } from '@/services/authRecovery';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 export default function PerfilAdminPage() {
   const { data: session } = useSession();
@@ -201,11 +201,7 @@ export default function PerfilAdminPage() {
   // Função para solicitar código
   async function handleSolicitarCodigo() {
     if (!email) {
-      Swal.fire({
-        icon: 'error',
-        title: 'E-mail necessário',
-        text: 'É necessário ter um e-mail cadastrado para solicitar o código.'
-      });
+      toast.error('É necessário ter um e-mail cadastrado para solicitar o código.');
       return;
     }
 
@@ -214,13 +210,7 @@ export default function PerfilAdminPage() {
       await forgotPassword({ email });
       setShowResetPassword(true);
       setCodigoEnviado(true);
-      Swal.fire({
-        icon: 'success',
-        title: 'Código enviado!',
-        text: 'Verifique seu e-mail e digite o código de 6 dígitos recebido.',
-        timer: CONSTANTS.TOAST_DURATION,
-        showConfirmButton: false
-      });
+      toast.success('Código enviado! Verifique seu e-mail e digite o código de 6 dígitos recebido.');
     } catch (error: unknown) {
       console.error('Erro ao solicitar código:', error);
       const err = error as {
@@ -237,11 +227,7 @@ export default function PerfilAdminPage() {
         err?.message ||
         'Não foi possível enviar o código. Tente novamente.';
 
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao enviar código',
-        text: errorMessage
-      });
+      toast.error(errorMessage);
     } finally {
       setLoadingReset(false);
     }
@@ -250,11 +236,7 @@ export default function PerfilAdminPage() {
   // Função para validar código
   async function handleValidarCodigo() {
     if (codigoReset.length !== 6) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Código inválido',
-        text: 'O código deve ter exatamente 6 dígitos.'
-      });
+      toast.error('O código deve ter exatamente 6 dígitos.');
       return;
     }
 
@@ -267,19 +249,9 @@ export default function PerfilAdminPage() {
 
       if (response.valid) {
         setCodigoValidado(true);
-        Swal.fire({
-          icon: 'success',
-          title: 'Código válido!',
-          text: 'Agora você pode definir sua nova senha.',
-          timer: CONSTANTS.TOAST_DURATION, // Using standard duration instead of 2000
-          showConfirmButton: false
-        });
+        toast.success('Código válido! Agora você pode definir sua nova senha.');
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Código inválido',
-          text: response.message || 'O código informado não é válido.'
-        });
+        toast.error(response.message || 'O código informado não é válido.');
       }
     } catch (error: unknown) {
       console.error('Erro ao validar código:', error);
@@ -297,11 +269,7 @@ export default function PerfilAdminPage() {
         err?.message ||
         'Não foi possível validar o código. Tente novamente.';
 
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao validar código',
-        text: errorMessage
-      });
+      toast.error(errorMessage);
     } finally {
       setLoadingReset(false);
     }
@@ -310,20 +278,12 @@ export default function PerfilAdminPage() {
   // Função para redefinir senha
   async function handleRedefinirSenha() {
     if (novaSenhaReset !== confirmarSenhaReset) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Senhas não coincidem',
-        text: 'As senhas informadas não são iguais.'
-      });
+      toast.error('As senhas informadas não são iguais.');
       return;
     }
 
     if (novaSenhaReset.length < 6) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Senha muito curta',
-        text: 'A senha deve ter no mínimo 6 caracteres.'
-      });
+      toast.error('A senha deve ter no mínimo 6 caracteres.');
       return;
     }
 
@@ -335,13 +295,7 @@ export default function PerfilAdminPage() {
         newPassword: novaSenhaReset
       });
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Senha redefinida com sucesso!',
-        text: 'Faça login novamente com sua nova senha.',
-        timer: CONSTANTS.TOAST_DURATION,
-        showConfirmButton: false
-      });
+      toast.success('Senha redefinida com sucesso! Faça login novamente com sua nova senha.');
 
       setTimeout(() => {
         signOut();
@@ -363,11 +317,7 @@ export default function PerfilAdminPage() {
         err?.message ||
         'Não foi possível redefinir a senha. Tente novamente.';
 
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao redefinir senha',
-        text: errorMessage
-      });
+      toast.error(errorMessage);
     } finally {
       setLoadingReset(false);
     }

@@ -1,9 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { FaUser, FaIdCard, FaRegNewspaper } from 'react-icons/fa';
+import {
+  faUser,
+  faIdCard,
+  faNewspaper
+} from '@fortawesome/free-solid-svg-icons';
 
-import { InputPassword } from '@/components/InputPassword';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -59,7 +62,7 @@ export const CreateCoordinatorAccount = ({
             <label className="block mb-1 text-sm">Nome completo:</label>
             <Input
               placeholder="Nome completo"
-              icon={FaUser}
+              icon={faUser}
               {...register('nome')}
             />
             {errors.nome && (
@@ -72,7 +75,7 @@ export const CreateCoordinatorAccount = ({
             <label className="block mb-1 text-sm">Número da Portaria:</label>
             <Input
               placeholder="Ex: 1234/2025"
-              icon={FaIdCard}
+              icon={faIdCard}
               {...register('portaria')}
             />
             {errors.portaria && (
@@ -89,7 +92,7 @@ export const CreateCoordinatorAccount = ({
             </label>
             <Input
               placeholder="Data ou referência do DOU"
-              icon={FaRegNewspaper}
+              icon={faNewspaper}
               {...register('dou')}
             />
             {errors.dou && (
@@ -102,7 +105,7 @@ export const CreateCoordinatorAccount = ({
             <label className="block mb-1 text-sm">Email:</label>
             <Input
               placeholder="Email"
-              icon={FaUser}
+              icon={faUser}
               value={prefilledEmail}
               readOnly
             />
@@ -116,7 +119,8 @@ export const CreateCoordinatorAccount = ({
           {/* Senha */}
           <div className="mb-4">
             <label className="block mb-1 text-sm">Senha:</label>
-            <InputPassword
+            <Input
+              isPassword
               placeholder="Digite sua senha"
               {...register('senha')}
             />
@@ -157,7 +161,8 @@ export const CreateCoordinatorAccount = ({
           {/* Confirmar Senha */}
           <div className="mb-6">
             <label className="block mb-1 text-sm">Confirmar Senha:</label>
-            <InputPassword
+            <Input
+              isPassword
               placeholder="Confirmar Senha"
               {...register('confirmarSenha')}
             />
@@ -173,7 +178,7 @@ export const CreateCoordinatorAccount = ({
               type="submit"
               disabled={loading || !isValid || !isEmailValid}
               className="w-full"
-              shape="pill"
+             
             >
               {loading ? 'Criando...' : 'Criar Conta'}
             </Button>
