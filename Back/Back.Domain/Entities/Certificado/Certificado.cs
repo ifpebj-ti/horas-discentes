@@ -42,6 +42,8 @@ public class Certificado
     [Required(ErrorMessage = "O anexo é obrigatório.")]
     public byte[]? Anexo { get; set; }
 
+    public string? AnexoContentType { get; set; }
+
     public StatusCertificado Status { get; set; } = StatusCertificado.PENDENTE;
 
     [Required(ErrorMessage = "O campo Tipo é obrigatório.")]

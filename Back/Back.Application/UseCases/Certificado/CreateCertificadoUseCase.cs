@@ -53,6 +53,7 @@ public class CreateCertificadoUseCase
             .WithTotalPeriodos(request.TotalPeriodos)
             .WithDescricao(request.Descricao)
             .WithAnexo(await request.Anexo.ToByteArrayAsync())
+            .WithAnexoContentType(request.Anexo.ContentType.ToLowerInvariant())
             .WithTipo(request.Tipo)
             .WithAlunoAtividadeId(alunoAtividade.Id)
             .Build();

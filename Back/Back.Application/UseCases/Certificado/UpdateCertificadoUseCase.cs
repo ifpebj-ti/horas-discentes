@@ -78,6 +78,7 @@ namespace Back.Application.UseCases.Certificado
             {
                 request.Anexo.ValidateAnexo();
                 certificado.Anexo = await request.Anexo.ToByteArrayAsync();
+                certificado.AnexoContentType = request.Anexo.ContentType.ToLowerInvariant();
             }
 
             // 7. Salva as mudanças

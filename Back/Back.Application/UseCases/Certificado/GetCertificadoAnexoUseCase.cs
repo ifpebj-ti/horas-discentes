@@ -17,16 +17,23 @@ public class GetCertificadoAnexoUseCase
         _repo = repo;
     }
 
-    public async Task<(byte[] anexo, string nomeArquivo)> ExecuteAsync(Guid certificadoId)
+    public async Task<(byte[] Anexo, string NomeArquivo, string ContentType)> ExecuteAsync(Guid certificadoId)
     {
-        var anexo = await _repo.GetAnexoByIdAsync(certificadoId);
+        var (anexo, contentType) = await _repo.GetAnexoByIdAsync(certificadoId);
 
         if (anexo == null || anexo.Length == 0)
             throw new KeyNotFoundException("Anexo não encontrado para este certificado.");
 
-        // Nome do arquivo baseado no ID (ou outro campo se desejar)
-        var nomeArquivo = $"certificado_{certificadoId}.pdf";
+        var mimeType = string.IsNullOrEmpty(contentType) ? "application/pdf" : contentType;
+        var extension = mimeType switch
+        {
+            "image/jpeg" or "image/jpg" => ".jpg",
+            "image/png"                 => ".png",
+            _                           => ".pdf"
+        };
 
-        return (anexo, nomeArquivo);
+        var nomeArquivo = $"certificado_{certificadoId}{extension}";
+
+        return (anexo, nomeArquivo, mimeType);
     }
 }

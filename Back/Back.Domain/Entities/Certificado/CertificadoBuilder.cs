@@ -87,6 +87,12 @@ public class CertificadoBuilder
         return this;
     }
 
+    public CertificadoBuilder WithAnexoContentType(string contentType)
+    {
+        _certificado.AnexoContentType = contentType;
+        return this;
+    }
+
     public CertificadoBuilder WithTipo(TipoCertificado tipo)
     {
         _certificado.Tipo = tipo;

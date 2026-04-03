@@ -80,11 +80,11 @@ public class CertificadoRepository : ICertificadoRepository
             .ToListAsync();
     }
 
-    public async Task<byte[]?> GetAnexoByIdAsync(Guid certificadoId)
+    public async Task<(byte[]? Anexo, string? ContentType)> GetAnexoByIdAsync(Guid certificadoId)
     {
         return await _context.Certificados
             .Where(c => c.Id == certificadoId)
-            .Select(c => c.Anexo)
+            .Select(c => new ValueTuple<byte[]?, string?>(c.Anexo, c.AnexoContentType))
             .FirstOrDefaultAsync();
     }
     public async Task<IEnumerable<Certificado>> GetCertificadosAprovadosPorAlunoAsync(Guid alunoId)
