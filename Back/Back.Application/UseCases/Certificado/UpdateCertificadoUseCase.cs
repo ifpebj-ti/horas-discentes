@@ -14,10 +14,12 @@ namespace Back.Application.UseCases.Certificado
     public class UpdateCertificadoUseCase
     {
         private readonly ICertificadoRepository _certificadoRepo;
+        private readonly IAlunoRepository _alunoRepo;
 
-        public UpdateCertificadoUseCase(ICertificadoRepository certificadoRepo)
+        public UpdateCertificadoUseCase(ICertificadoRepository certificadoRepo, IAlunoRepository alunoRepo)
         {
             _certificadoRepo = certificadoRepo;
+            _alunoRepo = alunoRepo;
         }
 
         /// <summary>
@@ -25,9 +27,11 @@ namespace Back.Application.UseCases.Certificado
         /// </summary>
         /// <param name="id">O ID do certificado a ser atualizado.</param>
         /// <param name="request">Os novos dados do certificado.</param>
+        /// <param name="identityUserId">ID do usuário autenticado (Identity).</param>
         /// <exception cref="KeyNotFoundException">Lançado se o certificado não for encontrado.</exception>
+        /// <exception cref="UnauthorizedAccessException">Lançado se o aluno não for dono do certificado.</exception>
         /// <exception cref="InvalidOperationException">Lançado se o certificado já estiver APROVADO.</exception>
-        public async Task ExecuteAsync(Guid id, UpdateCertificadoRequest request)
+        public async Task ExecuteAsync(Guid id, UpdateCertificadoRequest request, string identityUserId)
         {
             // 1. Busca o certificado
             var certificado = await _certificadoRepo.GetByIdAsync(id);
@@ -35,14 +39,19 @@ namespace Back.Application.UseCases.Certificado
             if (certificado == null)
                 throw new KeyNotFoundException("Certificado não encontrado.");
 
-            // 2. REGRA DE NEGÓCIO: Verifica se está APROVADO
+            // 2. Verifica se o aluno autenticado é dono do certificado
+            var aluno = await _alunoRepo.GetByIdentityUserIdAsync(identityUserId);
+            if (aluno == null || certificado.AlunoAtividade!.AlunoId != aluno.Id)
+                throw new UnauthorizedAccessException("Você não tem permissão para alterar este certificado.");
+
+            // 3. REGRA DE NEGÓCIO: Verifica se está APROVADO
             // Não permite a alteração de certificados que já foram APROVADOS.
             if (certificado.Status == StatusCertificado.APROVADO)
             {
                 throw new InvalidOperationException("Não é possível alterar um certificado que já foi APROVADO.");
             }
 
-            // 3. Atualiza os campos do certificado
+            // 4. Atualiza os campos do certificado
             certificado.TituloAtividade = request.TituloAtividade;
             certificado.Instituicao = request.Instituicao;
             certificado.Local = request.Local;
@@ -56,7 +65,7 @@ namespace Back.Application.UseCases.Certificado
             certificado.Descricao = request.Descricao;
             certificado.Tipo = (TipoCertificado)request.Tipo;
 
-            // 4. Se o certificado estava REPROVADO, ele volta a ficar PENDENTE
+            // 5. Se o certificado estava REPROVADO, ele volta a ficar PENDENTE
             //    para ser reavaliado.
             if (certificado.Status == StatusCertificado.REPROVADO)
             {
@@ -64,14 +73,14 @@ namespace Back.Application.UseCases.Certificado
             }
 
 
-            // 5. Atualiza o anexo apenas se um novo foi enviado
+            // 6. Atualiza o anexo apenas se um novo foi enviado
             if (request.Anexo != null && request.Anexo.Length > 0)
             {
                 request.Anexo.ValidateAnexo();
                 certificado.Anexo = await request.Anexo.ToByteArrayAsync();
             }
 
-            // 6. Salva as mudanças
+            // 7. Salva as mudanças
             await _certificadoRepo.UpdateAsync(certificado);
         }
     }
