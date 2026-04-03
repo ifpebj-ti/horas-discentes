@@ -1,38 +1,89 @@
+'use client';
+
 import * as React from 'react';
-import { IconType } from 'react-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import {
+  faCircleInfo,
+  faEye,
+  faEyeSlash,
+  faCircleXmark
+} from '@fortawesome/free-solid-svg-icons';
 
 import { cn } from '@/lib/utils';
 
 interface InputProps extends React.ComponentProps<'input'> {
-  icon?: IconType;
+  icon?: IconDefinition;
+  isPassword?: boolean;
+  helperText?: string;
+  errorText?: string;
 }
 
-function Input({ className, type, icon: Icon, ...props }: InputProps) {
-  const input = (
-    <input
-      type={type}
-      data-slot="input"
-      className={cn(
-        'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-        'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-        'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
-        Icon ? 'pl-9' : '',
-        className
-      )}
-      {...props}
-    />
-  );
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    { className, type, icon, isPassword = false, helperText, errorText, ...props },
+    ref
+  ) => {
+    const [showPassword, setShowPassword] = React.useState(false);
 
-  if (!Icon) return input;
+    return (
+      <div className="flex flex-col gap-2 w-full">
+        <div
+          className={cn(
+            'flex items-center border rounded-xs px-3 py-2 transition-all',
+            props.disabled
+              ? 'bg-gray-100 border-gray-300'
+              : 'bg-white border-gray-400 focus-within:ring-2 focus-within:ring-blue-500'
+          )}
+        >
+          {icon && (
+            <FontAwesomeIcon
+              icon={icon}
+              className={cn(
+                'mr-2 shrink-0',
+                props.disabled ? 'text-gray-400' : 'text-gray-500'
+              )}
+            />
+          )}
+          <input
+            type={isPassword ? (showPassword ? 'text' : 'password') : type}
+            className={cn(
+              'flex-1 bg-transparent text-sm placeholder-gray-400 focus:outline-none',
+              'disabled:cursor-not-allowed disabled:text-gray-500',
+              className
+            )}
+            ref={ref}
+            {...props}
+          />
+          {isPassword && (
+            <button
+              type="button"
+              className="ml-2 text-gray-500 cursor-pointer focus:outline-none shrink-0"
+              onClick={() => setShowPassword((v) => !v)}
+              disabled={props.disabled}
+            >
+              <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+            </button>
+          )}
+        </div>
 
-  return (
-    <div className="relative w-full">
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
-        <Icon className="size-4" />
+        {helperText && (
+          <div className="flex items-center bg-[#155BCB] text-white w-min text-nowrap text-sm p-1 gap-1">
+            <FontAwesomeIcon icon={faCircleInfo} />
+            {helperText}
+          </div>
+        )}
+
+        {errorText && (
+          <div className="flex items-center bg-red-500 text-white w-min text-nowrap text-sm p-1 gap-1">
+            <FontAwesomeIcon icon={faCircleXmark} />
+            {errorText}
+          </div>
+        )}
       </div>
-      {input}
-    </div>
-  );
-}
+    );
+  }
+);
+Input.displayName = 'Input';
 
 export { Input };

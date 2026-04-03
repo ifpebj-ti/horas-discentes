@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { FaEnvelope, FaCircleNotch } from 'react-icons/fa';
+import { FaCircleNotch } from 'react-icons/fa';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticated';
-import { InputPassword } from '../InputPassword';
 import { useLoginCard } from './hooks/useLoginCard';
 
 export const LoginCard = () => {
@@ -46,7 +46,7 @@ export const LoginCard = () => {
               id="email"
               type="email"
               placeholder="Digite seu email institucional."
-              icon={FaEnvelope}
+              icon={faEnvelope}
               {...register('email')}
             />
             {errors.email && (
@@ -67,8 +67,9 @@ export const LoginCard = () => {
             <label htmlFor="password" className="block mb-1 text-sm">
               Senha:
             </label>
-            <InputPassword
+            <Input
               id="password"
+              isPassword
               placeholder="Digite sua senha de segurança."
               {...register('password')}
             />
