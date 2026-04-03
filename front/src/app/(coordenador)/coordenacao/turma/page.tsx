@@ -189,38 +189,33 @@ export default function CourseDetailPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 text-gray-500 border-b border-gray-200">
+              <thead
+                className="text-left text-gray-700 text-xs uppercase tracking-wide"
+                style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}
+              >
                 <tr>
-                  <th className="py-3 px-4 text-left font-bold text-[10px] uppercase tracking-wider">
-                    Período
-                  </th>
-                  <th className="py-3 px-4 text-center font-bold text-[10px] uppercase tracking-wider">
-                    Turno
-                  </th>
-                  <th className="py-3 px-4 text-center font-bold text-[10px] uppercase tracking-wider">
-                    Alunos
-                  </th>
-                  <th className="py-3 px-4 text-right font-bold text-[10px] uppercase tracking-wider">
-                    Ações
-                  </th>
+                  <th className="px-4 py-3">Período</th>
+                  <th className="px-4 py-3 text-center">Turno</th>
+                  <th className="px-4 py-3 text-center">Alunos</th>
+                  <th className="px-4 py-3 text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody>
                 {turmas.map((turma) => (
                   <tr
                     key={turma.id}
-                    className="hover:bg-gray-50 transition-colors"
+                    className="border-b last:border-none hover:bg-gray-50 transition-colors"
                   >
-                    <td className="py-3 px-4 font-medium text-gray-900">
+                    <td className="px-4 py-3 font-medium text-gray-900">
                       {turma.periodo}
                     </td>
-                    <td className="py-3 px-4 text-center capitalize text-gray-600">
+                    <td className="px-4 py-3 text-center capitalize text-gray-600">
                       {turma.turno}
                     </td>
-                    <td className="py-3 px-4 text-center text-gray-600">
+                    <td className="px-4 py-3 text-center text-gray-600">
                       {turma.quantidadeAlunos}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="px-4 py-3 text-right">
                       <Button
                         variant="ghost"
                         size="sm"

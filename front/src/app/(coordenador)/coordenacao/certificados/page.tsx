@@ -222,55 +222,37 @@ export default function ValidacaoCertificadosPage() {
           className={`w-full md:w-3/5 lg:w-2/3 p-6 overflow-y-auto ${showDetailMobile ? 'hidden' : ''}`}
         >
           {certificadosFiltrados.length ? (
-            <div className="bg-white shadow-md rounded-lg overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-100 border-b border-gray-200">
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <table className="w-full text-sm">
+                <thead
+                  className="text-left text-gray-700 text-xs uppercase tracking-wide"
+                  style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}
+                >
                   <tr>
-                    {[
-                      'TURMA',
-                      'CATEGORIA',
-                      'ATIVIDADE',
-                      'HORAS',
-                      'ALUNO',
-                      'STATUS'
-                    ].map((h) => (
-                      <th
-                        key={h}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                      >
-                        {h}
-                      </th>
+                    {['Turma', 'Categoria', 'Atividade', 'Horas', 'Aluno', 'Status'].map((h) => (
+                      <th key={h} className="px-4 py-3">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody>
                   {certificadosFiltrados.map((c) => (
                     <tr
                       key={c.id}
                       onClick={() => handleSelectCertificado(c)}
-                      className={`hover:bg-gray-100 cursor-pointer ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : ''}`}
+                      className={`border-b last:border-none cursor-pointer transition-colors ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
                     >
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {c.periodoTurma}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
+                      <td className="px-4 py-3 text-gray-700">{c.periodoTurma}</td>
+                      <td className="px-4 py-3">
                         <span className="px-2 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                           {c.categoria}
                         </span>
                       </td>
-                      <td
-                        className="px-6 py-4 text-sm text-gray-700 truncate max-w-xs"
-                        title={c.tituloAtividade}
-                      >
+                      <td className="px-4 py-3 text-gray-700 truncate max-w-xs" title={c.tituloAtividade}>
                         {c.tituloAtividade}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {c.cargaHoraria}h
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-700">
-                        {c.alunoNome}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
+                      <td className="px-4 py-3 text-gray-700">{c.cargaHoraria}h</td>
+                      <td className="px-4 py-3 text-gray-700">{c.alunoNome}</td>
+                      <td className="px-4 py-3">
                         <StatusIcon status={c.status as StatusCertificado} />
                       </td>
                     </tr>
