@@ -31,9 +31,7 @@ export interface CertificadoResponse {
   categoriaKey: string; // Chave para identificar a categoria
 }
 
-export interface CertificadoDetalhadoResponse extends CertificadoResponse {
-  anexoBase64?: string;
-}
+export interface CertificadoDetalhadoResponse extends CertificadoResponse {}
 
 export interface CreateCertificadoRequest {
   tituloAtividade: string;

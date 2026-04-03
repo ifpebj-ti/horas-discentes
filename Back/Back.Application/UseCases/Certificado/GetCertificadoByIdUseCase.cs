@@ -37,8 +37,7 @@ public class GetCertificadoByIdUseCase
             cert.Tipo,
             cert.Status,
             cert.AlunoAtividade.AlunoId,
-            cert.AlunoAtividade.AtividadeId,
-            cert.Anexo != null ? Convert.ToBase64String(cert.Anexo) : null
+            cert.AlunoAtividade.AtividadeId
         );
     }
 }
