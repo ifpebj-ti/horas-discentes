@@ -108,7 +108,7 @@ export function BreadcrumbAuto({ map = {} }: { map?: Record<string, string> }) {
 
   // Determine home href: first meaningful segment
   const homeSegment = segments[0];
-  const homeHref = homeSegment ? `/${homeSegment}/${segments[1] ?? ''}`.replace(/\/$/, '') : '/';
+  const homeHref = homeSegment ? `/${homeSegment}` : '/';
   const homeLabel = routeMap[homeSegment] ?? 'Início';
 
   return (

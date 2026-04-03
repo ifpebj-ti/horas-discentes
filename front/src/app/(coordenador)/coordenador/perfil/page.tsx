@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 
 import { CONSTANTS } from '@/config/constants';
 import { atualizarMeusDados } from '@/services/coordinatorService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 export default function PerfilCoordenadorPage() {
   const { data: session } = useSession();
@@ -23,7 +23,7 @@ export default function PerfilCoordenadorPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (novaSenha && novaSenha !== confirmarSenha) {
-      Swal.fire({ icon: 'error', title: 'As senhas não coincidem!' });
+      toast.error('As senhas não coincidem!');
       return;
     }
 
@@ -33,24 +33,14 @@ export default function PerfilCoordenadorPage() {
         email,
         ...(novaSenha ? { senha: novaSenha } : {})
       });
-      Swal.fire({
-        icon: 'success',
-        title: 'Dados atualizados com sucesso!',
-        text: 'Faça login novamente para sua segurança.',
-        timer: CONSTANTS.TOAST_DURATION,
-        showConfirmButton: false
-      });
+      toast.success('Dados atualizados com sucesso! Faça login novamente para sua segurança.');
       setTimeout(() => {
         signOut();
         router.push('/');
       }, CONSTANTS.REDIRECT_DELAY);
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao atualizar dados!',
-        text: 'Tente novamente ou procure o suporte.'
-      });
+      toast.error('Erro ao atualizar dados! Tente novamente ou procure o suporte.');
     } finally {
       setLoading(false);
     }

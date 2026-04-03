@@ -2,23 +2,32 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaHome, FaPlus } from 'react-icons/fa';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import { CreateCourseModal } from './_components/CreateCourseModal';
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import CourseCard from '@/components/CourseCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 
-import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterResumoCursos,
   CursoResumoResponse,
   deletarCurso
 } from '@/services/courseService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 export default function CursoPage() {
   const router = useRouter();
@@ -28,6 +37,10 @@ export default function CursoPage() {
     [] as CursoResumoResponse[]
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    nome: string;
+  } | null>(null);
 
   const { show, hide, visible } = useLoadingOverlay();
 
@@ -60,36 +73,23 @@ export default function CursoPage() {
     setCourses(atualizados);
   };
 
-  const handleDeleteCourse = async (courseId: string, courseName: string) => {
+  const handleDeleteCourse = (courseId: string, courseName: string) => {
     if (!courseId) {
-      Swal.fire('Erro', 'ID do curso inválido.', 'error');
+      toast.error('ID do curso inválido.');
       return;
     }
+    setDeleteTarget({ id: courseId, nome: courseName });
+  };
 
-    const confirmation = await Swal.fire({
-      title: 'Confirmar exclusão',
-      text: `Deseja realmente excluir o curso "${courseName}"? Esta ação é PERMANENTE e irá remover TODOS os dados associados (turmas, alunos, certificados, atividades e coordenador).`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sim, excluir',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: COLORS.danger,
-      cancelButtonColor: COLORS.primary
-    });
-
-    if (!confirmation.isConfirmed) return;
+  const confirmDeleteCourse = async () => {
+    if (!deleteTarget) return;
 
     try {
       show();
-      await deletarCurso(courseId);
+      await deletarCurso(deleteTarget.id);
       const atualizados = await obterResumoCursos();
       setCourses(atualizados);
-      await Swal.fire({
-        title: 'Curso excluído!',
-        text: 'O curso e todos os dados associados foram excluídos com sucesso.',
-        icon: 'success',
-        confirmButtonColor: COLORS.primary
-      });
+      toast.success('O curso e todos os dados associados foram excluídos com sucesso.');
     } catch (error: unknown) {
       console.error('Erro ao excluir curso:', error);
       const err = error as {
@@ -119,9 +119,10 @@ export default function CursoPage() {
           errorMessage;
       }
 
-      Swal.fire('Erro', errorMessage, 'error');
+      toast.error(errorMessage);
     } finally {
       hide();
+      setDeleteTarget(null);
     }
   };
 
@@ -129,10 +130,32 @@ export default function CursoPage() {
     <div className="p-6 w-full">
       <LoadingOverlay show={visible} />
 
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja realmente excluir o curso &quot;{deleteTarget?.nome}&quot;?
+              Esta ação é PERMANENTE e irá remover TODOS os dados associados
+              (turmas, alunos, certificados, atividades e coordenador).
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={confirmDeleteCourse}>
+              Sim, excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="mb-4">
-        <BreadCrumb
-          items={[{ icon: <FaHome />, label: 'Início', href: '/curso' }]}
-        />
+        <BreadcrumbAuto />
       </div>
 
       <h1 className="md:text-4xl text-3xl font-semibold md:font-normal text-gray-800 mb-10">
@@ -146,8 +169,12 @@ export default function CursoPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="md:max-w-sm"
         />
-        <Button onClick={() => setIsModalOpen(true)} className="md:w-auto w-full">
-          <FaPlus /> Novo Curso
+        <Button
+          icon={faPlus}
+          onClick={() => setIsModalOpen(true)}
+          className="md:w-auto w-full"
+        >
+          Novo Curso
         </Button>
       </div>
 

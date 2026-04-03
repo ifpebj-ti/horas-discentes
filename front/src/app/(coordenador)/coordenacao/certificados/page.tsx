@@ -7,12 +7,10 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaHourglassHalf,
-  FaRegFileAlt,
-  FaHome,
-  FaIdCard
+  FaRegFileAlt
 } from 'react-icons/fa';
 
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
 
@@ -25,7 +23,7 @@ import {
   aprovarCertificado,
   reprovarCertificado
 } from '@/services/certificateService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 const useIsMobile = () => {
   const [mobile, setMobile] = useState(false);
   useEffect(() => {
@@ -131,19 +129,10 @@ export default function ValidacaoCertificadosPage() {
         status: StatusCertificado.APROVADO
       });
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Certificado aprovado com sucesso!',
-        timer: 2000,
-        showConfirmButton: false
-      });
+      toast.success('Certificado aprovado com sucesso!');
     } catch (error) {
       console.error('Erro ao aprovar certificado:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao aprovar certificado!',
-        text: 'Tente novamente mais tarde.'
-      });
+      toast.error('Erro ao aprovar certificado! Tente novamente mais tarde.');
     } finally {
       hide();
     }
@@ -172,19 +161,10 @@ export default function ValidacaoCertificadosPage() {
         status: StatusCertificado.REPROVADO
       });
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Certificado reprovado com sucesso!',
-        timer: 2000,
-        showConfirmButton: false
-      });
+      toast.success('Certificado reprovado com sucesso!');
     } catch (error) {
       console.error('Erro ao reprovar certificado:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao reprovar certificado!',
-        text: 'Tente novamente mais tarde.'
-      });
+      toast.error('Erro ao reprovar certificado! Tente novamente mais tarde.');
     } finally {
       hide();
     }
@@ -208,12 +188,7 @@ export default function ValidacaoCertificadosPage() {
       <LoadingOverlay show={visible} />
 
       <div className="p-6 bg-gray-50">
-        <BreadCrumb
-          items={[
-            { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
-            { icon: <FaIdCard />, label: 'Validar Certificados', href: '' }
-          ]}
-        />
+        <BreadcrumbAuto />
         <div className="mt-4 flex flex-col sm:flex-row gap-4 items-center">
           <div className="relative flex-grow w-full sm:w-auto">
             <input

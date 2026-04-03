@@ -1,20 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
-import { COLORS } from '@/config/colors';
 import {
   forgotPassword,
   validateResetCode,
   resetPassword as resetPasswordApi
 } from '@/services/authRecovery';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Swal from 'sweetalert2';
 
 import { resetPasswordSchema, ResetPasswordSchema } from '../schemas/schema';
 
 export const useResetPassword = () => {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1); // 4 = sucesso
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [email, setEmail] = useState('');
   const [submittedEmail, setSubmittedEmail] = useState('');
   const [code, setCode] = useState('');
@@ -33,19 +32,9 @@ export const useResetPassword = () => {
       await forgotPassword({ email });
       setSubmittedEmail(email);
       setStep(2);
-      Swal.fire({
-        icon: 'success',
-        title: 'Código enviado',
-        text: 'Verifique sua caixa de entrada e spam.',
-        confirmButtonColor: COLORS.primary
-      });
+      toast.success('Código enviado! Verifique sua caixa de entrada e spam.');
     } catch (err: any) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao enviar código',
-        text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
-        confirmButtonColor: COLORS.danger
-      });
+      toast.error(err?.response?.data?.message ?? 'Erro ao enviar código. Tente novamente mais tarde.');
     } finally {
       setLoading(false);
     }
@@ -60,20 +49,10 @@ export const useResetPassword = () => {
         setCodeValidated(true);
         setStep(3);
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Código inválido',
-          text: res.message ?? 'Verifique o código e tente novamente.',
-          confirmButtonColor: COLORS.danger
-        });
+        toast.error(res.message ?? 'Código inválido. Verifique e tente novamente.');
       }
     } catch (err: any) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao validar código',
-        text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
-        confirmButtonColor: COLORS.danger
-      });
+      toast.error(err?.response?.data?.message ?? 'Erro ao validar código. Tente novamente mais tarde.');
     } finally {
       setLoading(false);
     }
@@ -83,19 +62,10 @@ export const useResetPassword = () => {
     if (!codeValidated || !submittedEmail || !code) return;
     setLoading(true);
     try {
-      await resetPasswordApi({
-        email: submittedEmail,
-        code,
-        newPassword: data.senha
-      });
+      await resetPasswordApi({ email: submittedEmail, code, newPassword: data.senha });
       setStep(4);
     } catch (err: any) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao redefinir senha',
-        text: err?.response?.data?.message ?? 'Tente novamente mais tarde.',
-        confirmButtonColor: COLORS.danger
-      });
+      toast.error(err?.response?.data?.message ?? 'Erro ao redefinir senha. Tente novamente mais tarde.');
     } finally {
       setLoading(false);
     }

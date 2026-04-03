@@ -2,10 +2,8 @@
 
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
-import { FaHome } from 'react-icons/fa';
-
 import { RecentCertificates } from './_components/RecentCertificates';
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import StatsSummary from '@/components/Faq';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import NewCertificateButton from '@/components/NewCertificateButton';
@@ -16,7 +14,7 @@ import { useMeusCertificados } from '@/hooks/useCertificates';
 import { obterCertificadoPorId } from '@/services/certificateService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
   const link = document.createElement('a');
@@ -59,19 +57,11 @@ function AlunoPageContent({
           `${detalhes.tituloAtividade}.pdf`
         );
       } else {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Certificado inválido',
-          text: 'Certificado ou nome do arquivo indisponível.'
-        });
+        toast.warn('Certificado ou nome do arquivo indisponível.');
       }
     } catch (error) {
       console.error('Erro ao baixar certificado:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao visualizar',
-        text: 'Não foi possível visualizar o certificado.'
-      });
+      toast.error('Não foi possível visualizar o certificado.');
     }
   };
 
@@ -91,15 +81,7 @@ function AlunoPageContent({
             <NewCertificateButton user={user} />
           </div>
 
-          <BreadCrumb
-            items={[
-              {
-                icon: <FaHome className="text-base" />,
-                label: 'Início',
-                href: '/aluno'
-              }
-            ]}
-          />
+          <BreadcrumbAuto />
 
           <div className="grid gap-10 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
             <section className="space-y-8">

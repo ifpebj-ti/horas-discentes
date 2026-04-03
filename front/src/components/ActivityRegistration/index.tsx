@@ -8,8 +8,17 @@ import { ActivityForm } from '@/components/ActivityForm';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 
-import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   listarAtividadesPorCurso,
@@ -21,7 +30,7 @@ import {
   AtividadeResponse
 } from '@/services/activityService';
 import { TipoAtividade } from '@/types/atividade';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 interface ActivityRegistrationProps {
   cursoId: string;
@@ -31,6 +40,10 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
   const [atividades, setAtividades] = useState<AtividadeResponse[]>([]);
   const [tipoAtual, setTipoAtual] = useState<TipoAtividade>('COMPLEMENTAR');
   const [showForm, setShowForm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    nome: string;
+  } | null>(null);
 
   const { visible, show, hide } = useLoadingOverlay();
 
@@ -40,12 +53,7 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
       const dados = await listarAtividadesPorCurso(cursoId);
       setAtividades(dados);
     } catch {
-      await Swal.fire({
-        icon: 'error',
-        title: 'Erro ao buscar atividades',
-        text: 'Tente novamente mais tarde.',
-        confirmButtonColor: COLORS.danger
-      });
+      toast.error('Erro ao buscar atividades. Tente novamente mais tarde.');
     } finally {
       hide();
     }
@@ -73,66 +81,35 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
     try {
       show();
       await criarAtividade(dadosParaEnvio);
-
-      await Swal.fire({
-        icon: 'success',
-        title: 'Atividade cadastrada!',
-        text: 'A atividade foi adicionada com sucesso.',
-        confirmButtonColor: COLORS.primary
-      });
-
+      toast.success('A atividade foi adicionada com sucesso.');
       setShowForm(false);
       await fetchAtividades();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Erro no cadastro:', error);
-      await Swal.fire({
-        icon: 'error',
-        title: 'Erro ao cadastrar',
-        text:
-          error?.response?.data?.message ||
-          'Ocorreu um erro ao cadastrar a atividade.',
-        confirmButtonColor: COLORS.danger
-      });
+      toast.error(
+        error?.response?.data?.message ||
+          'Ocorreu um erro ao cadastrar a atividade.'
+      );
     } finally {
       hide();
     }
   };
 
-  const handleDeleteAtividade = async (id: string, nome: string) => {
-    const result = await Swal.fire({
-      icon: 'warning',
-      title: 'Confirmar exclusão',
-      text: `Deseja realmente excluir a atividade "${nome}"? Esta ação é permanente e removerá todos os vínculos com alunos.`,
-      showCancelButton: true,
-      confirmButtonText: 'Sim, excluir',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: COLORS.danger,
-      cancelButtonColor: COLORS.cancel
-    });
-
-    if (!result.isConfirmed) return;
+  const confirmDeleteAtividade = async () => {
+    if (!deleteTarget) return;
 
     try {
       show();
-      await deletarAtividade(id);
+      await deletarAtividade(deleteTarget.id);
       await fetchAtividades();
-      await Swal.fire({
-        icon: 'success',
-        title: 'Atividade excluída',
-        text: 'A atividade foi removida com sucesso.',
-        confirmButtonColor: COLORS.primary
-      });
+      toast.success('A atividade foi removida com sucesso.');
     } catch (error) {
       console.error('Erro ao excluir atividade:', error);
-      await Swal.fire({
-        icon: 'error',
-        title: 'Erro ao excluir',
-        text: 'Não foi possível excluir a atividade. Tente novamente mais tarde.',
-        confirmButtonColor: COLORS.danger
-      });
+      toast.error('Não foi possível excluir a atividade. Tente novamente mais tarde.');
     } finally {
       hide();
+      setDeleteTarget(null);
     }
   };
 
@@ -144,6 +121,28 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <LoadingOverlay show={visible} />
+
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja realmente excluir a atividade &quot;{deleteTarget?.nome}&quot;? Esta ação é permanente e removerá todos os vínculos com alunos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={confirmDeleteAtividade}>
+              Sim, excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -212,7 +211,7 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
               <ActivityCard
                 key={atividade.id}
                 atividade={atividade}
-                onDelete={handleDeleteAtividade}
+                onDelete={(id, nome) => setDeleteTarget({ id, nome })}
               />
             ))}
           </div>
@@ -251,7 +250,7 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
               <ActivityCard
                 key={atividade.id}
                 atividade={atividade}
-                onDelete={handleDeleteAtividade}
+                onDelete={(id, nome) => setDeleteTarget({ id, nome })}
               />
             ))}
           </div>

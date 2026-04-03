@@ -3,11 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 
-import { COLORS } from '@/config/colors';
 import { cadastrarCoordenador } from '@/services/coordinatorService';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Swal from 'sweetalert2';
 
 import {
   createCoordinatorSchema,
@@ -45,23 +44,12 @@ export const useCreateCoordinatorAccount = (
         token
       });
 
-      await Swal.fire({
-        icon: 'success',
-        title: 'Conta criada com sucesso!',
-        text: 'Agora você pode acessar o sistema.',
-        confirmButtonColor: COLORS.primary
-      });
-
+      toast.success('Conta criada com sucesso! Agora você pode acessar o sistema.');
       router.push('/');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
-      await Swal.fire({
-        icon: 'error',
-        title: 'Erro ao criar conta',
-        text: err?.response?.data?.message || 'Tente novamente.',
-        confirmButtonColor: COLORS.danger
-      });
+      toast.error(err?.response?.data?.message || 'Erro ao criar conta. Tente novamente.');
     } finally {
       setLoading(false);
     }

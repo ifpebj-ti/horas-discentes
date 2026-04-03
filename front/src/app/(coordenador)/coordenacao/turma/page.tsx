@@ -3,9 +3,10 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaHome, FaGraduationCap, FaPlus, FaTimes } from 'react-icons/fa';
+import { faPlus, faTimes, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,15 +26,24 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 
-import { COLORS } from '@/config/colors';
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterTurmasPorCurso,
   TurmaResponse,
   criarTurma
 } from '@/services/classService';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 export default function CourseDetailPage() {
   const { data: session } = useSession();
@@ -43,6 +53,7 @@ export default function CourseDetailPage() {
   const { visible, show, hide } = useLoadingOverlay();
   const [isTurmaModalOpen, setIsTurmaModalOpen] = useState(false);
   const [isTurmaLoading, setIsTurmaLoading] = useState(false);
+  const [confirmCreate, setConfirmCreate] = useState(false);
 
   const cursoId = session?.user?.cursoId || '';
   const nomeCoordenador = session?.user?.name || '';
@@ -75,7 +86,7 @@ export default function CourseDetailPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleTurmaSubmit = async (e: React.FormEvent) => {
+  const handleTurmaSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (
@@ -83,23 +94,14 @@ export default function CourseDetailPage() {
       !formData.turno ||
       !formData.cargaHorariaExtensao
     ) {
-      Swal.fire('Erro', 'Preencha todos os campos corretamente.', 'error');
+      toast.error('Preencha todos os campos corretamente.');
       return;
     }
 
-    const confirmation = await Swal.fire({
-      title: 'Confirmar criação',
-      text: `Deseja criar a turma ${formData.periodo} (${formData.turno})?`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Sim, criar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: COLORS.primary,
-      cancelButtonColor: COLORS.danger
-    });
+    setConfirmCreate(true);
+  };
 
-    if (!confirmation.isConfirmed) return;
-
+  const executeCreateTurma = async () => {
     setIsTurmaLoading(true);
 
     try {
@@ -110,12 +112,7 @@ export default function CourseDetailPage() {
         cursoId: cursoId
       });
 
-      await Swal.fire({
-        title: 'Turma criada!',
-        text: `Turma ${novaTurma.periodo} (${novaTurma.turno}) foi criada.`,
-        icon: 'success',
-        confirmButtonColor: COLORS.primary
-      });
+      toast.success(`Turma ${novaTurma.periodo} (${novaTurma.turno}) foi criada.`);
 
       const turmasAtualizadas = await obterTurmasPorCurso(cursoId);
       setTurmas(turmasAtualizadas);
@@ -124,31 +121,34 @@ export default function CourseDetailPage() {
       setFormData({ periodo: '', turno: '', cargaHorariaExtensao: '' });
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        title: 'Erro',
-        text: 'Não foi possível criar a turma. Tente novamente.',
-        icon: 'error',
-        confirmButtonColor: COLORS.primary
-      });
+      toast.error('Não foi possível criar a turma. Tente novamente.');
     } finally {
       setIsTurmaLoading(false);
     }
-  };
-
-  const handleAddTurmaClick = () => {
-    setIsTurmaModalOpen(true);
   };
 
   return (
     <div className="p-6 space-y-6 relative">
       <LoadingOverlay show={visible} />
 
-      <BreadCrumb
-        items={[
-          { icon: <FaHome />, label: 'Página Inicial', href: '/coordenacao' },
-          { icon: <FaGraduationCap />, label: 'Turma', href: '' }
-        ]}
-      />
+      <AlertDialog open={confirmCreate} onOpenChange={setConfirmCreate}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar criação</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja criar a turma {formData.periodo} ({formData.turno})?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={executeCreateTurma}>
+              Sim, criar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <BreadcrumbAuto />
 
       <div>
         <h1 className="text-2xl font-bold">
@@ -172,11 +172,11 @@ export default function CourseDetailPage() {
           <h2 className="text-lg font-semibold">Turmas</h2>
           <div className="max-w-xs">
             <Button
-              onClick={handleAddTurmaClick}
-             
+              icon={faPlus}
+              onClick={() => setIsTurmaModalOpen(true)}
               className="w-full bg-blue-700 hover:bg-blue-800 text-white"
             >
-              <FaPlus className="mr-2" /> Criar Nova Turma
+              Criar Nova Turma
             </Button>
           </div>
         </div>
@@ -226,14 +226,17 @@ export default function CourseDetailPage() {
               className="absolute top-0 mt-1 mb-1 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => setIsTurmaModalOpen(false)}
             >
-              <FaTimes className="w-6 h-6" />
+              <FontAwesomeIcon icon={faTimes} className="w-6 h-6" />
             </button>
 
             <div className="max-w-2xl mx-auto space-y-8">
               <Card>
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaGraduationCap className="w-8 h-8 text-purple-600" />
+                    <FontAwesomeIcon
+                      icon={faGraduationCap}
+                      className="w-8 h-8 text-purple-600"
+                    />
                   </div>
                   <CardTitle>Informações da Turma</CardTitle>
                   <CardDescription>
@@ -311,10 +314,7 @@ export default function CourseDetailPage() {
                       {isTurmaLoading ? (
                         <>Criando turma...</>
                       ) : (
-                        <>
-                          <FaPlus className="w-4 h-4 mr-2" />
-                          Criar turma
-                        </>
+                        <>Criar turma</>
                       )}
                     </Button>
                   </form>

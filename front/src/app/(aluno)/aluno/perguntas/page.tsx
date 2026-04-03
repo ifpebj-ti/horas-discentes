@@ -1,9 +1,9 @@
 'use client';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
-import { FaChevronDown, FaHome, FaQuestionCircle } from 'react-icons/fa';
+import { FaChevronDown } from 'react-icons/fa';
 
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 
 interface FAQItem {
   id: string;
@@ -143,21 +143,8 @@ function PerguntasFrequentesConteudo() {
 export default function PerguntasFrequentesPage() {
   return (
     <main className="container mx-auto px-4 py-8">
-      <BreadCrumb
-        items={[
-          {
-            icon: <FaHome className="text-base" />,
-            label: 'Início',
-            href: '/aluno'
-          },
-          {
-            icon: <FaQuestionCircle className="text-base" />,
-            label: 'Perguntas Frequentes',
-            href: '/aluno/perguntas'
-          }
-        ]}
-      />
-      <h1 className="text-2xl font-semibold text-center mb-3 mt-3 text-blue-600">
+      <BreadcrumbAuto />
+      <h1 className="md:text-4xl text-3xl font-semibold md:font-normal text-gray-800 mb-10">
         Dúvidas Frequentes
       </h1>
       {/* Envolver o componente cliente com Suspense */}

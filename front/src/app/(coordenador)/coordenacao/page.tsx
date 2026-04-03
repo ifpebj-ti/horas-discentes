@@ -2,17 +2,17 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaHome } from 'react-icons/fa';
-import {
-  FaUsers,
-  FaGraduationCap,
-  FaIdCard,
-  FaBookOpen
-} from 'react-icons/fa6';
 
-import BreadCrumb from '@/components/BreadCrumb';
-import { DashboardCard } from '@/components/DashboardCard';
+import {
+  faBookOpen,
+  faGraduationCap,
+  faIdCard,
+  faUsers
+} from '@fortawesome/free-solid-svg-icons';
+
+import { CardHome } from '@/components/CardHome';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { contarPendenciasDownload } from '@/services/studentService';
@@ -43,39 +43,35 @@ export default function CoordenacaoPage() {
     <div className="p-6 max-w-5xl mx-auto">
       <LoadingOverlay show={isLoading} />
 
-      <div className="mb-4">
-        <BreadCrumb
-          items={[{ icon: <FaHome />, label: 'Início', href: '/coordenacao' }]}
-        />
-      </div>
+      <BreadcrumbAuto />
 
       <h1 className="md:text-4xl text-3xl font-semibold md:font-normal text-gray-800 mb-10">
         Coordenação
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <DashboardCard
-          icon={<FaGraduationCap />}
-          label="Turma"
+        <CardHome
+          icon={faGraduationCap}
+          title="Turma"
           onClick={() => router.push('/coordenacao/turma')}
         />
 
-        <DashboardCard
-          icon={<FaIdCard />}
-          label="Validação de Certificados"
+        <CardHome
+          icon={faIdCard}
+          title="Validação de Certificados"
           onClick={() => router.push('/coordenacao/certificados')}
         />
 
-        <DashboardCard
-          icon={<FaUsers />}
-          label="Secretaria"
-          notificationCount={pendenciasCount}
+        <CardHome
+          icon={faUsers}
+          title="Secretaria"
+          indicatorNumber={pendenciasCount > 0 ? pendenciasCount : undefined}
           onClick={() => router.push('/coordenacao/contabilizarHoras')}
         />
 
-        <DashboardCard
-          icon={<FaBookOpen />}
-          label="Atividades"
+        <CardHome
+          icon={faBookOpen}
+          title="Atividades"
           onClick={() => router.push('/coordenacao/atividade')}
         />
       </div>

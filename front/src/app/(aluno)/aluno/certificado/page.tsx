@@ -9,9 +9,9 @@ import {
   createContext,
   Suspense
 } from 'react';
-import { FaHome, FaSearch, FaFileAlt } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 
-import BreadCrumb from '@/components/BreadCrumb';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import NewCertificateButton from '@/components/NewCertificateButton';
 import ViewCertificate from '@/components/ViewCertificate';
@@ -25,22 +25,10 @@ import {
 } from '@/services/certificateService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
-const breadcrumbItems = [
-  {
-    icon: <FaHome className="text-base" />,
-    label: 'Início',
-    href: '/aluno'
-  },
-  {
-    icon: <FaFileAlt className="text-base" />,
-    label: 'Certificados',
-    href: '/aluno/certificado'
-  }
-];
 
 function baixarPDFBase64(base64: string, nomeArquivo: string) {
   const link = document.createElement('a');
@@ -117,19 +105,11 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
           `${detalhes.tituloAtividade}.pdf`
         );
       } else {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Certificado inválido',
-          text: 'Certificado ou nome do arquivo indisponível.'
-        });
+        toast.warn('Certificado ou nome do arquivo indisponível.');
       }
     } catch (error) {
       console.error('Erro ao baixar certificado:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro ao visualizar',
-        text: 'Não foi possível visualizar o certificado.'
-      });
+      toast.error('Não foi possível visualizar o certificado.');
     }
   };
 
@@ -149,7 +129,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
               </div>
               <NewCertificateButton user={user} />
             </div>
-            <BreadCrumb items={breadcrumbItems} />
+            <BreadcrumbAuto />
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 border border-gray-200">

@@ -53,9 +53,7 @@
     "react-router-dom": "^7.13.2",
     "react-toastify": "^11.0.5",
     "signal-exit": "^4.1.0",
-    "sweetalert2": "^11.26.24",
-    "sweetalert2-react-content": "^5.1.2",
-    "tailwind-merge": "^3.5.0",
+"tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
