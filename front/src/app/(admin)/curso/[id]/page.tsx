@@ -273,7 +273,7 @@ export default function CourseDetailPage() {
           <div className="max-w-xs mt-4 cursor-pointer">
             <Button
               onClick={handleAddCoordinatorClick}
-              shape="pill"
+             
               className="w-full bg-blue-700 hover:bg-blue-800 text-white"
             >
               <FaPlus className="mr-2" /> Adicionar Coordenador
@@ -289,7 +289,7 @@ export default function CourseDetailPage() {
           <div className="max-w-xs">
             <Button
               onClick={handleAddTurmaClick}
-              shape="pill"
+             
               className="w-full bg-blue-700 hover:bg-blue-800 text-white"
             >
               <FaPlus className="mr-2" /> Criar Nova Turma

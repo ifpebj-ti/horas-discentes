@@ -105,7 +105,7 @@ export const LoginCard = () => {
             <Button
               type="submit"
               className="w-full"
-              shape="pill"
+             
               disabled={formState.isSubmitting}
             >
               {formState.isSubmitting && (

@@ -99,7 +99,7 @@ export const ResetPassword = () => {
                       type="submit"
                       disabled={loading || !email}
                       className="w-full"
-                      shape="pill"
+                     
                     >
                       {loading ? 'Enviando...' : 'Enviar Código'}
                     </Button>
@@ -160,7 +160,7 @@ export const ResetPassword = () => {
                         type="submit"
                         disabled={loading || code.length !== 6}
                         className="w-full"
-                        shape="pill"
+                       
                       >
                         {loading ? 'Validando...' : 'Validar Código'}
                       </Button>
@@ -256,7 +256,7 @@ export const ResetPassword = () => {
                         type="submit"
                         disabled={loading || !isValid || !senhasIguais}
                         className="w-full"
-                        shape="pill"
+                       
                       >
                         {loading ? 'Salvando...' : 'Salvar Nova Senha'}
                       </Button>

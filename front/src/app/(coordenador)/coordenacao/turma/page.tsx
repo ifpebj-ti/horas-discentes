@@ -173,7 +173,7 @@ export default function CourseDetailPage() {
           <div className="max-w-xs">
             <Button
               onClick={handleAddTurmaClick}
-              shape="pill"
+             
               className="w-full bg-blue-700 hover:bg-blue-800 text-white"
             >
               <FaPlus className="mr-2" /> Criar Nova Turma

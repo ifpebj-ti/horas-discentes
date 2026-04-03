@@ -23,13 +23,12 @@ const CourseCard: React.FC<CourseCardProps> = ({
       {onDeleteCourse && (
         <Button
           variant="ghost"
-          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             onDeleteCourse();
           }}
           title="Excluir curso"
-          className="absolute top-2 right-2 text-red-600 hover:text-red-800 hover:bg-red-50"
+          className="absolute top-2 right-2 size-9 text-red-600 hover:text-red-800 hover:bg-red-50"
         >
           <FaTrash className="w-4 h-4" />
         </Button>

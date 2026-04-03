@@ -73,7 +73,7 @@ export const FirstAccess = () => {
               <Button
                 onClick={handleValidarCodigo}
                 className="w-full"
-                shape="pill"
+               
               >
                 Continuar
               </Button>
@@ -184,7 +184,7 @@ export const FirstAccess = () => {
                 type="submit"
                 disabled={loading || !isValid}
                 className="w-full"
-                shape="pill"
+               
               >
                 {loading ? 'Finalizando...' : 'Finalizar'}
               </Button>

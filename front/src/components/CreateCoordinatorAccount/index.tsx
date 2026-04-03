@@ -178,7 +178,7 @@ export const CreateCoordinatorAccount = ({
               type="submit"
               disabled={loading || !isValid || !isEmailValid}
               className="w-full"
-              shape="pill"
+             
             >
               {loading ? 'Criando...' : 'Criar Conta'}
             </Button>
