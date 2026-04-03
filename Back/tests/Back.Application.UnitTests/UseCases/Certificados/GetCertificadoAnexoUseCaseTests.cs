@@ -1,4 +1,4 @@
-﻿using Back.Application.UseCases.Certificado;
+using Back.Application.UseCases.Certificado;
 using Back.Application.Interfaces.Repositories;
 using FluentAssertions;
 using Moq;
@@ -19,14 +19,15 @@ public class GetCertificadoAnexoUseCaseTests
         var anexo = new byte[] { 1, 2, 3 };
 
         _repo.Setup(r => r.GetAnexoByIdAsync(id))
-            .ReturnsAsync(anexo);
+            .ReturnsAsync((anexo, "application/pdf"));
 
         var useCase = CreateUseCase();
 
         var result = await useCase.ExecuteAsync(id);
 
-        result.anexo.Should().BeEquivalentTo(anexo);
-        result.nomeArquivo.Should().Be($"certificado_{id}.pdf");
+        result.Anexo.Should().BeEquivalentTo(anexo);
+        result.NomeArquivo.Should().Be($"certificado_{id}.pdf");
+        result.ContentType.Should().Be("application/pdf");
     }
 
     [Fact]
@@ -35,7 +36,7 @@ public class GetCertificadoAnexoUseCaseTests
         var id = Guid.NewGuid();
 
         _repo.Setup(r => r.GetAnexoByIdAsync(id))
-            .ReturnsAsync((byte[]?)null);
+            .ReturnsAsync(((byte[]?)null, (string?)null));
 
         var useCase = CreateUseCase();
 
