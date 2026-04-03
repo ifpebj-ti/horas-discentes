@@ -67,6 +67,7 @@ namespace Back.Application.UseCases.Certificado
             // 5. Atualiza o anexo apenas se um novo foi enviado
             if (request.Anexo != null && request.Anexo.Length > 0)
             {
+                request.Anexo.ValidateAnexo();
                 certificado.Anexo = await request.Anexo.ToByteArrayAsync();
             }
 

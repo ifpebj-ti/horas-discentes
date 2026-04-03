@@ -30,6 +30,8 @@ public class CreateCertificadoUseCase
         if (request.Anexo == null || request.Anexo.Length == 0)
             throw new InvalidOperationException("O anexo é obrigatório e deve conter conteúdo válido.");
 
+        request.Anexo.ValidateAnexo();
+
         var alunoAtividade = await _alunoAtividadeRepo
             .GetByAlunoEAtividadeAsync(request.AlunoId, request.AtividadeId);
 

@@ -50,6 +50,10 @@ namespace Back.API.Controllers
                 var id = await _create.ExecuteAsync(request);
                 return CreatedAtAction(nameof(ObterPorId), new { id }, new { certificadoId = id });
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { erro = ex.Message });
+            }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { erro = ex.Message });
@@ -97,6 +101,10 @@ namespace Back.API.Controllers
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { erro = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { erro = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
