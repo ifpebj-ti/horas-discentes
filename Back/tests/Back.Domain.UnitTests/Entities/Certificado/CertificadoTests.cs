@@ -20,7 +20,7 @@ public class CertificadoTests
             .WithDataInicio(DateTime.UtcNow.AddDays(-2))
             .WithDataFim(DateTime.UtcNow)
             .WithTotalPeriodos(1)
-            .WithAnexo(new byte[] { 1, 2, 3 })
+            .WithAnexoStorageKey("certificados/test.pdf")
             .WithTipo(TipoCertificado.COMPLEMENTAR)
             .WithAlunoAtividadeId(Guid.NewGuid())
             .Build();
@@ -44,7 +44,7 @@ public class CertificadoTests
             .WithDataInicio(DateTime.UtcNow)
             .WithDataFim(DateTime.UtcNow)
             .WithTotalPeriodos(1)
-            .WithAnexo(new byte[] { 1 })
+            .WithAnexoStorageKey("certificados/test.pdf")
             .WithTipo(TipoCertificado.EXTENSAO)
             .WithAlunoAtividadeId(Guid.NewGuid())
             .Build();
@@ -75,6 +75,6 @@ public class CertificadoTests
 
         var results = ValidationHelper.ValidateObject(certificado);
 
-        results.Should().Contain(r => r.MemberNames.Contains(nameof(Certificado.Anexo)));
+        results.Should().Contain(r => r.MemberNames.Contains(nameof(Certificado.AnexoStorageKey)));
     }
 }

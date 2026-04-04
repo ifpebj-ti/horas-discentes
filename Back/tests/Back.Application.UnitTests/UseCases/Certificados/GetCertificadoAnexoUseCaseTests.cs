@@ -1,5 +1,6 @@
-﻿using Back.Application.UseCases.Certificado;
+using Back.Application.UseCases.Certificado;
 using Back.Application.Interfaces.Repositories;
+using Back.Application.Interfaces.Services;
 using FluentAssertions;
 using Moq;
 
@@ -8,25 +9,30 @@ namespace Back.Application.UnitTests.UseCases.Certificados;
 public class GetCertificadoAnexoUseCaseTests
 {
     private readonly Mock<ICertificadoRepository> _repo = new();
+    private readonly Mock<IFileStorageService> _storage = new();
 
     private GetCertificadoAnexoUseCase CreateUseCase()
-        => new(_repo.Object);
+        => new(_repo.Object, _storage.Object);
 
     [Fact]
     public async Task Deve_Retornar_Anexo_Com_Sucesso()
     {
         var id = Guid.NewGuid();
-        var anexo = new byte[] { 1, 2, 3 };
+        var storageKey = $"certificados/{id}.pdf";
+        var contentStream = new MemoryStream(new byte[] { 1, 2, 3 });
 
-        _repo.Setup(r => r.GetAnexoByIdAsync(id))
-            .ReturnsAsync(anexo);
+        _repo.Setup(r => r.GetStorageKeyByIdAsync(id))
+            .ReturnsAsync(storageKey);
+        _storage.Setup(s => s.DownloadAsync(storageKey))
+            .ReturnsAsync((contentStream, "application/pdf"));
 
         var useCase = CreateUseCase();
 
         var result = await useCase.ExecuteAsync(id);
 
-        result.anexo.Should().BeEquivalentTo(anexo);
-        result.nomeArquivo.Should().Be($"certificado_{id}.pdf");
+        result.Content.Should().BeSameAs(contentStream);
+        result.NomeArquivo.Should().Be($"certificado_{id}.pdf");
+        result.ContentType.Should().Be("application/pdf");
     }
 
     [Fact]
@@ -34,8 +40,8 @@ public class GetCertificadoAnexoUseCaseTests
     {
         var id = Guid.NewGuid();
 
-        _repo.Setup(r => r.GetAnexoByIdAsync(id))
-            .ReturnsAsync((byte[]?)null);
+        _repo.Setup(r => r.GetStorageKeyByIdAsync(id))
+            .ReturnsAsync((string?)null);
 
         var useCase = CreateUseCase();
 

@@ -11,17 +11,11 @@ import GeneralProgress from '@/components/GeneralProgress';
 
 import { useMeusDadosDetalhados } from '@/hooks/useStudent';
 import { useMeusCertificados } from '@/hooks/useCertificates';
-import { obterCertificadoPorId } from '@/services/certificateService';
+import { baixarAnexoCertificado } from '@/services/certificateService';
 import * as Types from '@/types';
 import { mapStatusCertificado, mapTipoCertificado } from '@/types';
 import { toast } from 'react-toastify';
 
-function baixarPDFBase64(base64: string, nomeArquivo: string) {
-  const link = document.createElement('a');
-  link.href = `data:application/pdf;base64,${base64}`;
-  link.download = nomeArquivo;
-  link.click();
-}
 
 function AlunoPageContent({
   user,
@@ -50,15 +44,9 @@ function AlunoPageContent({
 
   const handleVerCertificado = async (id: string) => {
     try {
-      const detalhes = await obterCertificadoPorId(id);
-      if (detalhes.anexoBase64 && detalhes.tituloAtividade) {
-        baixarPDFBase64(
-          detalhes.anexoBase64,
-          `${detalhes.tituloAtividade}.pdf`
-        );
-      } else {
-        toast.warn('Certificado ou nome do arquivo indisponível.');
-      }
+      const blob = await baixarAnexoCertificado(id);
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
     } catch (error) {
       console.error('Erro ao baixar certificado:', error);
       toast.error('Não foi possível visualizar o certificado.');

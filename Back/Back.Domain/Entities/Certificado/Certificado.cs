@@ -40,7 +40,7 @@ public class Certificado
     public string? Descricao { get; set; }
 
     [Required(ErrorMessage = "O anexo é obrigatório.")]
-    public byte[]? Anexo { get; set; }
+    public string? AnexoStorageKey { get; set; }
 
     public StatusCertificado Status { get; set; } = StatusCertificado.PENDENTE;
 

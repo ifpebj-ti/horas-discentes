@@ -19,6 +19,5 @@ public record CertificadoDetalhadoResponse(
     TipoCertificado Tipo,
     StatusCertificado Status,
     Guid AlunoId,
-    Guid AtividadeId,
-    string? AnexoBase64
+    Guid AtividadeId
 );

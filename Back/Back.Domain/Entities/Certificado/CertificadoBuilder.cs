@@ -81,9 +81,9 @@ public class CertificadoBuilder
         return this;
     }
 
-    public CertificadoBuilder WithAnexo(byte[] anexo)
+    public CertificadoBuilder WithAnexoStorageKey(string storageKey)
     {
-        _certificado.Anexo = anexo;
+        _certificado.AnexoStorageKey = storageKey;
         return this;
     }
 

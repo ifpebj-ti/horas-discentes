@@ -5,7 +5,6 @@ using Back.Domain.Entities.AlunoAtividade;
 using Back.Domain.Entities.Certificado;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Moq;
 using System.Text;
 
@@ -16,9 +15,10 @@ public class CreateCertificadoUseCaseTests
     private readonly Mock<IAlunoAtividadeRepository> _alunoAtvRepo = new();
     private readonly Mock<ICertificadoRepository> _certRepo = new();
     private readonly Mock<ILimiteHorasAlunoRepository> _limiteRepo = new();
+    private readonly Mock<Back.Application.Interfaces.Services.IFileStorageService> _storage = new();
 
     private CreateCertificadoUseCase CreateUseCase()
-        => new(_alunoAtvRepo.Object, _certRepo.Object, _limiteRepo.Object);
+        => new(_alunoAtvRepo.Object, _certRepo.Object, _limiteRepo.Object, _storage.Object);
 
     [Fact]
     public async Task Deve_Criar_Certificado_Com_Sucesso()
@@ -27,14 +27,15 @@ public class CreateCertificadoUseCaseTests
         var alunoAtv = new AlunoAtividade { Id = Guid.NewGuid() };
         _alunoAtvRepo.Setup(r => r.GetByAlunoEAtividadeAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(alunoAtv);
+        _storage.Setup(s => s.UploadAsync(It.IsAny<IFormFile>(), It.IsAny<string>()))
+            .ReturnsAsync((IFormFile _, string key) => key);
 
-        var file = new FormFile(
-            baseStream: new MemoryStream(Encoding.UTF8.GetBytes("PDF")),
-            baseStreamOffset: 0,
-            length: 3,
-            name: "file",
-            fileName: "file.pdf"
-        );
+        var fileBytes = Encoding.UTF8.GetBytes("PDF");
+        var fileMock = new Mock<IFormFile>();
+        fileMock.Setup(f => f.ContentType).Returns("application/pdf");
+        fileMock.Setup(f => f.FileName).Returns("file.pdf");
+        fileMock.Setup(f => f.Length).Returns(fileBytes.Length);
+        fileMock.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(fileBytes));
 
         var req = new CreateCertificadoRequest
         {
@@ -48,7 +49,7 @@ public class CreateCertificadoUseCaseTests
             DataInicio = DateTime.Today,
             DataFim = DateTime.Today,
             TotalPeriodos = 1,
-            Anexo = file,
+            Anexo = fileMock.Object,
             Tipo = Back.Domain.Entities.Certificado.TipoCertificado.COMPLEMENTAR,
             AlunoId = Guid.NewGuid(),
             AtividadeId = Guid.NewGuid()

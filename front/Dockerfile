@@ -29,6 +29,9 @@ RUN npm run build
 FROM node:22-alpine AS production
 WORKDIR /app
 
+# Atualiza pacotes do sistema para corrigir CVEs (ex: zlib CVE-2026-22184)
+RUN apk upgrade --no-cache
+
 ENV NODE_ENV=production
 
 # Reexporta info de versionamento (opcional; bundle já contém os valores)

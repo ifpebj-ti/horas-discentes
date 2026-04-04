@@ -50,6 +50,10 @@ namespace Back.API.Controllers
                 var id = await _create.ExecuteAsync(request);
                 return CreatedAtAction(nameof(ObterPorId), new { id }, new { certificadoId = id });
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { erro = ex.Message });
+            }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { erro = ex.Message });
@@ -81,22 +85,33 @@ namespace Back.API.Controllers
         /// <response code="400">Dados inválidos ou certificado não está pendente.</response>
         /// <response code="404">Certificado não encontrado.</response>
         [HttpPut("{id}")]
-        [Authorize(Roles = "ALUNO")] // Aluno só pode editar o que é dele e está pendente
+        [Authorize(Roles = "ALUNO")]
         [Consumes("multipart/form-data")]
         [SwaggerOperation(Summary = "Atualiza um certificado PENDENTE.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Atualizar(Guid id, [FromForm] UpdateCertificadoRequest request)
         {
-            // TODO: Adicionar verificação de "dono" do certificado
-            // (O Use Case já verifica se está PENDENTE)
+            var identityUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(identityUserId))
+                return Unauthorized();
+
             try
             {
-                await _update.ExecuteAsync(id, request);
+                await _update.ExecuteAsync(id, request, identityUserId);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { erro = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { erro = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { erro = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
@@ -222,8 +237,8 @@ namespace Back.API.Controllers
         {
             try
             {
-                var (anexo, nomeArquivo) = await useCase.ExecuteAsync(id);
-                return File(anexo, "application/pdf", nomeArquivo);
+                var (content, nomeArquivo, contentType) = await useCase.ExecuteAsync(id);
+                return File(content, contentType, nomeArquivo);
             }
             catch (KeyNotFoundException ex)
             {

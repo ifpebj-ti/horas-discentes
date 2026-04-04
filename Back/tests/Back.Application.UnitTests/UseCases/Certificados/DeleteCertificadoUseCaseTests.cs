@@ -9,9 +9,10 @@ namespace Back.Application.UnitTests.UseCases.Certificados;
 public class DeleteCertificadoUseCaseTests
 {
     private readonly Mock<ICertificadoRepository> _repo = new();
+    private readonly Mock<Back.Application.Interfaces.Services.IFileStorageService> _storage = new();
 
     private DeleteCertificadoUseCase CreateUseCase()
-        => new(_repo.Object);
+        => new(_repo.Object, _storage.Object);
 
     [Fact]
     public async Task Deve_Deletar_Certificado_Quando_Pendente()
