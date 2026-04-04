@@ -22,7 +22,7 @@ export const MOCK_CERTIFICATES: Types.Certificado[] = [
     local: 'UFPE',
     periodoInicio: '2023-01-10',
     periodoFim: '2023-05-10',
-    status: 'aprovado',
+    status: StatusCertificado.APROVADO,
     tipo: 'complementar'
   }
   // {

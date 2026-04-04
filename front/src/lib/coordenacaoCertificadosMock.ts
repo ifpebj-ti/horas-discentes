@@ -1,4 +1,5 @@
 import * as Types from '@/types';
+import { StatusCertificado } from '@/types';
 
 // Supondo que MOCK_CERTIFICATES está no mesmo arquivo ou importado
 import { MOCK_CERTIFICATES } from './alunoMock'; // Ajuste o caminho conforme necessário
@@ -88,7 +89,7 @@ export const MOCK_COORDENACAO_CERTIFICADOS: Types.CertificadoCoordenacao[] =
       turma: aluno.turma,
       periodo: aluno.periodo,
       dataAtividade: formatarData(cert.periodoInicio, cert.periodoFim),
-      ...(cert.status === 'rejeitado'
+      ...(cert.status === StatusCertificado.REPROVADO
         ? { motivoRejeicao: 'Carga horária ou documento inválido.' }
         : {})
     };
