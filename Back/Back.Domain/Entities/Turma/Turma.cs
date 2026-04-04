@@ -13,6 +13,10 @@ public class Turma
     [Required(ErrorMessage = "O campo Turno é obrigatório.")]
     public string? Turno { get; set; }
 
+    [Required(ErrorMessage = "O código da turma é obrigatório.")]
+    [StringLength(6, MinimumLength = 6)]
+    public string? Codigo { get; set; }
+
     public bool PossuiExtensao { get; set; }
 
     [Required(ErrorMessage = "O campo CursoId é obrigatório.")]
