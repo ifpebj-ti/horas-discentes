@@ -1,4 +1,5 @@
-﻿using Back.Application.Interfaces.Repositories;
+﻿using Back.Application.DTOs.Turma;
+using Back.Application.Interfaces.Repositories;
 using System;
 using System.Threading.Tasks;
 
@@ -13,8 +14,14 @@ public class VerificarTurmaExisteUseCase
         _repo = repo;
     }
 
-    public async Task<bool> ExecuteAsync(Guid turmaId)
+    public async Task<VerificarTurmaResponse?> ExecuteAsync(string codigo)
     {
-        return await _repo.ExistsAsync(turmaId);
+        var turma = await _repo.GetByCodigoAsync(codigo);
+        if (turma == null) return null;
+
+        return new VerificarTurmaResponse(
+            turma.Periodo!,
+            turma.Curso?.Nome ?? "Curso não encontrado"
+        );
     }
 }

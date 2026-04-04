@@ -37,8 +37,17 @@ public class CreateAlunoUseCase
         if (!request.Email.EndsWith("@discente.ifpe.edu.br", StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("Email institucional inválido.");
 
-        // Verifica se a turma existe e carrega seus dados
-        var turma = await _turmaRepo.GetByIdAsync(request.TurmaId);
+        // Busca a turma por ID ou Código
+        Back.Domain.Entities.Turma.Turma? turma = null;
+        if (request.TurmaId.HasValue)
+        {
+            turma = await _turmaRepo.GetByIdAsync(request.TurmaId.Value);
+        }
+        else if (!string.IsNullOrEmpty(request.TurmaCodigo))
+        {
+            turma = await _turmaRepo.GetByCodigoAsync(request.TurmaCodigo);
+        }
+
         if (turma == null)
             throw new InvalidOperationException("Turma não encontrada.");
 
@@ -57,7 +66,7 @@ public class CreateAlunoUseCase
             .WithNome(request.Nome)
             .WithEmail(request.Email)
             .WithMatricula(request.Matricula)
-            .WithTurmaId(request.TurmaId)
+            .WithTurmaId(turma.Id)
             .WithIdentityUserId(userId)
             .Build();
 

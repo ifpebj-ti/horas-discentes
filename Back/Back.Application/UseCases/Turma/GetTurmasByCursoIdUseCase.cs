@@ -24,6 +24,7 @@ public class GetTurmasByCursoIdUseCase
             t.Id,
             t.Periodo!,
             t.Turno!,
+            t.Codigo!,
             t.PossuiExtensao,
             t.CursoId,
             t.Curso?.Nome ?? "Curso não encontrado",
