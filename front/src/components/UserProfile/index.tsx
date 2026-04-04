@@ -20,7 +20,15 @@ interface UserProfileProps {
   onLogout: () => void;
 }
 
+const roleLabel: Record<string, string> = {
+  ALUNO: 'Aluno(a)',
+  COORDENADOR: 'Coordenador(a)',
+  ADMIN: 'Administrador(a)'
+};
+
 export default function UserProfile({ user, onLogout }: UserProfileProps) {
+  const displayRole = user.role ? (roleLabel[user.role.toUpperCase()] ?? user.role) : '';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,7 +51,7 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
           <p className="text-xs font-semibold mb-2 text-muted-foreground">Perfil:</p>
           <div className="flex items-center text-sm text-gray-800">
             <ShieldCheck className="mr-2 h-4 w-4 text-green-600 flex-shrink-0" />
-            <span>{user.role}</span>
+            <span>{displayRole}</span>
           </div>
         </div>
 
