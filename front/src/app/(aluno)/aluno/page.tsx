@@ -13,7 +13,7 @@ import { useMeusDadosDetalhados } from '@/hooks/useStudent';
 import { useMeusCertificados } from '@/hooks/useCertificates';
 import { baixarAnexoCertificado } from '@/services/certificateService';
 import * as Types from '@/types';
-import { mapStatusCertificado, mapTipoCertificado } from '@/types';
+import { mapStatusCertificado, mapTipoCertificado, StatusCertificado } from '@/types';
 import { toast } from 'react-toastify';
 
 
@@ -60,10 +60,10 @@ function AlunoPageContent({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-2xl font-bold sm:text-3xl mb-1">
-                {user.name}, bem-vindo(a) de volta!
+                Olá, {user.name?.split(' ')[0]}!
               </h1>
               <p className="text-sm">
-                Bem-vindo ao Horas Discentes. Acompanhe seu progresso aqui.
+                Acompanhe o progresso das suas horas no Hora Mais.
               </p>
             </div>
             <NewCertificateButton user={user} />
@@ -105,13 +105,13 @@ function AlunoPageContent({
               <StatsSummary
                 total={certificados.length}
                 approved={
-                  certificados.filter((c) => c.status === 'aprovado').length
+                  certificados.filter((c) => c.status === StatusCertificado.APROVADO).length
                 }
                 pending={
-                  certificados.filter((c) => c.status === 'pendente').length
+                  certificados.filter((c) => c.status === StatusCertificado.PENDENTE).length
                 }
                 rejected={
-                  certificados.filter((c) => c.status === 'rejeitado').length
+                  certificados.filter((c) => c.status === StatusCertificado.REPROVADO).length
                 }
               />
             </aside>

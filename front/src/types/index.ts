@@ -1,20 +1,24 @@
 /**
- * Status possíveis para um certificado.
+ * Status possíveis para um certificado — única fonte de verdade.
  */
-export type StatusCertificado = 'pendente' | 'aprovado' | 'rejeitado';
+export enum StatusCertificado {
+  PENDENTE = 'PENDENTE',
+  APROVADO = 'APROVADO',
+  REPROVADO = 'REPROVADO'
+}
 
 /**
  * Tipos de atividades/certificados (complementar ou extensão).
  */
 export type TipoCertificado = 'complementar' | 'extensao';
 
-// Função para mapear status do backend para o tipo do frontend
+// Função para mapear status do backend para o enum unificado
 export const mapStatusCertificado = (
   status: string | number
 ): StatusCertificado => {
-  if (status === 'APROVADO' || status === 1) return 'aprovado';
-  if (status === 'REPROVADO' || status === 2) return 'rejeitado';
-  return 'pendente';
+  if (status === 'APROVADO' || status === 1) return StatusCertificado.APROVADO;
+  if (status === 'REPROVADO' || status === 2) return StatusCertificado.REPROVADO;
+  return StatusCertificado.PENDENTE;
 };
 
 // Função para mapear tipo do backend para o tipo do frontend

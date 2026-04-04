@@ -220,7 +220,7 @@ export default function CourseDetailPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() =>
-                          router.push(`/coordenacao/turma/${turma.id}`)
+                          router.push(`/coordenacao/turma/${turma.codigo}`)
                         }
                         className="bg-gray-100 hover:bg-gray-200 text-blue-700 font-semibold"
                       >

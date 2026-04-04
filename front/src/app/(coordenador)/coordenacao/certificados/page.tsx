@@ -40,7 +40,7 @@ const StatusIcon: React.FC<{ status: StatusCertificado }> = ({ status }) => {
     case 'APROVADO':
       return <FaCheckCircle className="text-green-500" title="Aprovado" />;
     case 'REPROVADO':
-      return <FaTimesCircle className="text-red-500" title="Rejeitado" />;
+      return <FaTimesCircle className="text-red-500" title="Reprovado" />;
     case 'PENDENTE':
       return <FaHourglassHalf className="text-yellow-500" title="Pendente" />;
     default:
@@ -211,7 +211,7 @@ export default function ValidacaoCertificadosPage() {
               <option value="todos">Todos Status</option>
               <option value={StatusCertificado.PENDENTE}>Pendentes</option>
               <option value={StatusCertificado.APROVADO}>Aprovados</option>
-              <option value={StatusCertificado.REPROVADO}>Rejeitados</option>
+              <option value={StatusCertificado.REPROVADO}>Reprovados</option>
             </select>
           </div>
         </div>

@@ -37,6 +37,18 @@ export default function NewCertificateButton({
     setOpen(false);
   }
 
+  if (!extensao) {
+    return (
+      <Link
+        href="/aluno/certificado/novo?tipo=horas-complementares"
+        className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      >
+        <FaPlusCircle />
+        Novo Certificado
+      </Link>
+    );
+  }
+
   return (
     <div className="relative">
       <button
@@ -67,15 +79,13 @@ export default function NewCertificateButton({
             >
               Horas Complementares
             </Link>
-            {extensao && (
-              <Link
-                href="/aluno/certificado/novo?tipo=horas-extensao"
-                className="block px-4 py-2 text-sm text-gray-900 hover:bg-blue-500 hover:text-white"
-                onClick={closeDropdown}
-              >
-                Horas de Extensão
-              </Link>
-            )}
+            <Link
+              href="/aluno/certificado/novo?tipo=horas-extensao"
+              className="block px-4 py-2 text-sm text-gray-900 hover:bg-blue-500 hover:text-white"
+              onClick={closeDropdown}
+            >
+              Horas de Extensão
+            </Link>
           </div>
         </div>
       )}

@@ -35,7 +35,7 @@ export const LoginCard = () => {
       <div className="flex flex-col justify-center items-center px-6 md:px-12 pb-4 md:pb-0">
         <form onSubmit={handleSubmit(submitForm)} className="w-full max-w-md">
           <h1 className="text-3xl lg:text-4xl font-medium text-center text-primary mb-8">
-            Hora+
+            Hora Mais
           </h1>
 
           <div className="mb-4">
