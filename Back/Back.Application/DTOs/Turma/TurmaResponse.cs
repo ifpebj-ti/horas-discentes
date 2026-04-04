@@ -6,6 +6,7 @@ public record TurmaResponse(
     Guid Id,
     string Periodo,
     string Turno,
+    string Codigo,
     bool PossuiExtensao,
     Guid CursoId,
     string CursoNome,
