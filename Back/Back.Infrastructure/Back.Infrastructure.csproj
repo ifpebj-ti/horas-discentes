@@ -6,6 +6,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AWSSDK.S3" Version="4.0.20.2" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
 		<ProjectReference Include="..\Back.Application\Back.Application.csproj" />
 		<ProjectReference Include="..\Back.Domain\Back.Domain.csproj" />
 		<PackageReference Include="Google.Apis.Auth" Version="1.71.0" />

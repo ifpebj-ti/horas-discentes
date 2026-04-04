@@ -1,10 +1,9 @@
-﻿using Back.Application.DTOs.Certificado;
+using Back.Application.DTOs.Certificado;
 using Back.Application.Extensions;
 using Back.Application.Interfaces.Repositories;
-using Back.Domain.Entities.Atividade;
+using Back.Application.Interfaces.Services;
 using Back.Domain.Entities.Certificado;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Back.Application.UseCases.Certificado;
@@ -14,15 +13,18 @@ public class CreateCertificadoUseCase
     private readonly IAlunoAtividadeRepository _alunoAtividadeRepo;
     private readonly ICertificadoRepository _certificadoRepo;
     private readonly ILimiteHorasAlunoRepository _limiteRepo;
+    private readonly IFileStorageService _storage;
 
     public CreateCertificadoUseCase(
         IAlunoAtividadeRepository alunoAtividadeRepo,
         ICertificadoRepository certificadoRepo,
-        ILimiteHorasAlunoRepository limiteRepo)
+        ILimiteHorasAlunoRepository limiteRepo,
+        IFileStorageService storage)
     {
         _alunoAtividadeRepo = alunoAtividadeRepo;
         _certificadoRepo = certificadoRepo;
         _limiteRepo = limiteRepo;
+        _storage = storage;
     }
 
     public async Task<Guid> ExecuteAsync(CreateCertificadoRequest request)
@@ -39,6 +41,15 @@ public class CreateCertificadoUseCase
             throw new InvalidOperationException("A atividade não está vinculada ao aluno informado.");
 
         var certificadoId = Guid.NewGuid();
+        var extension = request.Anexo.ContentType.ToLowerInvariant() switch
+        {
+            "image/jpeg" or "image/jpg" => ".jpg",
+            "image/png"                 => ".png",
+            _                           => ".pdf"
+        };
+        var storageKey = $"certificados/{certificadoId}{extension}";
+        await _storage.UploadAsync(request.Anexo, storageKey);
+
         var certificado = new CertificadoBuilder()
             .WithId(certificadoId)
             .WithTituloAtividade(request.TituloAtividade)
@@ -52,8 +63,7 @@ public class CreateCertificadoUseCase
             .WithDataFim(request.DataFim)
             .WithTotalPeriodos(request.TotalPeriodos)
             .WithDescricao(request.Descricao)
-            .WithAnexo(await request.Anexo.ToByteArrayAsync())
-            .WithAnexoContentType(request.Anexo.ContentType.ToLowerInvariant())
+            .WithAnexoStorageKey(storageKey)
             .WithTipo(request.Tipo)
             .WithAlunoAtividadeId(alunoAtividade.Id)
             .Build();

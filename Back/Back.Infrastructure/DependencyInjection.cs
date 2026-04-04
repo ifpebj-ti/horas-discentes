@@ -1,9 +1,11 @@
 ﻿using Back.Application.Interfaces;
 using Back.Application.Interfaces.Identity;
 using Back.Application.Interfaces.Repositories;
+using Back.Application.Interfaces.Services;
 using Back.Application.UseCases.Certificado;
 using Back.Infrastructure.Persistence.Repositories;
 using Back.Infrastructure.Services;
+using Back.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,6 +35,9 @@ public static class DependencyInjection
         services.AddScoped<ILimiteHorasAlunoRepository, LimiteHorasAlunoRepository>();
         services.AddScoped<IResetPasswordRepository, ResetPasswordRepository>();
         services.AddScoped<IIdentityLookupService, IdentityLookupService>();
+
+        services.Configure<FileStorageSettings>(configuration.GetSection("FileStorage"));
+        services.AddScoped<IFileStorageService, S3FileStorageService>();
 
         return services;
     }

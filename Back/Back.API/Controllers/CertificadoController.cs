@@ -237,8 +237,8 @@ namespace Back.API.Controllers
         {
             try
             {
-                var (anexo, nomeArquivo, contentType) = await useCase.ExecuteAsync(id);
-                return File(anexo, contentType, nomeArquivo);
+                var (content, nomeArquivo, contentType) = await useCase.ExecuteAsync(id);
+                return File(content, contentType, nomeArquivo);
             }
             catch (KeyNotFoundException ex)
             {

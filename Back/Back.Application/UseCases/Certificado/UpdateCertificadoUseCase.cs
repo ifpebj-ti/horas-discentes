@@ -1,6 +1,7 @@
-﻿using Back.Application.DTOs.Certificado;
+using Back.Application.DTOs.Certificado;
 using Back.Application.Extensions;
 using Back.Application.Interfaces.Repositories;
+using Back.Application.Interfaces.Services;
 using Back.Domain.Entities.Certificado;
 using System;
 using System.Collections.Generic;
@@ -15,16 +16,18 @@ namespace Back.Application.UseCases.Certificado
     {
         private readonly ICertificadoRepository _certificadoRepo;
         private readonly IAlunoRepository _alunoRepo;
+        private readonly IFileStorageService _storage;
 
-        public UpdateCertificadoUseCase(ICertificadoRepository certificadoRepo, IAlunoRepository alunoRepo)
+        public UpdateCertificadoUseCase(
+            ICertificadoRepository certificadoRepo,
+            IAlunoRepository alunoRepo,
+            IFileStorageService storage)
         {
             _certificadoRepo = certificadoRepo;
             _alunoRepo = alunoRepo;
+            _storage = storage;
         }
 
-        /// <summary>
-        /// Executa a atualização de um certificado.
-        /// </summary>
         /// <param name="id">O ID do certificado a ser atualizado.</param>
         /// <param name="request">Os novos dados do certificado.</param>
         /// <param name="identityUserId">ID do usuário autenticado (Identity).</param>
@@ -44,12 +47,9 @@ namespace Back.Application.UseCases.Certificado
             if (aluno == null || certificado.AlunoAtividade!.AlunoId != aluno.Id)
                 throw new UnauthorizedAccessException("Você não tem permissão para alterar este certificado.");
 
-            // 3. REGRA DE NEGÓCIO: Verifica se está APROVADO
-            // Não permite a alteração de certificados que já foram APROVADOS.
+            // 3. REGRA DE NEGÓCIO: não permite alterar certificados APROVADOS
             if (certificado.Status == StatusCertificado.APROVADO)
-            {
                 throw new InvalidOperationException("Não é possível alterar um certificado que já foi APROVADO.");
-            }
 
             // 4. Atualiza os campos do certificado
             certificado.TituloAtividade = request.TituloAtividade;
@@ -58,27 +58,37 @@ namespace Back.Application.UseCases.Certificado
             certificado.Categoria = request.Categoria;
             certificado.Grupo = request.Grupo;
             certificado.PeriodoLetivo = request.PeriodoLetivo;
-            certificado.CargaHoraria = request.CargaHoraria; // Carga horária solicitada
+            certificado.CargaHoraria = request.CargaHoraria;
             certificado.DataInicio = request.DataInicio;
             certificado.DataFim = request.DataFim;
             certificado.TotalPeriodos = request.TotalPeriodos;
             certificado.Descricao = request.Descricao;
             certificado.Tipo = (TipoCertificado)request.Tipo;
 
-            // 5. Se o certificado estava REPROVADO, ele volta a ficar PENDENTE
-            //    para ser reavaliado.
+            // 5. Se estava REPROVADO, volta a PENDENTE para reavaliação
             if (certificado.Status == StatusCertificado.REPROVADO)
-            {
                 certificado.Status = StatusCertificado.PENDENTE;
-            }
 
-
-            // 6. Atualiza o anexo apenas se um novo foi enviado
+            // 6. Substitui o anexo no storage se um novo foi enviado
             if (request.Anexo != null && request.Anexo.Length > 0)
             {
                 request.Anexo.ValidateAnexo();
-                certificado.Anexo = await request.Anexo.ToByteArrayAsync();
-                certificado.AnexoContentType = request.Anexo.ContentType.ToLowerInvariant();
+
+                var oldKey = certificado.AnexoStorageKey;
+
+                var extension = request.Anexo.ContentType.ToLowerInvariant() switch
+                {
+                    "image/jpeg" or "image/jpg" => ".jpg",
+                    "image/png"                 => ".png",
+                    _                           => ".pdf"
+                };
+                var newKey = $"certificados/{id}{extension}";
+
+                await _storage.UploadAsync(request.Anexo, newKey);
+                certificado.AnexoStorageKey = newKey;
+
+                if (!string.IsNullOrEmpty(oldKey) && oldKey != newKey)
+                    await _storage.DeleteAsync(oldKey);
             }
 
             // 7. Salva as mudanças

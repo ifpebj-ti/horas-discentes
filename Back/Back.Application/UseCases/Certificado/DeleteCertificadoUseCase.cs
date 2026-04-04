@@ -1,7 +1,8 @@
-﻿using Back.Application.Interfaces.Repositories;
-using Back.Domain.Entities.Certificado; 
+using Back.Application.Interfaces.Repositories;
+using Back.Application.Interfaces.Services;
+using Back.Domain.Entities.Certificado;
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Back.Application.UseCases.Certificado
@@ -9,29 +10,30 @@ namespace Back.Application.UseCases.Certificado
     public class DeleteCertificadoUseCase
     {
         private readonly ICertificadoRepository _certRepo;
+        private readonly IFileStorageService _storage;
 
-        public DeleteCertificadoUseCase(ICertificadoRepository certRepo)
+        public DeleteCertificadoUseCase(ICertificadoRepository certRepo, IFileStorageService storage)
         {
             _certRepo = certRepo;
+            _storage = storage;
         }
 
         public async Task ExecuteAsync(Guid id)
         {
-            // Busca o certificado simples, sem includes
             var certificado = await _certRepo.GetByIdAsync(id);
 
             if (certificado == null)
                 throw new KeyNotFoundException("Certificado não encontrado.");
 
-            // Verifica o status antes de deletar
             if (certificado.Status == StatusCertificado.APROVADO)
-            {
                 throw new InvalidOperationException("Não é possível excluir um certificado que já foi APROVADO.");
-            }
 
-            // Se estiver PENDENTE ou REPROVADO, permite a exclusão.
+            var storageKey = certificado.AnexoStorageKey;
+
             await _certRepo.DeleteAsync(certificado);
 
+            if (!string.IsNullOrEmpty(storageKey))
+                await _storage.DeleteAsync(storageKey);
         }
     }
 }
