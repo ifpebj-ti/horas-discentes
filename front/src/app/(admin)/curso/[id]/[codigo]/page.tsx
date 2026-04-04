@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 
 const VisualizarTurma = () => {
   const params = useParams();
-  const id = typeof params.turmaId === 'string' ? params.turmaId : '';
+  const id = typeof params.codigo === 'string' ? params.codigo : '';
   const cursoId = typeof params.id === 'string' ? params.id : '';
   const [turma, setTurma] = useState<TurmaResponse | null>(null);
   const [students, setStudents] = useState<AlunoPorTurmaDetalhadoResponse[]>(
@@ -51,7 +51,7 @@ const VisualizarTurma = () => {
 
   const copyCode = async () => {
     if (!turma) return;
-    navigator.clipboard.writeText(turma.id);
+    navigator.clipboard.writeText(turma.codigo);
     toast.success('Código copiado para a área de transferência.');
   };
 
@@ -111,8 +111,8 @@ const VisualizarTurma = () => {
                   Código da Turma
                 </p>
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-bold text-gray-800 truncate">
-                    {turma.id}
+                  <p className="text-sm font-mono font-bold text-[#1351B4] truncate">
+                    {turma.codigo}
                   </p>
                   <button
                     onClick={copyCode}

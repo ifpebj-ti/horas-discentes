@@ -45,7 +45,7 @@ export default function CourseDetailPage() {
     nome: string;
   } | null>(null);
   const [classes, setClasses] = useState<
-    { id: string; period: string; shift: string; students: number }[]
+    { id: string; period: string; shift: string; students: number; codigo: string }[]
   >([]);
 
   const [isCoordModalOpen, setIsCoordModalOpen] = useState(false);
@@ -70,7 +70,8 @@ export default function CourseDetailPage() {
             id: t.id,
             period: t.periodo,
             shift: t.turno,
-            students: t.quantidadeAlunos
+            students: t.quantidadeAlunos,
+            codigo: t.codigo
           }))
         );
         setCourseName(turmas[0]?.cursoNome || 'Curso');
@@ -90,7 +91,8 @@ export default function CourseDetailPage() {
         id: t.id,
         period: t.periodo,
         shift: t.turno,
-        students: t.quantidadeAlunos
+        students: t.quantidadeAlunos,
+        codigo: t.codigo
       }))
     );
   };
@@ -112,7 +114,8 @@ export default function CourseDetailPage() {
             id: t.id,
             period: t.periodo,
             shift: t.turno,
-            students: t.quantidadeAlunos
+            students: t.quantidadeAlunos,
+            codigo: t.codigo
           }))
         );
         toast.success('A turma foi excluída com sucesso.');
@@ -248,6 +251,7 @@ export default function CourseDetailPage() {
             <thead className="text-left text-gray-700 text-xs uppercase tracking-wide" style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}>
               <tr>
                 <th className="px-4 py-3">Período</th>
+                <th className="px-4 py-3 text-center">Código</th>
                 <th className="px-4 py-3">Turno</th>
                 <th className="px-4 py-3">Alunos</th>
                 <th className="px-4 py-3 text-right">Ações</th>
@@ -257,13 +261,18 @@ export default function CourseDetailPage() {
               {classes.map((cls) => (
                 <tr key={cls.id} className="border-b last:border-none hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3">{cls.period}</td>
+                  <td className="px-4 py-3 text-center">
+                    <span className="font-mono font-bold bg-blue-50 text-[#1351B4] px-2 py-1 rounded border border-blue-100">
+                      {cls.codigo}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">{cls.shift}</td>
                   <td className="px-4 py-3">{cls.students}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         className="text-sm bg-gray-100 hover:bg-gray-200 text-blue-700 font-medium px-3 py-1.5 rounded-lg transition-colors"
-                        onClick={() => router.push(`/curso/${cursoId}/${cls.id}`)}
+                        onClick={() => router.push(`/curso/${cursoId}/${cls.codigo}`)}
                       >
                         Visualizar turma
                       </button>

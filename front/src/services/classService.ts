@@ -11,10 +11,16 @@ export interface TurmaResponse {
   id: string;
   periodo: string;
   turno: string;
+  codigo: string;
   possuiExtensao: boolean;
   cursoId: string;
   cursoNome: string;
   quantidadeAlunos: number;
+}
+
+export interface TurmaVerificacaoResponse {
+  periodo: string;
+  cursoNome: string;
 }
 
 export interface TurmaAlunoResponse {
@@ -59,26 +65,34 @@ export const listarTodasTurmas = async (): Promise<TurmaResponse[]> => {
   return response.data;
 };
 
-// Busca turma por ID
-export const obterTurmaPorId = async (id: string): Promise<TurmaResponse> => {
-  const response = await api.get<TurmaResponse>(`/Turma/${id}`);
+// Busca turma por ID ou Código
+export const obterTurmaPorId = async (
+  identifier: string
+): Promise<TurmaResponse> => {
+  const response = await api.get<TurmaResponse>(`/Turma/${identifier}`);
   return response.data;
 };
 
-// Verifica se a turma existe
-export const verificarTurmaExiste = async (id: string): Promise<boolean> => {
-  const response = await api.get<{ turmaExiste: boolean }>(
-    `/Turma/verificar/${id}`
-  );
-  return response.data.turmaExiste;
+// Verifica se a turma existe pelo código
+export const verificarTurmaExiste = async (
+  codigo: string
+): Promise<TurmaVerificacaoResponse | null> => {
+  try {
+    const response = await api.get<TurmaVerificacaoResponse>(
+      `/Turma/verificar/${codigo}`
+    );
+    return response.data;
+  } catch (error) {
+    return null;
+  }
 };
 
-// Lista alunos da turma
+// Lista alunos da turma por ID ou Código
 export const listarAlunosPorTurma = async (
-  id: string
+  identifier: string
 ): Promise<AlunoPorTurmaDetalhadoResponse[]> => {
   const response = await api.get<AlunoPorTurmaDetalhadoResponse[]>(
-    `/Turma/${id}/alunos`
+    `/Turma/${identifier}/alunos`
   );
   return response.data;
 };
