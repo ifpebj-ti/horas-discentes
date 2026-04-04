@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
 import { criarAluno } from '@/services/studentService';
-import { verificarTurmaExiste, obterTurmaPorId } from '@/services/classService';
+import { verificarTurmaExiste } from '@/services/classService';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { firstAccessSchema, FirstAccessSchema } from '../schemas/schema';
