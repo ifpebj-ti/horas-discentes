@@ -59,7 +59,7 @@ const VisualizarTurma = () => {
 
   const copyCode = async () => {
     if (!turma) return;
-    navigator.clipboard.writeText(turma.id);
+    navigator.clipboard.writeText(turma.codigo);
     toast.success('O código da turma foi copiado para a área de transferência.');
   };
 
@@ -99,7 +99,7 @@ const VisualizarTurma = () => {
                 <p className="text-sm font-medium text-gray-600">
                   Código da Turma
                 </p>
-                <p className="text-lg font-bold text-gray-900">{turma.id}</p>
+                <p className="text-lg font-bold text-gray-900">{turma.codigo}</p>
                 <Button
                   variant="outline"
                   size="sm"
@@ -139,7 +139,12 @@ const VisualizarTurma = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {students.map((student) => (
+              {[...students]
+                .sort((a, b) => {
+                  if (a.isAtivo !== b.isAtivo) return a.isAtivo ? -1 : 1;
+                  return a.nome.localeCompare(b.nome, 'pt-BR');
+                })
+                .map((student) => (
                 <StudentCard
                   key={student.id}
                   student={student}
@@ -155,7 +160,7 @@ const VisualizarTurma = () => {
               Código da Turma
             </h3>
             <p className="text-blue-700 text-sm mb-3">
-              Compartilhe o código <strong>{turma.id}</strong> com os alunos
+              Compartilhe o código <strong>{turma.codigo}</strong> com os alunos
               para que eles possam se inscrever na turma.
             </p>
             <Button
