@@ -12,6 +12,7 @@ export interface TurmaResponse {
   periodo: string;
   turno: string;
   codigo: string;
+  codigoAtivo: boolean;
   possuiExtensao: boolean;
   cursoId: string;
   cursoNome: string;
@@ -102,6 +103,26 @@ export const obterTurmasPorCurso = async (
   cursoId: string
 ): Promise<TurmaResponse[]> => {
   const response = await api.get<TurmaResponse[]>(`/Turma/curso/${cursoId}`);
+  return response.data;
+};
+
+// Ativa ou desativa o código da turma
+export const toggleCodigoTurma = async (
+  identifier: string
+): Promise<TurmaResponse> => {
+  const response = await api.patch<TurmaResponse>(
+    `/Turma/${identifier}/codigo/toggle`
+  );
+  return response.data;
+};
+
+// Gera um novo código para a turma, invalidando o anterior
+export const resetarCodigoTurma = async (
+  identifier: string
+): Promise<TurmaResponse> => {
+  const response = await api.patch<TurmaResponse>(
+    `/Turma/${identifier}/codigo/reset`
+  );
   return response.data;
 };
 

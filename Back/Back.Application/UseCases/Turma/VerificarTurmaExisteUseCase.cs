@@ -17,7 +17,7 @@ public class VerificarTurmaExisteUseCase
     public async Task<VerificarTurmaResponse?> ExecuteAsync(string codigo)
     {
         var turma = await _repo.GetByCodigoAsync(codigo);
-        if (turma == null) return null;
+        if (turma == null || !turma.CodigoAtivo) return null;
 
         return new VerificarTurmaResponse(
             turma.Periodo!,

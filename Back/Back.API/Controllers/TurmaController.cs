@@ -19,6 +19,9 @@ public class TurmaController : ControllerBase
     private readonly GetTurmasByCursoIdUseCase _getByCurso;
     private readonly UpdateTurmaUseCase _update;
     private readonly DeleteTurmaUseCase _delete;
+    private readonly ToggleCodigoUseCase _toggleCodigo;
+    private readonly ResetarCodigoUseCase _resetarCodigo;
+
     public TurmaController(
         CreateTurmaUseCase create,
         GetAllTurmasUseCase getAll,
@@ -26,8 +29,10 @@ public class TurmaController : ControllerBase
         VerificarTurmaExisteUseCase verifica,
         GetAlunosByTurmaUseCase getAlunos,
         GetTurmasByCursoIdUseCase getByCurso,
-        UpdateTurmaUseCase update, 
-        DeleteTurmaUseCase delete)
+        UpdateTurmaUseCase update,
+        DeleteTurmaUseCase delete,
+        ToggleCodigoUseCase toggleCodigo,
+        ResetarCodigoUseCase resetarCodigo)
     {
         _create = create;
         _getAll = getAll;
@@ -37,6 +42,8 @@ public class TurmaController : ControllerBase
         _getByCurso = getByCurso;
         _update = update;
         _delete = delete;
+        _toggleCodigo = toggleCodigo;
+        _resetarCodigo = resetarCodigo;
     }
 
     /// <summary>
@@ -125,6 +132,46 @@ public class TurmaController : ControllerBase
         try
         {
             var turma = await _getById.ExecuteAsync(id);
+            return Ok(turma);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Ativa ou desativa o código de acesso de uma turma.
+    /// </summary>
+    [HttpPatch("{id}/codigo/toggle")]
+    [SwaggerOperation(Summary = "Ativa ou desativa o código da turma", Tags = new[] { "Turmas" })]
+    [ProducesResponseType(typeof(TurmaResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ToggleCodigo(string id)
+    {
+        try
+        {
+            var turma = await _toggleCodigo.ExecuteAsync(id);
+            return Ok(turma);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Gera um novo código para a turma, invalidando o anterior.
+    /// </summary>
+    [HttpPatch("{id}/codigo/reset")]
+    [SwaggerOperation(Summary = "Reseta o código da turma", Tags = new[] { "Turmas" })]
+    [ProducesResponseType(typeof(TurmaResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ResetarCodigo(string id)
+    {
+        try
+        {
+            var turma = await _resetarCodigo.ExecuteAsync(id);
             return Ok(turma);
         }
         catch (KeyNotFoundException ex)

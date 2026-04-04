@@ -17,6 +17,8 @@ public class Turma
     [StringLength(6, MinimumLength = 6)]
     public string? Codigo { get; set; }
 
+    public bool CodigoAtivo { get; set; } = true;
+
     public bool PossuiExtensao { get; set; }
 
     [Required(ErrorMessage = "O campo CursoId é obrigatório.")]

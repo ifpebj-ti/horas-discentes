@@ -1,20 +1,32 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaCopy } from 'react-icons/fa';
+import { FaCopy, FaRedo } from 'react-icons/fa';
 
 import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import { toggleStatusAluno } from '@/services/studentService';
 import {
   listarAlunosPorTurma,
   obterTurmaPorId,
+  toggleCodigoTurma,
+  resetarCodigoTurma,
   TurmaResponse,
   AlunoPorTurmaDetalhadoResponse
 } from '@/services/classService';
@@ -22,12 +34,12 @@ import { toast } from 'react-toastify';
 
 const VisualizarTurma = () => {
   const params = useParams();
+  const router = useRouter();
   const id = typeof params.codigo === 'string' ? params.codigo : '';
   const cursoId = typeof params.id === 'string' ? params.id : '';
   const [turma, setTurma] = useState<TurmaResponse | null>(null);
-  const [students, setStudents] = useState<AlunoPorTurmaDetalhadoResponse[]>(
-    []
-  );
+  const [students, setStudents] = useState<AlunoPorTurmaDetalhadoResponse[]>([]);
+  const [confirmReset, setConfirmReset] = useState(false);
   const { visible, show, hide } = useLoadingOverlay();
 
   useEffect(() => {
@@ -49,10 +61,38 @@ const VisualizarTurma = () => {
     if (id) carregarDados();
   }, [id, show, hide]);
 
-  const copyCode = async () => {
+  const copyCode = () => {
     if (!turma) return;
     navigator.clipboard.writeText(turma.codigo);
     toast.success('Código copiado para a área de transferência.');
+  };
+
+  const handleToggleCodigo = async () => {
+    if (!turma) return;
+    try {
+      show();
+      const atualizada = await toggleCodigoTurma(turma.id);
+      setTurma(atualizada);
+      toast.info(atualizada.codigoAtivo ? 'Código reativado.' : 'Código desativado. Nenhum novo aluno poderá entrar.');
+    } catch {
+      toast.error('Não foi possível alterar o status do código.');
+    } finally {
+      hide();
+    }
+  };
+
+  const handleResetarCodigo = async () => {
+    if (!turma) return;
+    try {
+      show();
+      const atualizada = await resetarCodigoTurma(turma.id);
+      toast.success(`Novo código gerado: ${atualizada.codigo}`);
+      router.replace(`/curso/${cursoId}/${atualizada.codigo}`);
+    } catch {
+      toast.error('Não foi possível gerar um novo código.');
+    } finally {
+      hide();
+    }
   };
 
   const toggleStudentStatus = async (studentId: string) => {
@@ -78,6 +118,23 @@ const VisualizarTurma = () => {
   return (
     <div className="p-6 space-y-6">
       <LoadingOverlay show={visible} />
+
+      <AlertDialog open={confirmReset} onOpenChange={setConfirmReset}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Resetar código da turma?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O código atual <span className="font-mono font-bold">{turma?.codigo}</span> será invalidado permanentemente. Um novo código será gerado e você será redirecionado.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={handleResetarCodigo}>
+              Sim, gerar novo código
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <BreadcrumbAuto map={{
         [cursoId]: turma?.cursoNome || cursoId,
@@ -107,21 +164,42 @@ const VisualizarTurma = () => {
                 </p>
               </div>
               <div className="bg-white border border-gray-200 rounded-lg py-3 px-4">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">
-                  Código da Turma
-                </p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+                    Código da Turma
+                  </p>
+                  <Badge variant={turma.codigoAtivo ? 'default' : 'secondary'}>
+                    {turma.codigoAtivo ? 'Ativo' : 'Desativado'}
+                  </Badge>
+                </div>
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-mono font-bold text-[#1351B4] truncate">
+                  <p className={`text-sm font-mono font-bold truncate ${turma.codigoAtivo ? 'text-[#1351B4]' : 'text-gray-400 line-through'}`}>
                     {turma.codigo}
                   </p>
-                  <button
-                    onClick={copyCode}
-                    className="text-gray-400 hover:text-blue-600 transition-colors shrink-0"
-                    title="Copiar código"
-                  >
-                    <FaCopy className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={copyCode}
+                      disabled={!turma.codigoAtivo}
+                      className="text-gray-400 hover:text-blue-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      title="Copiar código"
+                    >
+                      <FaCopy className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setConfirmReset(true)}
+                      className="text-gray-400 hover:text-orange-500 transition-colors"
+                      title="Gerar novo código"
+                    >
+                      <FaRedo className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
+                <button
+                  onClick={handleToggleCodigo}
+                  className="mt-2 text-xs font-medium text-gray-500 hover:text-gray-800 transition-colors"
+                >
+                  {turma.codigoAtivo ? 'Desativar código' : 'Reativar código'}
+                </button>
               </div>
             </div>
           </div>
@@ -193,24 +271,18 @@ const VisualizarTurma = () => {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <Badge
-                            variant={
-                              student.isAtivo ? 'default' : 'secondary'
-                            }
-                          >
-                            {student.isAtivo ? 'Ativo' : 'Inativo'}
+                          <Badge variant={student.isAtivo ? 'default' : 'secondary'}>
+                            {student.isAtivo ? 'Ativo' : 'Suspenso'}
                           </Badge>
                         </td>
                         <td className="px-4 py-3 text-right">
                           <Button
-                            variant={
-                              student.isAtivo ? 'destructive' : 'default'
-                            }
+                            variant={student.isAtivo ? 'outline' : 'default'}
                             size="sm"
                             onClick={() => toggleStudentStatus(student.id)}
                             className="cursor-pointer"
                           >
-                            {student.isAtivo ? 'Desativar' : 'Ativar'}
+                            {student.isAtivo ? 'Suspender' : 'Ativar'}
                           </Button>
                         </td>
                       </tr>

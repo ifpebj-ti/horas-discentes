@@ -37,6 +37,7 @@ public class UpdateTurmaUseCase
             turma.Periodo!,
             turma.Turno!,
             turma.Codigo!,
+            turma.CodigoAtivo,
             turma.PossuiExtensao,
             turma.CursoId,
             turma.Curso?.Nome ?? "Curso não encontrado",
