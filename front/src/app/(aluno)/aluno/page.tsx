@@ -60,10 +60,10 @@ function AlunoPageContent({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-2xl font-bold sm:text-3xl mb-1">
-                {user.name}, bem-vindo(a) de volta!
+                Olá, {user.name?.split(' ')[0]}!
               </h1>
               <p className="text-sm">
-                Bem-vindo ao Horas Discentes. Acompanhe seu progresso aqui.
+                Acompanhe o progresso das suas horas no Hora Mais.
               </p>
             </div>
             <NewCertificateButton user={user} />

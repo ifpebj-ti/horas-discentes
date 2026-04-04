@@ -9,8 +9,8 @@ import ClientProviders from '@/components/ClientProviders';
 import VersionDisplay from '@/components/VersionDisplay';
 
 export const metadata: Metadata = {
-  title: 'Hora+',
-  description: 'Sistema de gestão de horas discentes — IFPE Campus Belo Jardim'
+  title: 'Hora Mais',
+  description: 'Sistema de gestão de Hora Mais — IFPE Campus Belo Jardim'
 };
 
 export default function RootLayout({

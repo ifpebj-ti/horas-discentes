@@ -46,7 +46,7 @@ export default function Header() {
         </div>
 
         {/* Título centralizado */}
-        <h1 className="absolute left-1/2 -translate-x-1/2 md:text-xl font-semibold text-gray-800 pointer-events-none">Hora+</h1>
+        <h1 className="absolute left-1/2 -translate-x-1/2 md:text-xl font-semibold text-gray-800 pointer-events-none">Hora Mais</h1>
 
         {/* Menu do usuário */}
         <div className="flex-shrink-0 flex items-center gap-2">
