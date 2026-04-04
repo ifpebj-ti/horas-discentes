@@ -25,12 +25,20 @@ export default function ViewCertificate({
 }: ViewCertificateProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'aprovado':
+      case 'APROVADO':
         return 'bg-green-100 text-green-800';
-      case 'rejeitado':
+      case 'REPROVADO':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-yellow-100 text-yellow-800';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'APROVADO': return 'Aprovado';
+      case 'REPROVADO': return 'Reprovado';
+      default: return 'Pendente';
     }
   };
 
@@ -53,11 +61,11 @@ export default function ViewCertificate({
             {certificate.title}
           </h3>
           <span
-            className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(
+            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
               certificate.status
             )}`}
           >
-            {certificate.status}
+            {getStatusLabel(certificate.status)}
           </span>
         </div>
 

@@ -1,14 +1,11 @@
 import api from './api';
+import { StatusCertificado } from '@/types';
+
+export { StatusCertificado };
 
 export enum TipoCertificado {
   EXTENSAO = 'EXTENSAO',
   COMPLEMENTAR = 'COMPLEMENTAR'
-}
-
-export enum StatusCertificado {
-  PENDENTE = 'PENDENTE',
-  APROVADO = 'APROVADO',
-  REPROVADO = 'REPROVADO'
 }
 
 export interface CertificadoResponse {
