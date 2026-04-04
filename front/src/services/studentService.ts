@@ -5,7 +5,8 @@ export interface CreateAlunoRequest {
   email: string;
   matricula: string;
   senha: string;
-  turmaId: string;
+  turmaId?: string;
+  turmaCodigo?: string;
 }
 
 export interface CreateAlunoResponse {

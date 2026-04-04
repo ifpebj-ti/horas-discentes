@@ -19,6 +19,9 @@ public class TurmaController : ControllerBase
     private readonly GetTurmasByCursoIdUseCase _getByCurso;
     private readonly UpdateTurmaUseCase _update;
     private readonly DeleteTurmaUseCase _delete;
+    private readonly ToggleCodigoUseCase _toggleCodigo;
+    private readonly ResetarCodigoUseCase _resetarCodigo;
+
     public TurmaController(
         CreateTurmaUseCase create,
         GetAllTurmasUseCase getAll,
@@ -26,8 +29,10 @@ public class TurmaController : ControllerBase
         VerificarTurmaExisteUseCase verifica,
         GetAlunosByTurmaUseCase getAlunos,
         GetTurmasByCursoIdUseCase getByCurso,
-        UpdateTurmaUseCase update, 
-        DeleteTurmaUseCase delete)
+        UpdateTurmaUseCase update,
+        DeleteTurmaUseCase delete,
+        ToggleCodigoUseCase toggleCodigo,
+        ResetarCodigoUseCase resetarCodigo)
     {
         _create = create;
         _getAll = getAll;
@@ -37,6 +42,8 @@ public class TurmaController : ControllerBase
         _getByCurso = getByCurso;
         _update = update;
         _delete = delete;
+        _toggleCodigo = toggleCodigo;
+        _resetarCodigo = resetarCodigo;
     }
 
     /// <summary>
@@ -56,13 +63,13 @@ public class TurmaController : ControllerBase
     /// Atualiza os dados de uma turma.
     /// </summary>
     /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
-    /// <param name="id">ID da turma a ser atualizada.</param>
+    /// <param name="id">ID ou Código da turma a ser atualizada.</param>
     /// <param name="request">Novos dados da turma.</param>
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Atualiza uma turma", Tags = new[] { "Turmas" })]
     [ProducesResponseType(typeof(TurmaResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Atualizar(Guid id, [FromBody] UpdateTurmaRequest request)
+    public async Task<IActionResult> Atualizar(string id, [FromBody] UpdateTurmaRequest request)
     {
         try
         {
@@ -82,12 +89,12 @@ public class TurmaController : ControllerBase
     /// Requer permissão de ADMIN ou COORDENADOR. AÇÃO PERMANENTE E DESTRUTIVA.
     /// Remove a Turma, e todos os Alunos, AlunoAtividades e Certificados associados.
     /// </remarks>
-    /// <param name="id">ID da turma a ser removida.</param>
-    [HttpDelete("{id:guid}")]
+    /// <param name="id">ID ou Código da turma a ser removida.</param>
+    [HttpDelete("{id}")]
     [SwaggerOperation(Summary = "Remove uma turma e seus alunos (Cascata)", Tags = new[] { "Turmas" })]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Deletar(Guid id)
+    public async Task<IActionResult> Deletar(string id)
     {
         try
         {
@@ -114,14 +121,13 @@ public class TurmaController : ControllerBase
     }
 
     /// <summary>
-    /// Retorna os dados de uma turma pelo ID.
+    /// Retorna os dados de uma turma pelo ID ou Código.
     /// </summary>
-    [HttpGet("{id:guid}")]
-    [AllowAnonymous]
-    [SwaggerOperation(Summary = "Busca turma por ID", Tags = new[] { "Turmas" })]
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Busca turma por ID ou Código", Tags = new[] { "Turmas" })]
     [ProducesResponseType(typeof(TurmaResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ObterPorId(Guid id)
+    public async Task<IActionResult> ObterPorId(string id)
     {
         try
         {
@@ -135,28 +141,79 @@ public class TurmaController : ControllerBase
     }
 
     /// <summary>
-    /// Verifica se uma turma existe.
+    /// Ativa ou desativa o código de acesso de uma turma.
     /// </summary>
-    [HttpGet("verificar/{id:guid}")]
-    [AllowAnonymous]
-    [SwaggerOperation(Summary = "Verifica se uma turma existe", Tags = new[] { "Turmas" })]
-    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Verificar(Guid id)
+    [HttpPatch("{id}/codigo/toggle")]
+    [SwaggerOperation(Summary = "Ativa ou desativa o código da turma", Tags = new[] { "Turmas" })]
+    [ProducesResponseType(typeof(TurmaResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ToggleCodigo(string id)
     {
-        var existe = await _verifica.ExecuteAsync(id);
-        return Ok(new { turmaExiste = existe });
+        try
+        {
+            var turma = await _toggleCodigo.ExecuteAsync(id);
+            return Ok(turma);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Gera um novo código para a turma, invalidando o anterior.
+    /// </summary>
+    [HttpPatch("{id}/codigo/reset")]
+    [SwaggerOperation(Summary = "Reseta o código da turma", Tags = new[] { "Turmas" })]
+    [ProducesResponseType(typeof(TurmaResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ResetarCodigo(string id)
+    {
+        try
+        {
+            var turma = await _resetarCodigo.ExecuteAsync(id);
+            return Ok(turma);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Verifica se uma turma existe pelo código curto.
+    /// </summary>
+    [HttpGet("verificar/{codigo}")]
+    [AllowAnonymous]
+    [SwaggerOperation(Summary = "Verifica se uma turma existe pelo código", Tags = new[] { "Turmas" })]
+    [ProducesResponseType(typeof(VerificarTurmaResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Verificar(string codigo)
+    {
+        var result = await _verifica.ExecuteAsync(codigo);
+        if (result == null)
+            return NotFound(new { erro = "Código de turma inválido." });
+
+        return Ok(result);
     }
 
     /// <summary>
     /// Lista os alunos de uma turma específica.
     /// </summary>
-    [HttpGet("{id:guid}/alunos")]
+    [HttpGet("{id}/alunos")]
     [SwaggerOperation(Summary = "Lista os alunos de uma turma", Tags = new[] { "Turmas" })]
     [ProducesResponseType(typeof(IEnumerable<TurmaAlunoResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ListarAlunos(Guid id)
+    public async Task<IActionResult> ListarAlunos(string id)
     {
-        var alunos = await _getAlunos.ExecuteAsync(id);
-        return Ok(alunos);
+        try
+        {
+            var alunos = await _getAlunos.ExecuteAsync(id);
+            return Ok(alunos);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { erro = ex.Message });
+        }
     }
 
     /// <summary>

@@ -32,6 +32,8 @@ public static class DependencyInjection
         services.AddScoped<GetTurmasByCursoIdUseCase>();
         services.AddScoped<DeleteTurmaUseCase>();
         services.AddScoped<UpdateTurmaUseCase>();
+        services.AddScoped<ToggleCodigoUseCase>();
+        services.AddScoped<ResetarCodigoUseCase>();
 
         //Aluno
         services.AddScoped<CreateAlunoUseCase>();

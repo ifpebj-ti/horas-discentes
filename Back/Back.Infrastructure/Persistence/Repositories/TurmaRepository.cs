@@ -48,6 +48,41 @@ public class TurmaRepository : ITurmaRepository
         return await _context.Turmas.AnyAsync(t => t.Id == id);
     }
 
+    public async Task<bool> ExistsByCodigoAsync(string codigo)
+    {
+        return await _context.Turmas.AnyAsync(t => t.Codigo == codigo);
+    }
+
+    public async Task<Turma?> GetByCodigoAsync(string codigo)
+    {
+        return await _context.Turmas
+            .Include(t => t.Curso)
+            .Include(t => t.Alunos)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Codigo == codigo);
+    }
+
+    public async Task<Turma?> GetByIdentifierAsync(string identifier)
+    {
+        if (Guid.TryParse(identifier, out Guid guid))
+        {
+            return await GetByIdAsync(guid);
+        }
+        return await GetByCodigoAsync(identifier);
+    }
+
+    public async Task<Turma?> GetByIdentifierTrackedAsync(string identifier)
+    {
+        if (Guid.TryParse(identifier, out Guid guid))
+        {
+            return await GetByIdTrackedAsync(guid);
+        }
+        return await _context.Turmas
+            .Include(t => t.Curso)
+            .Include(t => t.Alunos)
+            .FirstOrDefaultAsync(t => t.Codigo == identifier);
+    }
+
     public async Task<IEnumerable<Aluno>> GetAlunosByTurmaAsync(Guid turmaId)
     {
         return await _context.Alunos

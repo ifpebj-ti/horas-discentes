@@ -22,6 +22,18 @@ public class TurmaBuilder
         return this;
     }
 
+    public TurmaBuilder WithCodigo(string codigo)
+    {
+        _turma.Codigo = codigo;
+        return this;
+    }
+
+    public TurmaBuilder WithCodigoAtivo(bool ativo)
+    {
+        _turma.CodigoAtivo = ativo;
+        return this;
+    }
+
     public TurmaBuilder WithPossuiExtensao(bool possui)
     {
         _turma.PossuiExtensao = possui;

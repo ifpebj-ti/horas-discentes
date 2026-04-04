@@ -7,5 +7,6 @@ public record CreateAlunoRequest(
     string Email,
     string Matricula,
     string Senha,
-    Guid TurmaId
+    string? TurmaCodigo = null,
+    Guid? TurmaId = null
 );

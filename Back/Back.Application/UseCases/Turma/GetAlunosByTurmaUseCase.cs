@@ -24,11 +24,14 @@ public class GetAlunosByTurmaUseCase
         _limiteRepo = limiteRepo;
     }
 
-    public async Task<IEnumerable<AlunoPorTurmaDetalhadoResponse>> ExecuteAsync(Guid turmaId)
+    public async Task<IEnumerable<AlunoPorTurmaDetalhadoResponse>> ExecuteAsync(string identifier)
     {
-        var alunos = await _turmaRepo.GetAlunosByTurmaAsync(turmaId);
-        var turma = await _turmaRepo.GetByIdAsync(turmaId);
-        var limite = await _limiteRepo.GetByCursoIdAsync(turma!.CursoId);
+        var turma = await _turmaRepo.GetByIdentifierAsync(identifier);
+        if (turma == null)
+            throw new KeyNotFoundException("Turma não encontrada.");
+
+        var alunos = await _turmaRepo.GetAlunosByTurmaAsync(turma.Id);
+        var limite = await _limiteRepo.GetByCursoIdAsync(turma.CursoId);
 
         var result = new List<AlunoPorTurmaDetalhadoResponse>();
 

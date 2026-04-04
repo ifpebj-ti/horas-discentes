@@ -27,15 +27,15 @@ public class DeleteTurmaUseCase
         _certificadoRepo = certificadoRepo;
     }
 
-    public async Task ExecuteAsync(Guid id)
+    public async Task ExecuteAsync(string identifier)
     {
         // 1. Busca a turma (rastreada)
-        var turma = await _turmaRepo.GetByIdTrackedAsync(id);
+        var turma = await _turmaRepo.GetByIdentifierTrackedAsync(identifier);
         if (turma == null)
             throw new KeyNotFoundException("Turma não encontrada.");
 
         // 2. Busca todos os alunos da turma (rastreados)
-        var alunos = await _alunoRepo.GetByTurmaIdTrackedAsync(id);
+        var alunos = await _alunoRepo.GetByTurmaIdTrackedAsync(turma.Id);
         if (alunos.Any())
         {
             // 3. Busca AlunoAtividades

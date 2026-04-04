@@ -61,13 +61,13 @@ export const FirstAccess = () => {
             >
               <label className="block mb-1 text-sm">Código</label>
               <Input
-                placeholder="Código"
+                placeholder="Ex: ADS2B7"
                 icon={faKey}
                 value={codigo}
                 onChange={(e) => setCodigo(e.target.value)}
               />
               <div className="flex items-center gap-2 bg-[#1351B4] text-white text-sm p-2 rounded-md mb-6 mt-0.5">
-                <span>Solicite o código ao coordenador ou a Secretária</span>
+                <span>Digite o código de 6 caracteres fornecido pelo seu coordenador</span>
               </div>
 
               <Button

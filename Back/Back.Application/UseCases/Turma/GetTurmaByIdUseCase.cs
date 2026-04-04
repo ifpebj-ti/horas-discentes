@@ -15,12 +15,21 @@ public class GetTurmaByIdUseCase
         _repo = repo;
     }
 
-    public async Task<TurmaResponse> ExecuteAsync(Guid id)
+    public async Task<TurmaResponse> ExecuteAsync(string identifier)
     {
-        var turma = await _repo.GetByIdAsync(id);
+        var turma = await _repo.GetByIdentifierAsync(identifier);
         if (turma == null)
             throw new KeyNotFoundException("Turma não encontrada.");
 
-        return new TurmaResponse(turma.Id, turma.Periodo!, turma.Turno!, turma.PossuiExtensao, turma.CursoId, turma.Curso?.Nome ?? "curso não encontrado", turma.Alunos.Count);
+        return new TurmaResponse(
+            turma.Id,
+            turma.Periodo!,
+            turma.Turno!,
+            turma.Codigo!,
+            turma.CodigoAtivo,
+            turma.PossuiExtensao,
+            turma.CursoId,
+            turma.Curso?.Nome ?? "curso não encontrado",
+            turma.Alunos.Count);
     }
 }

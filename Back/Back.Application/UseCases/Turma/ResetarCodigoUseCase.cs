@@ -1,45 +1,40 @@
-﻿using Back.Application.DTOs.Turma;
+using Back.Application.DTOs.Turma;
 using Back.Application.Interfaces.Repositories;
-using Back.Domain.Entities.Turma;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Back.Application.UseCases.Turma;
 
-public class CreateTurmaUseCase
+public class ResetarCodigoUseCase
 {
     private readonly ITurmaRepository _repo;
 
-    public CreateTurmaUseCase(ITurmaRepository repo)
+    public ResetarCodigoUseCase(ITurmaRepository repo)
     {
         _repo = repo;
     }
 
-    public async Task<TurmaResponse> ExecuteAsync(CreateTurmaRequest request)
+    public async Task<TurmaResponse> ExecuteAsync(string identifier)
     {
-        string codigo;
+        var turma = await _repo.GetByIdentifierTrackedAsync(identifier);
+        if (turma == null)
+            throw new KeyNotFoundException("Turma não encontrada.");
+
+        string novoCodigo;
         bool exists;
         do
         {
-            codigo = GenerateTurmaCode();
-            exists = await _repo.ExistsByCodigoAsync(codigo);
+            novoCodigo = GerarCodigo();
+            exists = await _repo.ExistsByCodigoAsync(novoCodigo);
         } while (exists);
 
-        var turma = new TurmaBuilder()
-            .WithId(Guid.NewGuid())
-            .WithPeriodo(request.Periodo)
-            .WithTurno(request.Turno)
-            .WithCodigo(codigo)
-            .WithPossuiExtensao(request.PossuiExtensao)
-            .WithCursoId(request.CursoId)
-            .Build();
+        turma.Codigo = novoCodigo;
+        turma.CodigoAtivo = true;
+        await _repo.UpdateAsync(turma);
 
-        await _repo.AddAsync(turma);
-
-        // Recarrega com curso incluído
         var turmaCompleta = await _repo.GetByIdAsync(turma.Id);
-
         return new TurmaResponse(
             turmaCompleta!.Id,
             turmaCompleta.Periodo!,
@@ -53,7 +48,7 @@ public class CreateTurmaUseCase
         );
     }
 
-    private static string GenerateTurmaCode()
+    private static string GerarCodigo()
     {
         const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         using var rng = RandomNumberGenerator.Create();
@@ -61,9 +56,7 @@ public class CreateTurmaUseCase
         var bytes = new byte[6];
         rng.GetBytes(bytes);
         for (int i = 0; i < 6; i++)
-        {
             result[i] = chars[bytes[i] % chars.Length];
-        }
         return new string(result);
     }
 }

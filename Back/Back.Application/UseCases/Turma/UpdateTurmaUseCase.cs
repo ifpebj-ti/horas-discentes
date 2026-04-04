@@ -15,10 +15,10 @@ public class UpdateTurmaUseCase
         _repo = repo;
     }
 
-    public async Task<TurmaResponse> ExecuteAsync(Guid id, UpdateTurmaRequest request)
+    public async Task<TurmaResponse> ExecuteAsync(string identifier, UpdateTurmaRequest request)
     {
         // 1. Busca a turma (rastreada e com includes)
-        var turma = await _repo.GetByIdTrackedAsync(id);
+        var turma = await _repo.GetByIdentifierTrackedAsync(identifier);
         if (turma == null)
             throw new KeyNotFoundException("Turma não encontrada.");
 
@@ -36,6 +36,8 @@ public class UpdateTurmaUseCase
             turma.Id,
             turma.Periodo!,
             turma.Turno!,
+            turma.Codigo!,
+            turma.CodigoAtivo,
             turma.PossuiExtensao,
             turma.CursoId,
             turma.Curso?.Nome ?? "Curso não encontrado",

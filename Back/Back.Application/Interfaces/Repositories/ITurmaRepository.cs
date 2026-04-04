@@ -11,7 +11,11 @@ public interface ITurmaRepository
     Task AddAsync(Turma turma);
     Task<IEnumerable<Turma>> GetAllAsync();
     Task<Turma?> GetByIdAsync(Guid id);
+    Task<Turma?> GetByCodigoAsync(string codigo);
+    Task<Turma?> GetByIdentifierAsync(string identifier);
+    Task<Turma?> GetByIdentifierTrackedAsync(string identifier);
     Task<bool> ExistsAsync(Guid id);
+    Task<bool> ExistsByCodigoAsync(string codigo);
     Task<IEnumerable<Aluno>> GetAlunosByTurmaAsync(Guid turmaId);
     Task<IEnumerable<Turma>> GetByCursoIdAsync(Guid cursoId);
     Task<IEnumerable<Turma>> GetByCursoIdTrackedAsync(Guid cursoId);
