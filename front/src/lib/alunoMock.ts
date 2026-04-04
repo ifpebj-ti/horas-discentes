@@ -1,4 +1,5 @@
 import * as Types from '@/types';
+import { StatusCertificado } from '@/types';
 
 export const MOCK_USER: Types.Usuario = {
   id: '1',
@@ -370,9 +371,9 @@ export const MOCK_CATEGORIAS_EXTENSAO: Types.CategoriaProgresso[] = [
 
 export const STATUS_OPTIONS: Types.OpcaoFiltro[] = [
   { value: 'all', label: 'Todos os status' },
-  { value: 'aprovado', label: 'Aprovado' },
-  { value: 'pendente', label: 'Pendente' },
-  { value: 'rejeitado', label: 'Rejeitado' }
+  { value: StatusCertificado.APROVADO, label: 'Aprovado' },
+  { value: StatusCertificado.PENDENTE, label: 'Pendente' },
+  { value: StatusCertificado.REPROVADO, label: 'Reprovado' }
 ];
 
 export const CATEGORY_OPTIONS: Types.OpcaoFiltro[] = [
