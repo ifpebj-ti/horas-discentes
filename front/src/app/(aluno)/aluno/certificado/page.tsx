@@ -24,7 +24,7 @@ import {
   baixarAnexoCertificado
 } from '@/services/certificateService';
 import * as Types from '@/types';
-import { mapStatusCertificado, mapTipoCertificado } from '@/types';
+import { mapStatusCertificado, mapTipoCertificado, StatusCertificado } from '@/types';
 import { toast } from 'react-toastify';
 
 const CertificadosContext = createContext<Types.Certificado[]>([]);
@@ -44,7 +44,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
     const status = searchParams.get('status');
 
     if (category) setSelectedCategory(category);
-    if (status && ['aprovado', 'pendente', 'rejeitado'].includes(status)) {
+    if (status && (Object.values(StatusCertificado) as string[]).includes(status)) {
       setSelectedStatus(status);
     }
   }, [searchParams]);

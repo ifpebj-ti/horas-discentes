@@ -13,7 +13,7 @@ import { useMeusDadosDetalhados } from '@/hooks/useStudent';
 import { useMeusCertificados } from '@/hooks/useCertificates';
 import { baixarAnexoCertificado } from '@/services/certificateService';
 import * as Types from '@/types';
-import { mapStatusCertificado, mapTipoCertificado } from '@/types';
+import { mapStatusCertificado, mapTipoCertificado, StatusCertificado } from '@/types';
 import { toast } from 'react-toastify';
 
 
@@ -105,13 +105,13 @@ function AlunoPageContent({
               <StatsSummary
                 total={certificados.length}
                 approved={
-                  certificados.filter((c) => c.status === 'aprovado').length
+                  certificados.filter((c) => c.status === StatusCertificado.APROVADO).length
                 }
                 pending={
-                  certificados.filter((c) => c.status === 'pendente').length
+                  certificados.filter((c) => c.status === StatusCertificado.PENDENTE).length
                 }
                 rejected={
-                  certificados.filter((c) => c.status === 'rejeitado').length
+                  certificados.filter((c) => c.status === StatusCertificado.REPROVADO).length
                 }
               />
             </aside>
