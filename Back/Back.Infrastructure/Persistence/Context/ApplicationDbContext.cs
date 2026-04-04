@@ -49,6 +49,10 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .WithMany(c => c.Turmas)
             .HasForeignKey(t => t.CursoId);
 
+        modelBuilder.Entity<Turma>()
+            .HasIndex(t => t.Codigo)
+            .IsUnique();
+
 
         // Coordenador -> Curso
         modelBuilder.Entity<Coordenador>()
