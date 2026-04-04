@@ -89,7 +89,7 @@ public class GetCertificadosByCursoIdUseCaseTests
             TotalPeriodos = 1,
             Status = StatusCertificado.PENDENTE,
             Tipo = TipoCertificado.COMPLEMENTAR,
-            Anexo = new byte[] { 1, 2, 3 },
+            AnexoStorageKey = "certificados/test.pdf",
             AlunoAtividadeId = alunoAtividade.Id,
             AlunoAtividade = alunoAtividade
         };

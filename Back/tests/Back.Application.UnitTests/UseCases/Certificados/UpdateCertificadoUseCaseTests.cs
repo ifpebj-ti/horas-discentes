@@ -12,9 +12,10 @@ public class UpdateCertificadoUseCaseTests
 {
     private readonly Mock<ICertificadoRepository> _repo = new();
     private readonly Mock<IAlunoRepository> _alunoRepo = new();
+    private readonly Mock<Back.Application.Interfaces.Services.IFileStorageService> _storage = new();
 
     private UpdateCertificadoUseCase CreateUseCase()
-        => new(_repo.Object, _alunoRepo.Object);
+        => new(_repo.Object, _alunoRepo.Object, _storage.Object);
 
     private (Certificado cert, string identityUserId) BuildOwnerSetup()
     {
