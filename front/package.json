@@ -56,6 +56,9 @@
 "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
   },
+  "overrides": {
+    "picomatch": ">=4.0.4"
+  },
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
     "@eslint/eslintrc": "^3",
