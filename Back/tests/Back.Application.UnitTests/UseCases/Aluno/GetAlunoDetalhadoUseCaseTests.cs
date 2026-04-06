@@ -65,8 +65,7 @@ public class GetAlunoDetalhadoUseCaseTests
             CategoriaKey = "CK1",
             Tipo = TipoAtividade.COMPLEMENTAR,
             CargaMaximaCurso = 40,
-            CargaMaximaSemestral = 10,
-            CursoId = cursoId
+            CargaMaximaSemestral = 10
         };
 
         var alunoAtiv = new AlunoAtividadeBuilder()
@@ -93,8 +92,8 @@ public class GetAlunoDetalhadoUseCaseTests
         _limiteRepo.Setup(r => r.GetByCursoIdAsync(cursoId))
             .ReturnsAsync(limite);
 
-        // MOCK EXTRA — obrigatório no construtor:
-        _atividadeCursoRepo.Setup(r => r.GetByCursoIdAsync(cursoId))
+        // Atividades são globais: retorna todas
+        _atividadeCursoRepo.Setup(r => r.GetAllAsync())
             .ReturnsAsync(new List<DomainAtividade> { atividade });
 
         var useCase = new GetAlunoDetalhadoUseCase(

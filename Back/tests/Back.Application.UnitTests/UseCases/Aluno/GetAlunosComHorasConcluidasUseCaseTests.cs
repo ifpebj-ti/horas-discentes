@@ -78,8 +78,7 @@ public class GetAlunosComHorasConcluidasUseCaseTests
             CategoriaKey = "K",
             Tipo = TipoAtividade.EXTENSAO,
             CargaMaximaCurso = 50,
-            CargaMaximaSemestral = 10,
-            CursoId = cursoId
+            CargaMaximaSemestral = 10
         };
 
         aluno1.Atividades.Add(new AlunoAtividade

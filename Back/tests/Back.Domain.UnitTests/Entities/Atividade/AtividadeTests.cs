@@ -1,4 +1,4 @@
-﻿using Back.Domain.Entities.Atividade;
+using Back.Domain.Entities.Atividade;
 using FluentAssertions;
 
 namespace Back.Domain.UnitTests;
@@ -17,7 +17,6 @@ public class AtividadeTests
             .WithTipo(TipoAtividade.EXTENSAO)
             .WithCategoria("Categoria X")
             .WithCategoriaKey("CAT-X")
-            .WithCursoId(Guid.NewGuid())
             .Build();
 
         var results = ValidationHelper.ValidateObject(atividade);
@@ -36,7 +35,6 @@ public class AtividadeTests
             .WithTipo(TipoAtividade.COMPLEMENTAR)
             .WithCategoria("Categoria")
             .WithCategoriaKey("CAT")
-            .WithCursoId(Guid.NewGuid())
             .Build();
 
         var results = ValidationHelper.ValidateObject(atividade);
@@ -45,7 +43,7 @@ public class AtividadeTests
     }
 
     [Fact]
-    public void Atividade_Sem_CursoId_Deve_Passar_Porque_Guid_Default_Eh_Valido()
+    public void Atividade_Global_Sem_CursoId_Deve_Passar()
     {
         var atividade = new AtividadeBuilder()
             .WithId(Guid.NewGuid())
@@ -56,7 +54,6 @@ public class AtividadeTests
             .WithTipo(TipoAtividade.COMPLEMENTAR)
             .WithCategoria("Cat")
             .WithCategoriaKey("Key")
-            // Guide.Empty é permitido pelo DataAnnotations
             .Build();
 
         var results = ValidationHelper.ValidateObject(atividade);

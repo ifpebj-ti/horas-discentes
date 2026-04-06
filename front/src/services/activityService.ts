@@ -3,7 +3,6 @@ import api from './api';
 export interface AtividadeResponse {
   id: string;
   nome: string;
-  cursoId: string;
   tipo: 'EXTENSAO' | 'COMPLEMENTAR';
   grupo: string;
   categoria: string;
@@ -20,15 +19,10 @@ export interface CreateAtividadeRequest {
   cargaMaximaSemestral: number;
   cargaMaximaCurso: number;
   tipo: number; // 0 for EXTENSAO, 1 for COMPLEMENTAR
-  cursoId: string;
 }
 
-export const listarAtividadesPorCurso = async (
-  cursoId: string
-): Promise<AtividadeResponse[]> => {
-  const response = await api.get<AtividadeResponse[]>(
-    `/Atividade/curso/${cursoId}`
-  );
+export const listarAtividades = async (): Promise<AtividadeResponse[]> => {
+  const response = await api.get<AtividadeResponse[]>('/Atividade');
   return response.data;
 };
 
@@ -73,12 +67,9 @@ export const deletarAtividade = async (id: string): Promise<void> => {
   }
 
   const cleanId = id.trim();
-  console.log('Deletando atividade:', cleanId);
-  console.log('URL completa:', `/api/Atividade/${cleanId}`);
 
   try {
-    const response = await api.delete(`/Atividade/${cleanId}`);
-    console.log('Resposta DELETE atividade:', response.status);
+    await api.delete(`/Atividade/${cleanId}`);
     return;
   } catch (error: unknown) {
     const err = error as {
@@ -88,8 +79,6 @@ export const deletarAtividade = async (id: string): Promise<void> => {
     console.error('Erro ao deletar atividade:', error);
     console.error('Status:', err?.response?.status);
     console.error('Data:', err?.response?.data);
-    console.error('URL tentada:', err?.config?.url);
-    console.error('Método HTTP:', err?.config?.method);
     throw error;
   }
 };

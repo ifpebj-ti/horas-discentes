@@ -21,7 +21,7 @@ import {
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
-  listarAtividadesPorCurso,
+  listarAtividades,
   criarAtividade,
   deletarAtividade
 } from '@/services/activityService';
@@ -32,11 +32,7 @@ import {
 import { TipoAtividade } from '@/types/atividade';
 import { toast } from 'react-toastify';
 
-interface ActivityRegistrationProps {
-  cursoId: string;
-}
-
-export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
+export function ActivityRegistration() {
   const [atividades, setAtividades] = useState<AtividadeResponse[]>([]);
   const [tipoAtual, setTipoAtual] = useState<TipoAtividade>('COMPLEMENTAR');
   const [showForm, setShowForm] = useState(false);
@@ -50,14 +46,14 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
   const fetchAtividades = useCallback(async () => {
     try {
       show();
-      const dados = await listarAtividadesPorCurso(cursoId);
+      const dados = await listarAtividades();
       setAtividades(dados);
     } catch {
       toast.error('Erro ao buscar atividades. Tente novamente mais tarde.');
     } finally {
       hide();
     }
-  }, [cursoId, show, hide]);
+  }, [show, hide]);
 
   useEffect(() => {
     fetchAtividades();
@@ -66,7 +62,7 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
   const atividadesFiltradas = atividades.filter((a) => a.tipo === tipoAtual);
 
   const handleAddAtividade = async (
-    data: Omit<CreateAtividadeRequest, 'cursoId' | 'tipo'>
+    data: Omit<CreateAtividadeRequest, 'tipo'>
   ) => {
     const tipoMap = {
       COMPLEMENTAR: 1,
@@ -74,7 +70,6 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
     };
     const dadosParaEnvio: CreateAtividadeRequest = {
       ...data,
-      cursoId,
       tipo: tipoMap[tipoAtual]
     };
 
@@ -146,11 +141,11 @@ export function ActivityRegistration({ cursoId }: ActivityRegistrationProps) {
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">
-          Cadastro de Atividades do Curso
+          Cadastro de Atividades
         </h1>
         <p className="text-muted-foreground">
-          Gerencie as atividades complementares e de extensão disponíveis para o
-          curso
+          Gerencie as atividades complementares e de extensão disponíveis para
+          todos os cursos
         </p>
       </div>
 

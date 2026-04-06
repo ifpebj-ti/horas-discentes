@@ -72,8 +72,8 @@ public class CreateAlunoUseCase
 
         await _alunoRepo.AddAsync(aluno);
 
-        // Pega as atividades do mesmo curso da turma
-        var atividades = await _atividadeRepo.GetByCursoIdAsync(turma.CursoId);
+        // Atividades são globais: vincula o aluno a TODAS as atividades
+        var atividades = await _atividadeRepo.GetAllAsync();
 
         var alunoAtividades = atividades.Select(atividade =>
             new AlunoAtividadeBuilder()

@@ -68,6 +68,9 @@ public class CertificadoRepository : ICertificadoRepository
         return await _context.Certificados
             .Include(c => c.AlunoAtividade)
                 .ThenInclude(aa => aa!.Atividade)
+            .Include(c => c.AlunoAtividade)
+                .ThenInclude(aa => aa!.Aluno)
+                    .ThenInclude(a => a!.Turma)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
     public async Task<IEnumerable<Certificado>> GetAllWithAlunoAtividadeAsync()

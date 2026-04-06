@@ -68,8 +68,7 @@ public class GetAlunoFromTokenUseCaseTests
             CategoriaKey = "CK",
             Tipo = TipoAtividade.EXTENSAO,
             CargaMaximaCurso = 40,
-            CargaMaximaSemestral = 10,
-            CursoId = cursoId
+            CargaMaximaSemestral = 10
         };
 
         var alunoAtiv = new AlunoAtividadeBuilder()

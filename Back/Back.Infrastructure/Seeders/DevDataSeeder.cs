@@ -20,6 +20,9 @@ public static class DevDataSeeder
         if (await context.Cursos.AnyAsync())
             return;
 
+        // Atividades globais (antes de cursos/alunos para poder vincular)
+        await AtividadeSeeder.SeedAsync(context);
+
         // Curso
         var cursoId = Guid.NewGuid();
         var curso = new CursoBuilder()
@@ -30,15 +33,13 @@ public static class DevDataSeeder
         context.Cursos.Add(curso);
         await context.SaveChangesAsync();
 
-        // Atividades complementares e de extensão do curso
-        await AtividadeSeeder.SeedAsync(context, cursoId);
-
         // Turmas
         var turma1Id = Guid.NewGuid();
         var turma1 = new TurmaBuilder()
             .WithId(turma1Id)
             .WithPeriodo("2024.1")
             .WithTurno("Noite")
+            .WithCodigo("ADS-2024.1-N")
             .WithCursoId(cursoId)
             .WithPossuiExtensao(true)
             .Build();
@@ -48,6 +49,7 @@ public static class DevDataSeeder
             .WithId(turma2Id)
             .WithPeriodo("2024.2")
             .WithTurno("Manhã")
+            .WithCodigo("ADS-2024.2-M")
             .WithCursoId(cursoId)
             .WithPossuiExtensao(false)
             .Build();
@@ -75,6 +77,9 @@ public static class DevDataSeeder
         context.Coordenadores.Add(coordenador);
         await context.SaveChangesAsync();
 
+        // Busca TODAS as atividades globais para vincular aos alunos
+        var atividades = await context.Atividades.ToListAsync();
+
         // Alunos (turma 1)
         var alunosTurma1 = new[]
         {
@@ -89,10 +94,6 @@ public static class DevDataSeeder
             ("Diana Rocha",  "20240001.ads@discente.ifpe.edu.br", "20240001"),
             ("Eduardo Paz",  "20240002.ads@discente.ifpe.edu.br", "20240002"),
         };
-
-        var atividades = await context.Atividades
-            .Where(a => a.CursoId == cursoId)
-            .ToListAsync();
 
         foreach (var (turmaId, alunos) in new[] { (turma1Id, alunosTurma1), (turma2Id, alunosTurma2) })
         {

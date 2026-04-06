@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
@@ -18,13 +18,19 @@ public class AtividadeRepository : IAtividadeRepository
         _context = context;
     }
 
-    public async Task<List<Atividade>> GetByCursoIdAsync(Guid cursoId)
+    public async Task<List<Atividade>> GetAllAsync()
     {
         return await _context.Atividades
             .AsNoTracking()
-            .Where(a => a.CursoId == cursoId)
             .ToListAsync();
     }
+
+    public async Task<List<Atividade>> GetAllTrackedAsync()
+    {
+        return await _context.Atividades
+            .ToListAsync();
+    }
+
     public async Task AddAsync(Atividade atividade)
     {
         _context.Atividades.Add(atividade);
@@ -33,7 +39,6 @@ public class AtividadeRepository : IAtividadeRepository
 
     public async Task<Atividade?> GetByIdAsync(Guid id)
     {
-        // Usamos FindAsync para chaves primárias, é mais otimizado.
         return await _context.Atividades.FindAsync(id);
     }
 
@@ -49,19 +54,10 @@ public class AtividadeRepository : IAtividadeRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Atividade>> GetByCursoIdTrackedAsync(Guid cursoId)
-    {
-        // Sem AsNoTracking() para permitir a exclusão
-        return await _context.Atividades
-            .Where(a => a.CursoId == cursoId)
-            .ToListAsync();
-    }
-
     public async Task RemoveRangeAsync(IEnumerable<Atividade> atividades)
     {
         if (!atividades.Any()) return;
         _context.Atividades.RemoveRange(atividades);
         await _context.SaveChangesAsync();
     }
-
 }

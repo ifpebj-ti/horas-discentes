@@ -1,4 +1,4 @@
-﻿using Back.Application.DTOs.Atividade;
+using Back.Application.DTOs.Atividade;
 using Back.Application.UseCases.Atividade;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,58 +13,55 @@ namespace Back.API.Controllers;
 [Authorize]
 public class AtividadeController : ControllerBase
 {
-    private readonly GetAtividadesByCursoIdUseCase _getByCurso;
+    private readonly GetAllAtividadesUseCase _getAll;
     private readonly CreateAtividadeUseCase _create;
-    private readonly UpdateAtividadeUseCase _update; 
+    private readonly UpdateAtividadeUseCase _update;
     private readonly DeleteAtividadeUseCase _delete;
+
     /// <summary>
     /// Inicializa o controlador de atividades com as dependências necessárias.
     /// </summary>
-    /// <param name="getByCurso">Caso de uso para buscar atividades por curso.</param>
-    /// <param name="create"></param>
-    /// <param name="update"></param>
-    /// <param name="delete"></param>
     public AtividadeController(
-        GetAtividadesByCursoIdUseCase getByCurso,
+        GetAllAtividadesUseCase getAll,
         CreateAtividadeUseCase create,
-        UpdateAtividadeUseCase update,  
-        DeleteAtividadeUseCase delete) 
+        UpdateAtividadeUseCase update,
+        DeleteAtividadeUseCase delete)
     {
-        _getByCurso = getByCurso;
+        _getAll = getAll;
         _create = create;
         _update = update;
-        _delete = delete; 
+        _delete = delete;
     }
 
     /// <summary>
-    /// Lista todas as atividades associadas a um curso.
+    /// Lista todas as atividades globais do sistema.
     /// </summary>
-    /// <param name="cursoId">ID do curso.</param>
-    /// <returns>Lista de atividades vinculadas ao curso.</returns>
+    /// <returns>Lista de atividades.</returns>
     /// <response code="200">Retorna a lista de atividades.</response>
-    [HttpGet("curso/{cursoId:guid}")]
+    [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<AtividadeResponse>), 200)]
-    public async Task<IActionResult> ListarPorCurso(Guid cursoId)
+    public async Task<IActionResult> Listar()
     {
-        var atividades = await _getByCurso.ExecuteAsync(cursoId);
+        var atividades = await _getAll.ExecuteAsync();
         return Ok(atividades);
     }
+
+    /// <summary>
+    /// Cria uma nova atividade global (vinculada a todos os alunos).
+    /// </summary>
     [HttpPost]
     [Authorize(Roles = "ADMIN,COORDENADOR")]
     [ProducesResponseType(typeof(object), 201)]
     public async Task<IActionResult> Criar([FromBody] CreateAtividadeRequest request)
     {
         var id = await _create.ExecuteAsync(request);
-        return CreatedAtAction(nameof(ListarPorCurso), new { cursoId = request.CursoId }, new { atividadeId = id });
+        return CreatedAtAction(nameof(Listar), new { id }, new { atividadeId = id });
     }
 
     /// <summary>
     /// Atualiza os dados de uma atividade.
     /// </summary>
-    /// <remarks>
-    /// Requer permissão de ADMIN ou COORDENADOR.
-    /// Não é permitido alterar o curso de uma atividade existente.
-    /// </remarks>
+    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
     /// <param name="id">ID da atividade a ser atualizada.</param>
     /// <param name="request">Novos dados da atividade.</param>
     /// <response code="204">Atividade atualizada com sucesso.</response>
@@ -93,5 +90,4 @@ public class AtividadeController : ControllerBase
         await _delete.ExecuteAsync(id);
         return NoContent();
     }
-
 }

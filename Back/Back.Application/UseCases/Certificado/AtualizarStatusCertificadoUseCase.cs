@@ -30,9 +30,10 @@ public class AtualizarStatusCertificadoUseCase
 
         var alunoAtividade = certificado.AlunoAtividade!;
         var atividade = alunoAtividade.Atividade!;
-        var limite = await _limiteRepo.GetByCursoIdAsync(atividade.CursoId);
+        var cursoId = alunoAtividade.Aluno!.Turma!.CursoId;
+        var limite = await _limiteRepo.GetByCursoIdAsync(cursoId);
 
-        if (novoStatus == StatusCertificado.APROVADO)
+        if (novoStatus == StatusCertificado.APROVADO && certificado.Status != StatusCertificado.APROVADO)
         {
             int maxTipo = atividade.Tipo == TipoAtividade.EXTENSAO
                 ? limite?.MaximoHorasExtensao ?? int.MaxValue
@@ -42,25 +43,24 @@ public class AtualizarStatusCertificadoUseCase
 
             int restanteTipo = Math.Max(0, maxTipo - horasTotaisAcumuladasDoTipo);
 
-            if (restanteTipo <= 0)
-            {
-                certificado.Status = novoStatus; 
-                await _repo.UpdateAsync(certificado);
-                return true; 
-            }
-
             var certificadosAprovados = (await _repo.GetByAlunoAtividadeAsync(certificado.AlunoAtividadeId))
                 .Where(c => c.Status == StatusCertificado.APROVADO && c.Id != certificado.Id)
                 .ToList();
+
+            if (certificado.TotalPeriodos <= 0)
+                throw new ArgumentException(
+                    $"Certificado '{certificado.Id}' possui TotalPeriodos inválido ({certificado.TotalPeriodos}).");
 
             int horasPorPeriodo = certificado.CargaHoraria / certificado.TotalPeriodos;
             int totalPermitido = 0;
 
             for (int i = 0; i < certificado.TotalPeriodos; i++)
             {
+                var periodoAtual = AvançarPeriodo(certificado.PeriodoLetivo, i);
+
                 var horasMesmoPeriodo = certificadosAprovados
-                    .Where(c => c.Grupo == certificado.Grupo && c.PeriodoLetivo == certificado.PeriodoLetivo)
-                    .Sum(c => c.CargaHoraria);
+                    .Where(c => c.Grupo == certificado.Grupo && c.PeriodoLetivo == periodoAtual)
+                    .Sum(c => c.CargaHoraria / c.TotalPeriodos);
 
                 int restanteSemestre = Math.Max(0, atividade.CargaMaximaSemestral - horasMesmoPeriodo);
                 int restanteCurso = Math.Max(0, atividade.CargaMaximaCurso - alunoAtividade.HorasConcluidas - totalPermitido);
@@ -93,5 +93,27 @@ public class AtualizarStatusCertificadoUseCase
         certificado.Status = novoStatus;
         await _repo.UpdateAsync(certificado);
         return true;
+    }
+
+    private static string AvançarPeriodo(string? periodo, int passos)
+    {
+        if (string.IsNullOrWhiteSpace(periodo))
+            throw new ArgumentException("Período letivo não pode ser nulo ou vazio.");
+
+        var partes = periodo.Split('.');
+
+        if (partes.Length != 2
+            || !int.TryParse(partes[0], out int ano)
+            || !int.TryParse(partes[1], out int semestre)
+            || semestre < 1 || semestre > 2)
+        {
+            throw new ArgumentException(
+                $"Período letivo '{periodo}' inválido. Use o formato YYYY.1 ou YYYY.2.");
+        }
+
+        semestre += passos;
+        ano += (semestre - 1) / 2;
+        semestre = ((semestre - 1) % 2) + 1;
+        return $"{ano}.{semestre}";
     }
 }

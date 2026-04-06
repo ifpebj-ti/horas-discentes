@@ -2,4 +2,4 @@
 
 namespace Back.Application.DTOs.Atividade;
 
-public record AtividadeResponse(Guid Id, string Nome, Guid CursoId, string Tipo, string Grupo, string Categoria, string CategoriaKey, int CargaMaximaSemestral, int CargaMaximaCurso);
+public record AtividadeResponse(Guid Id, string Nome, string Tipo, string Grupo, string Categoria, string CategoriaKey, int CargaMaximaSemestral, int CargaMaximaCurso);
