@@ -55,7 +55,7 @@ public class AtualizarStatusCertificadoUseCase
 
                 var horasMesmoPeriodo = certificadosAprovados
                     .Where(c => c.Grupo == certificado.Grupo && c.PeriodoLetivo == periodoAtual)
-                    .Sum(c => c.CargaHoraria);
+                    .Sum(c => c.CargaHoraria / c.TotalPeriodos);
 
                 int restanteSemestre = Math.Max(0, atividade.CargaMaximaSemestral - horasMesmoPeriodo);
                 int restanteCurso = Math.Max(0, atividade.CargaMaximaCurso - alunoAtividade.HorasConcluidas - totalPermitido);
