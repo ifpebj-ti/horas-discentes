@@ -51,8 +51,10 @@ public class AtualizarStatusCertificadoUseCase
 
             for (int i = 0; i < certificado.TotalPeriodos; i++)
             {
+                var periodoAtual = AvançarPeriodo(certificado.PeriodoLetivo!, i);
+
                 var horasMesmoPeriodo = certificadosAprovados
-                    .Where(c => c.Grupo == certificado.Grupo && c.PeriodoLetivo == certificado.PeriodoLetivo)
+                    .Where(c => c.Grupo == certificado.Grupo && c.PeriodoLetivo == periodoAtual)
                     .Sum(c => c.CargaHoraria);
 
                 int restanteSemestre = Math.Max(0, atividade.CargaMaximaSemestral - horasMesmoPeriodo);
@@ -86,5 +88,17 @@ public class AtualizarStatusCertificadoUseCase
         certificado.Status = novoStatus;
         await _repo.UpdateAsync(certificado);
         return true;
+    }
+
+    // Avança um período letivo no formato "YYYY.S" por um dado número de semestres.
+    // Ex: AvançarPeriodo("2024.1", 2) → "2025.1"
+    private static string AvançarPeriodo(string periodo, int passos)
+    {
+        var partes = periodo.Split('.');
+        int ano = int.Parse(partes[0]);
+        int semestre = int.Parse(partes[1]) + passos;
+        ano += (semestre - 1) / 2;
+        semestre = ((semestre - 1) % 2) + 1;
+        return $"{ano}.{semestre}";
     }
 }
