@@ -30,7 +30,8 @@ public class AtualizarStatusCertificadoUseCase
 
         var alunoAtividade = certificado.AlunoAtividade!;
         var atividade = alunoAtividade.Atividade!;
-        var limite = await _limiteRepo.GetByCursoIdAsync(atividade.CursoId);
+        var cursoId = alunoAtividade.Aluno!.Turma!.CursoId;
+        var limite = await _limiteRepo.GetByCursoIdAsync(cursoId);
 
         if (novoStatus == StatusCertificado.APROVADO && certificado.Status != StatusCertificado.APROVADO)
         {

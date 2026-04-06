@@ -1,4 +1,4 @@
-﻿using Back.Application.DTOs.Atividade;
+using Back.Application.DTOs.Atividade;
 using Back.Application.Interfaces.Repositories;
 using Back.Application.UseCases.Atividade;
 using FluentAssertions;
@@ -22,8 +22,6 @@ public class CreateAtividadeUseCaseTests
         var alunoRepo = new Mock<IAlunoRepository>();
         var alunoAtividadeRepo = new Mock<IAlunoAtividadeRepository>();
 
-        var cursoId = Guid.NewGuid();
-
         var alunos = new List<DomainAluno>
         {
             new AlunoBuilder()
@@ -36,7 +34,8 @@ public class CreateAtividadeUseCaseTests
                 .Build()
         };
 
-        alunoRepo.Setup(r => r.GetByCursoIdAsync(cursoId)).ReturnsAsync(alunos);
+        // Atividades são globais: busca TODOS os alunos
+        alunoRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(alunos);
 
         var request = new CreateAtividadeRequest
         {
@@ -44,7 +43,6 @@ public class CreateAtividadeUseCaseTests
             Grupo = "G1",
             Categoria = "CAT",
             CategoriaKey = "CK",
-            CursoId = cursoId,
             CargaMaximaCurso = 40,
             CargaMaximaSemestral = 10,
             Tipo = TipoAtividade.COMPLEMENTAR

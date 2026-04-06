@@ -1,4 +1,4 @@
-﻿using Back.Application.Interfaces.Repositories;
+using Back.Application.Interfaces.Repositories;
 using Back.Application.UseCases.Atividade;
 using FluentAssertions;
 using Moq;
@@ -8,15 +8,14 @@ using TipoAtividade = Back.Domain.Entities.Atividade.TipoAtividade;
 
 namespace Back.Application.UnitTests.UseCases.Atividade;
 
-public class GetAtividadesByCursoIdUseCaseTests
+public class GetAllAtividadesUseCaseTests
 {
     [Fact]
-    public async Task Deve_Retornar_Atividades_Do_Curso()
+    public async Task Deve_Retornar_Todas_Atividades()
     {
         var repo = new Mock<IAtividadeRepository>();
-        var cursoId = Guid.NewGuid();
 
-        repo.Setup(r => r.GetByCursoIdAsync(cursoId))
+        repo.Setup(r => r.GetAllAsync())
             .ReturnsAsync(new List<DomainAtividade>
             {
                 new DomainAtividade
@@ -28,17 +27,15 @@ public class GetAtividadesByCursoIdUseCaseTests
                     CategoriaKey = "CK",
                     CargaMaximaCurso = 40,
                     CargaMaximaSemestral = 10,
-                    CursoId = cursoId,
                     Tipo = TipoAtividade.EXTENSAO
                 }
             });
 
-        var useCase = new GetAtividadesByCursoIdUseCase(repo.Object);
+        var useCase = new GetAllAtividadesUseCase(repo.Object);
 
-        var result = (await useCase.ExecuteAsync(cursoId)).ToList();
+        var result = (await useCase.ExecuteAsync()).ToList();
 
         result.Should().HaveCount(1);
         result[0].Nome.Should().Be("A1");
-        result[0].CursoId.Should().Be(cursoId);
     }
 }

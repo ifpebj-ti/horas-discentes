@@ -60,8 +60,7 @@ public class GetCertificadosByCursoIdUseCaseTests
             Grupo = "G1",
             CargaMaximaCurso = 80,
             CargaMaximaSemestral = 40,
-            Tipo = TipoAtividade.COMPLEMENTAR,
-            CursoId = cursoId
+            Tipo = TipoAtividade.COMPLEMENTAR
         };
 
         var alunoAtividade = new AlunoAtividade

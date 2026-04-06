@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Back.Domain.Entities.Atividade;
 
@@ -28,12 +27,6 @@ public class Atividade
     [Required(ErrorMessage = "O campo CategoriaKey é obrigatório.")]
 
     public string? CategoriaKey { get; set; }
-
-    [Required(ErrorMessage = "O campo CursoId é obrigatório.")]
-    public Guid CursoId { get; set; }
-
-    [ForeignKey(nameof(CursoId))]
-    public Curso.Curso? Curso { get; set; }
 
     public ICollection<AlunoAtividade.AlunoAtividade> Alunos { get; set; } = new List<AlunoAtividade.AlunoAtividade>();
 }

@@ -1,44 +1,39 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import { useEffect, useState, Suspense } from 'react';
+import { toast } from 'react-toastify';
 import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import HoursRegistrationForm from '@/components/HoursRegistrationForm';
 
 import {
-  listarAtividadesPorCurso,
+  listarAtividades,
   AtividadeResponse
 } from '@/services/activityService';
 
 export default function NovoCertificado() {
-  const { data: session, status } = useSession();
   const [complementares, setComplementares] = useState<AtividadeResponse[]>([]);
   const [extensao, setExtensao] = useState<AtividadeResponse[]>([]);
+  const [loadingAtividades, setLoadingAtividades] = useState(false);
 
   useEffect(() => {
     const fetchAtividades = async () => {
-      if (status !== 'authenticated' || !session?.user?.cursoId) return;
-
+      setLoadingAtividades(true);
       try {
-        const atividades = await listarAtividadesPorCurso(session.user.cursoId);
+        const atividades = await listarAtividades();
 
-        const atividadesComplementares = atividades.filter(
-          (a) => a.tipo === 'COMPLEMENTAR'
-        );
-
-        const atividadesExtensao = atividades.filter(
-          (a) => a.tipo === 'EXTENSAO'
-        );
-
-        setComplementares(atividadesComplementares);
-        setExtensao(atividadesExtensao);
+        setComplementares(atividades.filter((a) => a.tipo === 'COMPLEMENTAR'));
+        setExtensao(atividades.filter((a) => a.tipo === 'EXTENSAO'));
       } catch (error) {
-        console.error('Erro ao buscar atividades do curso:', error);
+        console.error('Erro ao buscar atividades:', error);
+        toast.error('Não foi possível carregar as categorias. Tente novamente.');
+      } finally {
+        setLoadingAtividades(false);
       }
     };
 
     fetchAtividades();
-  }, [session, status]);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F6FA]">
       <main className="flex-1 w-full">
@@ -58,12 +53,18 @@ export default function NovoCertificado() {
           </div>
 
           {/* Formulário */}
-          <Suspense fallback={<div>Carregando formulário...</div>}>
-            <HoursRegistrationForm
-              categoriasComplementares={complementares}
-              categoriasExtensao={extensao}
-            />
-          </Suspense>
+          {loadingAtividades ? (
+            <div className="flex items-center justify-center py-12 text-gray-500">
+              Carregando categorias...
+            </div>
+          ) : (
+            <Suspense fallback={<div>Carregando formulário...</div>}>
+              <HoursRegistrationForm
+                categoriasComplementares={complementares}
+                categoriasExtensao={extensao}
+              />
+            </Suspense>
+          )}
         </div>
       </main>
     </div>

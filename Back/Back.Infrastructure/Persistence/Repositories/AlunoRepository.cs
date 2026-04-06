@@ -123,6 +123,13 @@ public class AlunoRepository : IAlunoRepository
             .AsNoTracking()
             .ToListAsync();
     }
+    public async Task<IEnumerable<Aluno>> GetAllAsync()
+    {
+        return await _context.Alunos
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Aluno>> GetByCursoIdAsync(Guid cursoId)
     {
         return await _context.Alunos

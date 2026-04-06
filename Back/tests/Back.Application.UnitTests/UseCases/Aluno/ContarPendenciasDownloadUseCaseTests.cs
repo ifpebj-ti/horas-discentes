@@ -94,8 +94,7 @@ public class ContarPendenciasDownloadUseCaseTests
             Grupo = "G",
             CargaMaximaCurso = 40,
             CargaMaximaSemestral = 10,
-            Tipo = TipoAtividade.COMPLEMENTAR,
-            CursoId = curso.Id
+            Tipo = TipoAtividade.COMPLEMENTAR
         };
 
         aluno.Atividades.Add(atividadeAluno);

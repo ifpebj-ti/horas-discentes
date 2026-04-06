@@ -32,9 +32,9 @@ public class GetAlunoDetalhadoUseCase
         if (aluno == null)
             throw new KeyNotFoundException("Aluno não encontrado");
 
-        // Busca todas as atividades do curso e faz um "left join" com as atividades do aluno,
+        // Atividades são globais: busca todas e faz "left join" com as do aluno,
         // para garantir que o aluno veja todas as atividades disponíveis (mesmo com 0 horas).
-        var atividadesCurso = await _atividadeCursoRepo.GetByCursoIdAsync(aluno.Turma!.CursoId);
+        var atividadesCurso = await _atividadeCursoRepo.GetAllAsync();
 
         var atividadesPorAluno = aluno.Atividades
             .ToDictionary(a => a.AtividadeId, a => a);

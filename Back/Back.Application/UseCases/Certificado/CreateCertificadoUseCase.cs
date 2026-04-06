@@ -13,17 +13,20 @@ public class CreateCertificadoUseCase
     private readonly IAlunoAtividadeRepository _alunoAtividadeRepo;
     private readonly ICertificadoRepository _certificadoRepo;
     private readonly ILimiteHorasAlunoRepository _limiteRepo;
+    private readonly IAtividadeRepository _atividadeRepo;
     private readonly IFileStorageService _storage;
 
     public CreateCertificadoUseCase(
         IAlunoAtividadeRepository alunoAtividadeRepo,
         ICertificadoRepository certificadoRepo,
         ILimiteHorasAlunoRepository limiteRepo,
+        IAtividadeRepository atividadeRepo,
         IFileStorageService storage)
     {
         _alunoAtividadeRepo = alunoAtividadeRepo;
         _certificadoRepo = certificadoRepo;
         _limiteRepo = limiteRepo;
+        _atividadeRepo = atividadeRepo;
         _storage = storage;
     }
 
@@ -37,8 +40,23 @@ public class CreateCertificadoUseCase
         var alunoAtividade = await _alunoAtividadeRepo
             .GetByAlunoEAtividadeAsync(request.AlunoId, request.AtividadeId);
 
+        // Atividades são globais: se o vínculo não existe, cria automaticamente
         if (alunoAtividade == null)
-            throw new InvalidOperationException("A atividade não está vinculada ao aluno informado.");
+        {
+            var atividade = await _atividadeRepo.GetByIdAsync(request.AtividadeId);
+            if (atividade == null)
+                throw new InvalidOperationException("Atividade não encontrada.");
+
+            alunoAtividade = new Back.Domain.Entities.AlunoAtividade.AlunoAtividade
+            {
+                Id = Guid.NewGuid(),
+                AlunoId = request.AlunoId,
+                AtividadeId = request.AtividadeId,
+                HorasConcluidas = 0,
+                Atividade = atividade
+            };
+            await _alunoAtividadeRepo.AddRangeAsync(new[] { alunoAtividade });
+        }
 
         var certificadoId = Guid.NewGuid();
         var extension = request.Anexo.ContentType.ToLowerInvariant() switch

@@ -4,12 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-// Adicione estes:
-using Back.Domain.Entities.Aluno;
 using Back.Domain.Entities.AlunoAtividade;
-using Back.Domain.Entities.Atividade;
 using Back.Domain.Entities.Certificado;
-using Back.Domain.Entities.Turma;
 
 
 namespace Back.Application.UseCases.Curso
@@ -19,7 +15,6 @@ namespace Back.Application.UseCases.Curso
         private readonly ICursoRepository _cursoRepo;
         private readonly ILimiteHorasAlunoRepository _limiteRepo;
         private readonly ICoordenadorRepository _coordenadorRepo;
-        private readonly IAtividadeRepository _atividadeRepo;
         private readonly ITurmaRepository _turmaRepo;
         private readonly IAlunoRepository _alunoRepo;
         private readonly IAlunoAtividadeRepository _alunoAtividadeRepo;
@@ -29,7 +24,6 @@ namespace Back.Application.UseCases.Curso
             ICursoRepository cursoRepo,
             ILimiteHorasAlunoRepository limiteRepo,
             ICoordenadorRepository coordenadorRepo,
-            IAtividadeRepository atividadeRepo,
             ITurmaRepository turmaRepo,
             IAlunoRepository alunoRepo,
             IAlunoAtividadeRepository alunoAtividadeRepo,
@@ -38,7 +32,6 @@ namespace Back.Application.UseCases.Curso
             _cursoRepo = cursoRepo;
             _limiteRepo = limiteRepo;
             _coordenadorRepo = coordenadorRepo;
-            _atividadeRepo = atividadeRepo;
             _turmaRepo = turmaRepo;
             _alunoRepo = alunoRepo;
             _alunoAtividadeRepo = alunoAtividadeRepo;
@@ -100,11 +93,9 @@ namespace Back.Application.UseCases.Curso
             // 9. DELETAR Turmas
             await _turmaRepo.RemoveRangeAsync(turmas);
 
-            // 10. DELETAR Atividades (Rastreado)
-            var atividades = await _atividadeRepo.GetByCursoIdTrackedAsync(id);
-            await _atividadeRepo.RemoveRangeAsync(atividades);
+            // Atividades são globais: NÃO deletar ao remover curso
 
-            // 11. DELETAR Coordenador (e sua conta do Identity)
+            // 10. DELETAR Coordenador (e sua conta do Identity)
             var coordenador = await _coordenadorRepo.GetByCursoIdAsync(id);
             if (coordenador != null)
             {

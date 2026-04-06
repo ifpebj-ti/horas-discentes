@@ -57,7 +57,7 @@ public static class DependencyInjection
         //coordenador
         services.AddScoped<EnviarConviteUseCase>();
         services.AddScoped<CriarCoordenadorUseCase>();
-        services.AddScoped<GetAtividadesByCursoIdUseCase>();
+        services.AddScoped<GetAllAtividadesUseCase>();
         services.AddScoped<GetCoordenadorFromTokenUseCase>();
         services.AddScoped<GetCoordenadorByCursoIdUseCase>();
         services.AddScoped<DeleteCoordenadorUseCase>();

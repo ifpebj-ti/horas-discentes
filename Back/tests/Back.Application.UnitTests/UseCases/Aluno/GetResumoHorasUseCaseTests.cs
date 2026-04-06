@@ -57,8 +57,7 @@ public class GetResumoHorasUseCaseTests
             Nome = "Extensão",
             Tipo = TipoAtividade.EXTENSAO,
             CargaMaximaCurso = 50,
-            CargaMaximaSemestral = 10,
-            CursoId = cursoId
+            CargaMaximaSemestral = 10
         };
 
         aluno.Atividades.Add(new AlunoAtividade

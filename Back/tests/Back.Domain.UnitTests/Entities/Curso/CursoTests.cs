@@ -1,4 +1,4 @@
-﻿using Back.Domain.Entities.Curso;
+using Back.Domain.Entities.Curso;
 using FluentAssertions;
 
 namespace Back.Domain.UnitTests;
@@ -38,7 +38,6 @@ public class CursoTests
             .WithNome("Direito")
             .Build();
 
-        curso.Atividades.Should().NotBeNull();
         curso.Turmas.Should().NotBeNull();
         curso.Coordenadores.Should().NotBeNull();
     }

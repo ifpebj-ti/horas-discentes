@@ -1,6 +1,5 @@
-﻿using Back.Application.DTOs.Atividade;
+using Back.Application.DTOs.Atividade;
 using Back.Application.Interfaces.Repositories;
-using Back.Domain.Entities.Atividade;
 using Back.Domain.Entities.AlunoAtividade;
 using System.Threading.Tasks;
 using System;
@@ -36,14 +35,13 @@ public class CreateAtividadeUseCase
             CategoriaKey = request.CategoriaKey,
             CargaMaximaSemestral = request.CargaMaximaSemestral,
             CargaMaximaCurso = request.CargaMaximaCurso,
-            Tipo = request.Tipo,
-            CursoId = request.CursoId
+            Tipo = request.Tipo
         };
 
         await _atividadeRepo.AddAsync(atividade);
 
-        // Busca todos os alunos do curso
-        var alunos = await _alunoRepo.GetByCursoIdAsync(request.CursoId);
+        // Atividades são globais: vincula a TODOS os alunos do sistema
+        var alunos = await _alunoRepo.GetAllAsync();
 
         var alunoAtividades = alunos.Select(aluno => new AlunoAtividade
         {

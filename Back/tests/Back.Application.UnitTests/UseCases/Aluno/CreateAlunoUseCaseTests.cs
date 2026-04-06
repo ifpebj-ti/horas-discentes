@@ -44,7 +44,7 @@ public class CreateAlunoUseCaseTests
         _identityService.Setup(r => r.CreateUserAsync("a@b.com", "123", "ALUNO"))
             .ReturnsAsync((true, "identity-1", Array.Empty<string>()));
 
-        _atividadeRepo.Setup(r => r.GetByCursoIdAsync(turma.CursoId))
+        _atividadeRepo.Setup(r => r.GetAllAsync())
             .ReturnsAsync(new List<DomainAtividade>());
 
         var request = new CreateAlunoRequest(
