@@ -42,13 +42,6 @@ public class AtualizarStatusCertificadoUseCase
 
             int restanteTipo = Math.Max(0, maxTipo - horasTotaisAcumuladasDoTipo);
 
-            if (restanteTipo <= 0)
-            {
-                certificado.Status = novoStatus; 
-                await _repo.UpdateAsync(certificado);
-                return true; 
-            }
-
             var certificadosAprovados = (await _repo.GetByAlunoAtividadeAsync(certificado.AlunoAtividadeId))
                 .Where(c => c.Status == StatusCertificado.APROVADO && c.Id != certificado.Id)
                 .ToList();
