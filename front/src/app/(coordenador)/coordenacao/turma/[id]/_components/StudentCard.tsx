@@ -1,5 +1,4 @@
-
-import { FaCheckCircle, FaClock, FaTimesCircle, FaUser } from 'react-icons/fa';
+import { FaCheckCircle, FaClock, FaDownload, FaTimesCircle, FaUser } from 'react-icons/fa';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,13 +13,26 @@ interface StudentCardProps {
   student: AlunoPorTurmaDetalhadoResponse;
   turma: TurmaResponse;
   onToggleStatus: (studentId: string) => void;
+  onDownload: (studentId: string, categoria: 'complementar' | 'extensao') => void;
+  isDownloading?: boolean;
 }
 
 export const StudentCard = ({
   student,
   turma,
-  onToggleStatus
+  onToggleStatus,
+  onDownload,
+  isDownloading = false
 }: StudentCardProps) => {
+  const complementarConcluido =
+    student.maximoHorasComplementar > 0 &&
+    student.totalHorasComplementar >= student.maximoHorasComplementar;
+
+  const extensaoConcluida =
+    turma.possuiExtensao &&
+    student.maximoHorasExtensao > 0 &&
+    student.totalHorasExtensao >= student.maximoHorasExtensao;
+
   return (
     <div className="border rounded-lg p-4 space-y-3">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
@@ -49,7 +61,31 @@ export const StudentCard = ({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+          {complementarConcluido && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onDownload(student.id, 'complementar')}
+              disabled={isDownloading}
+              className="text-green-700 border-green-300 hover:bg-green-50 cursor-pointer"
+            >
+              <FaDownload className="w-3 h-3 mr-1" />
+              Complementar
+            </Button>
+          )}
+          {extensaoConcluida && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onDownload(student.id, 'extensao')}
+              disabled={isDownloading}
+              className="text-blue-700 border-blue-300 hover:bg-blue-50 cursor-pointer"
+            >
+              <FaDownload className="w-3 h-3 mr-1" />
+              Extensão
+            </Button>
+          )}
           <Badge
             variant={student.isAtivo ? 'default' : 'secondary'}
             className="flex items-center space-x-1"

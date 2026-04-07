@@ -50,7 +50,7 @@ public class AlunoController : ControllerBase
     /// <summary>
     /// Cadastra um novo aluno.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <param name="request">Dados do aluno a ser criado.</param>
     /// <response code="201">Aluno criado com sucesso.</response>
     /// <response code="400">Dados inválidos ou erro de validação.</response>
@@ -65,12 +65,12 @@ public class AlunoController : ControllerBase
     /// <summary>
     /// Obtém os dados de um aluno pelo ID.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <param name="id">ID do aluno.</param>
     /// <response code="200">Dados do aluno retornados com sucesso.</response>
     /// <response code="404">Aluno não encontrado.</response>
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     public async Task<IActionResult> ObterPorId(Guid id)
     {
         var aluno = await _getById.ExecuteAsync(id);
@@ -80,14 +80,14 @@ public class AlunoController : ControllerBase
     /// <summary>
     /// Atualiza os dados de um aluno.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <param name="id">ID do aluno a ser atualizado.</param>
     /// <param name="request">Novos dados do aluno.</param>
     /// <response code="200">Aluno atualizado com sucesso.</response>
     /// <response code="400">Dados inválidos.</response>
     /// <response code="404">Aluno ou Turma não encontrados.</response>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] UpdateAlunoRequest request)
     {
         var result = await _update.ExecuteAsync(id, request);
@@ -97,11 +97,11 @@ public class AlunoController : ControllerBase
     /// <summary>
     /// Remove um aluno do sistema (remoção permanente).
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <param name="id">ID do aluno a ser excluído.</param>
     /// <response code="204">Aluno removido com sucesso.</response>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     public async Task<IActionResult> Deletar(Guid id)
     {
         await _delete.ExecuteAsync(id);
@@ -111,11 +111,11 @@ public class AlunoController : ControllerBase
     /// <summary>
     /// Ativa ou desativa o status de um aluno.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <param name="id">ID do aluno.</param>
     /// <response code="204">Status alterado com sucesso.</response>
     [HttpPatch("{id:guid}/toggle-status")]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     public async Task<IActionResult> AtivarDesativar(Guid id)
     {
         await _toggle.ExecuteAsync(id);
@@ -125,11 +125,11 @@ public class AlunoController : ControllerBase
     /// <summary>
     /// Obtém os dados detalhados de um aluno, incluindo atividades e horas concluídas.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <param name="id">ID do aluno.</param>
     /// <response code="200">Dados detalhados do aluno retornados com sucesso.</response>
     [HttpGet("{id:guid}/detalhado")]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     public async Task<IActionResult> ObterDetalhado(Guid id)
     {
         var aluno = await _getDetalhado.ExecuteAsync(id);
@@ -139,10 +139,10 @@ public class AlunoController : ControllerBase
     /// <summary>
     /// Lista todos os alunos com resumo das horas concluídas em atividades de extensão e complementar.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <response code="200">Resumo de horas retornado com sucesso.</response>
     [HttpGet("resumo-horas")]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     public async Task<IActionResult> ListarResumo()
     {
         var result = await _getResumo.ExecuteAsync();
