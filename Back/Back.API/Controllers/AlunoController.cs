@@ -257,6 +257,9 @@ public class AlunoController : ControllerBase
     [Authorize(Roles = "COORDENADOR")]
     public async Task<IActionResult> ListarEmRisco([FromQuery] double percentualMaximo = 50)
     {
+        if (percentualMaximo < 0 || percentualMaximo > 100)
+            return BadRequest("percentualMaximo deve estar entre 0 e 100.");
+
         var result = await _getEmRisco.ExecuteAsync(percentualMaximo);
         return Ok(result);
     }

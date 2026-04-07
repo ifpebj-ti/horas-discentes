@@ -211,7 +211,7 @@ export interface AlunoEmRiscoResponse {
 }
 
 export const listarAlunosEmRisco = async (
-  percentualMaximo: number = 50
+  percentualMaximo: number = 100
 ): Promise<AlunoEmRiscoResponse[]> => {
   const response = await api.get<AlunoEmRiscoResponse[]>(
     `/Aluno/risco?percentualMaximo=${percentualMaximo}`

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FaExclamationTriangle, FaUserClock } from 'react-icons/fa';
 
 import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
@@ -22,6 +22,8 @@ const FAIXAS = [
   { label: 'Todos', value: 100 }
 ];
 
+const PAGE_SIZE = 20;
+
 function corProgresso(pct: number) {
   if (pct < 25) return 'text-red-600';
   if (pct < 50) return 'text-orange-500';
@@ -36,25 +38,43 @@ function badgeRisco(pct: number) {
 }
 
 export default function AlunosEmRiscoPage() {
-  const [alunos, setAlunos] = useState<AlunoEmRiscoResponse[]>([]);
+  // cache: todos os alunos até 100% — faixas filtram localmente
+  const [todos, setTodos] = useState<AlunoEmRiscoResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [percentual, setPercentual] = useState(50);
-
-  const carregar = async (pct: number) => {
-    try {
-      setLoading(true);
-      const data = await listarAlunosEmRisco(pct);
-      setAlunos(data);
-    } catch {
-      toast.error('Erro ao carregar alunos em risco.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [pagina, setPagina] = useState(1);
 
   useEffect(() => {
-    carregar(percentual);
-  }, [percentual]);
+    const carregar = async () => {
+      try {
+        setLoading(true);
+        const data = await listarAlunosEmRisco(100);
+        setTodos(data);
+      } catch {
+        toast.error('Erro ao carregar alunos em risco.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    carregar();
+  }, []);
+
+  const alunosFiltrados = useMemo(
+    () => todos.filter((a) => a.porcentagemConclusao <= percentual),
+    [todos, percentual]
+  );
+
+  const totalPaginas = Math.max(1, Math.ceil(alunosFiltrados.length / PAGE_SIZE));
+  const paginaAtual = Math.min(pagina, totalPaginas);
+  const alunosPagina = alunosFiltrados.slice(
+    (paginaAtual - 1) * PAGE_SIZE,
+    paginaAtual * PAGE_SIZE
+  );
+
+  const handleFaixa = (valor: number) => {
+    setPercentual(valor);
+    setPagina(1);
+  };
 
   return (
     <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
@@ -79,7 +99,7 @@ export default function AlunosEmRiscoPage() {
               key={f.value}
               size="sm"
               variant={percentual === f.value ? 'default' : 'outline'}
-              onClick={() => setPercentual(f.value)}
+              onClick={() => handleFaixa(f.value)}
               className="cursor-pointer"
             >
               {f.label}
@@ -88,7 +108,7 @@ export default function AlunosEmRiscoPage() {
         </div>
       </div>
 
-      {!loading && alunos.length === 0 && (
+      {!loading && alunosFiltrados.length === 0 && (
         <div className="text-center py-16 text-gray-400">
           <FaExclamationTriangle className="mx-auto w-10 h-10 mb-3" />
           <p className="text-lg font-medium">Nenhum aluno encontrado nessa faixa.</p>
@@ -96,7 +116,7 @@ export default function AlunosEmRiscoPage() {
       )}
 
       <div className="space-y-3">
-        {alunos.map((aluno) => {
+        {alunosPagina.map((aluno) => {
           const risco = badgeRisco(aluno.porcentagemConclusao);
           return (
             <div
@@ -140,6 +160,32 @@ export default function AlunosEmRiscoPage() {
           );
         })}
       </div>
+
+      {totalPaginas > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-2">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={paginaAtual === 1}
+            onClick={() => setPagina((p) => p - 1)}
+            className="cursor-pointer"
+          >
+            Anterior
+          </Button>
+          <span className="text-sm text-gray-600">
+            {paginaAtual} / {totalPaginas}
+          </span>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={paginaAtual === totalPaginas}
+            onClick={() => setPagina((p) => p + 1)}
+            className="cursor-pointer"
+          >
+            Próxima
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

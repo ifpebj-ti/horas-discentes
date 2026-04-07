@@ -24,12 +24,14 @@ public class GetAlunosEmRiscoUseCase
     public async Task<IEnumerable<AlunoEmRiscoResponse>> ExecuteAsync(double percentualMaximo = 100)
     {
         var alunos = await _alunoRepo.GetAllComTurmaEAtividadesAsync();
+        var limites = (await _limiteRepo.GetAllAsync())
+            .ToDictionary(l => l.CursoId);
+
         var resultado = new List<AlunoEmRiscoResponse>();
 
-        foreach (var aluno in alunos.Where(a => a.IsAtivo && a.Turma != null))
+        foreach (var aluno in alunos)
         {
-            var limite = await _limiteRepo.GetByCursoIdAsync(aluno.Turma!.CursoId);
-            if (limite == null) continue;
+            if (!limites.TryGetValue(aluno.Turma!.CursoId, out var limite)) continue;
 
             var totalComplementar = aluno.Atividades
                 .Where(x => x.Atividade?.Tipo == TipoAtividade.COMPLEMENTAR)
@@ -41,7 +43,9 @@ public class GetAlunosEmRiscoUseCase
             var porcentagem = Math.Round((double)totalComplementar / maximo * 100, 2);
             if (porcentagem > percentualMaximo) continue;
 
-            var periodosDecorridos = CalcularPeriodosDecorridos(aluno.Turma.Periodo);
+            if (!TryCalcularPeriodosDecorridos(aluno.Turma.Periodo, out var periodosDecorridos))
+                continue; // período inválido — dado inconsistente, não expor o aluno
+
             var horasPorPeriodo = Math.Round((double)totalComplementar / periodosDecorridos, 2);
 
             resultado.Add(new AlunoEmRiscoResponse(
@@ -63,25 +67,29 @@ public class GetAlunosEmRiscoUseCase
     }
 
     /// <summary>
-    /// Calcula quantos períodos letivos se passaram desde o início da turma.
+    /// Tenta calcular quantos períodos letivos se passaram desde o início da turma.
     /// Período no formato "YYYY.S" onde S é 1 (jan–jun) ou 2 (jul–dez).
-    /// Resultado mínimo: 1.
+    /// Retorna false se o período for nulo, mal formatado ou com semestre fora de [1,2].
     /// </summary>
-    private static int CalcularPeriodosDecorridos(string? periodo)
+    private static bool TryCalcularPeriodosDecorridos(string? periodo, out int periodosDecorridos)
     {
-        if (periodo == null) return 1;
+        periodosDecorridos = 0;
+
+        if (string.IsNullOrWhiteSpace(periodo)) return false;
 
         var partes = periodo.Split('.');
         if (partes.Length != 2
             || !int.TryParse(partes[0], out var anoInicio)
-            || !int.TryParse(partes[1], out var semInicio))
-            return 1;
+            || !int.TryParse(partes[1], out var semInicio)
+            || semInicio < 1 || semInicio > 2)
+            return false;
 
         var hoje = DateTime.UtcNow;
         var anoAtual = hoje.Year;
         var semAtual = hoje.Month <= 6 ? 1 : 2;
 
         var periodos = (anoAtual - anoInicio) * 2 + (semAtual - semInicio) + 1;
-        return Math.Max(1, periodos);
+        periodosDecorridos = Math.Max(1, periodos);
+        return true;
     }
 }
