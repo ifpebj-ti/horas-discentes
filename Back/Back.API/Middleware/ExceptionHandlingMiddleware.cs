@@ -34,8 +34,11 @@ public class ExceptionHandlingMiddleware
     {
         var (statusCode, mensagem) = MapException(exception);
 
+        var sanitizedMethod = context.Request.Method.Replace("\r", string.Empty).Replace("\n", string.Empty);
+        var sanitizedPath = context.Request.Path.ToString().Replace("\r", string.Empty).Replace("\n", string.Empty);
+
         if (statusCode >= 500)
-            _logger.LogError(exception, "Erro não tratado na requisição {Method} {Path}", context.Request.Method, context.Request.Path);
+            _logger.LogError(exception, "Erro não tratado na requisição {Method} {Path}", sanitizedMethod, sanitizedPath);
         else
             _logger.LogWarning("Requisição rejeitada ({Status}): {Mensagem}", statusCode, mensagem);
 
