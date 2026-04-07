@@ -6,6 +6,7 @@ using Back.Domain.Entities.Aluno;
 using Back.Domain.Entities.AlunoAtividade;
 using Back.Domain.Entities.Coordenador;
 using Back.Domain.Entities.Curso;
+using Back.Domain.Entities.LimiteHorasAluno;
 using Back.Domain.Entities.Turma;
 using Back.Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,8 @@ public static class DevDataSeeder
 {
     public static async Task SeedAsync(ApplicationDbContext context, UserManager<IdentityUser> userManager)
     {
+        await SeedCoordenadorAsync(context, userManager);
+
         if (await context.Cursos.AnyAsync())
             return;
 
@@ -31,6 +34,17 @@ public static class DevDataSeeder
             .Build();
 
         context.Cursos.Add(curso);
+        await context.SaveChangesAsync();
+
+        // Limite de horas do curso
+        var limite = new LimiteHorasAlunoBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCursoId(cursoId)
+            .WithMaximoHorasComplementar(120)
+            .WithMaximoHorasExtensao(80)
+            .Build();
+
+        context.LimitesHoras.Add(limite);
         await context.SaveChangesAsync();
 
         // Turmas
@@ -58,7 +72,7 @@ public static class DevDataSeeder
         await context.SaveChangesAsync();
 
         // Coordenador
-        var coordEmail = "coordenador.ads@ifpe.edu.br";
+        var coordEmail = "coordenador.ads@docente.ifpe.edu.br";
         var coordIdentity = new IdentityUser { UserName = coordEmail, Email = coordEmail, EmailConfirmed = true };
         var coordResult = await userManager.CreateAsync(coordIdentity, "Senha@123");
         if (coordResult.Succeeded)
@@ -131,5 +145,43 @@ public static class DevDataSeeder
 
         await context.SaveChangesAsync();
         Console.WriteLine(" Dev data seed concluído.");
+    }
+
+    private static async Task SeedCoordenadorAsync(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+    {
+        const string coordEmail = "coordenador.ads@docente.ifpe.edu.br";
+        const string coordSenha = "Senha@123";
+
+        // Já existe → nada a fazer
+        if (await userManager.FindByEmailAsync(coordEmail) != null)
+            return;
+
+        var curso = await context.Cursos.FirstOrDefaultAsync();
+        if (curso == null)
+            return; // cursos ainda não existem, o bloco abaixo vai criar junto
+
+        var identity = new IdentityUser { UserName = coordEmail, Email = coordEmail, EmailConfirmed = true };
+        var result = await userManager.CreateAsync(identity, coordSenha);
+        if (!result.Succeeded)
+        {
+            Console.WriteLine($" Falha ao criar coordenador de dev: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            return;
+        }
+
+        await userManager.AddToRoleAsync(identity, "COORDENADOR");
+
+        var coordenador = new CoordenadorBuilder()
+            .WithId(Guid.NewGuid())
+            .WithNome("Prof. Carlos Mendonça")
+            .WithNumeroPortaria("001/2024")
+            .WithDOU("2024-01-15")
+            .WithEmail(coordEmail)
+            .WithCursoId(curso.Id)
+            .WithIdentityUserId(identity.Id)
+            .Build();
+
+        context.Coordenadores.Add(coordenador);
+        await context.SaveChangesAsync();
+        Console.WriteLine(" Coordenador de dev criado.");
     }
 }
