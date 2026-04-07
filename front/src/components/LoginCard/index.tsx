@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { FaCircleNotch } from 'react-icons/fa';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -70,6 +70,7 @@ export const LoginCard = () => {
             <Input
               id="password"
               isPassword
+              icon={faLock}
               placeholder="Digite sua senha de segurança."
               {...register('password')}
             />

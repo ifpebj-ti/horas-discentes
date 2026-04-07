@@ -4,6 +4,8 @@ import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { faLock } from '@fortawesome/free-solid-svg-icons';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -82,7 +84,8 @@ export default function PerfilCoordenadorPage() {
           </label>
           <Input
             id="senha-atual"
-            type="password"
+            isPassword
+            icon={faLock}
             autoComplete="current-password"
             value={senhaAtual}
             onChange={(e) => setSenhaAtual(e.target.value)}
@@ -98,7 +101,8 @@ export default function PerfilCoordenadorPage() {
           </label>
           <Input
             id="nova-senha"
-            type="password"
+            isPassword
+            icon={faLock}
             autoComplete="new-password"
             value={novaSenha}
             onChange={(e) => setNovaSenha(e.target.value)}
@@ -114,7 +118,8 @@ export default function PerfilCoordenadorPage() {
           </label>
           <Input
             id="confirmar-senha"
-            type="password"
+            isPassword
+            icon={faLock}
             autoComplete="new-password"
             value={confirmarSenha}
             onChange={(e) => setConfirmarSenha(e.target.value)}

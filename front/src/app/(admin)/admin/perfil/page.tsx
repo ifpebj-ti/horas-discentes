@@ -4,6 +4,8 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { faLock } from '@fortawesome/free-solid-svg-icons';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -137,7 +139,8 @@ export default function PerfilAdminPage() {
                     </label>
                     <Input
                       id="nova-senha-reset"
-                      type="password"
+                      isPassword
+                      icon={faLock}
                       value={novaSenhaReset}
                       onChange={(e) => setNovaSenhaReset(e.target.value)}
                       disabled={loadingReset}
@@ -153,7 +156,8 @@ export default function PerfilAdminPage() {
                     </label>
                     <Input
                       id="confirmar-senha-reset"
-                      type="password"
+                      isPassword
+                      icon={faLock}
                       value={confirmarSenhaReset}
                       onChange={(e) => setConfirmarSenhaReset(e.target.value)}
                       disabled={loadingReset}
