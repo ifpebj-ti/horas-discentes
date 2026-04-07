@@ -71,7 +71,7 @@ export const LoginCard = () => {
               id="password"
               isPassword
               icon={faLock}
-              placeholder="Digite sua senha de segurança."
+              placeholder="Digite sua senha."
               {...register('password')}
             />
 
@@ -81,10 +81,6 @@ export const LoginCard = () => {
               </p>
             )}
           </div>
-
-          <p className="text-sm text-gray-600 mb-2">
-            Digite sua senha de segurança.
-          </p>
 
           <div className="text-right mb-4">
             <a

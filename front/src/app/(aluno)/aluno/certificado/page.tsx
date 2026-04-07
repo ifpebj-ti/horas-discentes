@@ -17,8 +17,8 @@ import NewCertificateButton from '@/components/NewCertificateButton';
 import ViewCertificate from '@/components/ViewCertificate';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import { useMeusDadosDetalhados } from '@/hooks/useStudent';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
-import { obterMeusDadosDetalhados } from '@/services/studentService';
 import {
   listarMeusCertificados,
   baixarAnexoCertificado
@@ -108,6 +108,12 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
           <div className="flex flex-col gap-4 mb-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
+                <button
+                  onClick={() => router.push('/aluno')}
+                  className="text-sm text-primary hover:underline mb-2 flex items-center gap-1"
+                >
+                  ← Início
+                </button>
                 <h1 className="text-xl sm:text-2xl font-bold lg:text-3xl mb-1 text-gray-900">
                   Meus Certificados
                 </h1>
@@ -194,12 +200,7 @@ export default function Certificados() {
   const { data: session, status } = useSession();
   const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
   const loadingOverlay = useLoadingOverlay(true);
-  const [userHoras, setUserHoras] = useState<{
-    totalHorasExtensao: number;
-    maximoHorasExtensao: number;
-    totalHorasComplementar: number;
-    maximoHorasComplementar: number;
-  } | null>(null);
+  const { data: detalhado } = useMeusDadosDetalhados();
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -207,10 +208,7 @@ export default function Certificados() {
     const fetchData = async () => {
       try {
         loadingOverlay.show();
-        const [certData, detalhado] = await Promise.all([
-          listarMeusCertificados(),
-          obterMeusDadosDetalhados()
-        ]);
+        const certData = await listarMeusCertificados();
 
         const mapped = certData.map((cert) => ({
           id: cert.id,
@@ -228,14 +226,8 @@ export default function Certificados() {
         }));
 
         setCertificados(mapped);
-        setUserHoras({
-          totalHorasExtensao: detalhado.totalHorasExtensao ?? 0,
-          maximoHorasExtensao: detalhado.maximoHorasExtensao ?? 0,
-          totalHorasComplementar: detalhado.totalHorasComplementar ?? 0,
-          maximoHorasComplementar: detalhado.maximoHorasComplementar ?? 0
-        });
       } catch (error) {
-        console.error('Erro ao buscar certificados ou dados do aluno:', error);
+        console.error('Erro ao buscar certificados:', error);
       } finally {
         loadingOverlay.hide();
       }
@@ -250,17 +242,16 @@ export default function Certificados() {
   }
   if (!session?.user) return null;
 
-  // 🔑 monta o user com dados da sessão + resumo de horas do backend
   const user: Types.Usuario = {
     id: session.user.entidadeId!,
     name: session.user.name,
     email: session.user.email,
     role: session.user.role,
     isNewPPC: session.user.isNewPpc === true,
-    totalHorasExtensao: userHoras?.totalHorasExtensao ?? 0,
-    maximoHorasExtensao: userHoras?.maximoHorasExtensao ?? 0,
-    totalHorasComplementar: userHoras?.totalHorasComplementar ?? 0,
-    maximoHorasComplementar: userHoras?.maximoHorasComplementar ?? 0
+    totalHorasExtensao: detalhado?.totalHorasExtensao ?? 0,
+    maximoHorasExtensao: detalhado?.maximoHorasExtensao ?? 0,
+    totalHorasComplementar: detalhado?.totalHorasComplementar ?? 0,
+    maximoHorasComplementar: detalhado?.maximoHorasComplementar ?? 0
   };
 
   return (

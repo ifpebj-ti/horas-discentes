@@ -340,7 +340,7 @@ export default function HoursRegistrationForm({
                           }}
                           className="text-blue-600 hover:text-blue-800 underline font-medium"
                         >
-                          {termosExpandidos ? 'Ocultar detalhes' : 'Leia mais'}
+                          {termosExpandidos ? 'Ler menos' : 'Leia mais'}
                         </button>{' '}
                         com a realidade dos fatos.
                       </span>
