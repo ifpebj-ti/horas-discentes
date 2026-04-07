@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Redefinição de Senha</title>
+  <style>
+    html, body { margin:0 !important; padding:0 !important; height:100% !important; width:100% !important; }
+    * { -ms-text-size-adjust:100%; -webkit-text-size-adjust:100%; }
+    table, td { mso-table-lspace:0pt !important; mso-table-rspace:0pt !important; }
+    table { border-collapse:collapse !important; }
+    img { -ms-interpolation-mode:bicubic; border:0; line-height:100%; outline:none; text-decoration:none; display:block; }
+    a { text-decoration:none; }
+    body {
+      background:#0f172a;
+      background-image: radial-gradient(1200px 600px at 20% -10%, #1e293b 0%, rgba(15,23,42,0) 60%),
+                        radial-gradient(1000px 500px at 120% 10%, #0ea5e9 0%, rgba(14,165,233,0) 50%),
+                        radial-gradient(800px 400px at -10% 120%, #22d3ee 0%, rgba(34,211,238,0) 55%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color:#0b1220;
+    }
+    .wrapper { padding:28px 16px; }
+    .container {
+      max-width:640px;
+      margin:0 auto;
+      background:#ffffff;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(2,6,23,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+    .header {
+      background:linear-gradient(135deg, #0ea5e9 0%, #22d3ee 50%, #38bdf8 100%);
+      padding:28px 28px 18px;
+      color:#00111a;
+    }
+    .brand {
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:1.2px;
+      text-transform:uppercase;
+      background:rgba(255,255,255,0.85);
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:8px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    }
+    .title {
+      margin:18px 0 6px;
+      font-size:24px;
+      line-height:1.2;
+      font-weight:800;
+      color:#00202e;
+      text-shadow:0 1px 0 rgba(255,255,255,0.35);
+    }
+    .subtitle {
+      margin:0;
+      color:#043042;
+      font-size:14px;
+      opacity:.9;
+    }
+    .content { padding:28px; }
+    .hello { font-size:16px; color:#0f172a; margin:0 0 14px; }
+    .text  { font-size:15px; color:#334155; margin:0 0 18px; }
+    .code-box {
+      margin:22px 0;
+      background:linear-gradient(180deg, #0b1220 0%, #111827 100%);
+      border-radius:12px;
+      padding:20px;
+      text-align:center;
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow:0 10px 30px rgba(2,6,23,0.45), inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .code-label {
+      color:#94a3b8;
+      font-size:12px;
+      letter-spacing:1.8px;
+      text-transform:uppercase;
+    }
+    .code {
+      margin-top:10px;
+      display:inline-block;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size:28px;
+      letter-spacing:6px;
+      color:#e2f4ff;
+      padding:10px 16px;
+      border-radius:10px;
+      background:linear-gradient(180deg, rgba(14,165,233,.18), rgba(34,211,238,.18));
+      box-shadow: inset 0 0 0 1px rgba(56,189,248,.4), 0 8px 24px rgba(14,165,233,.25);
+    }
+    .expiry-note {
+      text-align:center;
+      margin:0 0 18px;
+      font-size:13px;
+      color:#64748b;
+    }
+    .divider {
+      height:1px;
+      background:linear-gradient(90deg, rgba(2,6,23,0), rgba(2,6,23,.12), rgba(2,6,23,0));
+      margin:10px 0 0;
+    }
+    .footer {
+      padding:18px 28px 26px;
+      background:#f8fafc;
+      color:#64748b;
+      font-size:12px;
+      text-align:center;
+    }
+    .muted { color:#94a3b8; }
+    @media (prefers-color-scheme: dark) {
+      .container { background:#0b1220; }
+      .content { background:transparent; }
+      .hello, .text { color:#e5e7eb; }
+      .footer { background:#0b1220; color:#94a3b8; }
+      .divider { background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.12), rgba(255,255,255,0)); }
+    }
+    @media screen and (max-width:560px) {
+      .title { font-size:20px; }
+      .content { padding:22px; }
+      .code { font-size:24px; letter-spacing:5px; }
+    }
+    <!--[if mso]>
+    <style>.code { letter-spacing:4px !important; }</style>
+    <![endif]-->
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+      <tr>
+        <td>
+          <div class="container">
+            <div class="header">
+              <span class="brand">hora+ — Segurança da Conta</span>
+              <h1 class="title">Redefinição de senha</h1>
+              <p class="subtitle">Confirme a identidade para continuar</p>
+            </div>
+            <div class="content">
+              <p class="hello">Olá, {{NOME}}!</p>
+              <p class="text">Foi solicitada a redefinição da senha da conta associada a este e-mail. Use o código abaixo para verificar sua identidade e prosseguir com a alteração.</p>
+
+              <div class="code-box">
+                <div class="code-label">Seu código de verificação</div>
+                <div class="code">{{CODIGO}}</div>
+              </div>
+
+              <p class="expiry-note">O código expira em <strong>10 minutos</strong>. Por segurança, não compartilhe com ninguém.</p>
+
+              <div class="divider"></div>
+
+              <p class="text" style="margin-top:18px;">Se você não solicitou a redefinição de senha, <span class="muted">nenhuma ação é necessária</span>. Recomendamos revisar as atividades recentes da sua conta.</p>
+            </div>
+            <div class="footer">
+              Este é um e-mail automático; respostas não são monitoradas.<br/>
+              <span class="muted">© {{ANO}} hora+ — IFPE. Todos os direitos reservados.</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
