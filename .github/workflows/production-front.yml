@@ -1,6 +1,13 @@
 name: Frontend CI/CD Workflow
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "front/**"
+      - ".github/workflows/**"
+
   pull_request:
     branches:
       - main
@@ -36,13 +43,13 @@ jobs:
           echo "${{ github.event.pull_request.body }}" > body.txt
 
           change_type=""
-          if grep -q "\[x\] novo-marco" body.txt; then
+          if grep -qi "\[x\] novo-marco" body.txt; then
             change_type="novo-marco"
-          elif grep -q "\[x\] nova-feature" body.txt; then
+          elif grep -qi "\[x\] nova-feature" body.txt; then
             change_type="nova-feature"
-          elif grep -q "\[x\] bug-fix" body.txt; then
+          elif grep -qi "\[x\] bug-fix" body.txt; then
             change_type="bug-fix"
-          elif grep -q "\[x\] outros" body.txt; then
+          elif grep -qi "\[x\] outros" body.txt; then
             change_type="outros"
           else
             echo "No option scheduled correctly in 'change_type:'"
@@ -91,9 +98,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: tag-creation
     env:
-      CREATED_TAG: ${{ needs.tag-creation.outputs.created_tag }}
+      CREATED_TAG: ${{ needs.tag-creation.outputs.created_tag || github.sha }}
     if: >
-      (github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch')
+      always() &&
+      (needs.tag-creation.result == 'success' || needs.tag-creation.result == 'skipped') &&
+      (github.event.pull_request.merged == true || github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     permissions:
       contents: read
       packages: write
@@ -173,6 +182,7 @@ jobs:
     name: 3. Automatic Creation Process of New Releases
     runs-on: ubuntu-latest
     needs: [tag-creation, frontend-docker]
+    if: github.event.pull_request.merged == true
     env:
       CREATED_TAG: ${{ needs.tag-creation.outputs.created_tag }}
       CHANGE_TYPE: ${{ needs.tag-creation.outputs.change_type }}
