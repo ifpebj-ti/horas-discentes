@@ -195,3 +195,26 @@ export const marcarDownloadExtensao = async (
 ): Promise<void> => {
   await api.patch(`/Aluno/${alunoId}/marcar-download/extensao`);
 };
+
+export interface AlunoEmRiscoResponse {
+  id: string;
+  nome: string;
+  matricula: string;
+  turmaPeriodo: string;
+  turmaCodigo: string;
+  cursoNome: string;
+  totalHorasComplementar: number;
+  maximoHorasComplementar: number;
+  porcentagemConclusao: number;
+  periodosDecorridos: number;
+  horasPorPeriodo: number;
+}
+
+export const listarAlunosEmRisco = async (
+  percentualMaximo: number = 50
+): Promise<AlunoEmRiscoResponse[]> => {
+  const response = await api.get<AlunoEmRiscoResponse[]>(
+    `/Aluno/risco?percentualMaximo=${percentualMaximo}`
+  );
+  return response.data;
+};

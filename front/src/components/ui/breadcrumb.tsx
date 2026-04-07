@@ -94,7 +94,8 @@ const breadcrumbRouteMap: Record<string, string> = {
   atividade: 'Atividades',
   certificados: 'Certificados',
   contabilizarHoras: 'Contabilizar Horas',
-  turma: 'Turmas'
+  turma: 'Turmas',
+  'alunos-em-risco': 'Alunos em Risco'
 };
 
 // Dynamic segments that follow a parent with dynamic children (treated as detail pages)
