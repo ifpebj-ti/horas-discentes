@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IAlunoRepository, AlunoRepository>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IEmailTemplateService, EmailTemplateService>();
         services.AddScoped<IConviteCoordenadorRepository, ConviteCoordenadorRepository>();
         services.AddScoped<ICoordenadorRepository, CoordenadorRepository>();
         services.AddScoped<IAuthService, AuthService>();

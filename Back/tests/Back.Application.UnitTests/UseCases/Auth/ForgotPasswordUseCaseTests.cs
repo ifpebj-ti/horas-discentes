@@ -16,6 +16,7 @@ public class ForgotPasswordUseCaseTests
     private readonly Mock<IResetPasswordRepository> _repo = new();
     private readonly Mock<UserManager<IdentityUser>> _userManager;
     private readonly Mock<IEmailService> _emailService = new();
+    private readonly Mock<IEmailTemplateService> _templateService = new();
 
     public ForgotPasswordUseCaseTests()
     {
@@ -37,7 +38,8 @@ public class ForgotPasswordUseCaseTests
             _identityLookup.Object,
             _repo.Object,
             _userManager.Object,
-            _emailService.Object
+            _emailService.Object,
+            _templateService.Object
         );
 
     [Fact]

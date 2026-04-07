@@ -16,11 +16,13 @@ public class ConviteCoordenadorRepository : IConviteCoordenadorRepository
         _context = context;
     }
 
-    public async Task AddAsync(ConviteCoordenador convite)
+    public Task AddAsync(ConviteCoordenador convite)
     {
         _context.Convites.Add(convite);
-        await _context.SaveChangesAsync();
+        return Task.CompletedTask;
     }
+
+    public Task SaveChangesAsync() => _context.SaveChangesAsync();
 
     public async Task<ConviteCoordenador?> GetValidByTokenAsync(string token)
     {
