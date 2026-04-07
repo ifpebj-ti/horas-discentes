@@ -21,7 +21,7 @@ ENV NEXT_PUBLIC_BUILDTIME=${NEXT_PUBLIC_BUILDTIME:-$BUILDTIME}
 
 # Dependências e build
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY . .
 RUN npm run build
 
