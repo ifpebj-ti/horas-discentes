@@ -1,11 +1,11 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRight, MoreHorizontal } from 'lucide-react';
-import { usePathname } from 'next/navigation';
 
 function Breadcrumb({ ...props }: React.ComponentProps<'nav'>) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
@@ -15,14 +15,23 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
   return (
     <ol
       data-slot="breadcrumb-list"
-      className={cn('text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5', className)}
+      className={cn(
+        'text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5',
+        className
+      )}
       {...props}
     />
   );
 }
 
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
-  return <li data-slot="breadcrumb-item" className={cn('inline-flex items-center gap-1.5', className)} {...props} />;
+  return (
+    <li
+      data-slot="breadcrumb-item"
+      className={cn('inline-flex items-center gap-1.5', className)}
+      {...props}
+    />
+  );
 }
 
 function BreadcrumbLink({
@@ -31,7 +40,13 @@ function BreadcrumbLink({
   ...props
 }: React.ComponentProps<'a'> & { asChild?: boolean }) {
   const Comp = asChild ? Slot : 'a';
-  return <Comp data-slot="breadcrumb-link" className={cn('hover:text-foreground transition-colors', className)} {...props} />;
+  return (
+    <Comp
+      data-slot="breadcrumb-link"
+      className={cn('hover:text-foreground transition-colors', className)}
+      {...props}
+    />
+  );
 }
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
@@ -47,7 +62,11 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
   );
 }
 
-function BreadcrumbSeparator({ children, className, ...props }: React.ComponentProps<'li'>) {
+function BreadcrumbSeparator({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<'li'>) {
   return (
     <li
       data-slot="breadcrumb-separator"
@@ -61,7 +80,10 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
   );
 }
 
-function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'>) {
+function BreadcrumbEllipsis({
+  className,
+  ...props
+}: React.ComponentProps<'span'>) {
   return (
     <span
       data-slot="breadcrumb-ellipsis"
@@ -110,7 +132,8 @@ export function BreadcrumbAuto({ map = {} }: { map?: Record<string, string> }) {
   // Determine home href: first meaningful segment
   const homeSegment = segments[0];
   const homeHref = homeSegment ? `/${homeSegment}` : '/';
-  const homeLabel = (homeSegment ? routeMap[homeSegment] : undefined) ?? 'Início';
+  const homeLabel =
+    (homeSegment ? routeMap[homeSegment] : undefined) ?? 'Início';
 
   return (
     <Breadcrumb className="mb-4">
@@ -128,7 +151,13 @@ export function BreadcrumbAuto({ map = {} }: { map?: Record<string, string> }) {
           const label = (segment && routeMap[segment]) ?? segment;
 
           // Skip role-root segments already shown as home (aluno, admin, coordenacao)
-          if (absoluteIndex === 1 && (segment === 'aluno' || segment === 'admin' || segment === 'coordenacao' || segment === 'coordenador')) {
+          if (
+            absoluteIndex === 1 &&
+            (segment === 'aluno' ||
+              segment === 'admin' ||
+              segment === 'coordenacao' ||
+              segment === 'coordenador')
+          ) {
             return null;
           }
 
@@ -137,7 +166,9 @@ export function BreadcrumbAuto({ map = {} }: { map?: Record<string, string> }) {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {isLast || isDetailId ? (
-                  <BreadcrumbPage className="text-gray-500 select-none">{label}</BreadcrumbPage>
+                  <BreadcrumbPage className="text-gray-500 select-none">
+                    {label}
+                  </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink href={fullPath}>{label}</BreadcrumbLink>
                 )}

@@ -3,9 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
-import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';
 
 import { Input } from '@/components/ui/input';
+
+import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';
+
 import { Button } from '../ui/button';
 import { useResetPassword } from './hooks/useResetPassword';
 import { StepsDots } from './StepsDots';
@@ -99,7 +101,6 @@ export const ResetPassword = () => {
                       type="submit"
                       disabled={loading || !email}
                       className="w-full"
-                     
                     >
                       {loading ? 'Enviando...' : 'Enviar Código'}
                     </Button>
@@ -160,7 +161,6 @@ export const ResetPassword = () => {
                         type="submit"
                         disabled={loading || code.length !== 6}
                         className="w-full"
-                       
                       >
                         {loading ? 'Validando...' : 'Validar Código'}
                       </Button>
@@ -256,7 +256,6 @@ export const ResetPassword = () => {
                         type="submit"
                         disabled={loading || !isValid || !senhasIguais}
                         className="w-full"
-                       
                       >
                         {loading ? 'Salvando...' : 'Salvar Nova Senha'}
                       </Button>

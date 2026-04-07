@@ -1,14 +1,15 @@
 'use client';
 
 import Image from 'next/image';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
 import {
   faUser,
   faIdCard,
   faNewspaper
 } from '@fortawesome/free-solid-svg-icons';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import { useCreateCoordinatorAccount } from './hooks/useCreateCoordinatorAccount';
 
@@ -178,7 +179,6 @@ export const CreateCoordinatorAccount = ({
               type="submit"
               disabled={loading || !isValid || !isEmailValid}
               className="w-full"
-             
             >
               {loading ? 'Criando...' : 'Criar Conta'}
             </Button>

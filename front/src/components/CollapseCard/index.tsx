@@ -57,7 +57,10 @@ export function CollapseCard({
       >
         {/* Esquerda: ícone + título + badges */}
         <div className="flex items-start gap-3">
-          <FontAwesomeIcon icon={icon} className="text-xl text-[#1351B4] pt-0.5" />
+          <FontAwesomeIcon
+            icon={icon}
+            className="text-xl text-[#1351B4] pt-0.5"
+          />
           <div className="flex flex-col text-left">
             <span className="font-medium">{title}</span>
             <div className="flex items-center gap-2 mt-1">
@@ -67,7 +70,9 @@ export function CollapseCard({
                 </span>
               )}
               {statusText && statusClass && (
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}
+                >
                   {statusText}
                 </span>
               )}
@@ -78,7 +83,9 @@ export function CollapseCard({
         {/* Direita: indicador + seta */}
         <div className="flex items-center gap-2">
           {indicatorNumber !== undefined && (
-            <span className={`text-white text-xs px-2 py-1 rounded-full ${indicatorColor}`}>
+            <span
+              className={`text-white text-xs px-2 py-1 rounded-full ${indicatorColor}`}
+            >
               {indicatorNumber}
             </span>
           )}

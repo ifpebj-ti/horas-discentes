@@ -93,4 +93,6 @@ export const hoursRegistrationFormSchema = z
   );
 
 // Tipo inferido a partir do schema para usar no formulário
-export type HoursRegistrationFormSchema = z.infer<typeof hoursRegistrationFormSchema>;
+export type HoursRegistrationFormSchema = z.infer<
+  typeof hoursRegistrationFormSchema
+>;

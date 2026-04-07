@@ -9,10 +9,11 @@ import {
   FaHourglassHalf,
   FaRegFileAlt
 } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
@@ -23,7 +24,7 @@ import {
   aprovarCertificado,
   reprovarCertificado
 } from '@/services/certificateService';
-import { toast } from 'react-toastify';
+
 const useIsMobile = () => {
   const [mobile, setMobile] = useState(false);
   useEffect(() => {
@@ -226,11 +227,23 @@ export default function ValidacaoCertificadosPage() {
               <table className="w-full text-sm">
                 <thead
                   className="text-left text-gray-700 text-xs uppercase tracking-wide"
-                  style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}
+                  style={{
+                    backgroundColor: '#F2F2F2',
+                    borderBottom: '1px solid #D1D1D1'
+                  }}
                 >
                   <tr>
-                    {['Turma', 'Categoria', 'Atividade', 'Horas', 'Aluno', 'Status'].map((h) => (
-                      <th key={h} className="px-4 py-3">{h}</th>
+                    {[
+                      'Turma',
+                      'Categoria',
+                      'Atividade',
+                      'Horas',
+                      'Aluno',
+                      'Status'
+                    ].map((h) => (
+                      <th key={h} className="px-4 py-3">
+                        {h}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -241,16 +254,23 @@ export default function ValidacaoCertificadosPage() {
                       onClick={() => handleSelectCertificado(c)}
                       className={`border-b last:border-none cursor-pointer transition-colors ${certificadoSelecionado?.id === c.id ? 'bg-blue-50' : 'hover:bg-gray-50'}`}
                     >
-                      <td className="px-4 py-3 text-gray-700">{c.periodoTurma}</td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {c.periodoTurma}
+                      </td>
                       <td className="px-4 py-3">
                         <span className="px-2 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                           {c.categoria}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-700 truncate max-w-xs" title={c.tituloAtividade}>
+                      <td
+                        className="px-4 py-3 text-gray-700 truncate max-w-xs"
+                        title={c.tituloAtividade}
+                      >
                         {c.tituloAtividade}
                       </td>
-                      <td className="px-4 py-3 text-gray-700">{c.cargaHoraria}h</td>
+                      <td className="px-4 py-3 text-gray-700">
+                        {c.cargaHoraria}h
+                      </td>
                       <td className="px-4 py-3 text-gray-700">{c.alunoNome}</td>
                       <td className="px-4 py-3">
                         <StatusIcon status={c.status as StatusCertificado} />
@@ -291,14 +311,18 @@ export default function ValidacaoCertificadosPage() {
                   certificadoSelecionado.dataFim
                 )}
                 workload={`${certificadoSelecionado.cargaHoraria} horas`}
-                {...(certificadoSelecionado?.status === StatusCertificado.PENDENTE
+                {...(certificadoSelecionado?.status ===
+                StatusCertificado.PENDENTE
                   ? { onApprove: handleApprove }
                   : {})}
-                {...(certificadoSelecionado?.status === StatusCertificado.PENDENTE
+                {...(certificadoSelecionado?.status ===
+                StatusCertificado.PENDENTE
                   ? { onReject: handleReject }
                   : {})}
                 onViewPdf={() => handleViewPdf(certificadoSelecionado.id)}
-                {...(isMobile ? { onBack: () => setCertificadoSelecionado(null) } : {})}
+                {...(isMobile
+                  ? { onBack: () => setCertificadoSelecionado(null) }
+                  : {})}
               />
             ) : (
               !isMobile && (

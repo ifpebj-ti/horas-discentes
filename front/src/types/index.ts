@@ -17,7 +17,8 @@ export const mapStatusCertificado = (
   status: string | number
 ): StatusCertificado => {
   if (status === 'APROVADO' || status === 1) return StatusCertificado.APROVADO;
-  if (status === 'REPROVADO' || status === 2) return StatusCertificado.REPROVADO;
+  if (status === 'REPROVADO' || status === 2)
+    return StatusCertificado.REPROVADO;
   return StatusCertificado.PENDENTE;
 };
 

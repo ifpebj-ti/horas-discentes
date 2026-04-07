@@ -2,10 +2,10 @@
 
 import { useRef } from 'react';
 
+import { Button } from '@/components/ui/button';
+
 import { faFilePdf, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { Button } from '@/components/ui/button';
 
 interface CustomFileInputProps {
   selectedFile: File | null;
@@ -46,8 +46,14 @@ export function CustomFileInput({
       {selectedFile && (
         <div className="mt-3 flex items-center justify-between p-2 bg-gray-100 border rounded-md">
           <div className="flex items-center gap-2 overflow-hidden">
-            <FontAwesomeIcon icon={faFilePdf} className="text-red-500 flex-shrink-0" />
-            <span className="text-sm text-gray-700 truncate" title={selectedFile.name}>
+            <FontAwesomeIcon
+              icon={faFilePdf}
+              className="text-red-500 flex-shrink-0"
+            />
+            <span
+              className="text-sm text-gray-700 truncate"
+              title={selectedFile.name}
+            >
               {selectedFile.name}
             </span>
           </div>

@@ -2,8 +2,9 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { toast } from 'react-toastify';
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
+
 import HoursRegistrationForm from '@/components/HoursRegistrationForm';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 
 import {
   listarAtividades,
@@ -25,7 +26,9 @@ export default function NovoCertificado() {
         setExtensao(atividades.filter((a) => a.tipo === 'EXTENSAO'));
       } catch (error) {
         console.error('Erro ao buscar atividades:', error);
-        toast.error('Não foi possível carregar as categorias. Tente novamente.');
+        toast.error(
+          'Não foi possível carregar as categorias. Tente novamente.'
+        );
       } finally {
         setLoadingAtividades(false);
       }

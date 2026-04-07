@@ -36,9 +36,12 @@ export default function ViewCertificate({
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'APROVADO': return 'Aprovado';
-      case 'REPROVADO': return 'Reprovado';
-      default: return 'Pendente';
+      case 'APROVADO':
+        return 'Aprovado';
+      case 'REPROVADO':
+        return 'Reprovado';
+      default:
+        return 'Pendente';
     }
   };
 

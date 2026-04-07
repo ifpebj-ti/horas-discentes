@@ -46,6 +46,7 @@ function PerguntasFrequentesConteudo() {
   useEffect(() => {
     const questionId = searchParams.get('id');
     if (questionId && faqData.some((item) => item.id === questionId)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenAccordion(questionId);
       setTimeout(() => {
         const element = document.getElementById(questionId);

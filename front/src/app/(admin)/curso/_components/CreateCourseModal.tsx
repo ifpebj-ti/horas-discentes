@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { FaGraduationCap, FaTimes } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,9 +12,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 
 import { CreateCursoRequest, criarCurso } from '@/services/courseService';
-import { toast } from 'react-toastify';
 
 interface CreateCourseModalProps {
   isOpen: boolean;

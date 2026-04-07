@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-
 import ViewCertificate from '@/components/ViewCertificate';
 
 import { Certificado } from '@/types';

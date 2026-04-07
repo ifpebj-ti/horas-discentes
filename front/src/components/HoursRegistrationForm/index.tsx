@@ -1,6 +1,5 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
-
 import {
   FaClock,
   FaFileAlt,
@@ -38,7 +37,10 @@ export default function HoursRegistrationForm({
     isLoading,
     errors,
     tipoRegistro
-  } = useHoursRegistrationForm({ categoriasComplementares, categoriasExtensao });
+  } = useHoursRegistrationForm({
+    categoriasComplementares,
+    categoriasExtensao
+  });
 
   const { register } = formMethods;
   const [termosExpandidos, setTermosExpandidos] = React.useState(false);
@@ -152,7 +154,9 @@ export default function HoursRegistrationForm({
                     value: c.nome,
                     label: `${c.nome}`
                   }))}
-                  {...(errors.categoria?.message ? { error: errors.categoria.message } : {})}
+                  {...(errors.categoria?.message
+                    ? { error: errors.categoria.message }
+                    : {})}
                 />
               )}
             />

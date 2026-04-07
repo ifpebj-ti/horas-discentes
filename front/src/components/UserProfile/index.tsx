@@ -1,7 +1,5 @@
 'use client';
 
-import { CircleUserRound, LogOut, ShieldCheck } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,6 +9,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+
+import { CircleUserRound, LogOut, ShieldCheck } from 'lucide-react';
 
 interface UserProfileProps {
   user: {
@@ -27,7 +27,9 @@ const roleLabel: Record<string, string> = {
 };
 
 export default function UserProfile({ user, onLogout }: UserProfileProps) {
-  const displayRole = user.role ? (roleLabel[user.role.toUpperCase()] ?? user.role) : '';
+  const displayRole = user.role
+    ? (roleLabel[user.role.toUpperCase()] ?? user.role)
+    : '';
 
   return (
     <DropdownMenu>
@@ -40,7 +42,9 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-xs font-semibold mb-2 text-muted-foreground">Usuário:</p>
+            <p className="text-xs font-semibold mb-2 text-muted-foreground">
+              Usuário:
+            </p>
             <p className="text-sm font-medium leading-none">{user.name}</p>
           </div>
         </DropdownMenuLabel>
@@ -48,7 +52,9 @@ export default function UserProfile({ user, onLogout }: UserProfileProps) {
         <DropdownMenuSeparator />
 
         <div className="px-2 py-1.5">
-          <p className="text-xs font-semibold mb-2 text-muted-foreground">Perfil:</p>
+          <p className="text-xs font-semibold mb-2 text-muted-foreground">
+            Perfil:
+          </p>
           <div className="flex items-center text-sm text-gray-800">
             <ShieldCheck className="mr-2 h-4 w-4 text-green-600 flex-shrink-0" />
             <span>{displayRole}</span>

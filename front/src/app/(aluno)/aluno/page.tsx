@@ -2,20 +2,24 @@
 
 import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
-import { RecentCertificates } from './_components/RecentCertificates';
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
-import StatsSummary from '@/components/Faq';
-import LoadingOverlay from '@/components/LoadingOverlay';
-import NewCertificateButton from '@/components/NewCertificateButton';
-import GeneralProgress from '@/components/GeneralProgress';
-
-import { useMeusDadosDetalhados } from '@/hooks/useStudent';
-import { useMeusCertificados } from '@/hooks/useCertificates';
-import { baixarAnexoCertificado } from '@/services/certificateService';
-import * as Types from '@/types';
-import { mapStatusCertificado, mapTipoCertificado, StatusCertificado } from '@/types';
 import { toast } from 'react-toastify';
 
+import { RecentCertificates } from './_components/RecentCertificates';
+import StatsSummary from '@/components/Faq';
+import GeneralProgress from '@/components/GeneralProgress';
+import LoadingOverlay from '@/components/LoadingOverlay';
+import NewCertificateButton from '@/components/NewCertificateButton';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
+
+import { useMeusCertificados } from '@/hooks/useCertificates';
+import { useMeusDadosDetalhados } from '@/hooks/useStudent';
+import { baixarAnexoCertificado } from '@/services/certificateService';
+import * as Types from '@/types';
+import {
+  mapStatusCertificado,
+  mapTipoCertificado,
+  StatusCertificado
+} from '@/types';
 
 function AlunoPageContent({
   user,
@@ -80,7 +84,9 @@ function AlunoPageContent({
                 totalHoras={user.totalHorasComplementar ?? 0}
                 totalNecessarias={user.maximoHorasComplementar ?? 0}
                 onCategoriaClick={setCategoriaKeySelecionada}
-                {...(categoriaKeySelecionada ? { categoriaKey: categoriaKeySelecionada } : {})}
+                {...(categoriaKeySelecionada
+                  ? { categoriaKey: categoriaKeySelecionada }
+                  : {})}
               />
 
               {mostrarExtensao && (
@@ -91,7 +97,9 @@ function AlunoPageContent({
                   totalHoras={user.totalHorasExtensao ?? 0}
                   totalNecessarias={user.maximoHorasExtensao ?? 0}
                   onCategoriaClick={setCategoriaKeySelecionada}
-                  {...(categoriaKeySelecionada ? { categoriaKey: categoriaKeySelecionada } : {})}
+                  {...(categoriaKeySelecionada
+                    ? { categoriaKey: categoriaKeySelecionada }
+                    : {})}
                 />
               )}
 
@@ -105,13 +113,19 @@ function AlunoPageContent({
               <StatsSummary
                 total={certificados.length}
                 approved={
-                  certificados.filter((c) => c.status === StatusCertificado.APROVADO).length
+                  certificados.filter(
+                    (c) => c.status === StatusCertificado.APROVADO
+                  ).length
                 }
                 pending={
-                  certificados.filter((c) => c.status === StatusCertificado.PENDENTE).length
+                  certificados.filter(
+                    (c) => c.status === StatusCertificado.PENDENTE
+                  ).length
                 }
                 rejected={
-                  certificados.filter((c) => c.status === StatusCertificado.REPROVADO).length
+                  certificados.filter(
+                    (c) => c.status === StatusCertificado.REPROVADO
+                  ).length
                 }
               />
             </aside>
@@ -131,7 +145,6 @@ export default function Aluno() {
     useMeusCertificados();
 
   const { entidadeId, name, email, role, isNewPPC } =
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (session?.user as any) || {};
 
   const user: Types.Usuario = useMemo(
@@ -141,10 +154,18 @@ export default function Aluno() {
       email: email || '',
       role: role || '',
       isNewPPC: isNewPPC === true,
-      ...(userData?.totalHorasExtensao !== undefined && { totalHorasExtensao: userData.totalHorasExtensao }),
-      ...(userData?.maximoHorasExtensao !== undefined && { maximoHorasExtensao: userData.maximoHorasExtensao }),
-      ...(userData?.totalHorasComplementar !== undefined && { totalHorasComplementar: userData.totalHorasComplementar }),
-      ...(userData?.maximoHorasComplementar !== undefined && { maximoHorasComplementar: userData.maximoHorasComplementar })
+      ...(userData?.totalHorasExtensao !== undefined && {
+        totalHorasExtensao: userData.totalHorasExtensao
+      }),
+      ...(userData?.maximoHorasExtensao !== undefined && {
+        maximoHorasExtensao: userData.maximoHorasExtensao
+      }),
+      ...(userData?.totalHorasComplementar !== undefined && {
+        totalHorasComplementar: userData.totalHorasComplementar
+      }),
+      ...(userData?.maximoHorasComplementar !== undefined && {
+        maximoHorasComplementar: userData.maximoHorasComplementar
+      })
     }),
     [entidadeId, name, email, role, isNewPPC, userData]
   );

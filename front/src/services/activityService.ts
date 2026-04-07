@@ -32,7 +32,6 @@ export const criarAtividade = async (
   try {
     const response = await api.post('/Atividade', dados);
     return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error(
       'Erro ao criar atividade:',

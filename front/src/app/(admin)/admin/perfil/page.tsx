@@ -3,8 +3,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +14,7 @@ import {
   validateResetCode,
   resetPassword
 } from '@/services/authRecovery';
-import { toast } from 'react-toastify';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 export default function PerfilAdminPage() {
   const { data: session } = useSession();
@@ -205,7 +204,9 @@ export default function PerfilAdminPage() {
   // Função para solicitar código
   async function handleSolicitarCodigo() {
     if (!email) {
-      toast.error('É necessário ter um e-mail cadastrado para solicitar o código.');
+      toast.error(
+        'É necessário ter um e-mail cadastrado para solicitar o código.'
+      );
       return;
     }
 
@@ -214,7 +215,9 @@ export default function PerfilAdminPage() {
       await forgotPassword({ email });
       setShowResetPassword(true);
       setCodigoEnviado(true);
-      toast.success('Código enviado! Verifique seu e-mail e digite o código de 6 dígitos recebido.');
+      toast.success(
+        'Código enviado! Verifique seu e-mail e digite o código de 6 dígitos recebido.'
+      );
     } catch (error: unknown) {
       console.error('Erro ao solicitar código:', error);
       const err = error as {
@@ -299,7 +302,9 @@ export default function PerfilAdminPage() {
         newPassword: novaSenhaReset
       });
 
-      toast.success('Senha redefinida com sucesso! Faça login novamente com sua nova senha.');
+      toast.success(
+        'Senha redefinida com sucesso! Faça login novamente com sua nova senha.'
+      );
 
       setTimeout(() => {
         signOut();

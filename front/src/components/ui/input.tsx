@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { cn } from '@/lib/utils';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faCircleInfo,
@@ -9,8 +10,7 @@ import {
   faEyeSlash,
   faCircleXmark
 } from '@fortawesome/free-solid-svg-icons';
-
-import { cn } from '@/lib/utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface InputProps extends React.ComponentProps<'input'> {
   icon?: IconDefinition;
@@ -21,7 +21,15 @@ interface InputProps extends React.ComponentProps<'input'> {
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { className, type, icon, isPassword = false, helperText, errorText, ...props },
+    {
+      className,
+      type,
+      icon,
+      isPassword = false,
+      helperText,
+      errorText,
+      ...props
+    },
     ref
   ) => {
     const [showPassword, setShowPassword] = React.useState(false);

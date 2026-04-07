@@ -63,7 +63,6 @@ export const obterCoordenadorPorCurso = async (
       `/Coordenador/por-curso/${cursoId}`
     );
     return response.data;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.response?.status === 404) {
       // Nenhum coordenador encontrado para o curso

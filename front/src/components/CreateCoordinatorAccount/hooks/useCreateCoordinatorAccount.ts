@@ -44,12 +44,15 @@ export const useCreateCoordinatorAccount = (
         token
       });
 
-      toast.success('Conta criada com sucesso! Agora você pode acessar o sistema.');
+      toast.success(
+        'Conta criada com sucesso! Agora você pode acessar o sistema.'
+      );
       router.push('/');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || 'Erro ao criar conta. Tente novamente.');
+      toast.error(
+        err?.response?.data?.message || 'Erro ao criar conta. Tente novamente.'
+      );
     } finally {
       setLoading(false);
     }

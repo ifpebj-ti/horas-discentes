@@ -1,4 +1,10 @@
-import { FaCheckCircle, FaClock, FaDownload, FaTimesCircle, FaUser } from 'react-icons/fa';
+import {
+  FaCheckCircle,
+  FaClock,
+  FaDownload,
+  FaTimesCircle,
+  FaUser
+} from 'react-icons/fa';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,7 +19,10 @@ interface StudentCardProps {
   student: AlunoPorTurmaDetalhadoResponse;
   turma: TurmaResponse;
   onToggleStatus: (studentId: string) => void;
-  onDownload: (studentId: string, categoria: 'complementar' | 'extensao') => void;
+  onDownload: (
+    studentId: string,
+    categoria: 'complementar' | 'extensao'
+  ) => void;
   isDownloading?: boolean;
 }
 

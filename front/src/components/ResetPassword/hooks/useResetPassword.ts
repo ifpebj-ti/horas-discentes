@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -34,7 +33,10 @@ export const useResetPassword = () => {
       setStep(2);
       toast.success('Código enviado! Verifique sua caixa de entrada e spam.');
     } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? 'Erro ao enviar código. Tente novamente mais tarde.');
+      toast.error(
+        err?.response?.data?.message ??
+          'Erro ao enviar código. Tente novamente mais tarde.'
+      );
     } finally {
       setLoading(false);
     }
@@ -49,10 +51,15 @@ export const useResetPassword = () => {
         setCodeValidated(true);
         setStep(3);
       } else {
-        toast.error(res.message ?? 'Código inválido. Verifique e tente novamente.');
+        toast.error(
+          res.message ?? 'Código inválido. Verifique e tente novamente.'
+        );
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? 'Erro ao validar código. Tente novamente mais tarde.');
+      toast.error(
+        err?.response?.data?.message ??
+          'Erro ao validar código. Tente novamente mais tarde.'
+      );
     } finally {
       setLoading(false);
     }
@@ -62,10 +69,17 @@ export const useResetPassword = () => {
     if (!codeValidated || !submittedEmail || !code) return;
     setLoading(true);
     try {
-      await resetPasswordApi({ email: submittedEmail, code, newPassword: data.senha });
+      await resetPasswordApi({
+        email: submittedEmail,
+        code,
+        newPassword: data.senha
+      });
       setStep(4);
     } catch (err: any) {
-      toast.error(err?.response?.data?.message ?? 'Erro ao redefinir senha. Tente novamente mais tarde.');
+      toast.error(
+        err?.response?.data?.message ??
+          'Erro ao redefinir senha. Tente novamente mais tarde.'
+      );
     } finally {
       setLoading(false);
     }

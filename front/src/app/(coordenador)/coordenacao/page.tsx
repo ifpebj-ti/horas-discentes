@@ -2,15 +2,15 @@
 
 import { useRouter } from 'next/navigation';
 
+import { CardHome } from '@/components/CardHome';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
+
 import {
   faBookOpen,
   faGraduationCap,
   faIdCard,
   faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons';
-
-import { CardHome } from '@/components/CardHome';
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 
 export default function CoordenacaoPage() {
   const router = useRouter();

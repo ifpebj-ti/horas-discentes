@@ -10,10 +10,11 @@ import {
   Suspense
 } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import NewCertificateButton from '@/components/NewCertificateButton';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import ViewCertificate from '@/components/ViewCertificate';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
@@ -24,12 +25,13 @@ import {
   baixarAnexoCertificado
 } from '@/services/certificateService';
 import * as Types from '@/types';
-import { mapStatusCertificado, mapTipoCertificado, StatusCertificado } from '@/types';
-import { toast } from 'react-toastify';
+import {
+  mapStatusCertificado,
+  mapTipoCertificado,
+  StatusCertificado
+} from '@/types';
 
 const CertificadosContext = createContext<Types.Certificado[]>([]);
-
-
 
 function CertificadosPageContent({ user }: { user: Types.Usuario }) {
   const router = useRouter();
@@ -43,8 +45,12 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
     const category = searchParams.get('category');
     const status = searchParams.get('status');
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (category) setSelectedCategory(category);
-    if (status && (Object.values(StatusCertificado) as string[]).includes(status)) {
+    if (
+      status &&
+      (Object.values(StatusCertificado) as string[]).includes(status)
+    ) {
       setSelectedStatus(status);
     }
   }, [searchParams]);

@@ -22,7 +22,10 @@ export default function Step({ currentStep }: StepProps) {
         const isCurrent = step.id === currentStep;
 
         return (
-          <div key={step.id} className="flex-1 flex flex-col items-center relative">
+          <div
+            key={step.id}
+            className="flex-1 flex flex-col items-center relative"
+          >
             {/* Linha conectora */}
             {index > 0 && (
               <div

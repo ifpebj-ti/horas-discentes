@@ -2,18 +2,18 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { FaExclamationTriangle, FaUserClock } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import { Badge } from '@/components/ui/badge';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 
 import {
   listarAlunosEmRisco,
   type AlunoEmRiscoResponse
 } from '@/services/studentService';
-import { toast } from 'react-toastify';
 
 const FAIXAS = [
   { label: 'Crítico (< 25%)', value: 25 },
@@ -64,7 +64,10 @@ export default function AlunosEmRiscoPage() {
     [todos, percentual]
   );
 
-  const totalPaginas = Math.max(1, Math.ceil(alunosFiltrados.length / PAGE_SIZE));
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(alunosFiltrados.length / PAGE_SIZE)
+  );
   const paginaAtual = Math.min(pagina, totalPaginas);
   const alunosPagina = alunosFiltrados.slice(
     (paginaAtual - 1) * PAGE_SIZE,
@@ -111,7 +114,9 @@ export default function AlunosEmRiscoPage() {
       {!loading && alunosFiltrados.length === 0 && (
         <div className="text-center py-16 text-gray-400">
           <FaExclamationTriangle className="mx-auto w-10 h-10 mb-3" />
-          <p className="text-lg font-medium">Nenhum aluno encontrado nessa faixa.</p>
+          <p className="text-lg font-medium">
+            Nenhum aluno encontrado nessa faixa.
+          </p>
         </div>
       )}
 
@@ -140,7 +145,8 @@ export default function AlunosEmRiscoPage() {
                     {aluno.horasPorPeriodo.toFixed(1)} h/período
                   </span>
                   <span className="text-xs text-gray-500">
-                    {aluno.periodosDecorridos} período{aluno.periodosDecorridos !== 1 ? 's' : ''}
+                    {aluno.periodosDecorridos} período
+                    {aluno.periodosDecorridos !== 1 ? 's' : ''}
                   </span>
                 </div>
               </div>
@@ -148,9 +154,12 @@ export default function AlunosEmRiscoPage() {
               <div className="space-y-1">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">
-                    {aluno.totalHorasComplementar}h de {aluno.maximoHorasComplementar}h complementares
+                    {aluno.totalHorasComplementar}h de{' '}
+                    {aluno.maximoHorasComplementar}h complementares
                   </span>
-                  <span className={`font-semibold ${corProgresso(aluno.porcentagemConclusao)}`}>
+                  <span
+                    className={`font-semibold ${corProgresso(aluno.porcentagemConclusao)}`}
+                  >
                     {aluno.porcentagemConclusao.toFixed(0)}%
                   </span>
                 </div>

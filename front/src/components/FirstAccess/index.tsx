@@ -1,15 +1,16 @@
 'use client';
 
 import Image from 'next/image';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
 import {
   faEnvelope,
   faUser,
   faIdBadge,
   faKey
 } from '@fortawesome/free-solid-svg-icons';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import { useFirstAccess } from './hooks/useFirstAccess';
 
@@ -67,14 +68,12 @@ export const FirstAccess = () => {
                 onChange={(e) => setCodigo(e.target.value)}
               />
               <div className="flex items-center gap-2 bg-[#1351B4] text-white text-sm p-2 rounded-md mb-6 mt-0.5">
-                <span>Digite o código de 6 caracteres fornecido pelo seu coordenador</span>
+                <span>
+                  Digite o código de 6 caracteres fornecido pelo seu coordenador
+                </span>
               </div>
 
-              <Button
-                onClick={handleValidarCodigo}
-                className="w-full"
-               
-              >
+              <Button onClick={handleValidarCodigo} className="w-full">
                 Continuar
               </Button>
             </form>
@@ -184,7 +183,6 @@ export const FirstAccess = () => {
                 type="submit"
                 disabled={loading || !isValid}
                 className="w-full"
-               
               >
                 {loading ? 'Finalizando...' : 'Finalizar'}
               </Button>

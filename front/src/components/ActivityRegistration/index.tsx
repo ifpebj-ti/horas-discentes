@@ -2,12 +2,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { FaGraduationCap, FaUsers, FaPlus } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 import { ActivityCard } from '@/components/ActivityCard';
 import { ActivityForm } from '@/components/ActivityForm';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,6 +17,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
@@ -30,7 +31,6 @@ import {
   AtividadeResponse
 } from '@/services/activityService';
 import { TipoAtividade } from '@/types/atividade';
-import { toast } from 'react-toastify';
 
 export function ActivityRegistration() {
   const [atividades, setAtividades] = useState<AtividadeResponse[]>([]);
@@ -79,7 +79,6 @@ export function ActivityRegistration() {
       toast.success('A atividade foi adicionada com sucesso.');
       setShowForm(false);
       await fetchAtividades();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Erro no cadastro:', error);
       toast.error(
@@ -101,7 +100,9 @@ export function ActivityRegistration() {
       toast.success('A atividade foi removida com sucesso.');
     } catch (error) {
       console.error('Erro ao excluir atividade:', error);
-      toast.error('Não foi possível excluir a atividade. Tente novamente mais tarde.');
+      toast.error(
+        'Não foi possível excluir a atividade. Tente novamente mais tarde.'
+      );
     } finally {
       hide();
       setDeleteTarget(null);
@@ -127,12 +128,17 @@ export function ActivityRegistration() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
             <AlertDialogDescription>
-              Deseja realmente excluir a atividade &quot;{deleteTarget?.nome}&quot;? Esta ação é permanente e removerá todos os vínculos com alunos.
+              Deseja realmente excluir a atividade &quot;{deleteTarget?.nome}
+              &quot;? Esta ação é permanente e removerá todos os vínculos com
+              alunos.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={confirmDeleteAtividade}>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={confirmDeleteAtividade}
+            >
               Sim, excluir
             </AlertDialogAction>
           </AlertDialogFooter>

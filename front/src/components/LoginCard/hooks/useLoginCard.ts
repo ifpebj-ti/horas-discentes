@@ -28,7 +28,9 @@ export function useLoginCard() {
     });
 
     if (res?.ok) {
-      const session = await fetch('/api/auth/session').then((res) => res.json());
+      const session = await fetch('/api/auth/session').then((res) =>
+        res.json()
+      );
       const role = session?.user?.role;
 
       toast.success('Login efetuado com sucesso!');

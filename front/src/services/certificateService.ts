@@ -1,5 +1,6 @@
-import api from './api';
 import { StatusCertificado } from '@/types';
+
+import api from './api';
 
 export { StatusCertificado };
 

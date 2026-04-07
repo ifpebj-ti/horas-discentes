@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AuthOptions } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -76,7 +75,9 @@ export const authOptions: AuthOptions = {
     strategy: 'jwt',
     maxAge: 4 * 60 * 60
   },
-  ...(process.env.NEXTAUTH_SECRET ? { secret: process.env.NEXTAUTH_SECRET } : {}),
+  ...(process.env.NEXTAUTH_SECRET
+    ? { secret: process.env.NEXTAUTH_SECRET }
+    : {}),
   callbacks: {
     async jwt({ token, user }) {
       if (user && 'accessToken' in user) {

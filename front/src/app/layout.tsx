@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { config } from '@fortawesome/fontawesome-svg-core';
+
 import '@fortawesome/fontawesome-svg-core/styles.css';
 config.autoAddCss = false;
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,6 +7,8 @@ import './globals.css';
 
 import ClientProviders from '@/components/ClientProviders';
 import VersionDisplay from '@/components/VersionDisplay';
+
+import { config } from '@fortawesome/fontawesome-svg-core';
 
 export const metadata: Metadata = {
   title: 'Hora Mais',

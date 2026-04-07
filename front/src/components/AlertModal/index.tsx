@@ -1,10 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import * as React from 'react';
 
-import Image from 'next/image';
-
-import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 
 interface AlertProps {
   imageUrl?: string;
@@ -40,9 +39,13 @@ export const Alert: React.FC<AlertProps> = ({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent className="max-w-md flex flex-col items-center justify-center">
         <AlertDialogHeader className="text-center">
-          {imageUrl && <Image src={imageUrl} alt="Alert" width={300} height={120} />}
+          {imageUrl && (
+            <Image src={imageUrl} alt="Alert" width={300} height={120} />
+          )}
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          {description && <AlertDialogDescription>{description}</AlertDialogDescription>}
+          {description && (
+            <AlertDialogDescription>{description}</AlertDialogDescription>
+          )}
         </AlertDialogHeader>
 
         <AlertDialogFooter className="flex gap-2 justify-center">

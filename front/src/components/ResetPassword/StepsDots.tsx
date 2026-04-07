@@ -1,5 +1,3 @@
-
-
 interface StepsDotsProps {
   active: number;
 }

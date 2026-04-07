@@ -47,7 +47,11 @@ export function CardHome({
         </div>
       )}
 
-      <FontAwesomeIcon icon={icon} className="text-3xl text-[#1351B4] mb-3" fixedWidth />
+      <FontAwesomeIcon
+        icon={icon}
+        className="text-3xl text-[#1351B4] mb-3"
+        fixedWidth
+      />
       <h3 className="text-lg font-semibold text-[#1351B4]">{title}</h3>
     </div>
   );

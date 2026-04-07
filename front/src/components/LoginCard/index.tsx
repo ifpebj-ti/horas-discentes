@@ -2,10 +2,11 @@
 
 import Image from 'next/image';
 import { FaCircleNotch } from 'react-icons/fa';
-import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+
+import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
 import { useRedirectIfAuthenticated } from '../../hooks/useRedirectIfAuthenticated';
 import { useLoginCard } from './hooks/useLoginCard';
@@ -102,7 +103,6 @@ export const LoginCard = () => {
             <Button
               type="submit"
               className="w-full"
-             
               disabled={formState.isSubmitting}
             >
               {formState.isSubmitting && (

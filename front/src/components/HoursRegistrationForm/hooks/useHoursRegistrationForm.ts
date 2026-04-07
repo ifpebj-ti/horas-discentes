@@ -56,32 +56,48 @@ export function useHoursRegistrationForm({
   const anexoComprovante = watch('anexoComprovante');
 
   const categoriasAtuais = useMemo(() => {
-    return tipoRegistro === 'horas-extensao' ? categoriasExtensao : categoriasComplementares;
+    return tipoRegistro === 'horas-extensao'
+      ? categoriasExtensao
+      : categoriasComplementares;
   }, [tipoRegistro, categoriasComplementares, categoriasExtensao]);
 
   const handleFileSelect = (file: File | null) => {
-    setValue('anexoComprovante', file, { shouldValidate: true, shouldDirty: true });
+    setValue('anexoComprovante', file, {
+      shouldValidate: true,
+      shouldDirty: true
+    });
   };
 
   const handleFileRemove = () => {
-    setValue('anexoComprovante', null, { shouldValidate: true, shouldDirty: true });
+    setValue('anexoComprovante', null, {
+      shouldValidate: true,
+      shouldDirty: true
+    });
   };
 
-  const submitForm: SubmitHandler<HoursRegistrationFormSchema> = async (data) => {
+  const submitForm: SubmitHandler<HoursRegistrationFormSchema> = async (
+    data
+  ) => {
     try {
       if (!session?.user?.entidadeId || !session?.user?.cursoId) {
         toast.error('Usuário não autenticado ou curso não identificado.');
         return;
       }
 
-      const atividadeSelecionada = categoriasAtuais.find((c) => c.nome === data.categoria);
+      const atividadeSelecionada = categoriasAtuais.find(
+        (c) => c.nome === data.categoria
+      );
       if (!atividadeSelecionada) {
         toast.error('Categoria não encontrada ou inválida.');
         return;
       }
 
-      const dataInicioUTC = new Date(data.dataInicioAtividade + 'T00:00:00Z').toISOString();
-      const dataFimUTC = new Date(data.dataFimAtividade + 'T00:00:00Z').toISOString();
+      const dataInicioUTC = new Date(
+        data.dataInicioAtividade + 'T00:00:00Z'
+      ).toISOString();
+      const dataFimUTC = new Date(
+        data.dataFimAtividade + 'T00:00:00Z'
+      ).toISOString();
 
       const formData = new FormData();
       formData.append('TituloAtividade', data.tituloAtividade);

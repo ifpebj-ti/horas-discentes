@@ -3,15 +3,14 @@
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-
-import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { CONSTANTS } from '@/config/constants';
 import { atualizarMeusDados } from '@/services/coordinatorService';
-import { toast } from 'react-toastify';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 export default function PerfilCoordenadorPage() {
   const { data: session } = useSession();
@@ -35,14 +34,18 @@ export default function PerfilCoordenadorPage() {
         email,
         ...(novaSenha ? { senha: novaSenha } : {})
       });
-      toast.success('Dados atualizados com sucesso! Faça login novamente para sua segurança.');
+      toast.success(
+        'Dados atualizados com sucesso! Faça login novamente para sua segurança.'
+      );
       setTimeout(() => {
         signOut();
         router.push('/');
       }, CONSTANTS.REDIRECT_DELAY);
     } catch (error) {
       console.error(error);
-      toast.error('Erro ao atualizar dados! Tente novamente ou procure o suporte.');
+      toast.error(
+        'Erro ao atualizar dados! Tente novamente ou procure o suporte.'
+      );
     } finally {
       setLoading(false);
     }

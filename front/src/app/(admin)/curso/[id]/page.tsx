@@ -2,13 +2,10 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { toast } from 'react-toastify';
 
 import { CoordinatorInviteModal } from './_components/CoordinatorInviteModal';
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +16,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
@@ -26,7 +25,8 @@ import {
   deletarCoordenador
 } from '@/services/coordinatorService';
 import { obterCursoPorId } from '@/services/courseService';
-import { toast } from 'react-toastify';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function CourseDetailPage() {
   const params = useParams();

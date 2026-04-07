@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
 import { FaEnvelope, FaPaperPlane, FaTimes } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,9 +12,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 import { enviarConviteCoordenador } from '@/services/coordinatorService';
-import { toast } from 'react-toastify';
 
 interface CoordinatorInviteModalProps {
   isOpen: boolean;
@@ -44,7 +44,9 @@ export const CoordinatorInviteModal = ({
     e.preventDefault();
 
     if (!coordEmail.endsWith('@docente.ifpe.edu.br')) {
-      toast.error('O email do coordenador deve ser institucional (@docente.ifpe.edu.br).');
+      toast.error(
+        'O email do coordenador deve ser institucional (@docente.ifpe.edu.br).'
+      );
       return;
     }
 
@@ -55,7 +57,9 @@ export const CoordinatorInviteModal = ({
     try {
       setIsCoordLoading(true);
       await enviarConviteCoordenador({ email: coordEmail, cursoId });
-      toast.success(`Um e-mail foi enviado para ${coordEmail} com instruções para criar a conta.`);
+      toast.success(
+        `Um e-mail foi enviado para ${coordEmail} com instruções para criar a conta.`
+      );
       onClose();
       setCoordEmail('');
     } catch (error) {
@@ -104,7 +108,8 @@ export const CoordinatorInviteModal = ({
                 </div>
                 <CardTitle>Convite por E-mail</CardTitle>
                 <CardDescription>
-                  O coordenador receberá um e-mail com um link para criar a conta.
+                  O coordenador receberá um e-mail com um link para criar a
+                  conta.
                 </CardDescription>
               </CardHeader>
               <CardContent>

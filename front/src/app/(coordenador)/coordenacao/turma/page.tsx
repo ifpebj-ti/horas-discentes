@@ -3,11 +3,20 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { faPlus, faTimes, faGraduationCap } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { toast } from 'react-toastify';
 
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -26,16 +35,6 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
@@ -43,7 +42,12 @@ import {
   TurmaResponse,
   criarTurma
 } from '@/services/classService';
-import { toast } from 'react-toastify';
+import {
+  faPlus,
+  faTimes,
+  faGraduationCap
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function CourseDetailPage() {
   const { data: session } = useSession();
@@ -112,7 +116,9 @@ export default function CourseDetailPage() {
         cursoId: cursoId
       });
 
-      toast.success(`Turma ${novaTurma.periodo} (${novaTurma.turno}) foi criada.`);
+      toast.success(
+        `Turma ${novaTurma.periodo} (${novaTurma.turno}) foi criada.`
+      );
 
       const turmasAtualizadas = await obterTurmasPorCurso(cursoId);
       setTurmas(turmasAtualizadas);
@@ -169,7 +175,9 @@ export default function CourseDetailPage() {
 
       <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Turmas</h2>
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+            Turmas
+          </h2>
           <div className="max-w-xs">
             <Button
               icon={faPlus}
@@ -191,7 +199,10 @@ export default function CourseDetailPage() {
             <table className="w-full text-sm">
               <thead
                 className="text-left text-gray-700 text-xs uppercase tracking-wide"
-                style={{ backgroundColor: '#F2F2F2', borderBottom: '1px solid #D1D1D1' }}
+                style={{
+                  backgroundColor: '#F2F2F2',
+                  borderBottom: '1px solid #D1D1D1'
+                }}
               >
                 <tr>
                   <th className="px-4 py-3">Período</th>

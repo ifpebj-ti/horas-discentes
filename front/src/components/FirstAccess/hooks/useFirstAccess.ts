@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
-import { criarAluno } from '@/services/studentService';
 import { verificarTurmaExiste } from '@/services/classService';
+import { criarAluno } from '@/services/studentService';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { firstAccessSchema, FirstAccessSchema } from '../schemas/schema';
@@ -14,7 +14,9 @@ export const useFirstAccess = () => {
 
   const [step, setStep] = useState(1);
   const [codigo, setCodigo] = useState('');
-  const [turma, setTurma] = useState<{ codigo: string; nome: string } | null>(null);
+  const [turma, setTurma] = useState<{ codigo: string; nome: string } | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
 
   const form = useForm<FirstAccessSchema>({
@@ -28,7 +30,9 @@ export const useFirstAccess = () => {
       const turmaData = await verificarTurmaExiste(codigo.trim());
 
       if (!turmaData) {
-        toast.error('Código inválido. Solicite ao coordenador ou à secretaria.');
+        toast.error(
+          'Código inválido. Solicite ao coordenador ou à secretaria.'
+        );
         return;
       }
 
@@ -49,7 +53,9 @@ export const useFirstAccess = () => {
     setLoading(true);
     try {
       await criarAluno({ ...data, turmaCodigo: turma.codigo });
-      toast.success('Cadastro realizado com sucesso! Você pode acessar o sistema agora.');
+      toast.success(
+        'Cadastro realizado com sucesso! Você pode acessar o sistema agora.'
+      );
       router.push('/');
     } catch (err) {
       toast.error('Erro ao cadastrar. Tente novamente.');

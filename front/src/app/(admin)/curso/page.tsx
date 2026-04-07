@@ -2,14 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 import { CreateCourseModal } from './_components/CreateCourseModal';
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import CourseCard from '@/components/CourseCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +17,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
@@ -27,7 +27,7 @@ import {
   CursoResumoResponse,
   deletarCurso
 } from '@/services/courseService';
-import { toast } from 'react-toastify';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 export default function CursoPage() {
   const router = useRouter();
@@ -89,7 +89,9 @@ export default function CursoPage() {
       await deletarCurso(deleteTarget.id);
       const atualizados = await obterResumoCursos();
       setCourses(atualizados);
-      toast.success('O curso e todos os dados associados foram excluídos com sucesso.');
+      toast.success(
+        'O curso e todos os dados associados foram excluídos com sucesso.'
+      );
     } catch (error: unknown) {
       console.error('Erro ao excluir curso:', error);
       const err = error as {
@@ -147,7 +149,10 @@ export default function CursoPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={confirmDeleteCourse}>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={confirmDeleteCourse}
+            >
               Sim, excluir
             </AlertDialogAction>
           </AlertDialogFooter>

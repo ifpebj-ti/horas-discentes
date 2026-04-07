@@ -3,14 +3,12 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaCopy, FaCheck, FaUser } from 'react-icons/fa';
-import Docxtemplater from 'docxtemplater';
-import { saveAs } from 'file-saver';
-import PizZip from 'pizzip';
+import { toast } from 'react-toastify';
 
 import { StudentCard } from './_components/StudentCard';
-import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { Badge } from '@/components/ui/badge';
+import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -22,13 +20,6 @@ import {
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
-  toggleStatusAluno,
-  listarConcluidosComplementar,
-  listarConcluidosExtensao,
-  marcarDownloadComplementar,
-  marcarDownloadExtensao
-} from '@/services/studentService';
-import {
   listarAlunosPorTurma,
   obterTurmaPorId,
   TurmaResponse,
@@ -38,13 +29,25 @@ import {
   obterCoordenadorAutenticado,
   type CoordenadorInfoResponse
 } from '@/services/coordinatorService';
-import { toast } from 'react-toastify';
+import {
+  toggleStatusAluno,
+  listarConcluidosComplementar,
+  listarConcluidosExtensao,
+  marcarDownloadComplementar,
+  marcarDownloadExtensao
+} from '@/services/studentService';
+import Docxtemplater from 'docxtemplater';
+import { saveAs } from 'file-saver';
+import PizZip from 'pizzip';
 
 const VisualizarTurma = () => {
   const { id } = useParams();
   const [turma, setTurma] = useState<TurmaResponse | null>(null);
-  const [students, setStudents] = useState<AlunoPorTurmaDetalhadoResponse[]>([]);
-  const [coordenador, setCoordenador] = useState<CoordenadorInfoResponse | null>(null);
+  const [students, setStudents] = useState<AlunoPorTurmaDetalhadoResponse[]>(
+    []
+  );
+  const [coordenador, setCoordenador] =
+    useState<CoordenadorInfoResponse | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
   const { visible, show, hide } = useLoadingOverlay();
@@ -54,11 +57,12 @@ const VisualizarTurma = () => {
     const carregarDados = async () => {
       try {
         show();
-        const [turmaResponse, alunosResponse, coordResponse] = await Promise.all([
-          obterTurmaPorId(id as string),
-          listarAlunosPorTurma(id as string),
-          obterCoordenadorAutenticado()
-        ]);
+        const [turmaResponse, alunosResponse, coordResponse] =
+          await Promise.all([
+            obterTurmaPorId(id as string),
+            listarAlunosPorTurma(id as string),
+            obterCoordenadorAutenticado()
+          ]);
         setTurma(turmaResponse);
         setStudents(alunosResponse);
         setCoordenador(coordResponse);
@@ -87,7 +91,9 @@ const VisualizarTurma = () => {
       await toggleStatusAluno(studentId);
       const atualizados = await listarAlunosPorTurma(id as string);
       setStudents(atualizados);
-      toast.info(`${student.nome} foi ${student.isAtivo ? 'desativado' : 'ativado'}.`);
+      toast.info(
+        `${student.nome} foi ${student.isAtivo ? 'desativado' : 'ativado'}.`
+      );
     } catch {
       toast.error('Não foi possível alterar o status.');
     } finally {
@@ -110,7 +116,9 @@ const VisualizarTurma = () => {
 
       const aluno = concluidos.find((a) => a.id === studentId);
       if (!aluno) {
-        toast.error('Dados do aluno não encontrados para geração do relatório.');
+        toast.error(
+          'Dados do aluno não encontrados para geração do relatório.'
+        );
         return;
       }
 
@@ -149,12 +157,21 @@ const VisualizarTurma = () => {
         curso: coordenador.curso,
         Portaria: coordenador.numeroPortaria,
         DOU: coordenador.dou,
-        alunos: [{ estudante: aluno.nome, matricula: aluno.matricula, carga: aluno.cargaHoraria }],
+        alunos: [
+          {
+            estudante: aluno.nome,
+            matricula: aluno.matricula,
+            carga: aluno.cargaHoraria
+          }
+        ],
         certs
       };
 
       const zip = new PizZip(templateBuffer);
-      const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+      const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true
+      });
       doc.setData(docxVars);
       doc.render();
 
@@ -190,21 +207,31 @@ const VisualizarTurma = () => {
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-600">Código da Turma</p>
-                <p className="text-lg font-bold text-gray-900">{turma.codigo}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Código da Turma
+                </p>
+                <p className="text-lg font-bold text-gray-900">
+                  {turma.codigo}
+                </p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={copyCode}
                   className="mt-3 flex items-center space-x-2 cursor-pointer"
                 >
-                  {copied ? <FaCheck className="w-4 h-4 text-green-600" /> : <FaCopy className="w-4 h-4" />}
+                  {copied ? (
+                    <FaCheck className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <FaCopy className="w-4 h-4" />
+                  )}
                   <span>{copied ? 'Copiado!' : 'Copiar'}</span>
                 </Button>
               </div>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm font-medium text-gray-600">Período</p>
-                <p className="text-lg font-bold text-gray-900">{turma.periodo}</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {turma.periodo}
+                </p>
               </div>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm font-medium text-gray-600">Turno</p>
@@ -224,7 +251,9 @@ const VisualizarTurma = () => {
                   {students.filter((s) => s.isAtivo).length} ativos
                 </Badge>
               </div>
-              <CardDescription>{students.length} alunos cadastrados</CardDescription>
+              <CardDescription>
+                {students.length} alunos cadastrados
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {[...students]
@@ -246,7 +275,9 @@ const VisualizarTurma = () => {
           </Card>
 
           <div className="bg-blue-50 rounded-lg p-4 sm:p-6">
-            <h3 className="font-semibold text-blue-900 mb-2">Código da Turma</h3>
+            <h3 className="font-semibold text-blue-900 mb-2">
+              Código da Turma
+            </h3>
             <p className="text-blue-700 text-sm mb-3">
               Compartilhe o código <strong>{turma.codigo}</strong> com os alunos
               para que eles possam se inscrever na turma.
@@ -256,7 +287,11 @@ const VisualizarTurma = () => {
               onClick={copyCode}
               className="flex items-center space-x-2 text-blue-700 border-blue-300 cursor-pointer"
             >
-              {copied ? <FaCheck className="w-4 h-4 text-green-600" /> : <FaCopy className="w-4 h-4" />}
+              {copied ? (
+                <FaCheck className="w-4 h-4 text-green-600" />
+              ) : (
+                <FaCopy className="w-4 h-4" />
+              )}
               <span>{copied ? 'Copiado!' : 'Copiar código da turma'}</span>
             </Button>
           </div>
