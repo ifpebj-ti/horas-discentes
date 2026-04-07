@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import {
   faBookOpen,
   faGraduationCap,
-  faIdCard
+  faIdCard,
+  faTriangleExclamation
 } from '@fortawesome/free-solid-svg-icons';
 
 import { CardHome } from '@/components/CardHome';
@@ -22,7 +23,7 @@ export default function CoordenacaoPage() {
         Coordenação
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <CardHome
           icon={faGraduationCap}
           title="Turma"
@@ -39,6 +40,12 @@ export default function CoordenacaoPage() {
           icon={faBookOpen}
           title="Atividades"
           onClick={() => router.push('/coordenacao/atividade')}
+        />
+
+        <CardHome
+          icon={faTriangleExclamation}
+          title="Alunos em Risco"
+          onClick={() => router.push('/coordenacao/alunos-em-risco')}
         />
       </div>
     </div>

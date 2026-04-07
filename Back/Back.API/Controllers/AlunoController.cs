@@ -21,6 +21,7 @@ public class AlunoController : ControllerBase
     private readonly ContarPendenciasDownloadUseCase _contarPendenciasDownload;
     private readonly MarcarDownloadRelatorioUseCase _marcarDownloadRelatorio;
     private readonly UpdateAlunoUseCase _update;
+    private readonly GetAlunosEmRiscoUseCase _getEmRisco;
     public AlunoController(
         CreateAlunoUseCase create,
         GetAlunoByIdUseCase getById,
@@ -32,7 +33,8 @@ public class AlunoController : ControllerBase
         GetAlunosComHorasConcluidasUseCase getAlunosComHorasConcluidas,
         ContarPendenciasDownloadUseCase contarPendenciasDownload,
         MarcarDownloadRelatorioUseCase marcarDownloadRelatorio,
-        UpdateAlunoUseCase update)
+        UpdateAlunoUseCase update,
+        GetAlunosEmRiscoUseCase getEmRisco)
     {
         _create = create;
         _getById = getById;
@@ -45,6 +47,7 @@ public class AlunoController : ControllerBase
         _contarPendenciasDownload = contarPendenciasDownload;
         _marcarDownloadRelatorio = marcarDownloadRelatorio;
         _update = update;
+        _getEmRisco = getEmRisco;
     }
 
     /// <summary>
@@ -237,6 +240,27 @@ public class AlunoController : ControllerBase
     public async Task<IActionResult> MarcarDownloadExtensao(Guid alunoId)
     {
         await _marcarDownloadRelatorio.ExecuteAsync(alunoId, Domain.Entities.Atividade.TipoAtividade.EXTENSAO, User);
-        return NoContent(); // HTTP 204: Sucesso, sem conteúdo para retornar.
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Lista alunos ativos com progresso abaixo do percentual informado, ordenados por horas/período (menor primeiro).
+    /// </summary>
+    /// <remarks>
+    /// A métrica <c>horasPorPeriodo</c> é calculada dividindo o total de horas complementares pelo número
+    /// de períodos letivos decorridos desde o início da turma (formato "YYYY.S").
+    /// Requer permissão de COORDENADOR.
+    /// </remarks>
+    /// <param name="percentualMaximo">Percentual máximo de conclusão (0–100). Padrão: 50.</param>
+    /// <response code="200">Lista de alunos em risco retornada com sucesso.</response>
+    [HttpGet("risco")]
+    [Authorize(Roles = "COORDENADOR")]
+    public async Task<IActionResult> ListarEmRisco([FromQuery] double percentualMaximo = 50)
+    {
+        if (percentualMaximo < 0 || percentualMaximo > 100)
+            return BadRequest("percentualMaximo deve estar entre 0 e 100.");
+
+        var result = await _getEmRisco.ExecuteAsync(percentualMaximo);
+        return Ok(result);
     }
 }

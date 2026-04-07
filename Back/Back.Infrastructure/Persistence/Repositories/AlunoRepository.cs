@@ -105,8 +105,9 @@ public class AlunoRepository : IAlunoRepository
     public async Task<IEnumerable<Aluno>> GetAllComTurmaEAtividadesAsync()
     {
         return await _context.Alunos
+            .Where(a => a.IsAtivo && a.Turma != null)
             .Include(a => a.Turma)
-                .ThenInclude(t => t!.Curso) 
+                .ThenInclude(t => t!.Curso)
             .Include(a => a.Atividades)
                 .ThenInclude(aa => aa.Atividade)
             .AsNoTracking()
