@@ -32,12 +32,7 @@ services:
       - rede-front
 
   frontend:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
-      args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-    # image: ghcr.io/ifpebj-ti/horas-discentes-frontend:latest
+    image: ghcr.io/ifpebj-ti/horas-discentes-frontend:latest
     ports:
       - "${PORT_MACHINE_FRONTEND}:3000"
     environment:
@@ -49,13 +44,10 @@ services:
       - rede-back
     depends_on:
       - backend
+    restart: unless-stopped
 
   backend:
     image: ghcr.io/ifpebj-ti/horas-discentes-backend:latest
-    # build:
-    #   context: ./back
-    #   dockerfile: Dockerfile
-
     ports:
       - "${PORT_MACHINE_BACKEND}:5000"
     environment:
@@ -64,9 +56,6 @@ services:
       - JWT__Key=${JWT__Key}
       - JWT__Issuer=${JWT__Issuer}
       - JWT__Audience=${JWT__Audience}
-      - Gmail__ApplicationName=${Gmail__ApplicationName}
-      - Gmail__CredenciaisPath=${Gmail__CredenciaisPath}
-      - Gmail__TokenPath=${Gmail__TokenPath}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - EMAIL__Remetente=${EMAIL__Remetente}
@@ -74,13 +63,19 @@ services:
       - EMAIL__Smtp=${EMAIL__Smtp}
       - EMAIL__Porta=${EMAIL__Porta}
       - COORDENADOR_CONVITE_LINK=${COORDENADOR_CONVITE_LINK}
-
+      - FileStorage__Endpoint=http://minio:9000
+      - FileStorage__AccessKey=${MINIO_ROOT_USER}
+      - FileStorage__SecretKey=${MINIO_ROOT_PASSWORD}
+      - FileStorage__BucketName=certificados
+      - FileStorage__UseSSL=false
     volumes:
       - backend_data_protection_keys:/root/.aspnet/DataProtection-Keys
     networks:
       - rede-back
     depends_on:
       db:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     restart: unless-stopped
 
@@ -103,6 +98,46 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: horas-discentes-minio
+    ports:
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
+    networks:
+      - rede-back
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: horas-discentes-minio-init
+    networks:
+      - rede-back
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+        mc mb --ignore-existing local/certificados;
+        echo 'Bucket certificados pronto.';
+      "
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    restart: on-failure
+
   portainer:
     image: portainer/portainer-ce:latest
     container_name: horas-discentes-portainer
@@ -115,10 +150,13 @@ services:
     restart: unless-stopped
     networks:
       - rede-front
+
 volumes:
   pgdata:
   backend_data_protection_keys:
+  minio_data:
   portainer_data:
+
 networks:
   rede-back:
   rede-front:
