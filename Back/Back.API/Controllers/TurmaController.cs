@@ -8,7 +8,7 @@ namespace Back.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "ADMIN,COORDENADOR")]
+[Authorize(Roles = "COORDENADOR")]
 public class TurmaController : ControllerBase
 {
     private readonly CreateTurmaUseCase _create;
@@ -62,7 +62,7 @@ public class TurmaController : ControllerBase
     /// <summary>
     /// Atualiza os dados de uma turma.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <param name="id">ID ou Código da turma a ser atualizada.</param>
     /// <param name="request">Novos dados da turma.</param>
     [HttpPut("{id}")]
@@ -86,7 +86,7 @@ public class TurmaController : ControllerBase
     /// Remove uma turma e todos os alunos (e seus dados) nela.
     /// </summary>
     /// <remarks>
-    /// Requer permissão de ADMIN ou COORDENADOR. AÇÃO PERMANENTE E DESTRUTIVA.
+    /// Requer permissão de COORDENADOR. AÇÃO PERMANENTE E DESTRUTIVA.
     /// Remove a Turma, e todos os Alunos, AlunoAtividades e Certificados associados.
     /// </remarks>
     /// <param name="id">ID ou Código da turma a ser removida.</param>

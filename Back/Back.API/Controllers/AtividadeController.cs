@@ -50,7 +50,7 @@ public class AtividadeController : ControllerBase
     /// Cria uma nova atividade global (vinculada a todos os alunos).
     /// </summary>
     [HttpPost]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     [ProducesResponseType(typeof(object), 201)]
     public async Task<IActionResult> Criar([FromBody] CreateAtividadeRequest request)
     {
@@ -61,13 +61,13 @@ public class AtividadeController : ControllerBase
     /// <summary>
     /// Atualiza os dados de uma atividade.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR.</remarks>
     /// <param name="id">ID da atividade a ser atualizada.</param>
     /// <param name="request">Novos dados da atividade.</param>
     /// <response code="204">Atividade atualizada com sucesso.</response>
     /// <response code="404">Atividade não encontrada.</response>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     [ProducesResponseType(204)]
     public async Task<IActionResult> Atualizar(Guid id, [FromBody] UpdateAtividadeRequest request)
     {
@@ -78,12 +78,12 @@ public class AtividadeController : ControllerBase
     /// <summary>
     /// Remove uma atividade e todos os seus vínculos com alunos.
     /// </summary>
-    /// <remarks>Requer permissão de ADMIN ou COORDENADOR. Esta ação é permanente.</remarks>
+    /// <remarks>Requer permissão de COORDENADOR. Esta ação é permanente.</remarks>
     /// <param name="id">ID da atividade a ser removida.</param>
     /// <response code="204">Atividade removida com sucesso.</response>
     /// <response code="404">Atividade não encontrada.</response>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "ADMIN,COORDENADOR")]
+    [Authorize(Roles = "COORDENADOR")]
     [ProducesResponseType(204)]
     public async Task<IActionResult> Deletar(Guid id)
     {

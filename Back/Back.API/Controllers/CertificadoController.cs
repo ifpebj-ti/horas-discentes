@@ -62,7 +62,7 @@ namespace Back.API.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "ADMIN,COORDENADOR")]
+        [Authorize(Roles = "COORDENADOR")]
         [SwaggerOperation(Summary = "Lista os certificados com filtros por status e aluno.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(typeof(IEnumerable<CertificadoResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Listar([FromQuery] StatusCertificado? status, [FromQuery] Guid? alunoId)
@@ -123,15 +123,15 @@ namespace Back.API.Controllers
         /// Remove um certificado do sistema.
         /// </summary>
         /// <remarks>
-        /// Requer permissão de ADMIN ou COORDENADOR.
+        /// Requer permissão de COORDENADOR.
         /// Se o certificado estava APROVADO, as horas do aluno serão recalculadas.
         /// </remarks>
         /// <param name="id">ID do certificado a ser removido.</param>
         /// <response code="204">Certificado removido com sucesso.</response>
         /// <response code="404">Certificado não encontrado.</response>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "ADMIN,COORDENADOR")]
-        [SwaggerOperation(Summary = "Remove um certificado (ação de Admin/Coordenador).", Tags = new[] { "Certificados" })]
+        [Authorize(Roles = "COORDENADOR")]
+        [SwaggerOperation(Summary = "Remove um certificado (ação de Coordenador).", Tags = new[] { "Certificados" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Deletar(Guid id)
         {
@@ -171,7 +171,7 @@ namespace Back.API.Controllers
 
 
         [HttpPatch("{id}/aprovar")]
-        [Authorize(Roles = "ADMIN,COORDENADOR")]
+        [Authorize(Roles = "COORDENADOR")]
         [SwaggerOperation(Summary = "Aprova um certificado enviado pelo aluno.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
@@ -185,7 +185,7 @@ namespace Back.API.Controllers
         }
 
         [HttpPatch("{id}/reprovar")]
-        [Authorize(Roles = "ADMIN,COORDENADOR")]
+        [Authorize(Roles = "COORDENADOR")]
         [SwaggerOperation(Summary = "Reprova um certificado enviado pelo aluno.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
@@ -220,7 +220,7 @@ namespace Back.API.Controllers
             }
         }
         [HttpGet("por-curso/{cursoId}")]
-        [Authorize(Roles = "ADMIN,COORDENADOR")]
+        [Authorize(Roles = "COORDENADOR")]
         [SwaggerOperation(Summary = "Lista os certificados por curso ID.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(typeof(IEnumerable<CertificadoPorCursoResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPorCurso(Guid cursoId, [FromServices] GetCertificadosByCursoIdUseCase useCase)
@@ -229,7 +229,7 @@ namespace Back.API.Controllers
             return Ok(result);
         }
         [HttpGet("{id}/anexo")]
-        [Authorize(Roles = "ALUNO,COORDENADOR,ADMIN")]
+        [Authorize(Roles = "ALUNO,COORDENADOR")]
         [SwaggerOperation(Summary = "Retorna apenas o anexo de um certificado.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
