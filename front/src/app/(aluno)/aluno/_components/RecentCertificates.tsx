@@ -49,10 +49,16 @@ export const RecentCertificates = ({
           ))}
         </div>
       ) : (
-        <div className="py-8 text-center bg-gray-50 rounded-lg">
+        <div className="py-8 text-center bg-gray-50 rounded-lg space-y-3">
           <p className="text-gray-500 text-sm">
             Ainda não há certificados enviados.
           </p>
+          <Link
+            href="/aluno/certificado/novo?tipo=horas-complementares"
+            className="inline-block text-sm font-medium text-primary hover:underline"
+          >
+            Enviar primeiro certificado →
+          </Link>
         </div>
       )}
     </div>

@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaCopy, FaUser } from 'react-icons/fa';
+import { FaCopy, FaCheck, FaUser } from 'react-icons/fa';
 import Docxtemplater from 'docxtemplater';
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
@@ -46,6 +46,7 @@ const VisualizarTurma = () => {
   const [students, setStudents] = useState<AlunoPorTurmaDetalhadoResponse[]>([]);
   const [coordenador, setCoordenador] = useState<CoordenadorInfoResponse | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { visible, show, hide } = useLoadingOverlay();
 
   useEffect(() => {
@@ -74,7 +75,8 @@ const VisualizarTurma = () => {
   const copyCode = async () => {
     if (!turma) return;
     navigator.clipboard.writeText(turma.codigo);
-    toast.success('O código da turma foi copiado para a área de transferência.');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const toggleStudentStatus = async (studentId: string) => {
@@ -196,8 +198,8 @@ const VisualizarTurma = () => {
                   onClick={copyCode}
                   className="mt-3 flex items-center space-x-2 cursor-pointer"
                 >
-                  <FaCopy className="w-4 h-4" />
-                  <span>Copiar</span>
+                  {copied ? <FaCheck className="w-4 h-4 text-green-600" /> : <FaCopy className="w-4 h-4" />}
+                  <span>{copied ? 'Copiado!' : 'Copiar'}</span>
                 </Button>
               </div>
               <div className="p-4 bg-gray-50 rounded-lg">
@@ -254,8 +256,8 @@ const VisualizarTurma = () => {
               onClick={copyCode}
               className="flex items-center space-x-2 text-blue-700 border-blue-300 cursor-pointer"
             >
-              <FaCopy className="w-4 h-4" />
-              <span>Copiar código da turma</span>
+              {copied ? <FaCheck className="w-4 h-4 text-green-600" /> : <FaCopy className="w-4 h-4" />}
+              <span>{copied ? 'Copiado!' : 'Copiar código da turma'}</span>
             </Button>
           </div>
         </>

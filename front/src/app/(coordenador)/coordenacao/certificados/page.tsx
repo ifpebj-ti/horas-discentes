@@ -177,7 +177,7 @@ export default function ValidacaoCertificadosPage() {
       window.open(url, '_blank');
     } catch (error) {
       console.error('Erro ao baixar PDF:', error);
-      alert('Erro ao visualizar o PDF.');
+      toast.error('Não foi possível visualizar o PDF. Tente novamente.');
     }
   };
 

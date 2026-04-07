@@ -277,6 +277,7 @@ export default function HoursRegistrationForm({
               {...register('especificacaoAtividade')}
               className={`${inputClass} h-24`}
               rows={3}
+              placeholder="Descreva brevemente a atividade realizada, local e período."
             />
             {errors.especificacaoAtividade && (
               <p className={errorClass}>
