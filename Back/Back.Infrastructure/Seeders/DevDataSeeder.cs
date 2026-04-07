@@ -39,7 +39,7 @@ public static class DevDataSeeder
             .WithId(turma1Id)
             .WithPeriodo("2024.1")
             .WithTurno("Noite")
-            .WithCodigo("ADS-2024.1-N")
+            .WithCodigo("ADS1B7")
             .WithCursoId(cursoId)
             .WithPossuiExtensao(true)
             .Build();
@@ -49,7 +49,7 @@ public static class DevDataSeeder
             .WithId(turma2Id)
             .WithPeriodo("2024.2")
             .WithTurno("Manhã")
-            .WithCodigo("ADS-2024.2-M")
+            .WithCodigo("ADS2B7")
             .WithCursoId(cursoId)
             .WithPossuiExtensao(false)
             .Build();

@@ -1,4 +1,5 @@
 using Back.API.Configurations;
+using Back.API.Middleware;
 using Back.Application;
 using Back.Infrastructure;
 using Back.Infrastructure.Persistence.Context;
@@ -108,6 +109,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors("AllowAll");
 app.UseSwagger();
 app.UseSwaggerUI();

@@ -1,4 +1,4 @@
-﻿using Back.Application.DTOs.Certificado;
+using Back.Application.DTOs.Certificado;
 using Back.Application.Interfaces.Repositories;
 using Back.Application.UseCases.Certificado;
 using Back.Domain.Entities.AlunoAtividade;
@@ -15,10 +15,11 @@ public class CreateCertificadoUseCaseTests
     private readonly Mock<IAlunoAtividadeRepository> _alunoAtvRepo = new();
     private readonly Mock<ICertificadoRepository> _certRepo = new();
     private readonly Mock<ILimiteHorasAlunoRepository> _limiteRepo = new();
+    private readonly Mock<IAtividadeRepository> _atvRepo = new();
     private readonly Mock<Back.Application.Interfaces.Services.IFileStorageService> _storage = new();
 
     private CreateCertificadoUseCase CreateUseCase()
-        => new(_alunoAtvRepo.Object, _certRepo.Object, _limiteRepo.Object, _storage.Object);
+        => new(_alunoAtvRepo.Object, _certRepo.Object, _limiteRepo.Object, _atvRepo.Object, _storage.Object);
 
     [Fact]
     public async Task Deve_Criar_Certificado_Com_Sucesso()
