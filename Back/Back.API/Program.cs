@@ -101,6 +101,10 @@ using (var scope = app.Services.CreateScope())
     Console.WriteLine(" Rodando seed de admin...");
     await AdminSeeder.SeedAsync(context, userManager);
 
+    // Executa seed de coordenador
+    Console.WriteLine(" Rodando seed de coordenador...");
+    await CoordenadorSeeder.SeedAsync(context, userManager);
+
     // Seed de dados de desenvolvimento
     if (app.Environment.IsDevelopment())
     {
