@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { CoordinatorInviteModal } from './_components/CoordinatorInviteModal';
@@ -42,7 +42,7 @@ export default function CourseDetailPage() {
   const [isCoordModalOpen, setIsCoordModalOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!cursoId) return;
     try {
       show();
@@ -54,15 +54,15 @@ export default function CourseDetailPage() {
       setCoordinator(
         coordenador ? { id: coordenador.id, nome: coordenador.nome } : null
       );
-    } catch (error) {
+    } catch {
     } finally {
       hide();
     }
-  };
+  }, [cursoId, show, hide]);
 
   useEffect(() => {
     loadData();
-  }, [cursoId]);
+  }, [loadData]);
 
   const handleDeleteCoordinator = async () => {
     if (!coordinator) return;

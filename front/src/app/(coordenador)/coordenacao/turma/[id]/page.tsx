@@ -239,7 +239,9 @@ const VisualizarTurma = () => {
               </div>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm font-medium text-gray-600">Turno</p>
-                <p className="text-lg font-bold text-gray-900">{turnoLabel[turma.turno] ?? turma.turno}</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {turnoLabel[turma.turno] ?? turma.turno}
+                </p>
               </div>
             </CardContent>
           </Card>

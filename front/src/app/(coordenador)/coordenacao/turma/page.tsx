@@ -124,7 +124,9 @@ export default function CourseDetailPage() {
     }
 
     if (!periodoRegex.test(formData.periodo)) {
-      toast.error('Período inválido. Use o formato AAAA.1 ou AAAA.2 (ex: 2026.1).');
+      toast.error(
+        'Período inválido. Use o formato AAAA.1 ou AAAA.2 (ex: 2026.1).'
+      );
       return;
     }
 
@@ -132,7 +134,9 @@ export default function CourseDetailPage() {
       (t) => t.periodo === formData.periodo && t.turno === formData.turno
     );
     if (duplicado) {
-      toast.error(`Já existe uma turma no período ${formData.periodo} no turno ${turnoLabel[formData.turno] ?? formData.turno}.`);
+      toast.error(
+        `Já existe uma turma no período ${formData.periodo} no turno ${turnoLabel[formData.turno] ?? formData.turno}.`
+      );
       return;
     }
 
@@ -175,7 +179,8 @@ export default function CourseDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar criação</AlertDialogTitle>
             <AlertDialogDescription>
-              Deseja criar a turma {formData.periodo} ({turnoLabel[formData.turno] ?? formData.turno})?
+              Deseja criar a turma {formData.periodo} (
+              {turnoLabel[formData.turno] ?? formData.turno})?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

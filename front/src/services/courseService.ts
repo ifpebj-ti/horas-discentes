@@ -85,7 +85,9 @@ export const deletarCurso = async (cursoId: string): Promise<void> => {
   } catch (error: unknown) {
     const err = error as { response?: { status?: number } };
     if (err?.response?.status === 405) {
-      throw new Error('Método não permitido. Verifique se o endpoint DELETE está habilitado no backend.');
+      throw new Error(
+        'Método não permitido. Verifique se o endpoint DELETE está habilitado no backend.'
+      );
     }
     throw error;
   }

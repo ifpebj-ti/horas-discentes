@@ -158,7 +158,9 @@ export const deletarTurma = async (turmaId: string): Promise<void> => {
   } catch (error: unknown) {
     const err = error as { response?: { status?: number } };
     if (err?.response?.status === 405) {
-      throw new Error('Método não permitido. Verifique se o endpoint DELETE está configurado corretamente no backend.');
+      throw new Error(
+        'Método não permitido. Verifique se o endpoint DELETE está configurado corretamente no backend.'
+      );
     }
     throw error;
   }
