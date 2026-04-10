@@ -1,0 +1,128 @@
+services:
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+      args:
+        # Baked no bundle do cliente (browser no Windows host chama localhost:5000)
+        NEXT_PUBLIC_API_URL: http://localhost:5000/api
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=http://localhost:3000
+      # URL interna Docker usada pelo servidor Next.js (container → container)
+      # Sobrescreve process.env.NEXT_PUBLIC_API_URL no código server-side
+      - INTERNAL_API_URL=http://backend:5000/api
+    networks:
+      - rede-local
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./Back
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - JWT__Key=${JWT__Key}
+      - JWT__Issuer=${JWT__Issuer}
+      - JWT__Audience=${JWT__Audience}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - COORD_EMAIL=${COORD_EMAIL}
+      - COORD_PASSWORD=${COORD_PASSWORD}
+      - COORD_NOME=${COORD_NOME}
+      - COORD_PORTARIA=${COORD_PORTARIA}
+      - COORD_DOU=${COORD_DOU}
+      - CURSO_NOME=${CURSO_NOME}
+      - EMAIL__Remetente=${EMAIL__Remetente}
+      - EMAIL__Senha=${EMAIL__Senha}
+      - EMAIL__Smtp=${EMAIL__Smtp}
+      - EMAIL__Porta=${EMAIL__Porta}
+      - COORDENADOR_CONVITE_LINK=http://localhost:3000/criarContaCoordenador
+      - FileStorage__Endpoint=http://minio:9000
+      - FileStorage__AccessKey=${MINIO_ROOT_USER}
+      - FileStorage__SecretKey=${MINIO_ROOT_PASSWORD}
+      - FileStorage__BucketName=certificados
+      - FileStorage__UseSSL=false
+    volumes:
+      - backend_data_protection_keys_local:/root/.aspnet/DataProtection-Keys
+    networks:
+      - rede-local
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pgdata_local:/var/lib/postgresql/data
+    networks:
+      - rede-local
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data_local:/data
+    networks:
+      - rede-local
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    networks:
+      - rede-local
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+        mc mb --ignore-existing local/certificados;
+        echo 'Bucket certificados pronto.';
+      "
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    restart: on-failure
+
+volumes:
+  pgdata_local:
+  backend_data_protection_keys_local:
+  minio_data_local:
+
+networks:
+  rede-local:

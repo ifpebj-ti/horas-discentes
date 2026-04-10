@@ -25,7 +25,6 @@ import {
   CardDescription,
   CardContent
 } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
@@ -35,6 +34,27 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select';
+
+const turnoLabel: Record<string, string> = {
+  manha: 'Manhã',
+  tarde: 'Tarde',
+  noite: 'Noite'
+};
+
+function gerarPeriodosLetivos(): string[] {
+  const periodos: string[] = [];
+  const anoInicio = 2023;
+  const dataAtual = new Date();
+  const anoAtual = dataAtual.getFullYear();
+  const mesAtual = dataAtual.getMonth() + 1;
+
+  for (let ano = anoInicio; ano < anoAtual; ano++) {
+    periodos.push(`${ano}.1`, `${ano}.2`);
+  }
+  periodos.push(`${anoAtual}.1`);
+  if (mesAtual >= 7) periodos.push(`${anoAtual}.2`);
+  return periodos;
+}
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
@@ -90,6 +110,8 @@ export default function CourseDetailPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const periodoRegex = /^\d{4}\.[12]$/;
+
   const handleTurmaSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -99,6 +121,19 @@ export default function CourseDetailPage() {
       !formData.cargaHorariaExtensao
     ) {
       toast.error('Preencha todos os campos corretamente.');
+      return;
+    }
+
+    if (!periodoRegex.test(formData.periodo)) {
+      toast.error('Período inválido. Use o formato AAAA.1 ou AAAA.2 (ex: 2026.1).');
+      return;
+    }
+
+    const duplicado = turmas.some(
+      (t) => t.periodo === formData.periodo && t.turno === formData.turno
+    );
+    if (duplicado) {
+      toast.error(`Já existe uma turma no período ${formData.periodo} no turno ${turnoLabel[formData.turno] ?? formData.turno}.`);
       return;
     }
 
@@ -117,7 +152,7 @@ export default function CourseDetailPage() {
       });
 
       toast.success(
-        `Turma ${novaTurma.periodo} (${novaTurma.turno}) foi criada.`
+        `Turma ${novaTurma.periodo} (${turnoLabel[novaTurma.turno] ?? novaTurma.turno}) foi criada.`
       );
 
       const turmasAtualizadas = await obterTurmasPorCurso(cursoId);
@@ -142,7 +177,7 @@ export default function CourseDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar criação</AlertDialogTitle>
             <AlertDialogDescription>
-              Deseja criar a turma {formData.periodo} ({formData.turno})?
+              Deseja criar a turma {formData.periodo} ({turnoLabel[formData.turno] ?? formData.turno})?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -220,8 +255,8 @@ export default function CourseDetailPage() {
                     <td className="px-4 py-3 font-medium text-gray-900">
                       {turma.periodo}
                     </td>
-                    <td className="px-4 py-3 text-center capitalize text-gray-600">
-                      {turma.turno}
+                    <td className="px-4 py-3 text-center text-gray-600">
+                      {turnoLabel[turma.turno] ?? turma.turno}
                     </td>
                     <td className="px-4 py-3 text-center text-gray-600">
                       {turma.quantidadeAlunos}
@@ -274,19 +309,23 @@ export default function CourseDetailPage() {
                   <form onSubmit={handleTurmaSubmit} className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="periodo">Período da turma</Label>
-                      <Input
-                        id="periodo"
-                        type="text"
-                        placeholder="Ex: 2025.1"
+                      <Select
                         value={formData.periodo}
-                        onChange={(e) =>
-                          handleTurmaChange('periodo', e.target.value)
+                        onValueChange={(value) =>
+                          handleTurmaChange('periodo', value)
                         }
-                        required
-                      />
-                      <p className="text-sm text-gray-500">
-                        Formato sugerido: AAAA.S (ano.semestre)
-                      </p>
+                      >
+                        <SelectTrigger id="periodo">
+                          <SelectValue placeholder="Selecione o período" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {gerarPeriodosLetivos().map((p) => (
+                            <SelectItem key={p} value={p}>
+                              {p}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div className="space-y-4">

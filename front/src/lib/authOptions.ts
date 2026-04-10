@@ -40,9 +40,13 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          // Usa a variável de ambiente ou fallback para localhost
+          // INTERNAL_API_URL: URL interna do Docker (container → container)
+          // NEXT_PUBLIC_API_URL: URL pública baked no bundle pelo Dockerfile
+          // Fallback: localhost para dev sem Docker
           const apiUrl =
-            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+            process.env.INTERNAL_API_URL ||
+            process.env.NEXT_PUBLIC_API_URL ||
+            'http://localhost:5000/api';
           const response = await axios.post<BackendUser>(
             `${apiUrl}/auth/login`,
             {
@@ -75,9 +79,7 @@ export const authOptions: AuthOptions = {
     strategy: 'jwt',
     maxAge: 4 * 60 * 60
   },
-  ...(process.env.NEXTAUTH_SECRET
-    ? { secret: process.env.NEXTAUTH_SECRET }
-    : {}),
+  secret: process.env.NEXTAUTH_SECRET!,
   callbacks: {
     async jwt({ token, user }) {
       if (user && 'accessToken' in user) {

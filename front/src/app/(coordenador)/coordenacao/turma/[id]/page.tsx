@@ -40,6 +40,12 @@ import Docxtemplater from 'docxtemplater';
 import { saveAs } from 'file-saver';
 import PizZip from 'pizzip';
 
+const turnoLabel: Record<string, string> = {
+  manha: 'Manhã',
+  tarde: 'Tarde',
+  noite: 'Noite'
+};
+
 const VisualizarTurma = () => {
   const { id } = useParams();
   const [turma, setTurma] = useState<TurmaResponse | null>(null);
@@ -235,7 +241,7 @@ const VisualizarTurma = () => {
               </div>
               <div className="p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm font-medium text-gray-600">Turno</p>
-                <p className="text-lg font-bold text-gray-900">{turma.turno}</p>
+                <p className="text-lg font-bold text-gray-900">{turnoLabel[turma.turno] ?? turma.turno}</p>
               </div>
             </CardContent>
           </Card>
