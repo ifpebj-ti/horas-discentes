@@ -42,7 +42,6 @@ export default function PerfilCoordenadorPage() {
         router.push('/');
       }, CONSTANTS.REDIRECT_DELAY);
     } catch (error) {
-      console.error(error);
       toast.error(
         'Erro ao atualizar dados! Tente novamente ou procure o suporte.'
       );

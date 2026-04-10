@@ -52,7 +52,6 @@ function AlunoPageContent({
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
     } catch (error) {
-      console.error('Erro ao baixar certificado:', error);
       toast.error('Não foi possível visualizar o certificado.');
     }
   };

@@ -167,23 +167,10 @@ export const deletarCertificado = async (id: string): Promise<void> => {
   }
 
   const cleanId = id.trim();
-  console.log('Deletando certificado:', cleanId);
-  console.log('URL completa:', `/api/Certificado/${cleanId}`);
 
   try {
-    const response = await api.delete(`/Certificado/${cleanId}`);
-    console.log('Resposta DELETE certificado:', response.status);
-    return;
-  } catch (error: unknown) {
-    const err = error as {
-      response?: { status?: number; data?: unknown };
-      config?: { url?: string; method?: string };
-    };
-    console.error('Erro ao deletar certificado:', error);
-    console.error('Status:', err?.response?.status);
-    console.error('Data:', err?.response?.data);
-    console.error('URL tentada:', err?.config?.url);
-    console.error('Método HTTP:', err?.config?.method);
+    await api.delete(`/Certificado/${cleanId}`);
+  } catch (error) {
     throw error;
   }
 };

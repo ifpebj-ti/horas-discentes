@@ -126,8 +126,7 @@ export function useHoursRegistrationForm({
       toast.success('Certificado enviado com sucesso!');
       form.reset();
       router.push('/aluno/certificado');
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error('Não foi possível enviar o certificado.');
     } finally {
       setIsUploading(false);

@@ -55,7 +55,6 @@ export default function CourseDetailPage() {
         coordenador ? { id: coordenador.id, nome: coordenador.nome } : null
       );
     } catch (error) {
-      console.error('Erro ao carregar dados do curso:', error);
     } finally {
       hide();
     }

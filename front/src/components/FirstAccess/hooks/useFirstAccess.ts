@@ -41,7 +41,6 @@ export const useFirstAccess = () => {
       setStep(2);
     } catch (error) {
       toast.error('Erro ao validar código. Tente novamente mais tarde.');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -59,7 +58,6 @@ export const useFirstAccess = () => {
       router.push('/');
     } catch (err) {
       toast.error('Erro ao cadastrar. Tente novamente.');
-      console.error('Erro ao cadastrar:', err);
     } finally {
       setLoading(false);
     }

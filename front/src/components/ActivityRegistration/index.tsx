@@ -80,7 +80,6 @@ export function ActivityRegistration() {
       setShowForm(false);
       await fetchAtividades();
     } catch (error: any) {
-      console.error('Erro no cadastro:', error);
       toast.error(
         error?.response?.data?.message ||
           'Ocorreu um erro ao cadastrar a atividade.'
@@ -98,8 +97,7 @@ export function ActivityRegistration() {
       await deletarAtividade(deleteTarget.id);
       await fetchAtividades();
       toast.success('A atividade foi removida com sucesso.');
-    } catch (error) {
-      console.error('Erro ao excluir atividade:', error);
+    } catch {
       toast.error(
         'Não foi possível excluir a atividade. Tente novamente mais tarde.'
       );

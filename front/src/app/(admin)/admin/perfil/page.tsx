@@ -219,7 +219,6 @@ export default function PerfilAdminPage() {
         'Código enviado! Verifique seu e-mail e digite o código de 6 dígitos recebido.'
       );
     } catch (error: unknown) {
-      console.error('Erro ao solicitar código:', error);
       const err = error as {
         response?: {
           status?: number;
@@ -261,7 +260,6 @@ export default function PerfilAdminPage() {
         toast.error(response.message || 'O código informado não é válido.');
       }
     } catch (error: unknown) {
-      console.error('Erro ao validar código:', error);
       const err = error as {
         response?: {
           status?: number;
@@ -311,7 +309,6 @@ export default function PerfilAdminPage() {
         router.push('/');
       }, CONSTANTS.REDIRECT_DELAY);
     } catch (error: unknown) {
-      console.error('Erro ao redefinir senha:', error);
       const err = error as {
         response?: {
           status?: number;

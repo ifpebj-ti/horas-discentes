@@ -29,16 +29,8 @@ export const listarAtividades = async (): Promise<AtividadeResponse[]> => {
 export const criarAtividade = async (
   dados: CreateAtividadeRequest
 ): Promise<{ atividadeId: string }> => {
-  try {
-    const response = await api.post('/Atividade', dados);
-    return response.data;
-  } catch (error: any) {
-    console.error(
-      'Erro ao criar atividade:',
-      error.response?.data || error.message
-    );
-    throw error;
-  }
+  const response = await api.post('/Atividade', dados);
+  return response.data;
 };
 
 export interface UpdateAtividadeRequest {
@@ -67,17 +59,5 @@ export const deletarAtividade = async (id: string): Promise<void> => {
 
   const cleanId = id.trim();
 
-  try {
-    await api.delete(`/Atividade/${cleanId}`);
-    return;
-  } catch (error: unknown) {
-    const err = error as {
-      response?: { status?: number; data?: unknown };
-      config?: { url?: string; method?: string };
-    };
-    console.error('Erro ao deletar atividade:', error);
-    console.error('Status:', err?.response?.status);
-    console.error('Data:', err?.response?.data);
-    throw error;
-  }
+  await api.delete(`/Atividade/${cleanId}`);
 };

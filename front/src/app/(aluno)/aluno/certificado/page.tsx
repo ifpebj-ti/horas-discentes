@@ -102,7 +102,6 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
     } catch (error) {
-      console.error('Erro ao baixar certificado:', error);
       toast.error('Não foi possível visualizar o certificado.');
     }
   };
@@ -233,7 +232,6 @@ export default function Certificados() {
 
         setCertificados(mapped);
       } catch (error) {
-        console.error('Erro ao buscar certificados:', error);
       } finally {
         loadingOverlay.hide();
       }

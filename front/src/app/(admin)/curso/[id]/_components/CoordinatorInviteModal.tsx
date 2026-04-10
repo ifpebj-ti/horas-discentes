@@ -63,7 +63,6 @@ export const CoordinatorInviteModal = ({
       onClose();
       setCoordEmail('');
     } catch (error) {
-      console.error(error);
       toast.error('Não foi possível enviar o convite.');
     } finally {
       setIsCoordLoading(false);

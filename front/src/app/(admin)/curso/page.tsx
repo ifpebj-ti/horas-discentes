@@ -51,7 +51,6 @@ export default function CursoPage() {
         const data = await obterResumoCursos();
         setCourses(data);
       } catch (error) {
-        console.error('Erro ao buscar cursos:', error);
       } finally {
         hide();
       }
@@ -93,7 +92,6 @@ export default function CursoPage() {
         'O curso e todos os dados associados foram excluídos com sucesso.'
       );
     } catch (error: unknown) {
-      console.error('Erro ao excluir curso:', error);
       const err = error as {
         response?: {
           status?: number;

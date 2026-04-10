@@ -73,7 +73,6 @@ const VisualizarTurma = () => {
         setStudents(alunosResponse);
         setCoordenador(coordResponse);
       } catch (error) {
-        console.error('Erro ao carregar dados da turma:', error);
         toast.error('Erro ao carregar dados da turma.');
       } finally {
         hide();
@@ -192,7 +191,6 @@ const VisualizarTurma = () => {
 
       toast.success(`Relatório de ${aluno.nome} gerado com sucesso.`);
     } catch (error) {
-      console.error('Erro ao gerar relatório:', error);
       toast.error('Não foi possível gerar o relatório.');
     } finally {
       setIsDownloading(false);

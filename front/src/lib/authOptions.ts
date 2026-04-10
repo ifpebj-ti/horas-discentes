@@ -66,7 +66,6 @@ export const authOptions: AuthOptions = {
             accessToken: user.token
           };
         } catch (error) {
-          console.error('Erro ao autenticar:', error);
           return null;
         }
       }

@@ -25,7 +25,6 @@ export default function NovoCertificado() {
         setComplementares(atividades.filter((a) => a.tipo === 'COMPLEMENTAR'));
         setExtensao(atividades.filter((a) => a.tipo === 'EXTENSAO'));
       } catch (error) {
-        console.error('Erro ao buscar atividades:', error);
         toast.error(
           'Não foi possível carregar as categorias. Tente novamente.'
         );

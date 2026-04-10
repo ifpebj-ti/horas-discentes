@@ -72,7 +72,6 @@ export const CreateCourseModal = ({
       setExtensionHours('');
       setHasExtension(false);
     } catch (error) {
-      console.error('Erro ao criar curso:', error);
       toast.error('Não foi possível criar o curso.');
     } finally {
       setLoading(false);

@@ -153,59 +153,13 @@ export const deletarTurma = async (turmaId: string): Promise<void> => {
     );
   }
 
-  console.log('Deletando turma:', cleanId);
-  console.log('Rota relativa:', `/Turma/${cleanId}`);
-  console.log(
-    'URL completa esperada:',
-    `https://api.horamais.app/api/Turma/${cleanId}`
-  );
-
   try {
-    // Requisição DELETE conforme rota do backend: DELETE /api/Turma/{id:guid}
-    // Usando axios.request com método explícito para garantir que funcione
-    const response = await api.request({
-      method: 'DELETE',
-      url: `/Turma/${cleanId}`
-    });
-
-    // Verificar se a resposta é 204 (No Content) conforme esperado pelo backend
-    if (response.status === 204 || response.status === 200) {
-      console.log('Turma deletada com sucesso. Status:', response.status);
-      return;
-    }
-
-    console.log('Resposta DELETE turma:', response.status);
-    return;
+    await api.request({ method: 'DELETE', url: `/Turma/${cleanId}` });
   } catch (error: unknown) {
-    const err = error as {
-      response?: {
-        status?: number;
-        statusText?: string;
-        data?: unknown;
-      };
-      config?: {
-        url?: string;
-        method?: string;
-        baseURL?: string;
-      };
-      message?: string;
-    };
-    console.error('Erro ao deletar turma:', error);
-    console.error('Status:', err?.response?.status);
-    console.error('Status Text:', err?.response?.statusText);
-    console.error('Data:', err?.response?.data);
-    console.error(
-      'URL completa:',
-      `${err?.config?.baseURL ?? ''}${err?.config?.url ?? ''}`
-    );
-    console.error('Método HTTP:', err?.config?.method);
-
+    const err = error as { response?: { status?: number } };
     if (err?.response?.status === 405) {
-      throw new Error(
-        'Método não permitido. Verifique se o endpoint DELETE está configurado corretamente no backend.'
-      );
+      throw new Error('Método não permitido. Verifique se o endpoint DELETE está configurado corretamente no backend.');
     }
-
     throw error;
   }
 };

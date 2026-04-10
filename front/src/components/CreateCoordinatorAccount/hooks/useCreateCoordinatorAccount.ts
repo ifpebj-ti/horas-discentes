@@ -49,7 +49,6 @@ export const useCreateCoordinatorAccount = (
       );
       router.push('/');
     } catch (err: any) {
-      console.error(err);
       toast.error(
         err?.response?.data?.message || 'Erro ao criar conta. Tente novamente.'
       );

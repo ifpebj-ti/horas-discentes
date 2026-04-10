@@ -90,7 +90,6 @@ export default function ValidacaoCertificadosPage() {
         const result = await listarCertificadosPorCurso(cursoId);
         setCertificados(result);
       } catch (error) {
-        console.error('Erro ao buscar certificados:', error);
       } finally {
         hide();
       }
@@ -132,7 +131,6 @@ export default function ValidacaoCertificadosPage() {
 
       toast.success('Certificado aprovado com sucesso!');
     } catch (error) {
-      console.error('Erro ao aprovar certificado:', error);
       toast.error('Erro ao aprovar certificado! Tente novamente mais tarde.');
     } finally {
       hide();
@@ -164,7 +162,6 @@ export default function ValidacaoCertificadosPage() {
 
       toast.success('Certificado reprovado com sucesso!');
     } catch (error) {
-      console.error('Erro ao reprovar certificado:', error);
       toast.error('Erro ao reprovar certificado! Tente novamente mais tarde.');
     } finally {
       hide();
@@ -177,7 +174,6 @@ export default function ValidacaoCertificadosPage() {
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
     } catch (error) {
-      console.error('Erro ao baixar PDF:', error);
       toast.error('Não foi possível visualizar o PDF. Tente novamente.');
     }
   };

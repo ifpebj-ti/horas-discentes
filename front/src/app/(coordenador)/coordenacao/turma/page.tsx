@@ -97,7 +97,6 @@ export default function CourseDetailPage() {
           setTurmas(data);
         }
       } catch (error) {
-        console.error('Erro ao buscar turmas:', error);
       } finally {
         hide();
       }
@@ -161,7 +160,6 @@ export default function CourseDetailPage() {
       setIsTurmaModalOpen(false);
       setFormData({ periodo: '', turno: '', cargaHorariaExtensao: '' });
     } catch (error) {
-      console.error(error);
       toast.error('Não foi possível criar a turma. Tente novamente.');
     } finally {
       setIsTurmaLoading(false);
