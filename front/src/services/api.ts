@@ -3,7 +3,11 @@ import { getSession } from 'next-auth/react';
 import axios, { AxiosHeaders } from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+  // IMPORTANTE:
+  // - Em runtime (browser), variáveis NEXT_PUBLIC_* são "baked" no build.
+  //   Se o container mudar env sem rebuild, o bundle não muda.
+  // - Para produção, preferimos URL relativa e deixamos o Nginx (ou rewrites) fazer proxy.
+  baseURL: process.env.NEXT_PUBLIC_API_URL || '/api'
 });
 
 api.interceptors.request.use(
