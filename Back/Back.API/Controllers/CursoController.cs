@@ -77,7 +77,7 @@ public class CursoController : ControllerBase
     [SwaggerOperation(
         Summary = "Busca um curso pelo ID.",
         Tags = new[] { "Cursos" })]
-    [ProducesResponseType(typeof(CursoResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CursoDetalhadoResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ObterPorId(Guid id)
     {

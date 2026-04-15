@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { CoordinatorInviteModal } from './_components/CoordinatorInviteModal';
+import { EditCourseModal } from './_components/EditCourseModal';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import {
   AlertDialog,
@@ -24,8 +25,8 @@ import {
   obterCoordenadorPorCurso,
   deletarCoordenador
 } from '@/services/coordinatorService';
-import { obterCursoPorId } from '@/services/courseService';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { CursoDetalhadoResponse, obterCursoPorId } from '@/services/courseService';
+import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function CourseDetailPage() {
@@ -33,24 +34,25 @@ export default function CourseDetailPage() {
   const cursoId = typeof params.id === 'string' ? params.id : '';
   const { visible, show, hide } = useLoadingOverlay();
 
-  const [courseName, setCourseName] = useState('');
+  const [curso, setCurso] = useState<CursoDetalhadoResponse | null>(null);
   const [coordinator, setCoordinator] = useState<{
     id: string;
     nome: string;
   } | null>(null);
 
   const [isCoordModalOpen, setIsCoordModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     if (!cursoId) return;
     try {
       show();
-      const [curso, coordenador] = await Promise.all([
+      const [cursoData, coordenador] = await Promise.all([
         obterCursoPorId(cursoId),
         obterCoordenadorPorCurso(cursoId)
       ]);
-      setCourseName(curso.nome);
+      setCurso(cursoData);
       setCoordinator(
         coordenador ? { id: coordenador.id, nome: coordenador.nome } : null
       );
@@ -106,13 +108,52 @@ export default function CourseDetailPage() {
       </AlertDialog>
 
       <div className="mb-6">
-        <BreadcrumbAuto map={{ [cursoId]: courseName || cursoId }} />
+        <BreadcrumbAuto map={{ [cursoId]: curso?.nome || cursoId }} />
       </div>
 
-      <div>
-        <h1 className="text-2xl font-bold">{courseName || 'Curso'}</h1>
-        <p className="text-gray-500">Gerenciamento do curso</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{curso?.nome || 'Curso'}</h1>
+          <p className="text-gray-500">Gerenciamento do curso</p>
+        </div>
+        {curso && (
+          <button
+            onClick={() => setIsEditModalOpen(true)}
+            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-md transition-colors"
+            title="Editar curso"
+          >
+            <FontAwesomeIcon icon={faEdit} className="w-4 h-4" />
+            Editar curso
+          </button>
+        )}
       </div>
+
+      {/* Limites de horas */}
+      {curso && (
+        <div className="rounded-lg border border-gray-200 bg-white py-3 px-4">
+          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
+            Limites de Horas
+          </h2>
+          <div className="flex gap-8">
+            <div>
+              <p className="text-xs text-gray-500">Complementares</p>
+              <p className="text-base font-bold text-gray-800">
+                {curso.maximoHorasComplementar > 0
+                  ? `${curso.maximoHorasComplementar}h`
+                  : <span className="text-yellow-600">Não configurado</span>}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Extensão</p>
+              <p className="text-base font-bold text-gray-800">
+                {curso.maximoHorasExtensao > 0
+                  ? `${curso.maximoHorasExtensao}h`
+                  : <span className="text-gray-400">—</span>}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Coordenador */}
       <div className="rounded-lg border border-gray-200 bg-white py-3 px-4">
@@ -153,6 +194,15 @@ export default function CourseDetailPage() {
         }}
         cursoId={cursoId}
       />
+
+      {curso && (
+        <EditCourseModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={loadData}
+          curso={curso}
+        />
+      )}
     </div>
   );
 }

@@ -1,7 +1,8 @@
-﻿using Back.Application.DTOs.Curso;
+using Back.Application.DTOs.Curso;
 using Back.Application.Interfaces.Repositories;
+using Back.Domain.Entities.LimiteHorasAluno;
 using System;
-using System.Collections.Generic; // Para KeyNotFoundException
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Back.Application.UseCases.Curso;
@@ -21,24 +22,29 @@ public class UpdateCursoUseCase
 
     public async Task ExecuteAsync(Guid id, UpdateCursoComLimiteHorasRequest request)
     {
-        // Busca o curso (precisa ser rastreado para update)
-        // --- CORREÇÃO AQUI ---
         var curso = await _cursoRepository.GetByIdToUpdateAsync(id);
         if (curso == null)
             throw new KeyNotFoundException("Curso não encontrado.");
 
-        // Busca o limite de horas associado (precisa ser rastreado para update)
+        curso.Nome = request.NomeCurso;
+        await _cursoRepository.UpdateAsync(curso);
+
         var limite = await _limiteHorasRepository.GetByCursoIdToUpdateAsync(id);
         if (limite == null)
-            throw new InvalidOperationException("Limite de horas para o curso não encontrado. Os dados estão inconsistentes.");
-
-        // Atualiza as propriedades das duas entidades
-        curso.Nome = request.NomeCurso;
-        limite.MaximoHorasComplementar = request.MaximoHorasComplementar;
-        limite.MaximoHorasExtensao = request.MaximoHorasExtensao;
-
-        // Persiste as alterações
-        await _cursoRepository.UpdateAsync(curso);
-        await _limiteHorasRepository.UpdateAsync(limite);
+        {
+            var novoLimite = new LimiteHorasAlunoBuilder()
+                .WithId(Guid.NewGuid())
+                .WithCursoId(id)
+                .WithMaximoHorasComplementar(request.MaximoHorasComplementar)
+                .WithMaximoHorasExtensao(request.MaximoHorasExtensao)
+                .Build();
+            await _limiteHorasRepository.AddAsync(novoLimite);
+        }
+        else
+        {
+            limite.MaximoHorasComplementar = request.MaximoHorasComplementar;
+            limite.MaximoHorasExtensao = request.MaximoHorasExtensao;
+            await _limiteHorasRepository.UpdateAsync(limite);
+        }
     }
 }
