@@ -25,7 +25,10 @@ import {
   obterCoordenadorPorCurso,
   deletarCoordenador
 } from '@/services/coordinatorService';
-import { CursoDetalhadoResponse, obterCursoPorId } from '@/services/courseService';
+import {
+  CursoDetalhadoResponse,
+  obterCursoPorId
+} from '@/services/courseService';
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -138,17 +141,21 @@ export default function CourseDetailPage() {
             <div>
               <p className="text-xs text-gray-500">Complementares</p>
               <p className="text-base font-bold text-gray-800">
-                {curso.maximoHorasComplementar > 0
-                  ? `${curso.maximoHorasComplementar}h`
-                  : <span className="text-yellow-600">Não configurado</span>}
+                {curso.maximoHorasComplementar > 0 ? (
+                  `${curso.maximoHorasComplementar}h`
+                ) : (
+                  <span className="text-yellow-600">Não configurado</span>
+                )}
               </p>
             </div>
             <div>
               <p className="text-xs text-gray-500">Extensão</p>
               <p className="text-base font-bold text-gray-800">
-                {curso.maximoHorasExtensao > 0
-                  ? `${curso.maximoHorasExtensao}h`
-                  : <span className="text-gray-400">—</span>}
+                {curso.maximoHorasExtensao > 0 ? (
+                  `${curso.maximoHorasExtensao}h`
+                ) : (
+                  <span className="text-gray-400">—</span>
+                )}
               </p>
             </div>
           </div>

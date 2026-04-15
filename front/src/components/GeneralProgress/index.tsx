@@ -58,9 +58,10 @@ export default function GeneralProgress({
         <div
           className="h-3 bg-blue-600 rounded-full"
           style={{
-            width: totalNecessarias > 0
-              ? `${Math.min((totalHoras / totalNecessarias) * 100, 100)}%`
-              : '0%'
+            width:
+              totalNecessarias > 0
+                ? `${Math.min((totalHoras / totalNecessarias) * 100, 100)}%`
+                : '0%'
           }}
         />
       </div>

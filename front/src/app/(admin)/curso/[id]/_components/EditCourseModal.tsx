@@ -138,7 +138,10 @@ export const EditCourseModal = ({
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2">
-                    <label htmlFor="editCourseName" className="block font-medium">
+                    <label
+                      htmlFor="editCourseName"
+                      className="block font-medium"
+                    >
                       Nome do curso
                     </label>
                     <input
@@ -194,7 +197,9 @@ export const EditCourseModal = ({
 
                   <button
                     type="submit"
-                    disabled={loading || !nomeCurso.trim() || !complementaryHours.trim()}
+                    disabled={
+                      loading || !nomeCurso.trim() || !complementaryHours.trim()
+                    }
                     className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                   >
                     Salvar alterações

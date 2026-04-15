@@ -38,7 +38,9 @@ export const listarCursos = async (): Promise<CursoResponse[]> => {
 };
 
 // Obter curso por ID (inclui limites de horas)
-export const obterCursoPorId = async (id: string): Promise<CursoDetalhadoResponse> => {
+export const obterCursoPorId = async (
+  id: string
+): Promise<CursoDetalhadoResponse> => {
   const response = await api.get<CursoDetalhadoResponse>(`/Curso/${id}`);
   return response.data;
 };
