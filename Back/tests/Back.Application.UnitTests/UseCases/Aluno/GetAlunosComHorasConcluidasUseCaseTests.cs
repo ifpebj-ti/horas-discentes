@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Back.Application.Interfaces.Repositories;
 using Back.Application.UseCases.Aluno;
 using Back.Domain.Entities.Aluno;
@@ -53,11 +53,13 @@ public class GetAlunosComHorasConcluidasUseCaseTests
             .Setup(r => r.GetByIdentityUserIdWithCursoAsync(coordId))
             .ReturnsAsync(coordenador);
 
-        // ----------------------------------------------
-        // ALUNO 1 — CONCLUIU EXTENSÃO
-        // ----------------------------------------------
+        // ALUNO 1 — CONCLUIU EXTENSÃO (turma com 10h de extensão exigidas)
+        var turma = new TurmaBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCursoId(cursoId)
+            .WithMaximoHorasExtensao(10)
+            .Build();
 
-        var turma = new TurmaBuilder().WithId(Guid.NewGuid()).WithCursoId(cursoId).Build();
         var aluno1 = new AlunoBuilder()
             .WithId(Guid.NewGuid())
             .WithNome("Aluno 1")
@@ -101,7 +103,7 @@ public class GetAlunosComHorasConcluidasUseCaseTests
                   {
                       Id = Guid.NewGuid(),
                       CursoId = cursoId,
-                      MaximoHorasExtensao = 10
+                      MaximoHorasComplementar = 0
                   });
 
         var useCase = new GetAlunosComHorasConcluidasUseCase(

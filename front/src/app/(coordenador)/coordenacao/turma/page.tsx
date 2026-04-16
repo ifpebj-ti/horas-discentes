@@ -85,7 +85,8 @@ export default function CourseDetailPage() {
   const [formData, setFormData] = useState({
     periodo: '',
     turno: '',
-    cargaHorariaExtensao: ''
+    cargaHorariaExtensao: '',
+    maximoHorasExtensao: ''
   });
 
   useEffect(() => {
@@ -123,6 +124,14 @@ export default function CourseDetailPage() {
       return;
     }
 
+    if (
+      formData.cargaHorariaExtensao === 'sim' &&
+      !formData.maximoHorasExtensao.trim()
+    ) {
+      toast.error('Informe o total de horas de extensão.');
+      return;
+    }
+
     if (!periodoRegex.test(formData.periodo)) {
       toast.error(
         'Período inválido. Use o formato AAAA.1 ou AAAA.2 (ex: 2026.1).'
@@ -147,10 +156,14 @@ export default function CourseDetailPage() {
     setIsTurmaLoading(true);
 
     try {
+      const possuiExtensao = formData.cargaHorariaExtensao === 'sim';
       const novaTurma = await criarTurma({
         periodo: formData.periodo,
         turno: formData.turno,
-        possuiExtensao: formData.cargaHorariaExtensao === 'sim',
+        possuiExtensao,
+        maximoHorasExtensao: possuiExtensao
+          ? Number(formData.maximoHorasExtensao)
+          : undefined,
         cursoId: cursoId
       });
 
@@ -162,7 +175,7 @@ export default function CourseDetailPage() {
       setTurmas(turmasAtualizadas);
 
       setIsTurmaModalOpen(false);
-      setFormData({ periodo: '', turno: '', cargaHorariaExtensao: '' });
+      setFormData({ periodo: '', turno: '', cargaHorariaExtensao: '', maximoHorasExtensao: '' });
     } catch (error) {
       toast.error('Não foi possível criar a turma. Tente novamente.');
     } finally {
@@ -335,9 +348,12 @@ export default function CourseDetailPage() {
                       <Label>Essa turma tem carga horária de extensão?</Label>
                       <RadioGroup
                         value={formData.cargaHorariaExtensao}
-                        onValueChange={(value) =>
-                          handleTurmaChange('cargaHorariaExtensao', value)
-                        }
+                        onValueChange={(value) => {
+                          handleTurmaChange('cargaHorariaExtensao', value);
+                          if (value === 'nao') {
+                            handleTurmaChange('maximoHorasExtensao', '');
+                          }
+                        }}
                         className="flex space-x-6"
                       >
                         <div className="flex items-center space-x-2">
@@ -350,6 +366,26 @@ export default function CourseDetailPage() {
                         </div>
                       </RadioGroup>
                     </div>
+
+                    {formData.cargaHorariaExtensao === 'sim' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="maximoHorasExtensao">
+                          Total de Horas de Extensão
+                        </Label>
+                        <input
+                          id="maximoHorasExtensao"
+                          type="number"
+                          min={1}
+                          placeholder="Horas de extensão"
+                          value={formData.maximoHorasExtensao}
+                          onChange={(e) =>
+                            handleTurmaChange('maximoHorasExtensao', e.target.value)
+                          }
+                          required
+                          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        />
+                      </div>
+                    )}
 
                     <div className="space-y-2">
                       <Label htmlFor="turno">Turno</Label>
@@ -377,7 +413,9 @@ export default function CourseDetailPage() {
                         isTurmaLoading ||
                         !formData.periodo ||
                         !formData.cargaHorariaExtensao ||
-                        !formData.turno
+                        !formData.turno ||
+                        (formData.cargaHorariaExtensao === 'sim' &&
+                          !formData.maximoHorasExtensao.trim())
                       }
                     >
                       {isTurmaLoading ? (

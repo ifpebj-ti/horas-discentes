@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Back.Domain.Entities.LimiteHorasAluno;
 using FluentAssertions;
@@ -15,7 +15,6 @@ public class LimiteHorasAlunoTests
         var limite = new LimiteHorasAlunoBuilder()
             .WithId(Guid.NewGuid())
             .WithMaximoHorasComplementar(40)
-            .WithMaximoHorasExtensao(20)
             .WithCursoId(Guid.NewGuid())
             .Build();
 
@@ -49,21 +48,6 @@ public class LimiteHorasAlunoTests
         var results = ValidationHelper.ValidateObject(limite);
 
         // Guid default é considerado válido pelo DataAnnotations
-        results.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void Limite_Com_MaximoHorasExtensao_Null_Deve_Passar()
-    {
-        var limite = new LimiteHorasAlunoBuilder()
-            .WithId(Guid.NewGuid())
-            .WithMaximoHorasComplementar(20)
-            .WithMaximoHorasExtensao(null) // permitido
-            .WithCursoId(Guid.NewGuid())
-            .Build();
-
-        var results = ValidationHelper.ValidateObject(limite);
-
         results.Should().BeEmpty();
     }
 }

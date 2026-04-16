@@ -1,4 +1,4 @@
-﻿using Back.Application.Interfaces.Repositories;
+using Back.Application.Interfaces.Repositories;
 using Back.Application.UseCases.Aluno;
 using Back.Domain.Entities.Aluno;
 using Back.Domain.Entities.AlunoAtividade;
@@ -42,6 +42,7 @@ public class GetAlunoDetalhadoUseCaseTests
             .WithPeriodo("2024.1")
             .WithTurno("Noite")
             .WithCursoId(cursoId)
+            .WithMaximoHorasExtensao(5)
             .Build();
 
         var aluno = new AlunoBuilder()
@@ -82,8 +83,7 @@ public class GetAlunoDetalhadoUseCaseTests
         {
             Id = Guid.NewGuid(),
             CursoId = cursoId,
-            MaximoHorasComplementar = 10,
-            MaximoHorasExtensao = 5
+            MaximoHorasComplementar = 10
         };
 
         _alunoRepo.Setup(r => r.GetByIdWithAtividadesAsync(alunoId))
@@ -100,7 +100,7 @@ public class GetAlunoDetalhadoUseCaseTests
             _alunoRepo.Object,
             _atividadeRepo.Object,
             _limiteRepo.Object,
-            _atividadeCursoRepo.Object // AGORA SIM
+            _atividadeCursoRepo.Object
         );
 
         // Act

@@ -1,4 +1,4 @@
-﻿using Back.Application.Interfaces.Repositories;
+using Back.Application.Interfaces.Repositories;
 using Back.Application.UseCases.Aluno;
 using Back.Domain.Entities.Aluno;
 using Back.Domain.Entities.AlunoAtividade;
@@ -35,6 +35,7 @@ public class GetResumoHorasUseCaseTests
         var turma = new TurmaBuilder()
             .WithId(Guid.NewGuid())
             .WithCursoId(cursoId)
+            .WithMaximoHorasExtensao(20)
             .Build();
 
         var aluno = new AlunoBuilder()
@@ -76,8 +77,7 @@ public class GetResumoHorasUseCaseTests
                   {
                       Id = Guid.NewGuid(),
                       CursoId = cursoId,
-                      MaximoHorasComplementar = 10,
-                      MaximoHorasExtensao = 20
+                      MaximoHorasComplementar = 10
                   });
 
         var useCase = new GetResumoHorasUseCase(alunoRepo.Object, limiteRepo.Object);
@@ -91,7 +91,6 @@ public class GetResumoHorasUseCaseTests
         var item = result[0];
         item.Nome.Should().Be("Aluno X");
 
-        // 🔧 aqui estavam os nomes errados
         item.TotalHorasExtensao.Should().Be(5);
         item.MaximoHorasExtensao.Should().Be(20);
     }
