@@ -20,7 +20,6 @@ public class CreateLimiteHorasAlunoUseCase
         var limite = new LimiteHorasAlunoBuilder()
             .WithId(Guid.NewGuid())
             .WithMaximoHorasComplementar(request.MaximoHorasComplementar)
-            .WithMaximoHorasExtensao(request.MaximoHorasExtensao)
             .WithCursoId(request.CursoId)
             .Build();
 

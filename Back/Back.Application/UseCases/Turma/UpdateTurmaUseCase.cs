@@ -26,6 +26,7 @@ public class UpdateTurmaUseCase
         turma.Periodo = request.Periodo;
         turma.Turno = request.Turno;
         turma.PossuiExtensao = request.PossuiExtensao;
+        turma.MaximoHorasExtensao = request.MaximoHorasExtensao;
         turma.CursoId = request.CursoId;
 
         // 3. Salva
@@ -39,6 +40,7 @@ public class UpdateTurmaUseCase
             turma.Codigo!,
             turma.CodigoAtivo,
             turma.PossuiExtensao,
+            turma.MaximoHorasExtensao,
             turma.CursoId,
             turma.Curso?.Nome ?? "Curso não encontrado",
             turma.Alunos.Count

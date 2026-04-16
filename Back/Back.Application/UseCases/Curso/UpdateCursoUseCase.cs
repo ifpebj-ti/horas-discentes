@@ -36,14 +36,12 @@ public class UpdateCursoUseCase
                 .WithId(Guid.NewGuid())
                 .WithCursoId(id)
                 .WithMaximoHorasComplementar(request.MaximoHorasComplementar)
-                .WithMaximoHorasExtensao(request.MaximoHorasExtensao)
                 .Build();
             await _limiteHorasRepository.AddAsync(novoLimite);
         }
         else
         {
             limite.MaximoHorasComplementar = request.MaximoHorasComplementar;
-            limite.MaximoHorasExtensao = request.MaximoHorasExtensao;
             await _limiteHorasRepository.UpdateAsync(limite);
         }
     }

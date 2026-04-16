@@ -9,6 +9,7 @@ public record TurmaResponse(
     string Codigo,
     bool CodigoAtivo,
     bool PossuiExtensao,
+    int? MaximoHorasExtensao,
     Guid CursoId,
     string CursoNome,
     int QuantidadeAlunos

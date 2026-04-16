@@ -32,6 +32,7 @@ public class CreateTurmaUseCase
             .WithTurno(request.Turno)
             .WithCodigo(codigo)
             .WithPossuiExtensao(request.PossuiExtensao)
+            .WithMaximoHorasExtensao(request.MaximoHorasExtensao)
             .WithCursoId(request.CursoId)
             .Build();
 
@@ -47,6 +48,7 @@ public class CreateTurmaUseCase
             turmaCompleta.Codigo!,
             turmaCompleta.CodigoAtivo,
             turmaCompleta.PossuiExtensao,
+            turmaCompleta.MaximoHorasExtensao,
             turmaCompleta.CursoId,
             turmaCompleta.Curso?.Nome ?? "Curso não encontrado",
             turmaCompleta.Alunos.Count

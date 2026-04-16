@@ -12,7 +12,4 @@ public class UpdateCursoComLimiteHorasRequest
     [Range(0, 9999, ErrorMessage = "O valor deve ser entre 0 e 9999.")]
     public int MaximoHorasComplementar { get; set; }
 
-    [Required(ErrorMessage = "O máximo de horas de extensão é obrigatório.")]
-    [Range(0, 9999, ErrorMessage = "O valor deve ser entre 0 e 9999.")]
-    public int MaximoHorasExtensao { get; set; }
 }

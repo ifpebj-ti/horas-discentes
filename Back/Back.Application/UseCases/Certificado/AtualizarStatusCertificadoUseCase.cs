@@ -36,7 +36,7 @@ public class AtualizarStatusCertificadoUseCase
         if (novoStatus == StatusCertificado.APROVADO && certificado.Status != StatusCertificado.APROVADO)
         {
             int maxTipo = atividade.Tipo == TipoAtividade.EXTENSAO
-                ? limite?.MaximoHorasExtensao ?? int.MaxValue
+                ? alunoAtividade.Aluno!.Turma!.MaximoHorasExtensao ?? int.MaxValue
                 : limite?.MaximoHorasComplementar ?? int.MaxValue;
 
             int horasTotaisAcumuladasDoTipo = await _alunoAtividadeRepo.GetTotalHorasConcluidasPorTipoAsync(alunoAtividade.AlunoId, atividade.Tipo);

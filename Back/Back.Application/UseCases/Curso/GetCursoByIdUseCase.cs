@@ -28,8 +28,7 @@ public class GetCursoByIdUseCase
         return new CursoDetalhadoResponse(
             curso.Id,
             curso.Nome,
-            limite?.MaximoHorasComplementar ?? 0,
-            limite?.MaximoHorasExtensao ?? 0
+            limite?.MaximoHorasComplementar ?? 0
         );
     }
 }

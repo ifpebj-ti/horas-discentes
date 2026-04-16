@@ -32,6 +32,7 @@ public class ToggleCodigoUseCase
             turmaCompleta.Codigo!,
             turmaCompleta.CodigoAtivo,
             turmaCompleta.PossuiExtensao,
+            turmaCompleta.MaximoHorasExtensao,
             turmaCompleta.CursoId,
             turmaCompleta.Curso?.Nome ?? "Curso não encontrado",
             turmaCompleta.Alunos.Count

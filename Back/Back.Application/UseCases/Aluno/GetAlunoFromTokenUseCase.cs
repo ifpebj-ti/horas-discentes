@@ -57,7 +57,7 @@ public class GetAlunoFromTokenUseCase
             aluno.TurmaId,
             atividades,
             ext,
-            limite?.MaximoHorasExtensao ?? 0,
+            aluno.Turma!.MaximoHorasExtensao ?? 0,
             comp,
             limite?.MaximoHorasComplementar ?? 0
         );
