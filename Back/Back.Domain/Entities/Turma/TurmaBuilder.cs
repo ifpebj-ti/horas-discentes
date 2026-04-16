@@ -40,6 +40,12 @@ public class TurmaBuilder
         return this;
     }
 
+    public TurmaBuilder WithMaximoHorasExtensao(int? horas)
+    {
+        _turma.MaximoHorasExtensao = horas;
+        return this;
+    }
+
     public TurmaBuilder WithCursoId(Guid cursoId)
     {
         _turma.CursoId = cursoId;

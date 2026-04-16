@@ -16,12 +16,6 @@ public class LimiteHorasAlunoBuilder
         return this;
     }
 
-    public LimiteHorasAlunoBuilder WithMaximoHorasExtensao(int? horas)
-    {
-        _limite.MaximoHorasExtensao = horas;
-        return this;
-    }
-
     public LimiteHorasAlunoBuilder WithCursoId(Guid cursoId)
     {
         _limite.CursoId = cursoId;

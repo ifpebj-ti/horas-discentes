@@ -21,6 +21,8 @@ public class Turma
 
     public bool PossuiExtensao { get; set; }
 
+    public int? MaximoHorasExtensao { get; set; }
+
     [Required(ErrorMessage = "O campo CursoId é obrigatório.")]
     public Guid CursoId { get; set; }
 

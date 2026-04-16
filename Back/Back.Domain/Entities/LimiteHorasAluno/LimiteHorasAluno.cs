@@ -10,8 +10,6 @@ public class LimiteHorasAluno
     [Required(ErrorMessage = "O campo MaximoHorasComplementar é obrigatório.")]
     public int MaximoHorasComplementar { get; set; }
 
-    public int? MaximoHorasExtensao { get; set; } // Extensão é optativa
-
     [Required(ErrorMessage = "O campo CursoId é obrigatório.")]
     public Guid CursoId { get; set; }
 }
