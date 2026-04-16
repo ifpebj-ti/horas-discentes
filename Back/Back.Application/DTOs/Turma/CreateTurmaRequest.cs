@@ -6,5 +6,6 @@ public record CreateTurmaRequest(
     string Periodo,
     string Turno,
     bool PossuiExtensao,
+    int? MaximoHorasExtensao,
     Guid CursoId
 );

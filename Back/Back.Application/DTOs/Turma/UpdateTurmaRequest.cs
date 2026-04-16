@@ -16,6 +16,8 @@ public class UpdateTurmaRequest
     [Required(ErrorMessage = "Informar se possui extensão é obrigatório.")]
     public bool PossuiExtensao { get; set; }
 
+    public int? MaximoHorasExtensao { get; set; }
+
     [Required(ErrorMessage = "O ID do curso é obrigatório.")]
     public Guid CursoId { get; set; }
 }

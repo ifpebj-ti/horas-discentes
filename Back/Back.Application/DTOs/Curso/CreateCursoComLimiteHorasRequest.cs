@@ -9,5 +9,4 @@ public class CreateCursoComLimiteHorasRequest
 {
     public string? NomeCurso { get; set; }
     public int MaximoHorasComplementar { get; set; }
-    public int MaximoHorasExtensao { get; set; }
 }
