@@ -50,7 +50,7 @@ public class GetAlunosByTurmaUseCase
             {
                 if (turma.PossuiExtensao)
                 {
-                    var pExt = limite.MaximoHorasExtensao > 0 ? ((double)totalHorasExtensao / limite.MaximoHorasExtensao!.Value) * 100 : 0;
+                    var pExt = turma.MaximoHorasExtensao > 0 ? ((double)totalHorasExtensao / turma.MaximoHorasExtensao!.Value) * 100 : 0;
                     var pComp = limite.MaximoHorasComplementar > 0 ? ((double)totalHorasComplementar / limite.MaximoHorasComplementar) * 100 : 0;
                     porcentagem = Math.Round((pExt + pComp) / 2, 2);
                 }
@@ -70,7 +70,7 @@ public class GetAlunosByTurmaUseCase
                 aluno.IsAtivo,
                 totalHorasExtensao,
                 totalHorasComplementar,
-                limite?.MaximoHorasExtensao ?? 0,
+                turma.MaximoHorasExtensao ?? 0,
                 limite?.MaximoHorasComplementar ?? 0,
                 porcentagem
             ));

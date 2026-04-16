@@ -52,17 +52,14 @@ public class GetAlunosComHorasConcluidasUseCase
 
         var alunosConcluidos = new List<AlunoComHorasConcluidasResponse>();
 
-        var horasExigidas = tipoAtividade == TipoAtividade.EXTENSAO
-                ? limiteDoCurso.MaximoHorasExtensao
-                : limiteDoCurso.MaximoHorasComplementar;
-
-        if (horasExigidas == null || horasExigidas == 0)
-        {
-            return Enumerable.Empty<AlunoComHorasConcluidasResponse>();
-        }
-
         foreach (var aluno in alunosDoCurso)
         {
+            int? horasExigidas = tipoAtividade == TipoAtividade.EXTENSAO
+                ? aluno.Turma!.MaximoHorasExtensao
+                : limiteDoCurso.MaximoHorasComplementar;
+
+            if (horasExigidas == null || horasExigidas == 0) continue;
+
             // A variável 'horasConcluidas' já é calculada aqui
             var horasConcluidas = aluno.Atividades
                 .Where(a => a.Atividade?.Tipo == tipoAtividade)

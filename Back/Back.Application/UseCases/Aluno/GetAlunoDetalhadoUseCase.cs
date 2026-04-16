@@ -76,7 +76,7 @@ public class GetAlunoDetalhadoUseCase
             aluno.TurmaId,
             atividades,
             totalHorasExtensao,
-            limite?.MaximoHorasExtensao ?? 0,
+            aluno.Turma!.MaximoHorasExtensao ?? 0,
             totalHorasComplementar,
             limite?.MaximoHorasComplementar ?? 120
         );

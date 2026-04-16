@@ -28,6 +28,7 @@ public class GetTurmaByIdUseCase
             turma.Codigo!,
             turma.CodigoAtivo,
             turma.PossuiExtensao,
+            turma.MaximoHorasExtensao,
             turma.CursoId,
             turma.Curso?.Nome ?? "curso não encontrado",
             turma.Alunos.Count);

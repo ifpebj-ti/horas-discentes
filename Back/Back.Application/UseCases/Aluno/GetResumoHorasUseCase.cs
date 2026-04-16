@@ -38,7 +38,7 @@ public class GetResumoHorasUseCase
                 a.Nome!,
                 a.Email!,
                 ext,
-                limite?.MaximoHorasExtensao ?? 0,
+                a.Turma!.MaximoHorasExtensao ?? 0,
                 comp,
                 limite?.MaximoHorasComplementar ?? 0,
                 a.IsAtivo

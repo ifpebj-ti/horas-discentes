@@ -51,13 +51,10 @@ public class ContarPendenciasDownloadUseCase
         int contagemTotalDePendencias = 0;
 
         var horasExigidasComp = limiteDoCurso.MaximoHorasComplementar;
-        var horasExigidasExt = limiteDoCurso.MaximoHorasExtensao;
 
         foreach (var aluno in alunosDoCurso)
         {
             // --- Verificação para Horas COMPLEMENTARES ---
-            // CORREÇÃO 1: 'horasExigidasComp' é 'int', então não possui '.HasValue'.
-            // A verificação é direta.
             if (horasExigidasComp > 0)
             {
                 var horasConcluidasComp = aluno.Atividades
@@ -70,8 +67,8 @@ public class ContarPendenciasDownloadUseCase
                 }
             }
 
-            // --- Verificação para Horas de EXTENSÃO ---
-            // Esta verificação já estava correta, pois 'horasExigidasExt' é 'int?'.
+            // --- Verificação para Horas de EXTENSÃO (por turma) ---
+            var horasExigidasExt = aluno.Turma!.MaximoHorasExtensao;
             if (horasExigidasExt.HasValue && horasExigidasExt > 0)
             {
                 var horasConcluidasExt = aluno.Atividades
