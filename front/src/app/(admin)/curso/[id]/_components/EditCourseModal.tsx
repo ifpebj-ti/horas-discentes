@@ -41,6 +41,7 @@ export const EditCourseModal = ({
 }: EditCourseModalProps) => {
   const [nomeCurso, setNomeCurso] = useState('');
   const [complementaryHours, setComplementaryHours] = useState('');
+  const [extensionHours, setExtensionHours] = useState('');
   const [loading, setLoading] = useState(false);
   const [confirmEdit, setConfirmEdit] = useState(false);
 
@@ -48,6 +49,7 @@ export const EditCourseModal = ({
     if (isOpen) {
       setNomeCurso(curso.nome);
       setComplementaryHours(String(curso.maximoHorasComplementar));
+      setExtensionHours(String(curso.maximoHorasExtensao));
     }
   }, [isOpen, curso]);
 
@@ -73,7 +75,8 @@ export const EditCourseModal = ({
 
       const payload: UpdateCursoRequest = {
         nomeCurso: nomeCurso.trim(),
-        maximoHorasComplementar: Number(complementaryHours)
+        maximoHorasComplementar: Number(complementaryHours),
+        maximoHorasExtensao: Number(extensionHours) || 0
       };
 
       await atualizarCurso(curso.id, payload);
@@ -167,6 +170,27 @@ export const EditCourseModal = ({
                       value={complementaryHours}
                       onChange={(e) => setComplementaryHours(e.target.value)}
                       required
+                      className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="editExtensionHours"
+                      className="block font-medium"
+                    >
+                      Total de Horas de Extensão
+                      <span className="ml-1 text-sm font-normal text-gray-500">
+                        (0 se não aplicável)
+                      </span>
+                    </label>
+                    <input
+                      id="editExtensionHours"
+                      type="number"
+                      min={0}
+                      placeholder="Horas de extensão"
+                      value={extensionHours}
+                      onChange={(e) => setExtensionHours(e.target.value)}
                       className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     />
                   </div>

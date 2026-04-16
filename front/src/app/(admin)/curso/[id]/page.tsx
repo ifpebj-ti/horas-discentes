@@ -148,6 +148,16 @@ export default function CourseDetailPage() {
                 )}
               </p>
             </div>
+            <div>
+              <p className="text-xs text-gray-500">Extensão</p>
+              <p className="text-base font-bold text-gray-800">
+                {curso.maximoHorasExtensao > 0 ? (
+                  `${curso.maximoHorasExtensao}h`
+                ) : (
+                  <span className="text-gray-400">—</span>
+                )}
+              </p>
+            </div>
           </div>
         </div>
       )}

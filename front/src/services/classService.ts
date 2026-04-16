@@ -4,7 +4,6 @@ export interface CreateTurmaRequest {
   periodo: string;
   turno: string;
   possuiExtensao: boolean;
-  maximoHorasExtensao?: number;
   cursoId: string;
 }
 
@@ -15,7 +14,6 @@ export interface TurmaResponse {
   codigo: string;
   codigoAtivo: boolean;
   possuiExtensao: boolean;
-  maximoHorasExtensao: number | null;
   cursoId: string;
   cursoNome: string;
   quantidadeAlunos: number;
