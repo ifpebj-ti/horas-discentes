@@ -336,6 +336,9 @@ namespace Back.Infrastructure.Migrations
                     b.Property<int>("MaximoHorasComplementar")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("MaximoHorasExtensao")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("LimitesHoras");
@@ -357,9 +360,6 @@ namespace Back.Infrastructure.Migrations
 
                     b.Property<Guid>("CursoId")
                         .HasColumnType("uuid");
-
-                    b.Property<int?>("MaximoHorasExtensao")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Periodo")
                         .IsRequired()
