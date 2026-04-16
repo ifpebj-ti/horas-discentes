@@ -7,6 +7,7 @@ using Back.Domain.Entities.Atividade;
 using Back.Domain.Entities.Coordenador;
 using Back.Domain.Entities.Curso;
 using Back.Domain.Entities.LimiteHorasAluno;
+using Back.Domain.Entities.Turma;
 using FluentAssertions;
 using Moq;
 using DomainAtividade = Back.Domain.Entities.Atividade.Atividade;
@@ -69,14 +70,21 @@ public class ContarPendenciasDownloadUseCaseTests
         // Injetando Curso via reflection
         SetPrivateProperty(coordenador, nameof(Coordenador.Curso), curso);
 
+        var turma = new TurmaBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCursoId(curso.Id)
+            .Build();
+
         var aluno = new AlunoBuilder()
             .WithId(Guid.NewGuid())
             .WithNome("Aluno 1")
             .WithEmail("a1@ifpe.edu.br")
             .WithMatricula("001")
-            .WithTurmaId(Guid.NewGuid())
+            .WithTurmaId(turma.Id)
             .WithIdentityUserId("al1")
             .Build();
+
+        SetPrivateProperty(aluno, nameof(aluno.Turma), turma);
 
         var atividadeAluno = new AlunoAtividadeBuilder()
             .WithId(Guid.NewGuid())
@@ -103,8 +111,7 @@ public class ContarPendenciasDownloadUseCaseTests
         {
             Id = Guid.NewGuid(),
             CursoId = curso.Id,
-            MaximoHorasComplementar = 5,
-            MaximoHorasExtensao = null
+            MaximoHorasComplementar = 5
         };
 
         _coordenadorRepo.Setup(r => r.GetByIdentityUserIdWithCursoAsync(identityUserId))

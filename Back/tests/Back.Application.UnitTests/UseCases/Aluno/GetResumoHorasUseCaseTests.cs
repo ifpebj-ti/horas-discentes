@@ -35,6 +35,7 @@ public class GetResumoHorasUseCaseTests
         var turma = new TurmaBuilder()
             .WithId(Guid.NewGuid())
             .WithCursoId(cursoId)
+            .WithMaximoHorasExtensao(20)
             .Build();
 
         var aluno = new AlunoBuilder()
@@ -76,8 +77,7 @@ public class GetResumoHorasUseCaseTests
                   {
                       Id = Guid.NewGuid(),
                       CursoId = cursoId,
-                      MaximoHorasComplementar = 10,
-                      MaximoHorasExtensao = 20
+                      MaximoHorasComplementar = 10
                   });
 
         var useCase = new GetResumoHorasUseCase(alunoRepo.Object, limiteRepo.Object);

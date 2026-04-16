@@ -57,7 +57,7 @@ public class GetAlunosComHorasConcluidasUseCaseTests
         // ALUNO 1 — CONCLUIU EXTENSÃO
         // ----------------------------------------------
 
-        var turma = new TurmaBuilder().WithId(Guid.NewGuid()).WithCursoId(cursoId).Build();
+        var turma = new TurmaBuilder().WithId(Guid.NewGuid()).WithCursoId(cursoId).WithMaximoHorasExtensao(10).Build();
         var aluno1 = new AlunoBuilder()
             .WithId(Guid.NewGuid())
             .WithNome("Aluno 1")
@@ -100,8 +100,7 @@ public class GetAlunosComHorasConcluidasUseCaseTests
                   .ReturnsAsync(new LimiteHorasAluno
                   {
                       Id = Guid.NewGuid(),
-                      CursoId = cursoId,
-                      MaximoHorasExtensao = 10
+                      CursoId = cursoId
                   });
 
         var useCase = new GetAlunosComHorasConcluidasUseCase(

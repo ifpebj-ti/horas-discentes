@@ -41,7 +41,6 @@ public static class DevDataSeeder
             .WithId(Guid.NewGuid())
             .WithCursoId(cursoId)
             .WithMaximoHorasComplementar(120)
-            .WithMaximoHorasExtensao(80)
             .Build();
 
         context.LimitesHoras.Add(limite);
@@ -56,6 +55,7 @@ public static class DevDataSeeder
             .WithCodigo("ADS1B7")
             .WithCursoId(cursoId)
             .WithPossuiExtensao(true)
+            .WithMaximoHorasExtensao(80)
             .Build();
 
         var turma2Id = Guid.NewGuid();

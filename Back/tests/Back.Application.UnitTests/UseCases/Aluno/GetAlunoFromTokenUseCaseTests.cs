@@ -45,6 +45,7 @@ public class GetAlunoFromTokenUseCaseTests
             .WithPeriodo("2024.1")
             .WithTurno("Manhã")
             .WithCursoId(cursoId)
+            .WithMaximoHorasExtensao(10)
             .Build();
 
         var aluno = new AlunoBuilder()
@@ -85,8 +86,7 @@ public class GetAlunoFromTokenUseCaseTests
         {
             Id = Guid.NewGuid(),
             CursoId = cursoId,
-            MaximoHorasComplementar = 20,
-            MaximoHorasExtensao = 10
+            MaximoHorasComplementar = 20
         };
 
         _alunoRepo.Setup(r => r.GetByIdentityUserIdWithAtividadesAsync(identityId))
