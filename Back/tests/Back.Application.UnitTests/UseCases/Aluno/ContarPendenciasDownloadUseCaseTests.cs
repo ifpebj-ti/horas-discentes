@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Back.Application.UseCases.Aluno;
 using Back.Application.Interfaces.Repositories;
 using Back.Domain.Entities.Aluno;
@@ -7,7 +7,6 @@ using Back.Domain.Entities.Atividade;
 using Back.Domain.Entities.Coordenador;
 using Back.Domain.Entities.Curso;
 using Back.Domain.Entities.LimiteHorasAluno;
-using Back.Domain.Entities.Turma;
 using FluentAssertions;
 using Moq;
 using DomainAtividade = Back.Domain.Entities.Atividade.Atividade;
@@ -33,6 +32,7 @@ public class ContarPendenciasDownloadUseCaseTests
             })
         );
 
+    // Helper para setar propriedades com setter private
     private static void SetPrivateProperty<T, TValue>(T obj, string propertyName, TValue value)
     {
         var prop = typeof(T).GetProperty(propertyName,
@@ -59,31 +59,24 @@ public class ContarPendenciasDownloadUseCaseTests
             .WithCursoId(Guid.NewGuid())
             .Build();
 
+        // Criando curso
         var curso = new Curso
         {
             Id = coordenador.CursoId,
             Nome = "Curso Teste"
         };
 
+        // Injetando Curso via reflection
         SetPrivateProperty(coordenador, nameof(Coordenador.Curso), curso);
-
-        // Turma sem extensão
-        var turma = new TurmaBuilder()
-            .WithId(Guid.NewGuid())
-            .WithCursoId(curso.Id)
-            .WithPossuiExtensao(false)
-            .Build();
 
         var aluno = new AlunoBuilder()
             .WithId(Guid.NewGuid())
             .WithNome("Aluno 1")
             .WithEmail("a1@ifpe.edu.br")
             .WithMatricula("001")
-            .WithTurmaId(turma.Id)
+            .WithTurmaId(Guid.NewGuid())
             .WithIdentityUserId("al1")
             .Build();
-
-        SetPrivateProperty(aluno, nameof(aluno.Turma), turma);
 
         var atividadeAluno = new AlunoAtividadeBuilder()
             .WithId(Guid.NewGuid())
@@ -110,7 +103,8 @@ public class ContarPendenciasDownloadUseCaseTests
         {
             Id = Guid.NewGuid(),
             CursoId = curso.Id,
-            MaximoHorasComplementar = 5
+            MaximoHorasComplementar = 5,
+            MaximoHorasExtensao = null
         };
 
         _coordenadorRepo.Setup(r => r.GetByIdentityUserIdWithCursoAsync(identityUserId))
