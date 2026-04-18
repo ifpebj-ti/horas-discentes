@@ -35,8 +35,6 @@ export const CreateCourseModal = ({
 }: CreateCourseModalProps) => {
   const [newCourseName, setNewCourseName] = useState('');
   const [complementaryHours, setComplementaryHours] = useState('');
-  const [extensionHours, setExtensionHours] = useState('');
-  const [hasExtension, setHasExtension] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [confirmCreate, setConfirmCreate] = useState(false);
 
@@ -57,8 +55,7 @@ export const CreateCourseModal = ({
 
       const payload: CreateCursoRequest = {
         nomeCurso: newCourseName,
-        maximoHorasComplementar: Number(complementaryHours),
-        ...(hasExtension ? { maximoHorasExtensao: Number(extensionHours) } : {})
+        maximoHorasComplementar: Number(complementaryHours)
       };
 
       await criarCurso(payload);
@@ -69,8 +66,6 @@ export const CreateCourseModal = ({
       onClose();
       setNewCourseName('');
       setComplementaryHours('');
-      setExtensionHours('');
-      setHasExtension(false);
     } catch (error) {
       toast.error('Não foi possível criar o curso.');
     } finally {
@@ -154,69 +149,19 @@ export const CreateCourseModal = ({
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <p className="font-medium">
-                      Este curso tem carga horária de extensão?
-                    </p>
-                    <div className="flex space-x-6">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="hasExtension"
-                          value="sim"
-                          checked={hasExtension === true}
-                          onChange={() => setHasExtension(true)}
-                          className="accent-blue-600"
-                        />
-                        <span>Sim</span>
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="hasExtension"
-                          value="nao"
-                          checked={hasExtension === false}
-                          onChange={() => setHasExtension(false)}
-                          className="accent-blue-600"
-                        />
-                        <span>Não</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {hasExtension && (
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="extensionHours"
-                        className="block font-medium"
-                      >
-                        Horas de Extensão
-                      </label>
-                      <input
-                        id="extensionHours"
-                        type="number"
-                        placeholder="Horas de extensão"
-                        value={extensionHours}
-                        onChange={(e) => setExtensionHours(e.target.value)}
-                        required
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                      />
-                    </div>
-                  )}
-
                   <button
                     type="submit"
                     disabled={
                       loading ||
                       !newCourseName.trim() ||
-                      !complementaryHours.trim() ||
-                      (hasExtension && !extensionHours.trim())
+                      !complementaryHours.trim()
                     }
                     className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                   >
                     {loading ? 'Criando...' : 'Criar Curso'}
                   </button>
                 </form>
+
               </CardContent>
             </Card>
           </div>
