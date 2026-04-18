@@ -4,6 +4,7 @@ export interface CreateTurmaRequest {
   periodo: string;
   turno: string;
   possuiExtensao: boolean;
+  maximoHorasExtensao?: number;
   cursoId: string;
 }
 

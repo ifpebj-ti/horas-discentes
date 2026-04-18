@@ -161,7 +161,6 @@ export const CreateCourseModal = ({
                     {loading ? 'Criando...' : 'Criar Curso'}
                   </button>
                 </form>
-
               </CardContent>
             </Card>
           </div>

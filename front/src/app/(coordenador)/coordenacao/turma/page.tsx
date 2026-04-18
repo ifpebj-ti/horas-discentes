@@ -161,9 +161,9 @@ export default function CourseDetailPage() {
         periodo: formData.periodo,
         turno: formData.turno,
         possuiExtensao,
-        maximoHorasExtensao: possuiExtensao
-          ? Number(formData.maximoHorasExtensao)
-          : undefined,
+        ...(possuiExtensao
+          ? { maximoHorasExtensao: Number(formData.maximoHorasExtensao) }
+          : {}),
         cursoId: cursoId
       });
 
@@ -175,7 +175,12 @@ export default function CourseDetailPage() {
       setTurmas(turmasAtualizadas);
 
       setIsTurmaModalOpen(false);
-      setFormData({ periodo: '', turno: '', cargaHorariaExtensao: '', maximoHorasExtensao: '' });
+      setFormData({
+        periodo: '',
+        turno: '',
+        cargaHorariaExtensao: '',
+        maximoHorasExtensao: ''
+      });
     } catch (error) {
       toast.error('Não foi possível criar a turma. Tente novamente.');
     } finally {
@@ -379,7 +384,10 @@ export default function CourseDetailPage() {
                           placeholder="Horas de extensão"
                           value={formData.maximoHorasExtensao}
                           onChange={(e) =>
-                            handleTurmaChange('maximoHorasExtensao', e.target.value)
+                            handleTurmaChange(
+                              'maximoHorasExtensao',
+                              e.target.value
+                            )
                           }
                           required
                           className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
