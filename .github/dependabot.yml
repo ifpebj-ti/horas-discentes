@@ -11,7 +11,7 @@ updates:
     commit-message:
       prefix: "chore"
     labels:
-      - "chore"
+      - "type: chore"
     groups:
       dependencias-back-api:
         patterns:
@@ -28,7 +28,7 @@ updates:
     commit-message:
       prefix: "chore"
     labels:
-      - "chore"
+      - "type: chore"
     groups:
       dependencias-back-application:
         patterns:
@@ -45,7 +45,7 @@ updates:
     commit-message:
       prefix: "chore"
     labels:
-      - "chore"
+      - "type: chore"
     groups:
       dependencias-back-domain:
         patterns:
@@ -62,7 +62,7 @@ updates:
     commit-message:
       prefix: "chore"
     labels:
-      - "chore"
+      - "type: chore"
     groups:
       dependencias-front:
         patterns:
