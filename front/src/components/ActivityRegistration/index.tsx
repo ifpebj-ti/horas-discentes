@@ -56,6 +56,7 @@ export function ActivityRegistration() {
   }, [show, hide]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAtividades();
   }, [fetchAtividades]);
 

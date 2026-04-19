@@ -51,6 +51,7 @@ export const EditCourseModal = ({
 
   useEffect(() => {
     if (!isOpen) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setNomeCurso(curso.nome);
     setComplementaryHours(String(curso.maximoHorasComplementar));
     setSelectedCampusId(curso.campusId);

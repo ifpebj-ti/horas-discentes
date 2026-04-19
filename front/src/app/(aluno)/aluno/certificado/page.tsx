@@ -184,7 +184,9 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                       dateEnd: cert.periodoFim,
                       category: cert.categoriaKey,
                       status: cert.status,
-                      ...(cert.justificativaRejeicao ? { justificativaRejeicao: cert.justificativaRejeicao } : {})
+                      ...(cert.justificativaRejeicao
+                        ? { justificativaRejeicao: cert.justificativaRejeicao }
+                        : {})
                     }}
                     onClick={handleVerCertificado}
                   />
@@ -229,7 +231,9 @@ export default function Certificados() {
           categoriaKey: cert.categoriaKey,
           tipo: mapTipoCertificado(cert.tipo),
           status: mapStatusCertificado(cert.status),
-          ...(cert.justificativaRejeicao ? { justificativaRejeicao: cert.justificativaRejeicao } : {})
+          ...(cert.justificativaRejeicao
+            ? { justificativaRejeicao: cert.justificativaRejeicao }
+            : {})
         }));
 
         setCertificados(mapped);
