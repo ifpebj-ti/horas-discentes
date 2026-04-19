@@ -383,17 +383,14 @@ export default function ValidacaoCertificadosPage() {
               <textarea
                 id="justificativa-rejeicao"
                 className={`w-full min-h-[120px] p-3 border rounded-lg resize-y text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                  errors.justificativa
-                    ? 'border-red-500'
-                    : 'border-gray-300'
+                  errors.justificativa ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Descreva o motivo da reprovação..."
                 {...register('justificativa', {
                   required: 'A justificativa é obrigatória.',
                   minLength: {
                     value: 10,
-                    message:
-                      'A justificativa deve ter no mínimo 10 caracteres.'
+                    message: 'A justificativa deve ter no mínimo 10 caracteres.'
                   }
                 })}
               />

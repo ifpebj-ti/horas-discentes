@@ -106,7 +106,10 @@ export const aprovarCertificado = async (id: string): Promise<void> => {
   await api.patch(`/Certificado/${id}/aprovar`);
 };
 
-export const reprovarCertificado = async (id: string, justificativa: string): Promise<void> => {
+export const reprovarCertificado = async (
+  id: string,
+  justificativa: string
+): Promise<void> => {
   await api.patch(`/Certificado/${id}/reprovar`, { justificativa });
 };
 
