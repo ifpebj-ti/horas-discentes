@@ -11,6 +11,17 @@ on:
       - ".github/workflows/**"
 
   workflow_dispatch:
+    inputs:
+      change_type:
+        description: 'Tipo de mudanca (novo-marco, nova-feature, bug-fix, outros)'
+        required: true
+        default: 'nova-feature'
+        type: choice
+        options:
+          - novo-marco
+          - nova-feature
+          - bug-fix
+          - outros
 
 jobs:
   # --------------------------------------------------------------------
@@ -76,11 +87,12 @@ jobs:
         id: created_tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            created_tag="${{ steps.last_tag.outputs.last_tag }}"
-            echo "Dispatch manual: reutilizando tag $created_tag"
+            change_type="${{ github.event.inputs.change_type }}"
           else
+            change_type="${{ steps.change_type.outputs.change_type }}"
+          fi
             IFS='.' read -r major minor patch <<< "${{ steps.last_tag.outputs.last_tag }}"
-            case "${{ steps.change_type.outputs.change_type }}" in
+            case "$change_type" in
               bug-fix|outros)
                 patch=$((patch + 1))
                 ;;
