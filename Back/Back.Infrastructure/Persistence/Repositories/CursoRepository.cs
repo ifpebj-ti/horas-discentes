@@ -32,18 +32,24 @@ public class CursoRepository : ICursoRepository
 
     public async Task<Curso?> GetByIdAsync(Guid id)
     {
-        return await _context.Cursos.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+        return await _context.Cursos
+            .Include(c => c.Campus)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
+
     public async Task<IEnumerable<CursoResumoResponse>> GetResumoCursosAsync()
     {
         return await _context.Cursos
+            .Include(c => c.Campus)
             .Include(c => c.Turmas!)
                 .ThenInclude(t => t.Alunos)
             .Select(c => new CursoResumoResponse(
                 c.Id,
                 c.Nome!,
                 c.Turmas!.Count,
-                c.Turmas!.SelectMany(t => t.Alunos).Count()
+                c.Turmas!.SelectMany(t => t.Alunos).Count(),
+                c.Campus!.Nome!
             ))
             .AsNoTracking()
             .ToListAsync();
