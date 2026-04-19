@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUsers, FaCalendarAlt, FaTrash } from 'react-icons/fa';
+import { FaUsers, FaCalendarAlt, FaTrash, FaMapMarkerAlt } from 'react-icons/fa';
 
 import { Button } from '@/components/ui/button';
 
@@ -7,6 +7,7 @@ interface CourseCardProps {
   courseName: string;
   alunos: number;
   classes: number;
+  campus?: string;
   onManageCourse: () => void;
   onDeleteCourse?: () => void;
 }
@@ -15,6 +16,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
   courseName,
   alunos,
   classes,
+  campus,
   onManageCourse,
   onDeleteCourse
 }) => {
@@ -39,6 +41,12 @@ const CourseCard: React.FC<CourseCardProps> = ({
       </h2>
 
       <div className="flex flex-col gap-1 text-sm text-gray-600 mb-5">
+        {campus && (
+          <div className="flex items-center gap-2">
+            <FaMapMarkerAlt />
+            {campus}
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <FaUsers />
           {alunos} Aluno{alunos !== 1 ? 's' : ''}

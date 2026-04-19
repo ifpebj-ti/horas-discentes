@@ -27,15 +27,42 @@ public static class DevDataSeeder
         // Atividades globais (antes de cursos/alunos para poder vincular)
         await AtividadeSeeder.SeedAsync(context);
 
-        // Campus padrão
-        var campusId = Guid.NewGuid();
-        var campus = new CampusBuilder()
-            .WithId(campusId)
-            .WithNome("Campus Belo Jardim")
-            .WithCidade("Belo Jardim")
-            .Build();
+        // Campi do IFPE
+        var campiData = new[]
+        {
+            ("Campus Abreu e Lima",              "Abreu e Lima"),
+            ("Campus Afogados da Ingazeira",     "Afogados da Ingazeira"),
+            ("Campus Barreiros",                 "Barreiros"),
+            ("Campus Belo Jardim",               "Belo Jardim"),
+            ("Campus Cabo de Santo Agostinho",   "Cabo de Santo Agostinho"),
+            ("Campus Caruaru",                   "Caruaru"),
+            ("Campus Garanhuns",                 "Garanhuns"),
+            ("Campus Igarassu",                  "Igarassu"),
+            ("Campus Ipojuca",                   "Ipojuca"),
+            ("Campus Jaboatão dos Guararapes",   "Jaboatão dos Guararapes"),
+            ("Campus Olinda",                    "Olinda"),
+            ("Campus Palmares",                  "Palmares"),
+            ("Campus Paulista",                  "Paulista"),
+            ("Campus Pesqueira",                 "Pesqueira"),
+            ("Campus Recife",                    "Recife"),
+            ("Campus Vitória de Santo Antão",    "Vitória de Santo Antão"),
+        };
 
-        context.Campi.Add(campus);
+        Guid campusId = Guid.Empty;
+        foreach (var (nome, cidade) in campiData)
+        {
+            var id = Guid.NewGuid();
+            var campus = new CampusBuilder()
+                .WithId(id)
+                .WithNome(nome)
+                .WithCidade(cidade)
+                .Build();
+            context.Campi.Add(campus);
+
+            if (cidade == "Belo Jardim")
+                campusId = id;
+        }
+
         await context.SaveChangesAsync();
 
         // Curso

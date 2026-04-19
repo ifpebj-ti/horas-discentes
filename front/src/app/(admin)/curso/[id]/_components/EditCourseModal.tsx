@@ -107,7 +107,7 @@ export const EditCourseModal = ({
 
   const campusOptions = campuses.map((c) => ({
     value: c.id,
-    label: `${c.nome} — ${c.cidade}`
+    label: c.nome
   }));
 
   const selectedCampusLabel =
