@@ -25,6 +25,7 @@ public class CreateCursoUseCase
         var curso = new CursoBuilder()
             .WithId(Guid.NewGuid())
             .WithNome(request.NomeCurso!)
+            .WithCampusId(request.CampusId)
             .Build();
 
         await _cursoRepository.AddAsync(curso);
