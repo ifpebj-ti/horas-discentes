@@ -15,6 +15,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        // campus
+        services.AddScoped<ICampusRepository, CampusRepository>();
+
         // curso
         services.AddScoped<ICursoRepository, CursoRepository>();
 
