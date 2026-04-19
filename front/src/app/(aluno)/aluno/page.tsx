@@ -184,7 +184,8 @@ export default function Aluno() {
       grupo: cert.grupo,
       categoriaKey: cert.categoriaKey,
       tipo: mapTipoCertificado(cert.tipo),
-      status: mapStatusCertificado(cert.status)
+      status: mapStatusCertificado(cert.status),
+      justificativaRejeicao: cert.justificativaRejeicao
     }));
   }, [certificadosData]);
 

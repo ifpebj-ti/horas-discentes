@@ -183,7 +183,8 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                       date: cert.periodoInicio,
                       dateEnd: cert.periodoFim,
                       category: cert.categoriaKey,
-                      status: cert.status
+                      status: cert.status,
+                      justificativaRejeicao: cert.justificativaRejeicao
                     }}
                     onClick={handleVerCertificado}
                   />
@@ -227,7 +228,8 @@ export default function Certificados() {
           grupo: cert.grupo,
           categoriaKey: cert.categoriaKey,
           tipo: mapTipoCertificado(cert.tipo),
-          status: mapStatusCertificado(cert.status)
+          status: mapStatusCertificado(cert.status),
+          justificativaRejeicao: cert.justificativaRejeicao
         }));
 
         setCertificados(mapped);
