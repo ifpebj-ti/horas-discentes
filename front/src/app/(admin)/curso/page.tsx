@@ -50,15 +50,26 @@ export default function CursoPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      show();
       try {
-        show();
-        const [data, campusData] = await Promise.all([
+        const [coursesResult, campusesResult] = await Promise.allSettled([
           obterResumoCursos(),
           listarCampuses()
         ]);
-        setCourses(data);
-        setCampuses(campusData);
-      } catch (error) {
+
+        if (coursesResult.status === 'fulfilled') {
+          setCourses(coursesResult.value);
+        } else {
+          toast.error('Não foi possível carregar os cursos.');
+          setCourses([]);
+        }
+
+        if (campusesResult.status === 'fulfilled') {
+          setCampuses(campusesResult.value);
+        } else {
+          toast.error('Não foi possível carregar os campi.');
+          setCampuses([]);
+        }
       } finally {
         hide();
       }
@@ -67,16 +78,13 @@ export default function CursoPage() {
     fetchData();
   }, [show, hide]);
 
-  const selectedCampusNome =
-    campuses.find((c) => c.id === selectedCampusId)?.nome ?? '';
-
   const filteredCourses = Array.isArray(courses)
     ? courses.filter((course) => {
         const matchesSearch =
           typeof course.nome === 'string' &&
           course.nome.toLowerCase().includes(search.toLowerCase());
         const matchesCampus =
-          !selectedCampusId || course.nomeCampus === selectedCampusNome;
+          !selectedCampusId || course.campusId === selectedCampusId;
         return matchesSearch && matchesCampus;
       })
     : [];

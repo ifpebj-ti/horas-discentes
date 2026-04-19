@@ -54,6 +54,7 @@ public class CursoRepository : ICursoRepository
                 c.Nome!,
                 c.Turmas!.Count,
                 c.Turmas!.SelectMany(t => t.Alunos).Count(),
+                c.CampusId,
                 c.Campus!.Nome!
             ))
             .AsNoTracking()

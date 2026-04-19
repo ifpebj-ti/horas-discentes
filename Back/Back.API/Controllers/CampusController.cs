@@ -37,10 +37,10 @@ public class CampusController : ControllerBase
     /// </summary>
     [HttpPost]
     [SwaggerOperation(Summary = "Cria um novo campus.", Tags = new[] { "Campus" })]
-    [ProducesResponseType(typeof(CampusResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(CampusResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> Criar([FromBody] CreateCampusRequest request)
     {
         var campus = await _criar.ExecuteAsync(request);
-        return CreatedAtAction(nameof(ListarTodos), new { id = campus.Id }, campus);
+        return Ok(campus);
     }
 }

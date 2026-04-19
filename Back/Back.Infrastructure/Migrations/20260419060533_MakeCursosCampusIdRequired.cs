@@ -11,16 +11,29 @@ namespace Back.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            var campusPadraoId = new Guid("11111111-1111-1111-1111-111111111111");
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Cursos_Campi_CampusId",
                 table: "Cursos");
+
+            migrationBuilder.Sql($@"
+                INSERT INTO ""Campi"" (""Id"", ""Nome"", ""Cidade"")
+                SELECT '{campusPadraoId}', 'Campus Padrão', 'Não informado'
+                WHERE NOT EXISTS (SELECT 1 FROM ""Campi"");
+            ");
+
+            migrationBuilder.Sql(@"
+                UPDATE ""Cursos""
+                SET ""CampusId"" = (SELECT ""Id"" FROM ""Campi"" ORDER BY ""Nome"" LIMIT 1)
+                WHERE ""CampusId"" IS NULL;
+            ");
 
             migrationBuilder.AlterColumn<Guid>(
                 name: "CampusId",
                 table: "Cursos",
                 type: "uuid",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
                 oldClrType: typeof(Guid),
                 oldType: "uuid",
                 oldNullable: true);

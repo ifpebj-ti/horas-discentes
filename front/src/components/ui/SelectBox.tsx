@@ -22,6 +22,7 @@ export default function SelectBox({
 }: Props) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const selectedOptionLabel = options.find((opt) => opt.value === value)?.label;
 
   /* Fecha ao clicar fora */
   useEffect(() => {
@@ -44,8 +45,8 @@ export default function SelectBox({
           ${error ? 'border-red-500' : ''}
         `}
       >
-        <span className={value ? '' : 'text-gray-400'}>
-          {value || placeholder}
+        <span className={selectedOptionLabel ? '' : 'text-gray-400'}>
+          {selectedOptionLabel || placeholder}
         </span>
         <FaChevronDown className="ml-2 text-sm" />
       </button>

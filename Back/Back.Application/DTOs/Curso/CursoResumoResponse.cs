@@ -7,5 +7,6 @@ public record CursoResumoResponse(
     string Nome,
     int QuantidadeTurmas,
     int QuantidadeAlunos,
+    Guid CampusId,
     string NomeCampus
 );

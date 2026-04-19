@@ -102,9 +102,6 @@ export const CreateCourseModal = ({
     label: c.nome
   }));
 
-  const selectedCampusLabel =
-    campusOptions.find((o) => o.value === selectedCampusId)?.label ?? '';
-
   return (
     <>
       <AlertDialog open={confirmCreate} onOpenChange={setConfirmCreate}>
@@ -182,7 +179,7 @@ export const CreateCourseModal = ({
                   <div className="space-y-2">
                     <label className="block font-medium">Campus</label>
                     <SelectBox
-                      value={selectedCampusLabel}
+                      value={selectedCampusId}
                       onChange={setSelectedCampusId}
                       placeholder="Selecione um campus"
                       options={campusOptions}

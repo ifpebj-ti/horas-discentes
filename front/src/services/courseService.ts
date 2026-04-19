@@ -30,6 +30,7 @@ export interface CursoResumoResponse {
   nome: string;
   quantidadeTurmas: number;
   quantidadeAlunos: number;
+  campusId: string;
   nomeCampus: string;
 }
 // Criar novo curso

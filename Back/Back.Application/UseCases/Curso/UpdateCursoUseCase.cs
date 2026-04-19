@@ -11,13 +11,16 @@ public class UpdateCursoUseCase
 {
     private readonly ICursoRepository _cursoRepository;
     private readonly ILimiteHorasAlunoRepository _limiteHorasRepository;
+    private readonly ICampusRepository _campusRepository;
 
     public UpdateCursoUseCase(
         ICursoRepository cursoRepository,
-        ILimiteHorasAlunoRepository limiteHorasRepository)
+        ILimiteHorasAlunoRepository limiteHorasRepository,
+        ICampusRepository campusRepository)
     {
         _cursoRepository = cursoRepository;
         _limiteHorasRepository = limiteHorasRepository;
+        _campusRepository = campusRepository;
     }
 
     public async Task ExecuteAsync(Guid id, UpdateCursoComLimiteHorasRequest request)
@@ -25,6 +28,10 @@ public class UpdateCursoUseCase
         var curso = await _cursoRepository.GetByIdToUpdateAsync(id);
         if (curso == null)
             throw new KeyNotFoundException("Curso não encontrado.");
+
+        var campus = await _campusRepository.GetByIdAsync(request.CampusId);
+        if (campus == null)
+            throw new InvalidOperationException("Campus não encontrado.");
 
         curso.Nome = request.NomeCurso;
         curso.CampusId = request.CampusId;

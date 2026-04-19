@@ -45,10 +45,18 @@ public class CursoController : ControllerBase
         Description = "Somente usuários com perfil ADMIN podem cadastrar um novo curso.",
         Tags = new[] { "Cursos" })]
     [ProducesResponseType(typeof(CursoResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Criar([FromBody] CreateCursoComLimiteHorasRequest request)
     {
-        var curso = await _create.ExecuteAsync(request);
-        return CreatedAtAction(nameof(ObterPorId), new { id = curso.Id }, curso);
+        try
+        {
+            var curso = await _create.ExecuteAsync(request);
+            return CreatedAtAction(nameof(ObterPorId), new { id = curso.Id }, curso);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { erro = ex.Message });
+        }
     }
 
     /// <summary>
