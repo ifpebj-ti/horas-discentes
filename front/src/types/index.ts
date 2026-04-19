@@ -45,7 +45,7 @@ export interface Certificado {
   status: StatusCertificado;
   tipo: TipoCertificado;
   anexoComprovanteURL?: string;
-  justificativaRejeicao?: string;
+  justificativaRejeicao?: string | null | undefined;
 }
 
 /**

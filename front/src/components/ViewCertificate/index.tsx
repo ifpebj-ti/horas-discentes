@@ -12,7 +12,7 @@ interface Certificate {
   dateEnd: string;
   category: string;
   status: string;
-  justificativaRejeicao?: string;
+  justificativaRejeicao?: string | null | undefined;
 }
 
 interface ViewCertificateProps {
