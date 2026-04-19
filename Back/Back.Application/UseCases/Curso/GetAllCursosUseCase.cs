@@ -1,5 +1,6 @@
 ﻿using Back.Application.DTOs.Curso;
 using Back.Application.Interfaces.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,9 +16,9 @@ public class GetAllCursosUseCase
         _repository = repository;
     }
 
-    public async Task<IEnumerable<CursoResponse>> ExecuteAsync()
+    public async Task<IEnumerable<CursoResponse>> ExecuteAsync(Guid? campusId = null)
     {
-        var cursos = await _repository.GetAllAsync();
+        var cursos = await _repository.GetAllAsync(campusId);
         return cursos.Select(c => new CursoResponse(c.Id, c.Nome));
     }
 }

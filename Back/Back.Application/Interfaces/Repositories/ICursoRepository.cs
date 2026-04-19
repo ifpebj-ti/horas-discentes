@@ -10,7 +10,7 @@ public interface ICursoRepository
 {
     Task AddAsync(Curso curso);
     Task<Curso?> GetByIdAsync(Guid id);
-    Task<IEnumerable<Curso>> GetAllAsync();
+    Task<IEnumerable<Curso>> GetAllAsync(Guid? campusId = null);
     Task<IEnumerable<CursoResumoResponse>> GetResumoCursosAsync();
     Task UpdateAsync(Curso curso);
     Task DeleteAsync(Curso curso);

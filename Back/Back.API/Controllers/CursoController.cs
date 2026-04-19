@@ -61,9 +61,9 @@ public class CursoController : ControllerBase
         Summary = "Lista todos os cursos cadastrados.",
         Tags = new[] { "Cursos" })]
     [ProducesResponseType(typeof(IEnumerable<CursoResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ListarTodos()
+    public async Task<IActionResult> ListarTodos([FromQuery] Guid? campusId = null)
     {
-        var cursos = await _getAll.ExecuteAsync();
+        var cursos = await _getAll.ExecuteAsync(campusId);
         return Ok(cursos);
     }
 
