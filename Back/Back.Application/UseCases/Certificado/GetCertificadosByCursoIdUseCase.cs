@@ -1,4 +1,4 @@
-﻿using Back.Application.DTOs.Certificado;
+using Back.Application.DTOs.Certificado;
 using Back.Application.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,8 @@ public class GetCertificadosByCursoIdUseCase
                 c.AlunoAtividade.Aluno.Nome!,
                 c.AlunoAtividade.Aluno.Email!,
                 c.AlunoAtividade.Aluno.Matricula!,
-                c.AlunoAtividade.Aluno.Turma!.Periodo!
+                c.AlunoAtividade.Aluno.Turma!.Periodo!,
+                c.JustificativaRejeicao
             ));
     }
 }

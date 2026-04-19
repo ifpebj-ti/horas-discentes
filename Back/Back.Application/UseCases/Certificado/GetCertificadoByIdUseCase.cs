@@ -1,4 +1,4 @@
-﻿using Back.Application.DTOs.Certificado;
+using Back.Application.DTOs.Certificado;
 using Back.Application.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,8 @@ public class GetCertificadoByIdUseCase
             cert.Tipo,
             cert.Status,
             cert.AlunoAtividade.AlunoId,
-            cert.AlunoAtividade.AtividadeId
+            cert.AlunoAtividade.AtividadeId,
+            cert.JustificativaRejeicao
         );
     }
 }
