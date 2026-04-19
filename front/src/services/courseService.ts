@@ -47,7 +47,9 @@ export const listarCampuses = async (): Promise<CampusResponse[]> => {
 };
 
 // Listar todos os cursos (opcionalmente filtrado por campus)
-export const listarCursos = async (campusId?: string): Promise<CursoResponse[]> => {
+export const listarCursos = async (
+  campusId?: string
+): Promise<CursoResponse[]> => {
   const params = campusId ? { campusId } : {};
   const response = await api.get<CursoResponse[]>('/Curso', { params });
   return response.data;

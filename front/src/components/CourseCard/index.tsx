@@ -1,5 +1,10 @@
 import React from 'react';
-import { FaUsers, FaCalendarAlt, FaTrash, FaMapMarkerAlt } from 'react-icons/fa';
+import {
+  FaUsers,
+  FaCalendarAlt,
+  FaTrash,
+  FaMapMarkerAlt
+} from 'react-icons/fa';
 
 import { Button } from '@/components/ui/button';
 
