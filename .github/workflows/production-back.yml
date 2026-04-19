@@ -83,7 +83,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-            - name: Calculate new tag
+        - name: Calculate new tag
         id: created_tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
