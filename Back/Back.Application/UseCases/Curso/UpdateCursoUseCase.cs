@@ -27,6 +27,7 @@ public class UpdateCursoUseCase
             throw new KeyNotFoundException("Curso não encontrado.");
 
         curso.Nome = request.NomeCurso;
+        curso.CampusId = request.CampusId;
         await _cursoRepository.UpdateAsync(curso);
 
         var limite = await _limiteHorasRepository.GetByCursoIdToUpdateAsync(id);

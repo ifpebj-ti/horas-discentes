@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Back.Application.DTOs.Curso;
 
@@ -12,4 +13,6 @@ public class UpdateCursoComLimiteHorasRequest
     [Range(0, 9999, ErrorMessage = "O valor deve ser entre 0 e 9999.")]
     public int MaximoHorasComplementar { get; set; }
 
+    [Required(ErrorMessage = "O campo Campus é obrigatório.")]
+    public Guid CampusId { get; set; }
 }
