@@ -11,15 +11,13 @@ namespace Back.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var campusPadraoId = new Guid("11111111-1111-1111-1111-111111111111");
-
             migrationBuilder.DropForeignKey(
                 name: "FK_Cursos_Campi_CampusId",
                 table: "Cursos");
 
-            migrationBuilder.Sql($@"
+            migrationBuilder.Sql(@"
                 INSERT INTO ""Campi"" (""Id"", ""Nome"", ""Cidade"")
-                SELECT '{campusPadraoId}', 'Campus Padrão', 'Não informado'
+                SELECT (md5(random()::text || clock_timestamp()::text)::uuid), 'Campus Padrão', 'Não informado'
                 WHERE NOT EXISTS (SELECT 1 FROM ""Campi"");
             ");
 
