@@ -31,10 +31,12 @@ jobs:
         run: sudo apt-get install -y gh
 
       - name: Write PR body and log context
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           echo "Event: ${{ github.event_name }}"
           echo "PR merged: ${{ github.event.pull_request.merged }}"
-          printf '%s' "${{ github.event.pull_request.body }}" > body.txt
+          printf '%s' "$PR_BODY" > body.txt
           echo "--- PR body ---"
           cat body.txt
           echo "--- end ---"
