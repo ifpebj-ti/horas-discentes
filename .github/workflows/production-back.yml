@@ -83,7 +83,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Calculate new tag
+            - name: Calculate new tag
         id: created_tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
@@ -91,28 +91,26 @@ jobs:
           else
             change_type="${{ steps.change_type.outputs.change_type }}"
           fi
-            IFS='.' read -r major minor patch <<< "${{ steps.last_tag.outputs.last_tag }}"
-            case "$change_type" in
-              bug-fix|outros)
-                patch=$((patch + 1))
-                ;;
-              nova-feature)
-                minor=$((minor + 1))
-                patch=0
-                ;;
-              novo-marco)
-                major=$((major + 1))
-                minor=0
-                patch=0
-                ;;
-            esac
-            created_tag="${major}.${minor}.${patch}"
-          fi
+          IFS='.' read -r major minor patch <<< "${{ steps.last_tag.outputs.last_tag }}"
+          case "$change_type" in
+            bug-fix|outros)
+              patch=$((patch + 1))
+              ;;
+            nova-feature)
+              minor=$((minor + 1))
+              patch=0
+              ;;
+            novo-marco)
+              major=$((major + 1))
+              minor=0
+              patch=0
+              ;;
+          esac
+          created_tag="${major}.${minor}.${patch}"
           echo "Nova tag: $created_tag"
           echo "created_tag=$created_tag" >> "$GITHUB_OUTPUT"
 
-  # --------------------------------------------------------------------
-  # 1) BACKEND DOCKER --------------------------------------------------
+      # 1) BACKEND DOCKER --------------------------------------------------
   # --------------------------------------------------------------------
   backend-docker:
     name: 1. Backend CI/CD
