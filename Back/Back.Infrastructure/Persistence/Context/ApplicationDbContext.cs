@@ -45,12 +45,12 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         .WithMany(t => t.Alunos)
         .HasForeignKey(a => a.TurmaId);
 
-        // Curso -> Campus (nullable até migration de required)
+        // Curso -> Campus
         modelBuilder.Entity<Curso>()
             .HasOne(c => c.Campus)
             .WithMany(camp => camp.Cursos)
             .HasForeignKey(c => c.CampusId)
-            .IsRequired(false);
+            .IsRequired();
 
         // Turma -> Curso
         modelBuilder.Entity<Turma>()

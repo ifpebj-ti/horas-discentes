@@ -10,7 +10,7 @@ public class Curso
     [Required(ErrorMessage = "O campo Nome do curso é obrigatório.")]
     public string? Nome { get; set; }
 
-    public Guid? CampusId { get; set; }
+    public Guid CampusId { get; set; }
     public Campus.Campus? Campus { get; set; }
 
     public ICollection<Turma.Turma> Turmas { get; set; } = new List<Turma.Turma>();

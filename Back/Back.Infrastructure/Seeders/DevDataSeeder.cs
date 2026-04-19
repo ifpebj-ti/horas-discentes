@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Back.Domain.Entities.Aluno;
 using Back.Domain.Entities.AlunoAtividade;
+using Back.Domain.Entities.Campus;
 using Back.Domain.Entities.Coordenador;
 using Back.Domain.Entities.Curso;
 using Back.Domain.Entities.LimiteHorasAluno;
@@ -26,11 +27,23 @@ public static class DevDataSeeder
         // Atividades globais (antes de cursos/alunos para poder vincular)
         await AtividadeSeeder.SeedAsync(context);
 
+        // Campus padrão
+        var campusId = Guid.NewGuid();
+        var campus = new CampusBuilder()
+            .WithId(campusId)
+            .WithNome("Campus Belo Jardim")
+            .WithCidade("Belo Jardim")
+            .Build();
+
+        context.Campi.Add(campus);
+        await context.SaveChangesAsync();
+
         // Curso
         var cursoId = Guid.NewGuid();
         var curso = new CursoBuilder()
             .WithId(cursoId)
             .WithNome("Análise e Desenvolvimento de Sistemas")
+            .WithCampusId(campusId)
             .Build();
 
         context.Cursos.Add(curso);
