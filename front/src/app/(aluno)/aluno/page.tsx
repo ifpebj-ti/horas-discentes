@@ -185,7 +185,7 @@ export default function Aluno() {
       categoriaKey: cert.categoriaKey,
       tipo: mapTipoCertificado(cert.tipo),
       status: mapStatusCertificado(cert.status),
-      justificativaRejeicao: cert.justificativaRejeicao
+      ...(cert.justificativaRejeicao ? { justificativaRejeicao: cert.justificativaRejeicao } : {})
     }));
   }, [certificadosData]);
 
