@@ -16,5 +16,11 @@ public class CursoBuilder
         return this;
     }
 
+    public CursoBuilder WithCampusId(Guid campusId)
+    {
+        _curso.CampusId = campusId;
+        return this;
+    }
+
     public Curso Build() => _curso;
 }

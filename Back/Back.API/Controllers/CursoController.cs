@@ -45,10 +45,18 @@ public class CursoController : ControllerBase
         Description = "Somente usuários com perfil ADMIN podem cadastrar um novo curso.",
         Tags = new[] { "Cursos" })]
     [ProducesResponseType(typeof(CursoResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Criar([FromBody] CreateCursoComLimiteHorasRequest request)
     {
-        var curso = await _create.ExecuteAsync(request);
-        return CreatedAtAction(nameof(ObterPorId), new { id = curso.Id }, curso);
+        try
+        {
+            var curso = await _create.ExecuteAsync(request);
+            return CreatedAtAction(nameof(ObterPorId), new { id = curso.Id }, curso);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { erro = ex.Message });
+        }
     }
 
     /// <summary>
@@ -61,9 +69,9 @@ public class CursoController : ControllerBase
         Summary = "Lista todos os cursos cadastrados.",
         Tags = new[] { "Cursos" })]
     [ProducesResponseType(typeof(IEnumerable<CursoResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ListarTodos()
+    public async Task<IActionResult> ListarTodos([FromQuery] Guid? campusId = null)
     {
-        var cursos = await _getAll.ExecuteAsync();
+        var cursos = await _getAll.ExecuteAsync(campusId);
         return Ok(cursos);
     }
 

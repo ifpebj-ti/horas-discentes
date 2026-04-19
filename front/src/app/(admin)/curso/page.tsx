@@ -25,6 +25,8 @@ import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
   obterResumoCursos,
   CursoResumoResponse,
+  CampusResponse,
+  listarCampuses,
   deletarCurso
 } from '@/services/courseService';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -36,6 +38,8 @@ export default function CursoPage() {
   const [courses, setCourses] = useState<CursoResumoResponse[]>(
     [] as CursoResumoResponse[]
   );
+  const [campuses, setCampuses] = useState<CampusResponse[]>([]);
+  const [selectedCampusId, setSelectedCampusId] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
@@ -46,11 +50,26 @@ export default function CursoPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      show();
       try {
-        show();
-        const data = await obterResumoCursos();
-        setCourses(data);
-      } catch (error) {
+        const [coursesResult, campusesResult] = await Promise.allSettled([
+          obterResumoCursos(),
+          listarCampuses()
+        ]);
+
+        if (coursesResult.status === 'fulfilled') {
+          setCourses(coursesResult.value);
+        } else {
+          toast.error('Não foi possível carregar os cursos.');
+          setCourses([]);
+        }
+
+        if (campusesResult.status === 'fulfilled') {
+          setCampuses(campusesResult.value);
+        } else {
+          toast.error('Não foi possível carregar os campi.');
+          setCampuses([]);
+        }
       } finally {
         hide();
       }
@@ -60,11 +79,14 @@ export default function CursoPage() {
   }, [show, hide]);
 
   const filteredCourses = Array.isArray(courses)
-    ? courses.filter(
-        (course) =>
+    ? courses.filter((course) => {
+        const matchesSearch =
           typeof course.nome === 'string' &&
-          course.nome.toLowerCase().includes(search.toLowerCase())
-      )
+          course.nome.toLowerCase().includes(search.toLowerCase());
+        const matchesCampus =
+          !selectedCampusId || course.campusId === selectedCampusId;
+        return matchesSearch && matchesCampus;
+      })
     : [];
 
   const refreshCourses = async () => {
@@ -172,6 +194,18 @@ export default function CursoPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="md:max-w-sm"
         />
+        <select
+          value={selectedCampusId}
+          onChange={(e) => setSelectedCampusId(e.target.value)}
+          className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 md:max-w-xs"
+        >
+          <option value="">Todos os campi</option>
+          {campuses.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.nome}
+            </option>
+          ))}
+        </select>
         <Button
           icon={faPlus}
           onClick={() => setIsModalOpen(true)}
@@ -186,6 +220,7 @@ export default function CursoPage() {
           <CourseCard
             key={course.id}
             courseName={course.nome}
+            campus={course.nomeCampus}
             alunos={course.quantidadeAlunos}
             classes={course.quantidadeTurmas}
             onManageCourse={() => router.push(`/curso/${course.id}`)}

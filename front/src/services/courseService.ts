@@ -1,5 +1,11 @@
 ﻿import api from './api';
 
+export interface CampusResponse {
+  id: string;
+  nome: string;
+  cidade: string;
+}
+
 export interface CursoResponse {
   id: string;
   nome: string;
@@ -9,17 +15,23 @@ export interface CursoDetalhadoResponse {
   id: string;
   nome: string;
   maximoHorasComplementar: number;
+  campusId: string;
+  nomeCampus: string;
 }
 
 export interface CreateCursoRequest {
   nomeCurso: string;
   maximoHorasComplementar: number;
+  campusId: string;
 }
+
 export interface CursoResumoResponse {
   id: string;
   nome: string;
   quantidadeTurmas: number;
   quantidadeAlunos: number;
+  campusId: string;
+  nomeCampus: string;
 }
 // Criar novo curso
 export const criarCurso = async (
@@ -29,9 +41,18 @@ export const criarCurso = async (
   return response.data;
 };
 
-// Listar todos os cursos
-export const listarCursos = async (): Promise<CursoResponse[]> => {
-  const response = await api.get<CursoResponse[]>('/Curso');
+// Listar todos os campi
+export const listarCampuses = async (): Promise<CampusResponse[]> => {
+  const response = await api.get<CampusResponse[]>('/Campus');
+  return response.data;
+};
+
+// Listar todos os cursos (opcionalmente filtrado por campus)
+export const listarCursos = async (
+  campusId?: string
+): Promise<CursoResponse[]> => {
+  const params = campusId ? { campusId } : {};
+  const response = await api.get<CursoResponse[]>('/Curso', { params });
   return response.data;
 };
 
@@ -66,6 +87,7 @@ export const obterResumoCursos = async (): Promise<CursoResumoResponse[]> => {
 export interface UpdateCursoRequest {
   nomeCurso: string;
   maximoHorasComplementar: number;
+  campusId: string;
 }
 
 // Atualizar curso por ID (atualiza também os limites de horas)

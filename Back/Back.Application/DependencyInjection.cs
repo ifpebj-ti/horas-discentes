@@ -1,6 +1,7 @@
 ﻿using Back.Application.UseCases.Aluno;
 using Back.Application.UseCases.Atividade;
 using Back.Application.UseCases.Auth;
+using Back.Application.UseCases.Campus;
 using Back.Application.UseCases.Certificado;
 using Back.Application.UseCases.Coordenador;
 using Back.Application.UseCases.Curso;
@@ -14,6 +15,9 @@ public static class DependencyInjection
 {
     public static object AddApplication(this IServiceCollection services)
     {
+        //campus
+        services.AddScoped<ListarCampusesUseCase>();
+        services.AddScoped<CriarCampusUseCase>();
 
         //curso
         services.AddScoped<CreateCursoUseCase>();

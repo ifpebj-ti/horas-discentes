@@ -3,6 +3,7 @@ using Back.Domain.Entities.Aluno;
 using Back.Domain.Entities.AlunoAtividade;
 using Back.Domain.Entities.Atividade;
 using Back.Domain.Entities.Auth;
+using Back.Domain.Entities.Campus;
 using Back.Domain.Entities.Certificado;
 using Back.Domain.Entities.Convite;
 using Back.Domain.Entities.Coordenador;
@@ -22,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     }
 
     // DbSets para entidades principais
+    public DbSet<Campus> Campi { get; set; }
     public DbSet<Curso> Cursos { get; set; }
     public DbSet<Turma> Turmas { get; set; }
     public DbSet<Aluno> Alunos { get; set; }
@@ -42,6 +44,13 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         .HasOne(a => a.Turma)
         .WithMany(t => t.Alunos)
         .HasForeignKey(a => a.TurmaId);
+
+        // Curso -> Campus
+        modelBuilder.Entity<Curso>()
+            .HasOne(c => c.Campus)
+            .WithMany(camp => camp.Cursos)
+            .HasForeignKey(c => c.CampusId)
+            .IsRequired();
 
         // Turma -> Curso
         modelBuilder.Entity<Turma>()
