@@ -19,11 +19,14 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import SelectBox from '@/components/ui/SelectBox';
 
 import {
+  CampusResponse,
   CursoDetalhadoResponse,
   UpdateCursoRequest,
-  atualizarCurso
+  atualizarCurso,
+  listarCampuses
 } from '@/services/courseService';
 
 interface EditCourseModalProps {
@@ -41,14 +44,19 @@ export const EditCourseModal = ({
 }: EditCourseModalProps) => {
   const [nomeCurso, setNomeCurso] = useState('');
   const [complementaryHours, setComplementaryHours] = useState('');
+  const [selectedCampusId, setSelectedCampusId] = useState('');
+  const [campuses, setCampuses] = useState<CampusResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [confirmEdit, setConfirmEdit] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      setNomeCurso(curso.nome);
-      setComplementaryHours(String(curso.maximoHorasComplementar));
-    }
+    if (!isOpen) return;
+    setNomeCurso(curso.nome);
+    setComplementaryHours(String(curso.maximoHorasComplementar));
+    setSelectedCampusId(curso.campusId);
+    listarCampuses()
+      .then(setCampuses)
+      .catch(() => toast.error('Não foi possível carregar os campi.'));
   }, [isOpen, curso]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -64,6 +72,11 @@ export const EditCourseModal = ({
       return;
     }
 
+    if (!selectedCampusId) {
+      toast.error('Selecione um campus.');
+      return;
+    }
+
     setConfirmEdit(true);
   };
 
@@ -73,7 +86,8 @@ export const EditCourseModal = ({
 
       const payload: UpdateCursoRequest = {
         nomeCurso: nomeCurso.trim(),
-        maximoHorasComplementar: Number(complementaryHours)
+        maximoHorasComplementar: Number(complementaryHours),
+        campusId: selectedCampusId
       };
 
       await atualizarCurso(curso.id, payload);
@@ -90,6 +104,14 @@ export const EditCourseModal = ({
   };
 
   if (!isOpen) return null;
+
+  const campusOptions = campuses.map((c) => ({
+    value: c.id,
+    label: `${c.nome} — ${c.cidade}`
+  }));
+
+  const selectedCampusLabel =
+    campusOptions.find((o) => o.value === selectedCampusId)?.label ?? '';
 
   return (
     <>
@@ -171,10 +193,23 @@ export const EditCourseModal = ({
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <label className="block font-medium">Campus</label>
+                    <SelectBox
+                      value={selectedCampusLabel}
+                      onChange={setSelectedCampusId}
+                      placeholder="Selecione um campus"
+                      options={campusOptions}
+                    />
+                  </div>
+
                   <button
                     type="submit"
                     disabled={
-                      loading || !nomeCurso.trim() || !complementaryHours.trim()
+                      loading ||
+                      !nomeCurso.trim() ||
+                      !complementaryHours.trim() ||
+                      !selectedCampusId
                     }
                     className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                   >

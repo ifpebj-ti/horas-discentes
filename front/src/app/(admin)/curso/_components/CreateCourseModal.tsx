@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaGraduationCap, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -19,8 +19,14 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import SelectBox from '@/components/ui/SelectBox';
 
-import { CreateCursoRequest, criarCurso } from '@/services/courseService';
+import {
+  CampusResponse,
+  CreateCursoRequest,
+  criarCurso,
+  listarCampuses
+} from '@/services/courseService';
 
 interface CreateCourseModalProps {
   isOpen: boolean;
@@ -35,14 +41,28 @@ export const CreateCourseModal = ({
 }: CreateCourseModalProps) => {
   const [newCourseName, setNewCourseName] = useState('');
   const [complementaryHours, setComplementaryHours] = useState('');
+  const [selectedCampusId, setSelectedCampusId] = useState('');
+  const [campuses, setCampuses] = useState<CampusResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [confirmCreate, setConfirmCreate] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    listarCampuses()
+      .then(setCampuses)
+      .catch(() => toast.error('Não foi possível carregar os campi.'));
+  }, [isOpen]);
 
   const handleAddCourse = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newCourseName.trim()) {
       toast.error('O nome do curso é obrigatório.');
+      return;
+    }
+
+    if (!selectedCampusId) {
+      toast.error('Selecione um campus.');
       return;
     }
 
@@ -55,7 +75,8 @@ export const CreateCourseModal = ({
 
       const payload: CreateCursoRequest = {
         nomeCurso: newCourseName,
-        maximoHorasComplementar: Number(complementaryHours)
+        maximoHorasComplementar: Number(complementaryHours),
+        campusId: selectedCampusId
       };
 
       await criarCurso(payload);
@@ -66,6 +87,7 @@ export const CreateCourseModal = ({
       onClose();
       setNewCourseName('');
       setComplementaryHours('');
+      setSelectedCampusId('');
     } catch (error) {
       toast.error('Não foi possível criar o curso.');
     } finally {
@@ -74,6 +96,14 @@ export const CreateCourseModal = ({
   };
 
   if (!isOpen) return null;
+
+  const campusOptions = campuses.map((c) => ({
+    value: c.id,
+    label: `${c.nome} — ${c.cidade}`
+  }));
+
+  const selectedCampusLabel =
+    campusOptions.find((o) => o.value === selectedCampusId)?.label ?? '';
 
   return (
     <>
@@ -149,12 +179,23 @@ export const CreateCourseModal = ({
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <label className="block font-medium">Campus</label>
+                    <SelectBox
+                      value={selectedCampusLabel}
+                      onChange={setSelectedCampusId}
+                      placeholder="Selecione um campus"
+                      options={campusOptions}
+                    />
+                  </div>
+
                   <button
                     type="submit"
                     disabled={
                       loading ||
                       !newCourseName.trim() ||
-                      !complementaryHours.trim()
+                      !complementaryHours.trim() ||
+                      !selectedCampusId
                     }
                     className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                   >
