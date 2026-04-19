@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Back.Domain.Entities.Certificado;
 
 namespace Back.Application.DTOs.Certificado;
@@ -20,5 +20,6 @@ public record CertificadoResponse(
     StatusCertificado Status,
     Guid AlunoId,
     Guid AtividadeId,
-    string CategoriaKey
+    string CategoriaKey,
+    string? JustificativaRejeicao
 );

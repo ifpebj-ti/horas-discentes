@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Back.Domain.Entities.Certificado;
 
@@ -43,6 +43,8 @@ public class Certificado
     public string? AnexoStorageKey { get; set; }
 
     public StatusCertificado Status { get; set; } = StatusCertificado.PENDENTE;
+
+    public string? JustificativaRejeicao { get; set; }
 
     [Required(ErrorMessage = "O campo Tipo é obrigatório.")]
     public TipoCertificado Tipo { get; set; }

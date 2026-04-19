@@ -12,6 +12,7 @@ interface Certificate {
   dateEnd: string;
   category: string;
   status: string;
+  justificativaRejeicao?: string | null | undefined;
 }
 
 interface ViewCertificateProps {
@@ -96,6 +97,17 @@ export default function ViewCertificate({
             {certificate.category}
           </span>
         </div>
+
+        {certificate.status === 'REPROVADO' && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-xs font-semibold text-red-700 mb-1">
+              Motivo da Reprovação
+            </p>
+            <p className="text-sm text-red-800 break-words max-h-32 overflow-y-auto">
+              {certificate.justificativaRejeicao || 'Motivo não registrado.'}
+            </p>
+          </div>
+        )}
 
         <button
           className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"

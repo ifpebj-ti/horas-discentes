@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using Back.Application.DTOs.Certificado;
@@ -46,7 +46,8 @@ public class GetCertificadosDoAlunoAutenticadoUseCase
             c.Status,
             c.AlunoAtividade!.AlunoId,
             c.AlunoAtividade.AtividadeId,
-            c.AlunoAtividade.Atividade.CategoriaKey!
+            c.AlunoAtividade.Atividade.CategoriaKey!,
+            c.JustificativaRejeicao
             
         ));
     }

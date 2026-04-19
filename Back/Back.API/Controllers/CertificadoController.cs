@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Back.Application.DTOs.Certificado;
 using Back.Application.UseCases.Certificado;
 using Back.Domain.Entities.Certificado;
@@ -188,14 +188,22 @@ namespace Back.API.Controllers
         [Authorize(Roles = "COORDENADOR")]
         [SwaggerOperation(Summary = "Reprova um certificado enviado pelo aluno.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Reprovar(Guid id)
+        public async Task<IActionResult> Reprovar(Guid id, [FromBody] ReprovarCertificadoRequest request)
         {
-            var ok = await _atualizar.ExecuteAsync(id, StatusCertificado.REPROVADO);
-            if (!ok)
-                return NotFound(new { erro = "Certificado não encontrado." });
+            try
+            {
+                var ok = await _atualizar.ExecuteAsync(id, StatusCertificado.REPROVADO, request.Justificativa);
+                if (!ok)
+                    return NotFound(new { erro = "Certificado não encontrado." });
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { erro = ex.Message });
+            }
         }
 
         [HttpGet("me")]

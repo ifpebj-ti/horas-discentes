@@ -41,7 +41,8 @@ export const RecentCertificates = ({
                 date: cert.periodoInicio,
                 dateEnd: cert.periodoFim,
                 category: cert.categoriaKey,
-                status: cert.status
+                status: cert.status,
+                justificativaRejeicao: cert.justificativaRejeicao
               }}
               onClick={onView}
             />

@@ -27,6 +27,7 @@ export interface CertificadoResponse {
   alunoId: string;
   atividadeId: string;
   categoriaKey: string; // Chave para identificar a categoria
+  justificativaRejeicao?: string;
 }
 
 export interface CertificadoDetalhadoResponse extends CertificadoResponse {}
@@ -64,6 +65,7 @@ export interface CertificadoPorCursoResponse {
   alunoEmail: string;
   alunoMatricula: string;
   periodoTurma: string;
+  justificativaRejeicao?: string;
 }
 
 export const enviarCertificado = async (
@@ -104,8 +106,11 @@ export const aprovarCertificado = async (id: string): Promise<void> => {
   await api.patch(`/Certificado/${id}/aprovar`);
 };
 
-export const reprovarCertificado = async (id: string): Promise<void> => {
-  await api.patch(`/Certificado/${id}/reprovar`);
+export const reprovarCertificado = async (
+  id: string,
+  justificativa: string
+): Promise<void> => {
+  await api.patch(`/Certificado/${id}/reprovar`, { justificativa });
 };
 
 export const listarMeusCertificados = async (): Promise<

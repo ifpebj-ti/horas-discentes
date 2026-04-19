@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Back.Application.Interfaces.Repositories;
@@ -23,8 +23,11 @@ public class AtualizarStatusCertificadoUseCase
         _limiteRepo = limiteRepo;
     }
 
-    public async Task<bool> ExecuteAsync(Guid id, StatusCertificado novoStatus)
+    public async Task<bool> ExecuteAsync(Guid id, StatusCertificado novoStatus, string? justificativaRejeicao = null)
     {
+        if (novoStatus == StatusCertificado.REPROVADO && string.IsNullOrWhiteSpace(justificativaRejeicao))
+            throw new ArgumentException("A justificativa é obrigatória ao reprovar um certificado.");
+
         var certificado = await _repo.GetByIdWithAlunoAtividadeAsync(id);
         if (certificado == null) return false;
 
@@ -91,6 +94,9 @@ public class AtualizarStatusCertificadoUseCase
         }
 
         certificado.Status = novoStatus;
+        certificado.JustificativaRejeicao = novoStatus == StatusCertificado.REPROVADO
+            ? justificativaRejeicao
+            : null;
         await _repo.UpdateAsync(certificado);
         return true;
     }
