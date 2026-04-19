@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,5 +20,6 @@ public record CertificadoPorCursoResponse(
     string AlunoNome,
     string AlunoEmail,
     string AlunoMatricula,
-    string PeriodoTurma
+    string PeriodoTurma,
+    string? JustificativaRejeicao
 );
