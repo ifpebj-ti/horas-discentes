@@ -2,6 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   FaSearch,
   FaCheckCircle,
@@ -14,6 +15,14 @@ import { toast } from 'react-toastify';
 import { CertificateDetailsCard } from '@/components/CertificateDetailsCard';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
 import {
@@ -65,6 +74,10 @@ const formatarData = (inicio: string, fim: string): string => {
   return inicioFmt === fimFmt ? inicioFmt : `${inicioFmt} a ${fimFmt}`;
 };
 
+interface RejectFormData {
+  justificativa: string;
+}
+
 export default function ValidacaoCertificadosPage() {
   const isMobile = useIsMobile();
   const { data: session } = useSession();
@@ -79,6 +92,14 @@ export default function ValidacaoCertificadosPage() {
   const [termoBusca, setTermoBusca] = useState('');
   const [certificadoSelecionado, setCertificadoSelecionado] =
     useState<CertificadoPorCursoResponse | null>(null);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting }
+  } = useForm<RejectFormData>();
 
   const { visible, show, hide } = useLoadingOverlay();
 
@@ -137,19 +158,26 @@ export default function ValidacaoCertificadosPage() {
     }
   };
 
-  const handleReject = async () => {
+  const handleOpenRejectModal = () => {
+    if (!certificadoSelecionado) return;
+    reset();
+    setRejectModalOpen(true);
+  };
+
+  const handleConfirmReject = async (data: RejectFormData) => {
     if (!certificadoSelecionado) return;
 
     try {
       show();
-      await reprovarCertificado(certificadoSelecionado.id);
+      await reprovarCertificado(certificadoSelecionado.id, data.justificativa);
 
       setCertificados((prev) =>
         prev.map((c) =>
           c.id === certificadoSelecionado.id
             ? {
                 ...c,
-                status: StatusCertificado.REPROVADO
+                status: StatusCertificado.REPROVADO,
+                justificativaRejeicao: data.justificativa
               }
             : c
         )
@@ -157,9 +185,11 @@ export default function ValidacaoCertificadosPage() {
 
       setCertificadoSelecionado({
         ...certificadoSelecionado,
-        status: StatusCertificado.REPROVADO
+        status: StatusCertificado.REPROVADO,
+        justificativaRejeicao: data.justificativa
       });
 
+      setRejectModalOpen(false);
       toast.success('Certificado reprovado com sucesso!');
     } catch (error) {
       toast.error('Erro ao reprovar certificado! Tente novamente mais tarde.');
@@ -313,7 +343,7 @@ export default function ValidacaoCertificadosPage() {
                   : {})}
                 {...(certificadoSelecionado?.status ===
                 StatusCertificado.PENDENTE
-                  ? { onReject: handleReject }
+                  ? { onReject: handleOpenRejectModal }
                   : {})}
                 onViewPdf={() => handleViewPdf(certificadoSelecionado.id)}
                 {...(isMobile
@@ -337,6 +367,62 @@ export default function ValidacaoCertificadosPage() {
           </aside>
         )}
       </div>
+
+      <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reprovar Certificado</DialogTitle>
+            <DialogDescription>
+              Informe o motivo da reprovação. O aluno poderá visualizar esta
+              justificativa.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit(handleConfirmReject)}>
+            <div className="py-4">
+              <textarea
+                id="justificativa-rejeicao"
+                className={`w-full min-h-[120px] p-3 border rounded-lg resize-y text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                  errors.justificativa
+                    ? 'border-red-500'
+                    : 'border-gray-300'
+                }`}
+                placeholder="Descreva o motivo da reprovação..."
+                {...register('justificativa', {
+                  required: 'A justificativa é obrigatória.',
+                  minLength: {
+                    value: 10,
+                    message:
+                      'A justificativa deve ter no mínimo 10 caracteres.'
+                  }
+                })}
+              />
+              {errors.justificativa && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.justificativa.message}
+                </p>
+              )}
+            </div>
+
+            <DialogFooter>
+              <button
+                type="button"
+                onClick={() => setRejectModalOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition disabled:opacity-50 cursor-pointer"
+              >
+                {isSubmitting ? 'Reprovando...' : 'Confirmar Reprovação'}
+              </button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
