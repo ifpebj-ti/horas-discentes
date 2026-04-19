@@ -66,6 +66,7 @@ export default function CourseDetailPage() {
   }, [cursoId, show, hide]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, [loadData]);
 

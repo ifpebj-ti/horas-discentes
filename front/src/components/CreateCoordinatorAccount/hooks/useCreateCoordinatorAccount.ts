@@ -28,6 +28,7 @@ export const useCreateCoordinatorAccount = (
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPrefilledEmail(decodeURIComponent(emailFromURL || ''));
     setToken(tokenFromURL || '');
   }, [emailFromURL, tokenFromURL]);
