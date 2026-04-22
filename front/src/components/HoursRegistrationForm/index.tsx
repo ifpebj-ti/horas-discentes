@@ -21,11 +21,13 @@ import { useHoursRegistrationForm } from './hooks/useHoursRegistrationForm';
 interface HoursRegistrationFormProps {
   categoriasComplementares: AtividadeResponse[];
   categoriasExtensao: AtividadeResponse[];
+  periodosLetivos: string[];
 }
 
 export default function HoursRegistrationForm({
   categoriasComplementares,
-  categoriasExtensao
+  categoriasExtensao,
+  periodosLetivos
 }: Readonly<HoursRegistrationFormProps>) {
   const {
     formMethods,
@@ -54,21 +56,6 @@ export default function HoursRegistrationForm({
   const inputClass =
     'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500';
   const errorClass = 'text-red-500 text-xs mt-1';
-
-  const periodosLetivos = (() => {
-    const periodos: string[] = [];
-    const anoInicio = 2023;
-    const dataAtual = new Date();
-    const anoAtual = dataAtual.getFullYear();
-    const mesAtual = dataAtual.getMonth() + 1;
-
-    for (let ano = anoInicio; ano < anoAtual; ano++) {
-      periodos.push(`${ano}.1`, `${ano}.2`);
-    }
-    periodos.push(`${anoAtual}.1`);
-    if (mesAtual >= 7) periodos.push(`${anoAtual}.2`);
-    return periodos;
-  })();
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 overflow-x-auto">
