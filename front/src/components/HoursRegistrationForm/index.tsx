@@ -39,7 +39,9 @@ export default function HoursRegistrationForm({
     anexoComprovante,
     isLoading,
     errors,
-    tipoRegistro
+    tipoRegistro,
+    maxHorasSemestral,
+    campoHorasHabilitado
   } = useHoursRegistrationForm({
     categoriasComplementares,
     categoriasExtensao
@@ -202,13 +204,39 @@ export default function HoursRegistrationForm({
                 <FaClock className="text-blue-600" /> Carga Horária
               </span>
             </label>
-            <input
-              id="cargaHoraria"
-              type="number"
-              {...register('cargaHoraria')}
-              className={inputClass}
-              min={1}
+            <Controller
+              control={control}
+              name="cargaHoraria"
+              render={({ field }) => (
+                <input
+                  id="cargaHoraria"
+                  type="number"
+                  value={field.value}
+                  disabled={!campoHorasHabilitado}
+                  min={1}
+                  max={maxHorasSemestral ?? undefined}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    field.onChange(
+                      maxHorasSemestral !== null && val > maxHorasSemestral
+                        ? maxHorasSemestral
+                        : val
+                    );
+                  }}
+                  className={`${inputClass} ${!campoHorasHabilitado ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''}`}
+                />
+              )}
             />
+            {campoHorasHabilitado && maxHorasSemestral !== null && (
+              <p className="text-xs text-gray-500 mt-1">
+                Máximo permitido neste semestre: <span className="font-medium">{maxHorasSemestral}h</span>
+              </p>
+            )}
+            {!campoHorasHabilitado && (
+              <p className="text-xs text-gray-400 mt-1">
+                Selecione a categoria e o período letivo primeiro.
+              </p>
+            )}
             {errors.cargaHoraria && (
               <p className={errorClass}>{errors.cargaHoraria.message}</p>
             )}
