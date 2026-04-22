@@ -131,4 +131,14 @@ public class TurmaRepository : ITurmaRepository
         _context.Turmas.Remove(turma);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<string>> GetDistinctPeriodosAsync()
+    {
+        return await _context.Turmas
+            .Where(t => t.Periodo != null)
+            .Select(t => t.Periodo!)
+            .Distinct()
+            .OrderBy(p => p)
+            .ToListAsync();
+    }
 }
