@@ -54,7 +54,7 @@ export const RecentCertificates = ({
             Ainda não há certificados enviados.
           </p>
           <Link
-            href="/aluno/certificado/novo?tipo=horas-complementares"
+            href="/aluno/certificado/novo"
             className="inline-block text-sm font-medium text-primary hover:underline"
           >
             Enviar primeiro certificado →
