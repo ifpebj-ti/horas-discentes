@@ -10,20 +10,26 @@ import {
   listarAtividades,
   AtividadeResponse
 } from '@/services/activityService';
+import { listarPeriodosLetivos } from '@/services/turmaService';
 
 export default function NovoCertificado() {
   const [complementares, setComplementares] = useState<AtividadeResponse[]>([]);
   const [extensao, setExtensao] = useState<AtividadeResponse[]>([]);
+  const [periodosLetivos, setPeriodosLetivos] = useState<string[]>([]);
   const [loadingAtividades, setLoadingAtividades] = useState(false);
 
   useEffect(() => {
-    const fetchAtividades = async () => {
+    const fetchDados = async () => {
       setLoadingAtividades(true);
       try {
-        const atividades = await listarAtividades();
+        const [atividades, periodos] = await Promise.all([
+          listarAtividades(),
+          listarPeriodosLetivos()
+        ]);
 
         setComplementares(atividades.filter((a) => a.tipo === 'COMPLEMENTAR'));
         setExtensao(atividades.filter((a) => a.tipo === 'EXTENSAO'));
+        setPeriodosLetivos(periodos);
       } catch (error) {
         toast.error(
           'Não foi possível carregar as categorias. Tente novamente.'
@@ -33,7 +39,7 @@ export default function NovoCertificado() {
       }
     };
 
-    fetchAtividades();
+    fetchDados();
   }, []);
 
   return (
@@ -64,6 +70,7 @@ export default function NovoCertificado() {
               <HoursRegistrationForm
                 categoriasComplementares={complementares}
                 categoriasExtensao={extensao}
+                periodosLetivos={periodosLetivos}
               />
             </Suspense>
           )}
