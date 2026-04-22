@@ -19,15 +19,26 @@ public class CreateCertificadoUseCaseTests
     private readonly Mock<Back.Application.Interfaces.Services.IFileStorageService> _storage = new();
 
     private CreateCertificadoUseCase CreateUseCase()
-        => new(_alunoAtvRepo.Object, _certRepo.Object, _limiteRepo.Object, _atvRepo.Object, _storage.Object);
+    {
+        var validarLimite = new ValidarLimiteCertificadoUseCase(_certRepo.Object);
+        return new(_alunoAtvRepo.Object, _certRepo.Object, _limiteRepo.Object, _atvRepo.Object, _storage.Object, validarLimite);
+    }
 
     [Fact]
     public async Task Deve_Criar_Certificado_Com_Sucesso()
     {
         // Arrange
-        var alunoAtv = new AlunoAtividade { Id = Guid.NewGuid() };
+        var atividade = new Back.Domain.Entities.Atividade.Atividade
+        {
+            Id = Guid.NewGuid(),
+            CargaMaximaSemestral = 100,
+            CargaMaximaCurso = 300
+        };
+        var alunoAtv = new AlunoAtividade { Id = Guid.NewGuid(), Atividade = atividade };
         _alunoAtvRepo.Setup(r => r.GetByAlunoEAtividadeAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(alunoAtv);
+        _certRepo.Setup(r => r.GetByAlunoAtividadeAndStatusAsync(It.IsAny<Guid>(), It.IsAny<IEnumerable<Back.Domain.Entities.Certificado.StatusCertificado>>()))
+            .ReturnsAsync([]);
         _storage.Setup(s => s.UploadAsync(It.IsAny<IFormFile>(), It.IsAny<string>()))
             .ReturnsAsync((IFormFile _, string key) => key);
 

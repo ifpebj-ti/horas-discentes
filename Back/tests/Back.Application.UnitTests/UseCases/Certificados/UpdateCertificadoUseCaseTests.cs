@@ -15,13 +15,26 @@ public class UpdateCertificadoUseCaseTests
     private readonly Mock<Back.Application.Interfaces.Services.IFileStorageService> _storage = new();
 
     private UpdateCertificadoUseCase CreateUseCase()
-        => new(_repo.Object, _alunoRepo.Object, _storage.Object);
+    {
+        var validarLimite = new ValidarLimiteCertificadoUseCase(_repo.Object);
+        return new(_repo.Object, _alunoRepo.Object, _storage.Object, validarLimite);
+    }
 
     private (Certificado cert, string identityUserId) BuildOwnerSetup()
     {
         var alunoId = Guid.NewGuid();
         var identityUserId = "user-identity-123";
-        var alunoAtividade = new Back.Domain.Entities.AlunoAtividade.AlunoAtividade { AlunoId = alunoId };
+        var atividade = new Back.Domain.Entities.Atividade.Atividade
+        {
+            Id = Guid.NewGuid(),
+            CargaMaximaSemestral = 100,
+            CargaMaximaCurso = 300
+        };
+        var alunoAtividade = new Back.Domain.Entities.AlunoAtividade.AlunoAtividade
+        {
+            AlunoId = alunoId,
+            Atividade = atividade
+        };
         var cert = new Certificado
         {
             Id = Guid.NewGuid(),
@@ -43,6 +56,8 @@ public class UpdateCertificadoUseCaseTests
 
         _repo.Setup(r => r.GetByIdAsync(cert.Id))
             .ReturnsAsync(cert);
+        _repo.Setup(r => r.GetByAlunoAtividadeAndStatusAsync(It.IsAny<Guid>(), It.IsAny<IEnumerable<StatusCertificado>>()))
+            .ReturnsAsync([]);
 
         var req = new UpdateCertificadoRequest
         {
