@@ -126,7 +126,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                   Gerencie seus certificados e acompanhe o status de cada um.
                 </p>
               </div>
-              <NewCertificateButton user={user} />
+              <NewCertificateButton />
             </div>
             <BreadcrumbAuto />
           </div>
