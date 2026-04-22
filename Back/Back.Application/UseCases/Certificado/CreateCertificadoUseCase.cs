@@ -15,19 +15,22 @@ public class CreateCertificadoUseCase
     private readonly ILimiteHorasAlunoRepository _limiteRepo;
     private readonly IAtividadeRepository _atividadeRepo;
     private readonly IFileStorageService _storage;
+    private readonly ValidarLimiteCertificadoUseCase _validarLimite;
 
     public CreateCertificadoUseCase(
         IAlunoAtividadeRepository alunoAtividadeRepo,
         ICertificadoRepository certificadoRepo,
         ILimiteHorasAlunoRepository limiteRepo,
         IAtividadeRepository atividadeRepo,
-        IFileStorageService storage)
+        IFileStorageService storage,
+        ValidarLimiteCertificadoUseCase validarLimite)
     {
         _alunoAtividadeRepo = alunoAtividadeRepo;
         _certificadoRepo = certificadoRepo;
         _limiteRepo = limiteRepo;
         _atividadeRepo = atividadeRepo;
         _storage = storage;
+        _validarLimite = validarLimite;
     }
 
     public async Task<Guid> ExecuteAsync(CreateCertificadoRequest request)
@@ -57,6 +60,13 @@ public class CreateCertificadoUseCase
             };
             await _alunoAtividadeRepo.AddRangeAsync(new[] { alunoAtividade });
         }
+
+        await _validarLimite.ExecuteAsync(
+            alunoAtividade.Id,
+            request.CargaHoraria,
+            request.PeriodoLetivo,
+            alunoAtividade.Atividade!.CargaMaximaSemestral,
+            alunoAtividade.Atividade!.CargaMaximaCurso);
 
         var certificadoId = Guid.NewGuid();
         var extension = request.Anexo.ContentType.ToLowerInvariant() switch
