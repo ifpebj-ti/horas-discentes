@@ -70,7 +70,7 @@ jobs:
           if [[ -z "$tag" ]]; then tag="0.0.0"; fi
           echo "last_tag=$tag" >> "$GITHUB_OUTPUT"
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Calculate new tag
         id: created_tag
@@ -99,16 +99,6 @@ jobs:
           echo "Nova tag: $created_tag"
           echo "created_tag=$created_tag" >> "$GITHUB_OUTPUT"
 
-      - name: Push new tag
-        if: github.event_name != 'workflow_dispatch'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ steps.created_tag.outputs.created_tag }}
-          git push origin ${{ steps.created_tag.outputs.created_tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
   # --------------------------------------------------------------------
   # 2) FRONTEND DOCKER -------------------------------------------------
   # --------------------------------------------------------------------
@@ -118,7 +108,6 @@ jobs:
     needs: tag-creation
     env:
       CREATED_TAG: ${{ needs.tag-creation.outputs.created_tag }}
-    if: needs.tag-creation.result == 'success'
     permissions:
       contents: read
       packages: write
@@ -198,10 +187,7 @@ jobs:
     name: 3. Automatic Creation Process of New Releases
     runs-on: ubuntu-latest
     needs: [tag-creation, frontend-docker]
-    if: >
-      github.event.pull_request.merged == true &&
-      needs.tag-creation.result == 'success' &&
-      needs.frontend-docker.result == 'success'
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     env:
@@ -217,7 +203,7 @@ jobs:
           name: Release ${{ env.CREATED_TAG }}
           generate_release_notes: true
           body: |
-            Release gerada automaticamente da Pull Request #${{ github.event.pull_request.number }}
-            Tipo de mudança: ${{ env.CHANGE_TYPE }}
+            Release gerada automaticamente.
+            Tipo de mudança: ${{ env.CHANGE_TYPE || 'Manual Dispatch' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
