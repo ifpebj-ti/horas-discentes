@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<ICertificadoRepository, CertificadoRepository>();
         services.AddScoped<ILimiteHorasAlunoRepository, LimiteHorasAlunoRepository>();
         services.AddScoped<IResetPasswordRepository, ResetPasswordRepository>();
+        services.AddScoped<ValidarLimiteCertificadoUseCase>();
         services.AddScoped<IIdentityLookupService, IdentityLookupService>();
 
         services.Configure<FileStorageSettings>(configuration.GetSection("FileStorage"));
