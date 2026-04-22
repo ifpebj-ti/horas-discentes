@@ -22,18 +22,21 @@ export default function NovoCertificado() {
     const fetchDados = async () => {
       setLoadingAtividades(true);
       try {
-        const [atividades, periodos] = await Promise.all([
+        const [atividadesResult, periodosResult] = await Promise.allSettled([
           listarAtividades(),
           listarPeriodosLetivos()
         ]);
 
-        setComplementares(atividades.filter((a) => a.tipo === 'COMPLEMENTAR'));
-        setExtensao(atividades.filter((a) => a.tipo === 'EXTENSAO'));
-        setPeriodosLetivos(periodos);
-      } catch (error) {
-        toast.error(
-          'Não foi possível carregar as categorias. Tente novamente.'
-        );
+        if (atividadesResult.status === 'fulfilled') {
+          setComplementares(atividadesResult.value.filter((a) => a.tipo === 'COMPLEMENTAR'));
+          setExtensao(atividadesResult.value.filter((a) => a.tipo === 'EXTENSAO'));
+        } else {
+          toast.error('Não foi possível carregar as categorias. Tente novamente.');
+        }
+
+        if (periodosResult.status === 'fulfilled') {
+          setPeriodosLetivos(periodosResult.value);
+        }
       } finally {
         setLoadingAtividades(false);
       }

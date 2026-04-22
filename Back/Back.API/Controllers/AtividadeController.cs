@@ -1,5 +1,6 @@
 using Back.Application.DTOs.Atividade;
 using Back.Application.UseCases.Atividade;
+using Back.Application.UseCases.Turma;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ public class AtividadeController : ControllerBase
     private readonly CreateAtividadeUseCase _create;
     private readonly UpdateAtividadeUseCase _update;
     private readonly DeleteAtividadeUseCase _delete;
+    private readonly GetPeriodosLetivosUseCase _getPeriodos;
 
     /// <summary>
     /// Inicializa o controlador de atividades com as dependências necessárias.
@@ -25,12 +27,25 @@ public class AtividadeController : ControllerBase
         GetAllAtividadesUseCase getAll,
         CreateAtividadeUseCase create,
         UpdateAtividadeUseCase update,
-        DeleteAtividadeUseCase delete)
+        DeleteAtividadeUseCase delete,
+        GetPeriodosLetivosUseCase getPeriodos)
     {
         _getAll = getAll;
         _create = create;
         _update = update;
         _delete = delete;
+        _getPeriodos = getPeriodos;
+    }
+
+    /// <summary>
+    /// Retorna os períodos letivos distintos de todas as turmas cadastradas.
+    /// </summary>
+    [HttpGet("periodos")]
+    [ProducesResponseType(typeof(IEnumerable<string>), 200)]
+    public async Task<IActionResult> ListarPeriodos()
+    {
+        var periodos = await _getPeriodos.ExecuteAsync();
+        return Ok(periodos);
     }
 
     /// <summary>

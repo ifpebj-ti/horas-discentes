@@ -21,7 +21,6 @@ public class TurmaController : ControllerBase
     private readonly DeleteTurmaUseCase _delete;
     private readonly ToggleCodigoUseCase _toggleCodigo;
     private readonly ResetarCodigoUseCase _resetarCodigo;
-    private readonly GetPeriodosLetivosUseCase _getPeriodos;
 
     public TurmaController(
         CreateTurmaUseCase create,
@@ -33,8 +32,7 @@ public class TurmaController : ControllerBase
         UpdateTurmaUseCase update,
         DeleteTurmaUseCase delete,
         ToggleCodigoUseCase toggleCodigo,
-        ResetarCodigoUseCase resetarCodigo,
-        GetPeriodosLetivosUseCase getPeriodos)
+        ResetarCodigoUseCase resetarCodigo)
     {
         _create = create;
         _getAll = getAll;
@@ -46,7 +44,6 @@ public class TurmaController : ControllerBase
         _delete = delete;
         _toggleCodigo = toggleCodigo;
         _resetarCodigo = resetarCodigo;
-        _getPeriodos = getPeriodos;
     }
 
     /// <summary>
@@ -181,19 +178,6 @@ public class TurmaController : ControllerBase
         {
             return NotFound(new { erro = ex.Message });
         }
-    }
-
-    /// <summary>
-    /// Retorna os períodos letivos distintos de todas as turmas cadastradas.
-    /// </summary>
-    [HttpGet("periodos")]
-    [AllowAnonymous]
-    [SwaggerOperation(Summary = "Lista os períodos letivos cadastrados", Tags = new[] { "Turmas" })]
-    [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ListarPeriodos()
-    {
-        var periodos = await _getPeriodos.ExecuteAsync();
-        return Ok(periodos);
     }
 
     /// <summary>
