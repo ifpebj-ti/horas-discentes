@@ -378,13 +378,11 @@ export const STATUS_OPTIONS: Types.OpcaoFiltro[] = [
 
 export const CATEGORY_OPTIONS: Types.OpcaoFiltro[] = [
   { value: 'all', label: 'Todas as categorias' },
-  { value: 'Ensino', label: 'Ensino' },
-  { value: 'Estagio', label: 'Estagio' },
-  { value: 'Eventos', label: 'Eventos' },
-  { value: 'Pesquisa', label: 'Pesquisa' },
-  { value: 'Extensao', label: 'Extensao' },
-  { value: 'Curso', label: 'Curso' },
-  { value: 'Voluntariado', label: 'Voluntariado' }
+  { value: 'categoria-i', label: 'Categoria I' },
+  { value: 'categoria-ii', label: 'Categoria II' },
+  { value: 'categoria-iii', label: 'Categoria III' },
+  { value: 'categoria-iv', label: 'Categoria IV' },
+  { value: 'extensao', label: 'Extensão' }
 ];
 
 export const CATEGORIES_SELECT: Types.CategoriaSelecaoForm[] = [
