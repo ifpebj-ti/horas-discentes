@@ -33,6 +33,7 @@ export default function HoursRegistrationForm({
     handleSubmit,
     submitForm,
     handleFileSelect,
+    handleTipoChange,
     anexoComprovante,
     isLoading,
     errors,
@@ -72,12 +73,30 @@ export default function HoursRegistrationForm({
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 overflow-x-auto">
       <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-md overflow-hidden">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <FaClock className="text-blue-600" />
-          {tipoRegistro === 'horas-extensao'
-            ? 'Registrar Horas de Extensão'
-            : 'Registrar Horas Complementares'}
-        </h2>
+        <div className="flex mb-6 rounded-lg border border-gray-200 overflow-hidden w-fit">
+          <button
+            type="button"
+            onClick={() => handleTipoChange('horas-complementares')}
+            className={`px-5 py-2 text-sm font-medium transition-colors ${
+              tipoRegistro === 'horas-complementares'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Horas Complementares
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTipoChange('horas-extensao')}
+            className={`px-5 py-2 text-sm font-medium transition-colors ${
+              tipoRegistro === 'horas-extensao'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Horas de Extensão
+          </button>
+        </div>
 
         <form
           onSubmit={handleSubmit(submitForm)}
