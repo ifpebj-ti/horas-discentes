@@ -17,15 +17,18 @@ namespace Back.Application.UseCases.Certificado
         private readonly ICertificadoRepository _certificadoRepo;
         private readonly IAlunoRepository _alunoRepo;
         private readonly IFileStorageService _storage;
+        private readonly ValidarLimiteCertificadoUseCase _validarLimite;
 
         public UpdateCertificadoUseCase(
             ICertificadoRepository certificadoRepo,
             IAlunoRepository alunoRepo,
-            IFileStorageService storage)
+            IFileStorageService storage,
+            ValidarLimiteCertificadoUseCase validarLimite)
         {
             _certificadoRepo = certificadoRepo;
             _alunoRepo = alunoRepo;
             _storage = storage;
+            _validarLimite = validarLimite;
         }
 
         /// <param name="id">O ID do certificado a ser atualizado.</param>
@@ -51,7 +54,16 @@ namespace Back.Application.UseCases.Certificado
             if (certificado.Status == StatusCertificado.APROVADO)
                 throw new InvalidOperationException("Não é possível alterar um certificado que já foi APROVADO.");
 
-            // 4. Atualiza os campos do certificado
+            // 4. Valida limites de carga horária excluindo o próprio certificado do somatório
+            await _validarLimite.ExecuteAsync(
+                certificado.AlunoAtividadeId,
+                request.CargaHoraria,
+                request.PeriodoLetivo,
+                certificado.AlunoAtividade!.Atividade!.CargaMaximaSemestral,
+                certificado.AlunoAtividade!.Atividade!.CargaMaximaCurso,
+                ignorarCertificadoId: id);
+
+            // 5. Atualiza os campos do certificado
             certificado.TituloAtividade = request.TituloAtividade;
             certificado.Instituicao = request.Instituicao;
             certificado.Local = request.Local;
@@ -65,11 +77,11 @@ namespace Back.Application.UseCases.Certificado
             certificado.Descricao = request.Descricao;
             certificado.Tipo = (TipoCertificado)request.Tipo;
 
-            // 5. Se estava REPROVADO, volta a PENDENTE para reavaliação
+            // 6. Se estava REPROVADO, volta a PENDENTE para reavaliação
             if (certificado.Status == StatusCertificado.REPROVADO)
                 certificado.Status = StatusCertificado.PENDENTE;
 
-            // 6. Substitui o anexo no storage se um novo foi enviado
+            // 7. Substitui o anexo no storage se um novo foi enviado
             if (request.Anexo != null && request.Anexo.Length > 0)
             {
                 request.Anexo.ValidateAnexo();
@@ -91,7 +103,7 @@ namespace Back.Application.UseCases.Certificado
                     await _storage.DeleteAsync(oldKey);
             }
 
-            // 7. Salva as mudanças
+            // 8. Salva as mudanças
             await _certificadoRepo.UpdateAsync(certificado);
         }
     }

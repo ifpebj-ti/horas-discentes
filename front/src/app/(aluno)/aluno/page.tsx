@@ -69,7 +69,7 @@ function AlunoPageContent({
                 Acompanhe o progresso das suas horas no Hora Mais.
               </p>
             </div>
-            <NewCertificateButton user={user} />
+            <NewCertificateButton />
           </div>
 
           <BreadcrumbAuto />

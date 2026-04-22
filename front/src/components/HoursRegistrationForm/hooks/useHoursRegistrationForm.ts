@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -23,7 +23,9 @@ export function useHoursRegistrationForm({
   const { data: session } = useSession();
   const router = useRouter();
 
-  const tipoRegistro = searchParams.get('tipo') ?? 'horas-complementares';
+  const [tipoRegistro, setTipoRegistro] = useState(
+    searchParams.get('tipo') ?? 'horas-complementares'
+  );
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -54,12 +56,32 @@ export function useHoursRegistrationForm({
   } = form;
 
   const anexoComprovante = watch('anexoComprovante');
+  const categoriaWatched = watch('categoria');
+  const periodoWatched = watch('periodoLetivoFaculdade');
 
   const categoriasAtuais = useMemo(() => {
     return tipoRegistro === 'horas-extensao'
       ? categoriasExtensao
       : categoriasComplementares;
   }, [tipoRegistro, categoriasComplementares, categoriasExtensao]);
+
+  const atividadeSelecionada = useMemo(
+    () => categoriasAtuais.find((c) => c.nome === categoriaWatched),
+    [categoriasAtuais, categoriaWatched]
+  );
+
+  const maxHorasSemestral = atividadeSelecionada?.cargaMaximaSemestral ?? null;
+  const campoHorasHabilitado = !!categoriaWatched && !!periodoWatched;
+
+  useEffect(() => {
+    setValue('cargaHoraria', 0, { shouldValidate: false });
+  }, [categoriaWatched, setValue]);
+
+  const handleTipoChange = useCallback((novoTipo: string) => {
+    setValue('categoria', '');
+    setValue('cargaHoraria', 0, { shouldValidate: false });
+    setTipoRegistro(novoTipo);
+  }, [setValue]);
 
   const handleFileSelect = (file: File | null) => {
     setValue('anexoComprovante', file, {
@@ -140,9 +162,12 @@ export function useHoursRegistrationForm({
     submitForm,
     handleFileSelect,
     handleFileRemove,
+    handleTipoChange,
     anexoComprovante,
     isLoading: isSubmitting || isUploading,
     errors,
-    tipoRegistro
+    tipoRegistro,
+    maxHorasSemestral,
+    campoHorasHabilitado
   };
 }

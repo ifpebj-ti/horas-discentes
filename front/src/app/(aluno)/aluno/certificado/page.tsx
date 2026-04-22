@@ -18,7 +18,6 @@ import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import ViewCertificate from '@/components/ViewCertificate';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
-import { useMeusDadosDetalhados } from '@/hooks/useStudent';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '@/lib/alunoMock';
 import {
   listarMeusCertificados,
@@ -33,7 +32,7 @@ import {
 
 const CertificadosContext = createContext<Types.Certificado[]>([]);
 
-function CertificadosPageContent({ user }: { user: Types.Usuario }) {
+function CertificadosPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
@@ -126,7 +125,7 @@ function CertificadosPageContent({ user }: { user: Types.Usuario }) {
                   Gerencie seus certificados e acompanhe o status de cada um.
                 </p>
               </div>
-              <NewCertificateButton user={user} />
+              <NewCertificateButton />
             </div>
             <BreadcrumbAuto />
           </div>
@@ -208,7 +207,6 @@ export default function Certificados() {
   const { data: session, status } = useSession();
   const [certificados, setCertificados] = useState<Types.Certificado[]>([]);
   const loadingOverlay = useLoadingOverlay(true);
-  const { data: detalhado } = useMeusDadosDetalhados();
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -252,24 +250,12 @@ export default function Certificados() {
   }
   if (!session?.user) return null;
 
-  const user: Types.Usuario = {
-    id: session.user.entidadeId!,
-    name: session.user.name,
-    email: session.user.email,
-    role: session.user.role,
-    isNewPPC: session.user.isNewPpc === true,
-    totalHorasExtensao: detalhado?.totalHorasExtensao ?? 0,
-    maximoHorasExtensao: detalhado?.maximoHorasExtensao ?? 0,
-    totalHorasComplementar: detalhado?.totalHorasComplementar ?? 0,
-    maximoHorasComplementar: detalhado?.maximoHorasComplementar ?? 0
-  };
-
   return (
     <>
       <LoadingOverlay show={loadingOverlay.visible} />
       <CertificadosContext.Provider value={certificados}>
         <Suspense fallback={<div>Carregando certificados...</div>}>
-          <CertificadosPageContent user={user} />
+          <CertificadosPageContent />
         </Suspense>
       </CertificadosContext.Provider>
     </>

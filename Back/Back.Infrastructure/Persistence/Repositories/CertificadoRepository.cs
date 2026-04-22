@@ -119,4 +119,14 @@ public class CertificadoRepository : ICertificadoRepository
         _context.Certificados.RemoveRange(certificados);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<Certificado>> GetByAlunoAtividadeAndStatusAsync(
+        Guid alunoAtividadeId,
+        IEnumerable<StatusCertificado> statuses)
+    {
+        return await _context.Certificados
+            .Where(c => c.AlunoAtividadeId == alunoAtividadeId && statuses.Contains(c.Status))
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

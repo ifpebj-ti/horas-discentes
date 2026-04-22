@@ -23,4 +23,5 @@ public interface ITurmaRepository
     Task<Turma?> GetByIdTrackedAsync(Guid id);
     Task UpdateAsync(Turma turma);
     Task DeleteAsync(Turma turma);
+    Task<IEnumerable<string>> GetDistinctPeriodosAsync();
 }

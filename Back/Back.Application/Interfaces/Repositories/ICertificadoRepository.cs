@@ -20,4 +20,5 @@ public interface ICertificadoRepository
     Task DeleteAsync(Certificado certificado);
     Task RemoveRangeAsync(IEnumerable<Certificado> certificados);
     Task<IEnumerable<Certificado>> GetByAlunoAtividadeIdTrackedAsync(Guid alunoAtividadeId);
+    Task<IEnumerable<Certificado>> GetByAlunoAtividadeAndStatusAsync(Guid alunoAtividadeId, IEnumerable<StatusCertificado> statuses);
 }

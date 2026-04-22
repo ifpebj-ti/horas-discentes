@@ -21,11 +21,13 @@ import { useHoursRegistrationForm } from './hooks/useHoursRegistrationForm';
 interface HoursRegistrationFormProps {
   categoriasComplementares: AtividadeResponse[];
   categoriasExtensao: AtividadeResponse[];
+  periodosLetivos: string[];
 }
 
 export default function HoursRegistrationForm({
   categoriasComplementares,
-  categoriasExtensao
+  categoriasExtensao,
+  periodosLetivos
 }: Readonly<HoursRegistrationFormProps>) {
   const {
     formMethods,
@@ -33,10 +35,13 @@ export default function HoursRegistrationForm({
     handleSubmit,
     submitForm,
     handleFileSelect,
+    handleTipoChange,
     anexoComprovante,
     isLoading,
     errors,
-    tipoRegistro
+    tipoRegistro,
+    maxHorasSemestral,
+    campoHorasHabilitado
   } = useHoursRegistrationForm({
     categoriasComplementares,
     categoriasExtensao
@@ -54,30 +59,33 @@ export default function HoursRegistrationForm({
     'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500';
   const errorClass = 'text-red-500 text-xs mt-1';
 
-  const periodosLetivos = (() => {
-    const periodos: string[] = [];
-    const anoInicio = 2023;
-    const dataAtual = new Date();
-    const anoAtual = dataAtual.getFullYear();
-    const mesAtual = dataAtual.getMonth() + 1;
-
-    for (let ano = anoInicio; ano < anoAtual; ano++) {
-      periodos.push(`${ano}.1`, `${ano}.2`);
-    }
-    periodos.push(`${anoAtual}.1`);
-    if (mesAtual >= 7) periodos.push(`${anoAtual}.2`);
-    return periodos;
-  })();
-
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 overflow-x-auto">
       <div className="w-full max-w-5xl mx-auto p-4 md:p-8 bg-white rounded-2xl shadow-md overflow-hidden">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-          <FaClock className="text-blue-600" />
-          {tipoRegistro === 'horas-extensao'
-            ? 'Registrar Horas de Extensão'
-            : 'Registrar Horas Complementares'}
-        </h2>
+        <div className="flex mb-6 rounded-lg border border-gray-200 overflow-hidden w-fit">
+          <button
+            type="button"
+            onClick={() => handleTipoChange('horas-complementares')}
+            className={`px-5 py-2 text-sm font-medium transition-colors ${
+              tipoRegistro === 'horas-complementares'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Horas Complementares
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTipoChange('horas-extensao')}
+            className={`px-5 py-2 text-sm font-medium transition-colors ${
+              tipoRegistro === 'horas-extensao'
+                ? 'bg-blue-600 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Horas de Extensão
+          </button>
+        </div>
 
         <form
           onSubmit={handleSubmit(submitForm)}
@@ -196,13 +204,39 @@ export default function HoursRegistrationForm({
                 <FaClock className="text-blue-600" /> Carga Horária
               </span>
             </label>
-            <input
-              id="cargaHoraria"
-              type="number"
-              {...register('cargaHoraria')}
-              className={inputClass}
-              min={1}
+            <Controller
+              control={control}
+              name="cargaHoraria"
+              render={({ field }) => (
+                <input
+                  id="cargaHoraria"
+                  type="number"
+                  value={field.value}
+                  disabled={!campoHorasHabilitado}
+                  min={1}
+                  max={maxHorasSemestral ?? undefined}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    field.onChange(
+                      maxHorasSemestral !== null && val > maxHorasSemestral
+                        ? maxHorasSemestral
+                        : val
+                    );
+                  }}
+                  className={`${inputClass} ${!campoHorasHabilitado ? 'bg-gray-100 cursor-not-allowed text-gray-400' : ''}`}
+                />
+              )}
             />
+            {campoHorasHabilitado && maxHorasSemestral !== null && (
+              <p className="text-xs text-gray-500 mt-1">
+                Máximo permitido neste semestre: <span className="font-medium">{maxHorasSemestral}h</span>
+              </p>
+            )}
+            {!campoHorasHabilitado && (
+              <p className="text-xs text-gray-400 mt-1">
+                Selecione a categoria e o período letivo primeiro.
+              </p>
+            )}
             {errors.cargaHoraria && (
               <p className={errorClass}>{errors.cargaHoraria.message}</p>
             )}
