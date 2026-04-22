@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -23,7 +23,9 @@ export function useHoursRegistrationForm({
   const { data: session } = useSession();
   const router = useRouter();
 
-  const tipoRegistro = searchParams.get('tipo') ?? 'horas-complementares';
+  const [tipoRegistro, setTipoRegistro] = useState(
+    searchParams.get('tipo') ?? 'horas-complementares'
+  );
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -60,6 +62,11 @@ export function useHoursRegistrationForm({
       ? categoriasExtensao
       : categoriasComplementares;
   }, [tipoRegistro, categoriasComplementares, categoriasExtensao]);
+
+  const handleTipoChange = useCallback((novoTipo: string) => {
+    setValue('categoria', '');
+    setTipoRegistro(novoTipo);
+  }, [setValue]);
 
   const handleFileSelect = (file: File | null) => {
     setValue('anexoComprovante', file, {
@@ -140,6 +147,7 @@ export function useHoursRegistrationForm({
     submitForm,
     handleFileSelect,
     handleFileRemove,
+    handleTipoChange,
     anexoComprovante,
     isLoading: isSubmitting || isUploading,
     errors,
