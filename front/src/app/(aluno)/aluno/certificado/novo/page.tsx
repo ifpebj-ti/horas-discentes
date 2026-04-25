@@ -28,10 +28,16 @@ export default function NovoCertificado() {
         ]);
 
         if (atividadesResult.status === 'fulfilled') {
-          setComplementares(atividadesResult.value.filter((a) => a.tipo === 'COMPLEMENTAR'));
-          setExtensao(atividadesResult.value.filter((a) => a.tipo === 'EXTENSAO'));
+          setComplementares(
+            atividadesResult.value.filter((a) => a.tipo === 'COMPLEMENTAR')
+          );
+          setExtensao(
+            atividadesResult.value.filter((a) => a.tipo === 'EXTENSAO')
+          );
         } else {
-          toast.error('Não foi possível carregar as categorias. Tente novamente.');
+          toast.error(
+            'Não foi possível carregar as categorias. Tente novamente.'
+          );
         }
 
         if (periodosResult.status === 'fulfilled') {

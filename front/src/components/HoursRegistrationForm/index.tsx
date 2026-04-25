@@ -229,7 +229,8 @@ export default function HoursRegistrationForm({
             />
             {campoHorasHabilitado && maxHorasSemestral !== null && (
               <p className="text-xs text-gray-500 mt-1">
-                Máximo permitido neste semestre: <span className="font-medium">{maxHorasSemestral}h</span>
+                Máximo permitido neste semestre:{' '}
+                <span className="font-medium">{maxHorasSemestral}h</span>
               </p>
             )}
             {!campoHorasHabilitado && (
