@@ -118,7 +118,6 @@ public class AuthService : IAuthService
         var jwtKey = _config["Jwt:Key"];
         if (string.IsNullOrWhiteSpace(jwtKey))
             throw new Exception("A chave JWT (Jwt:Key) não foi configurada corretamente. Verifique o .env ou appsettings.");
-        Console.WriteLine("jwtkey", jwtKey);
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
