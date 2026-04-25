@@ -30,7 +30,7 @@ namespace Back.Infrastructure.Services
             if (!int.TryParse(portaStr, out int porta))
                 throw new InvalidOperationException("A porta configurada para o SMTP é inválida.");
 
-            var mimeMessage = new MimeMessage();
+            using var mimeMessage = new MimeMessage();
             mimeMessage.From.Add(MailboxAddress.Parse(remetente));
             mimeMessage.To.Add(MailboxAddress.Parse(destinatario));
             mimeMessage.Subject = assunto;

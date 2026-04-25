@@ -27,69 +27,59 @@ public class GetAlunosEmRiscoUseCase
         var limites = (await _limiteRepo.GetAllAsync())
             .ToDictionary(l => l.CursoId);
 
-        var resultado = new List<AlunoEmRiscoResponse>();
-
-        foreach (var aluno in alunos)
-        {
-            if (!limites.TryGetValue(aluno.Turma!.CursoId, out var limite)) continue;
-
-            var totalComplementar = aluno.Atividades
-                .Where(x => x.Atividade?.Tipo == TipoAtividade.COMPLEMENTAR)
-                .Sum(x => x.HorasConcluidas);
-
-            var maximo = limite.MaximoHorasComplementar;
-            if (maximo <= 0) continue;
-
-            var porcentagem = Math.Round((double)totalComplementar / maximo * 100, 2);
-            if (porcentagem > percentualMaximo) continue;
-
-            if (!TryCalcularPeriodosDecorridos(aluno.Turma.Periodo, out var periodosDecorridos))
-                continue; // período inválido — dado inconsistente, não expor o aluno
-
-            var horasPorPeriodo = Math.Round((double)totalComplementar / periodosDecorridos, 2);
-
-            resultado.Add(new AlunoEmRiscoResponse(
-                aluno.Id,
-                aluno.Nome!,
-                aluno.Matricula!,
-                aluno.Turma.Periodo!,
-                aluno.Turma.Codigo!,
-                aluno.Turma.Curso?.Nome ?? "",
-                totalComplementar,
-                maximo,
-                porcentagem,
-                periodosDecorridos,
-                horasPorPeriodo
-            ));
-        }
-
-        return resultado.OrderBy(a => a.HorasPorPeriodo);
+        return alunos
+            .Where(a => limites.ContainsKey(a.Turma!.CursoId))
+            .Where(a => limites[a.Turma!.CursoId].MaximoHorasComplementar > 0)
+            .Select(a =>
+            {
+                var limite = limites[a.Turma!.CursoId];
+                var totalComplementar = a.Atividades
+                    .Where(x => x.Atividade?.Tipo == TipoAtividade.COMPLEMENTAR)
+                    .Sum(x => x.HorasConcluidas);
+                var maximo = limite.MaximoHorasComplementar;
+                var porcentagem = Math.Round((double)totalComplementar / maximo * 100, 2);
+                var periodos = CalcularPeriodosDecorridos(a.Turma.Periodo);
+                return (Aluno: a, TotalComplementar: totalComplementar, Maximo: maximo,
+                        Porcentagem: porcentagem, Periodos: periodos);
+            })
+            .Where(x => x.Porcentagem <= percentualMaximo && x.Periodos.HasValue)
+            .Select(x => new AlunoEmRiscoResponse(
+                x.Aluno.Id,
+                x.Aluno.Nome!,
+                x.Aluno.Matricula!,
+                x.Aluno.Turma!.Periodo!,
+                x.Aluno.Turma.Codigo!,
+                x.Aluno.Turma.Curso?.Nome ?? "",
+                x.TotalComplementar,
+                x.Maximo,
+                x.Porcentagem,
+                x.Periodos!.Value,
+                Math.Round((double)x.TotalComplementar / x.Periodos!.Value, 2)
+            ))
+            .OrderBy(a => a.HorasPorPeriodo);
     }
 
     /// <summary>
-    /// Tenta calcular quantos períodos letivos se passaram desde o início da turma.
+    /// Calcula quantos períodos letivos se passaram desde o início da turma.
     /// Período no formato "YYYY.S" onde S é 1 (jan–jun) ou 2 (jul–dez).
-    /// Retorna false se o período for nulo, mal formatado ou com semestre fora de [1,2].
+    /// Retorna null se o período for nulo, mal formatado ou com semestre fora de [1,2].
     /// </summary>
-    private static bool TryCalcularPeriodosDecorridos(string? periodo, out int periodosDecorridos)
+    private static int? CalcularPeriodosDecorridos(string? periodo)
     {
-        periodosDecorridos = 0;
-
-        if (string.IsNullOrWhiteSpace(periodo)) return false;
+        if (string.IsNullOrWhiteSpace(periodo)) return null;
 
         var partes = periodo.Split('.');
         if (partes.Length != 2
             || !int.TryParse(partes[0], out var anoInicio)
             || !int.TryParse(partes[1], out var semInicio)
             || semInicio < 1 || semInicio > 2)
-            return false;
+            return null;
 
         var hoje = DateTime.UtcNow;
         var anoAtual = hoje.Year;
         var semAtual = hoje.Month <= 6 ? 1 : 2;
 
         var periodos = (anoAtual - anoInicio) * 2 + (semAtual - semInicio) + 1;
-        periodosDecorridos = Math.Max(1, periodos);
-        return true;
+        return Math.Max(1, periodos);
     }
 }

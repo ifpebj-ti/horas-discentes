@@ -43,11 +43,12 @@ public class CreateCertificadoUseCaseTests
             .ReturnsAsync((IFormFile _, string key) => key);
 
         var fileBytes = Encoding.UTF8.GetBytes("PDF");
+        using var fileStream = new MemoryStream(fileBytes);
         var fileMock = new Mock<IFormFile>();
         fileMock.Setup(f => f.ContentType).Returns("application/pdf");
         fileMock.Setup(f => f.FileName).Returns("file.pdf");
         fileMock.Setup(f => f.Length).Returns(fileBytes.Length);
-        fileMock.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(fileBytes));
+        fileMock.Setup(f => f.OpenReadStream()).Returns(fileStream);
 
         var req = new CreateCertificadoRequest
         {

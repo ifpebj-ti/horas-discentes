@@ -19,7 +19,7 @@ public class GetCertificadoAnexoUseCaseTests
     {
         var id = Guid.NewGuid();
         var storageKey = $"certificados/{id}.pdf";
-        var contentStream = new MemoryStream(new byte[] { 1, 2, 3 });
+        using var contentStream = new MemoryStream(new byte[] { 1, 2, 3 });
 
         _repo.Setup(r => r.GetStorageKeyByIdAsync(id))
             .ReturnsAsync(storageKey);

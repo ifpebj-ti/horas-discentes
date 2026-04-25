@@ -58,11 +58,12 @@ public class AuthService : IAuthService
                 if (!aluno.IsAtivo)
                     throw new UnauthorizedAccessException("Aluno inativo. Acesso não permitido.");
 
+                var turma = aluno.Turma ?? throw new UnauthorizedAccessException("Curso não encontrado.");
                 nome = aluno.Nome;
                 entidadeId = aluno.Id;
                 turmaId = aluno.TurmaId;
-                cursoId = aluno.Turma?.CursoId ?? throw new UnauthorizedAccessException("Curso não encontrado.");
-                isNewPpc = aluno.Turma?.PossuiExtensao ?? false;
+                cursoId = turma.CursoId;
+                isNewPpc = turma.PossuiExtensao;
                 break;
 
             case "COORDENADOR":
@@ -117,7 +118,6 @@ public class AuthService : IAuthService
         var jwtKey = _config["Jwt:Key"];
         if (string.IsNullOrWhiteSpace(jwtKey))
             throw new Exception("A chave JWT (Jwt:Key) não foi configurada corretamente. Verifique o .env ou appsettings.");
-        Console.WriteLine("jwtkey", jwtKey);
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
