@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 
 // Carrega vari�veis do .env
-DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+DotNetEnv.Env.Load(Path.Join(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
