@@ -20,6 +20,8 @@ jobs:
     name: 0. Automatic Creation Process of New Tags
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
     outputs:
       created_tag: ${{ steps.created_tag.outputs.created_tag }}
       change_type: ${{ steps.change_type.outputs.change_type }}
@@ -197,7 +199,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Release Publication
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.CREATED_TAG }}
           name: Release ${{ env.CREATED_TAG }}
@@ -206,4 +208,4 @@ jobs:
             Release gerada automaticamente.
             Tipo de mudança: ${{ env.CHANGE_TYPE || 'Manual Dispatch' }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
