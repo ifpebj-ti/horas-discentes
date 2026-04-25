@@ -29,8 +29,8 @@ public class ValidarLimiteCertificadoUseCase
         var existentes = await _certificadoRepo
             .GetByAlunoAtividadeAndStatusAsync(alunoAtividadeId, StatusesAtivos);
 
-        if (ignorarCertificadoId.HasValue)
-            existentes = existentes.Where(c => c.Id != ignorarCertificadoId.Value);
+        if (ignorarCertificadoId is { } idIgnorar)
+            existentes = existentes.Where(c => c.Id != idIgnorar);
 
         var somaSemestral = existentes
             .Where(c => c.PeriodoLetivo == periodoLetivo)

@@ -29,8 +29,8 @@ public class CursoRepository : ICursoRepository
     {
         var query = _context.Cursos.AsNoTracking();
 
-        if (campusId.HasValue)
-            query = query.Where(c => c.CampusId == campusId.Value);
+        if (campusId is { } id)
+            query = query.Where(c => c.CampusId == id);
 
         return await query.ToListAsync();
     }
