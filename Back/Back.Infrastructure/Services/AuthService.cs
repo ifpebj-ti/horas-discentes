@@ -58,11 +58,12 @@ public class AuthService : IAuthService
                 if (!aluno.IsAtivo)
                     throw new UnauthorizedAccessException("Aluno inativo. Acesso não permitido.");
 
+                var turma = aluno.Turma ?? throw new UnauthorizedAccessException("Curso não encontrado.");
                 nome = aluno.Nome;
                 entidadeId = aluno.Id;
                 turmaId = aluno.TurmaId;
-                cursoId = aluno.Turma?.CursoId ?? throw new UnauthorizedAccessException("Curso não encontrado.");
-                isNewPpc = aluno.Turma?.PossuiExtensao ?? false;
+                cursoId = turma.CursoId;
+                isNewPpc = turma.PossuiExtensao;
                 break;
 
             case "COORDENADOR":
