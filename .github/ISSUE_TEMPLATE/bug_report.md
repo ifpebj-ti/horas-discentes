@@ -1,7 +1,7 @@
 ---
 name: "Bug Report"
 about: "Reporte um comportamento inesperado ou erro"
-title: "fix: "
+title: "[Fix]: "
 labels: ["fix", "bug"]
 ---
 

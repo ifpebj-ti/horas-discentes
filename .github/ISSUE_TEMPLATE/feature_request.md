@@ -1,7 +1,7 @@
 ---
 name: "Feature Request"
 about: "Sugira uma nova funcionalidade"
-title: "feat: "
+title: "[Feat]: "
 labels: ["feat", "enhancement"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: "Documentação"
 about: "Criação ou atualização de documentação"
-title: "docs: "
+title: "[Docs]: "
 labels: ["docs"]
 ---
 

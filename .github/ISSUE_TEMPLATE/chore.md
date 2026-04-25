@@ -1,7 +1,7 @@
 ---
 name: "Chore / Manutenção"
 about: "Tarefas de manutenção, configuração, dependências ou CI/CD"
-title: "chore: "
+title: "[Chore]: "
 labels: ["chore"]
 ---
 

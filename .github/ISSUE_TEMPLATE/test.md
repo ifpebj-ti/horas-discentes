@@ -1,7 +1,7 @@
 ---
 name: "Testes"
 about: "Adição ou correção de testes automatizados"
-title: "test: "
+title: "[Test]: "
 labels: ["test"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: "Refatoração"
 about: "Melhoria na estrutura do código sem mudança de comportamento"
-title: "refactor: "
+title: "[Refactor]: "
 labels: ["refactor"]
 ---
 
