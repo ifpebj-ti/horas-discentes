@@ -74,7 +74,7 @@ public class ForgotPasswordUseCaseTests
 
         var useCase = CreateUseCase();
 
-        var result = await useCase.ExecuteAsync(new ForgotPasswordRequestDto { Email = user.Email! });
+        await useCase.ExecuteAsync(new ForgotPasswordRequestDto { Email = user.Email! });
 
         active.Used.Should().BeTrue();
         _repo.Verify(x => x.UpdateAsync(active), Times.Once);
@@ -97,7 +97,7 @@ public class ForgotPasswordUseCaseTests
 
         var useCase = CreateUseCase();
 
-        var result = await useCase.ExecuteAsync(new ForgotPasswordRequestDto { Email = user.Email! });
+        await useCase.ExecuteAsync(new ForgotPasswordRequestDto { Email = user.Email! });
 
         _repo.Verify(r => r.AddAsync(It.IsAny<ResetPasswordCode>()), Times.Once);
         _repo.Verify(r => r.SaveChangesAsync(), Times.AtLeastOnce);
