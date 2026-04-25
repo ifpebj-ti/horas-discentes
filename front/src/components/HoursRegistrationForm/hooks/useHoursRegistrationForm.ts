@@ -77,11 +77,14 @@ export function useHoursRegistrationForm({
     setValue('cargaHoraria', 0, { shouldValidate: false });
   }, [categoriaWatched, setValue]);
 
-  const handleTipoChange = useCallback((novoTipo: string) => {
-    setValue('categoria', '');
-    setValue('cargaHoraria', 0, { shouldValidate: false });
-    setTipoRegistro(novoTipo);
-  }, [setValue]);
+  const handleTipoChange = useCallback(
+    (novoTipo: string) => {
+      setValue('categoria', '');
+      setValue('cargaHoraria', 0, { shouldValidate: false });
+      setTipoRegistro(novoTipo);
+    },
+    [setValue]
+  );
 
   const handleFileSelect = (file: File | null) => {
     setValue('anexoComprovante', file, {
