@@ -1,36 +1,4 @@
 services:
-  nginx:
-    image: nginx:latest
-    container_name: horas-discentes-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
-      - ./nginx/certbot/certbot-data/live/:/etc/letsencrypt/live
-      - ./nginx/certbot/certbot-data/archive/:/etc/letsencrypt/archive
-      - ./nginx/certbot/www:/var/www/certbot
-      - ./nginx/certbot/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
-      - ./nginx/certbot/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf:ro
-    networks:
-      - rede-back
-      - rede-front
-    depends_on:
-      - frontend
-      - backend
-    restart: unless-stopped
-
-  certbot:
-    image: certbot/certbot
-    container_name: horas-discentes-certbot
-    volumes:
-      - ./nginx/certbot/certbot-data/live/:/etc/letsencrypt/live
-      - ./nginx/certbot/certbot-data/archive/:/etc/letsencrypt/archive
-      - ./nginx/certbot/www:/var/www/certbot
-    command: certonly --webroot --webroot-path=/var/www/certbot --email ingrid.lauanne@gmail.com --agree-tos --expand -d horamais.app -d www.horamais.app -d api.horamais.app
-    networks:
-      - rede-front
-
   frontend:
     image: ghcr.io/ifpebj-ti/horas-discentes-frontend:latest
     ports:
@@ -40,7 +8,6 @@ services:
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
     networks:
-      - rede-front
       - rede-back
     depends_on:
       - backend
@@ -138,25 +105,10 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     restart: on-failure
 
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: horas-discentes-portainer
-    command: -H unix:///var/run/docker.sock
-    ports:
-      - "9000:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-    restart: unless-stopped
-    networks:
-      - rede-front
-
 volumes:
   pgdata:
   backend_data_protection_keys:
   minio_data:
-  portainer_data:
 
 networks:
   rede-back:
-  rede-front:
