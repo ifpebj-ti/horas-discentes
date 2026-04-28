@@ -163,7 +163,7 @@ jobs:
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:$CREATED_TAG
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.CREATED_TAG }}
           format: table
           exit-code: 1
           severity: CRITICAL
@@ -187,6 +187,9 @@ jobs:
     env:
       CREATED_TAG: ${{ needs.tag-creation.outputs.created_tag }}
       CHANGE_TYPE: ${{ needs.tag-creation.outputs.change_type }}
+      REGISTRY: ghcr.io
+      IMAGE_NAME: horas-discentes-frontend
+
     steps:
       - uses: actions/checkout@v4
 
