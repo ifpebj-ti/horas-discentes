@@ -160,6 +160,11 @@ jobs:
           docker tag ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:$CREATED_TAG \
                      ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
 
+      - name: Push Docker images (version and latest)
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:$CREATED_TAG
+          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
+
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
@@ -167,12 +172,6 @@ jobs:
           format: table
           exit-code: 1
           severity: CRITICAL
-
-      - name: Push Docker images (version and latest)
-        run: |
-          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:$CREATED_TAG
-          docker push ghcr.io/${{ github.repository_owner }}/horas-discentes-frontend:latest
-
 
   # --------------------------------------------------------------------
   # 3) RELEASE CREATION ------------------------------------------------
