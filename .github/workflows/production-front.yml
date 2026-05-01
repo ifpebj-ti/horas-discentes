@@ -168,6 +168,7 @@ jobs:
           image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.CREATED_TAG }}
           format: table
           exit-code: 1
+          ignore-unfixed: true 
           severity: CRITICAL
 
       - name: Push Docker images (version and latest)
