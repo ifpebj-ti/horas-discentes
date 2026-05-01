@@ -59,7 +59,7 @@ public class GetAlunoFromTokenUseCase
             ext,
             aluno.Turma!.MaximoHorasExtensao ?? 0,
             comp,
-            limite?.MaximoHorasComplementar ?? 0
+            limite != null && limite.MaximoHorasComplementar > 0 ? limite.MaximoHorasComplementar : 120
         );
     }
 }
