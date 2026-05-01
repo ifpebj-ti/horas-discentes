@@ -68,8 +68,8 @@ export const EditCourseModal = ({
       return;
     }
 
-    if (!complementaryHours.trim()) {
-      toast.error('O total de horas complementares é obrigatório.');
+    if (Number(complementaryHours) <= 0) {
+      toast.error('O total de horas complementares deve ser maior que zero.');
       return;
     }
 
@@ -182,7 +182,7 @@ export const EditCourseModal = ({
                     <input
                       id="editComplementaryHours"
                       type="number"
-                      min={0}
+                      min={1}
                       placeholder="Horas complementares"
                       value={complementaryHours}
                       onChange={(e) => setComplementaryHours(e.target.value)}
