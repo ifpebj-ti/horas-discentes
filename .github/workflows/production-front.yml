@@ -110,6 +110,8 @@ jobs:
     needs: tag-creation
     env:
       CREATED_TAG: ${{ needs.tag-creation.outputs.created_tag }}
+      REGISTRY: ghcr.io
+      IMAGE_NAME: horas-discentes-frontend
     permissions:
       contents: read
       packages: write
