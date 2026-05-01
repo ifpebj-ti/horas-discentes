@@ -1,10 +1,12 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 import { CardHome } from '@/components/CardHome';
 import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 
+import { useCertificadosPendentesPorCurso } from '@/hooks/useCertificates';
 import {
   faBookOpen,
   faGraduationCap,
@@ -14,6 +16,9 @@ import {
 
 export default function CoordenacaoPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const cursoId = session?.user?.cursoId;
+  const { data: pendingCount } = useCertificadosPendentesPorCurso(cursoId);
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -33,6 +38,7 @@ export default function CoordenacaoPage() {
         <CardHome
           icon={faIdCard}
           title="Validação de Certificados"
+          indicatorNumber={pendingCount || undefined}
           onClick={() => router.push('/coordenacao/certificados')}
         />
 
