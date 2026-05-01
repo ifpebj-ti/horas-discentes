@@ -1,6 +1,8 @@
 import {
   listarMeusCertificados,
-  obterCertificadoPorId
+  listarCertificadosPorCurso,
+  obterCertificadoPorId,
+  StatusCertificado
 } from '@/services/certificateService';
 import {
   CertificadoResponse,
@@ -15,6 +17,20 @@ export function useMeusCertificados() {
   return useQuery<CertificadoResponse[]>({
     queryKey: ['meus-certificados'],
     queryFn: listarMeusCertificados,
+    staleTime: ONE_MINUTE_IN_MS
+  });
+}
+
+export function useCertificadosPendentesPorCurso(cursoId: string | undefined) {
+  return useQuery<number>({
+    queryKey: ['certificados-pendentes-count', cursoId],
+    queryFn: async () => {
+      if (!cursoId) return 0;
+      const certificados = await listarCertificadosPorCurso(cursoId);
+      return certificados.filter((c) => c.status === StatusCertificado.PENDENTE)
+        .length;
+    },
+    enabled: !!cursoId,
     staleTime: ONE_MINUTE_IN_MS
   });
 }
