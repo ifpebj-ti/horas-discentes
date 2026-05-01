@@ -91,10 +91,9 @@ using (var scope = app.Services.CreateScope())
 
     // Cria roles se n�o existirem
     var roles = new[] { "ALUNO", "COORDENADOR", "ADMIN" };
-    var roleChecks = await Task.WhenAll(
-        roles.Select(async r => (Role: r, Exists: await roleManager.RoleExistsAsync(r))));
-    foreach (var r in roleChecks.Where(x => !x.Exists))
-        await roleManager.CreateAsync(new IdentityRole(r.Role));
+    foreach (var role in roles)
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
 
     // Executa seed de admin
     Console.WriteLine(" Rodando seed de admin...");
@@ -140,10 +139,9 @@ async Task SeedDatabaseAsync(WebApplication app)
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
     var roles = new[] { "ALUNO", "COORDENADOR", "ADMIN" };
-    var roleChecks = await Task.WhenAll(
-        roles.Select(async r => (Role: r, Exists: await roleManager.RoleExistsAsync(r))));
-    foreach (var r in roleChecks.Where(x => !x.Exists))
-        await roleManager.CreateAsync(new IdentityRole(r.Role));
+    foreach (var role in roles)
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
 
     await AdminSeeder.SeedAsync(context, userManager);
     Console.WriteLine(" Seed executado com sucesso.");
