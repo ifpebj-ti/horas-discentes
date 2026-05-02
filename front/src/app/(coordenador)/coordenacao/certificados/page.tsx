@@ -130,24 +130,41 @@ export default function ValidacaoCertificadosPage() {
   const handleSelectCertificado = (c: CertificadoPorCursoResponse) =>
     setCertificadoSelecionado(c);
 
-  const handleApprove = async () => {
+  const handleApprove = async (novaCargaHoraria?: number) => {
     if (!certificadoSelecionado) return;
 
     try {
       show();
-      await aprovarCertificado(certificadoSelecionado.id);
+      await aprovarCertificado(certificadoSelecionado.id, novaCargaHoraria);
+
+      const cargaCorrigida =
+        novaCargaHoraria !== undefined &&
+        novaCargaHoraria !== certificadoSelecionado.cargaHoraria;
 
       setCertificados((prev) =>
         prev.map((c) =>
           c.id === certificadoSelecionado.id
-            ? { ...c, status: StatusCertificado.APROVADO }
+            ? {
+                ...c,
+                status: StatusCertificado.APROVADO,
+                ...(cargaCorrigida && {
+                  cargaHorariaOriginal: c.cargaHoraria,
+                  cargaHoraria: novaCargaHoraria!,
+                  cargaHorariaCorrigida: true
+                })
+              }
             : c
         )
       );
 
       setCertificadoSelecionado({
         ...certificadoSelecionado,
-        status: StatusCertificado.APROVADO
+        status: StatusCertificado.APROVADO,
+        ...(cargaCorrigida && {
+          cargaHorariaOriginal: certificadoSelecionado.cargaHoraria,
+          cargaHoraria: novaCargaHoraria!,
+          cargaHorariaCorrigida: true
+        })
       });
 
       toast.success('Certificado aprovado com sucesso!');
@@ -325,6 +342,7 @@ export default function ValidacaoCertificadosPage() {
           >
             {certificadoSelecionado ? (
               <CertificateDetailsCard
+                key={certificadoSelecionado.id}
                 name={certificadoSelecionado.alunoNome}
                 registration={certificadoSelecionado.alunoMatricula}
                 email={certificadoSelecionado.alunoEmail}
@@ -337,6 +355,7 @@ export default function ValidacaoCertificadosPage() {
                   certificadoSelecionado.dataFim
                 )}
                 workload={`${certificadoSelecionado.cargaHoraria} horas`}
+                workloadValue={certificadoSelecionado.cargaHoraria}
                 {...(certificadoSelecionado?.status ===
                 StatusCertificado.PENDENTE
                   ? { onApprove: handleApprove }
