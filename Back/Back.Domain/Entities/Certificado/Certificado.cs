@@ -46,6 +46,10 @@ public class Certificado
 
     public string? JustificativaRejeicao { get; set; }
 
+    public int? CargaHorariaOriginal { get; set; }
+
+    public bool CargaHorariaCorrigida { get; set; } = false;
+
     [Required(ErrorMessage = "O campo Tipo é obrigatório.")]
     public TipoCertificado Tipo { get; set; }
 

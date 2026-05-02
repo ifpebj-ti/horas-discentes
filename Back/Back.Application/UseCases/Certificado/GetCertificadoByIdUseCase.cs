@@ -38,7 +38,9 @@ public class GetCertificadoByIdUseCase
             cert.Status,
             cert.AlunoAtividade.AlunoId,
             cert.AlunoAtividade.AtividadeId,
-            cert.JustificativaRejeicao
+            cert.JustificativaRejeicao,
+            cert.CargaHorariaOriginal,
+            cert.CargaHorariaCorrigida
         );
     }
 }

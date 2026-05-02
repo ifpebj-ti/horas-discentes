@@ -38,7 +38,9 @@ public class GetCertificadosByCursoIdUseCase
                 c.AlunoAtividade.Aluno.Email!,
                 c.AlunoAtividade.Aluno.Matricula!,
                 c.AlunoAtividade.Aluno.Turma!.Periodo!,
-                c.JustificativaRejeicao
+                c.JustificativaRejeicao,
+                c.CargaHorariaOriginal,
+                c.CargaHorariaCorrigida
             ));
     }
 }

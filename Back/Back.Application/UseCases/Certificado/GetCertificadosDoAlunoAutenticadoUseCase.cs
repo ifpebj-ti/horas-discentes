@@ -47,8 +47,9 @@ public class GetCertificadosDoAlunoAutenticadoUseCase
             c.AlunoAtividade!.AlunoId,
             c.AlunoAtividade.AtividadeId,
             c.AlunoAtividade.Atividade.CategoriaKey!,
-            c.JustificativaRejeicao
-            
+            c.JustificativaRejeicao,
+            c.CargaHorariaOriginal,
+            c.CargaHorariaCorrigida
         ));
     }
 }

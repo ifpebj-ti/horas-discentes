@@ -23,7 +23,7 @@ public class AtualizarStatusCertificadoUseCase
         _limiteRepo = limiteRepo;
     }
 
-    public async Task<bool> ExecuteAsync(Guid id, StatusCertificado novoStatus, string? justificativaRejeicao = null)
+    public async Task<bool> ExecuteAsync(Guid id, StatusCertificado novoStatus, string? justificativaRejeicao = null, int? novaCargaHoraria = null)
     {
         if (novoStatus == StatusCertificado.REPROVADO && string.IsNullOrWhiteSpace(justificativaRejeicao))
             throw new ArgumentException("A justificativa é obrigatória ao reprovar um certificado.");
@@ -35,6 +35,17 @@ public class AtualizarStatusCertificadoUseCase
         var atividade = alunoAtividade.Atividade!;
         var cursoId = alunoAtividade.Aluno!.Turma!.CursoId;
         var limite = await _limiteRepo.GetByCursoIdAsync(cursoId);
+
+        if (novoStatus == StatusCertificado.APROVADO
+            && certificado.Status != StatusCertificado.APROVADO
+            && novaCargaHoraria.HasValue
+            && novaCargaHoraria.Value > 0
+            && novaCargaHoraria.Value != certificado.CargaHoraria)
+        {
+            certificado.CargaHorariaOriginal = certificado.CargaHoraria;
+            certificado.CargaHoraria = novaCargaHoraria.Value;
+            certificado.CargaHorariaCorrigida = true;
+        }
 
         if (novoStatus == StatusCertificado.APROVADO && certificado.Status != StatusCertificado.APROVADO)
         {
