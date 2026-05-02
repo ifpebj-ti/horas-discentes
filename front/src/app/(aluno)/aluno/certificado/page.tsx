@@ -185,7 +185,9 @@ function CertificadosPageContent() {
                       status: cert.status,
                       ...(cert.justificativaRejeicao
                         ? { justificativaRejeicao: cert.justificativaRejeicao }
-                        : {})
+                        : {}),
+                      cargaHorariaOriginal: cert.cargaHorariaOriginal,
+                      cargaHorariaCorrigida: cert.cargaHorariaCorrigida
                     }}
                     onClick={handleVerCertificado}
                   />
@@ -231,7 +233,9 @@ export default function Certificados() {
           status: mapStatusCertificado(cert.status),
           ...(cert.justificativaRejeicao
             ? { justificativaRejeicao: cert.justificativaRejeicao }
-            : {})
+            : {}),
+          cargaHorariaOriginal: cert.cargaHorariaOriginal,
+          cargaHorariaCorrigida: cert.cargaHorariaCorrigida
         }));
 
         setCertificados(mapped);

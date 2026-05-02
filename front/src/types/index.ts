@@ -46,6 +46,8 @@ export interface Certificado {
   tipo: TipoCertificado;
   anexoComprovanteURL?: string;
   justificativaRejeicao?: string | null | undefined;
+  cargaHorariaOriginal?: number | null;
+  cargaHorariaCorrigida?: boolean;
 }
 
 /**

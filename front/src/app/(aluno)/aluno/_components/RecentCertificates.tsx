@@ -42,7 +42,9 @@ export const RecentCertificates = ({
                 dateEnd: cert.periodoFim,
                 category: cert.categoriaKey,
                 status: cert.status,
-                justificativaRejeicao: cert.justificativaRejeicao
+                justificativaRejeicao: cert.justificativaRejeicao,
+                cargaHorariaOriginal: cert.cargaHorariaOriginal,
+                cargaHorariaCorrigida: cert.cargaHorariaCorrigida
               }}
               onClick={onView}
             />

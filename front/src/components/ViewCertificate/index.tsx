@@ -13,6 +13,8 @@ interface Certificate {
   category: string;
   status: string;
   justificativaRejeicao?: string | null | undefined;
+  cargaHorariaOriginal?: number | null;
+  cargaHorariaCorrigida?: boolean;
 }
 
 interface ViewCertificateProps {
@@ -97,6 +99,23 @@ export default function ViewCertificate({
             {certificate.category}
           </span>
         </div>
+
+        {certificate.status === 'APROVADO' &&
+          certificate.cargaHorariaCorrigida && (
+            <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3">
+              <p className="text-xs font-semibold text-yellow-800 mb-1">
+                Carga horária corrigida pela coordenação
+              </p>
+              <p className="text-sm text-yellow-900">
+                Horas validadas: <strong>{certificate.hours}h</strong>
+                {certificate.cargaHorariaOriginal && (
+                  <span className="text-xs text-yellow-700 ml-1">
+                    (você informou {certificate.cargaHorariaOriginal}h)
+                  </span>
+                )}
+              </p>
+            </div>
+          )}
 
         {certificate.status === 'REPROVADO' && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3">
