@@ -66,6 +66,11 @@ export const CreateCourseModal = ({
       return;
     }
 
+    if (Number(complementaryHours) <= 0) {
+      toast.error('O total de horas complementares deve ser maior que zero.');
+      return;
+    }
+
     setConfirmCreate(true);
   };
 
