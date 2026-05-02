@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FaEnvelope,
   FaCalendarAlt,
@@ -20,7 +20,8 @@ interface CertificateDetailsProps {
   location: string;
   date: string;
   workload: string;
-  onApprove?: () => void;
+  workloadValue: number;
+  onApprove?: (novaCargaHoraria?: number) => void;
   onReject?: () => void;
   onViewPdf: () => void;
   onBack?: () => void;
@@ -29,6 +30,10 @@ interface CertificateDetailsProps {
 export const CertificateDetailsCard: React.FC<
   CertificateDetailsProps | undefined
 > = (props) => {
+  const [editedWorkload, setEditedWorkload] = useState<number>(
+    props?.workloadValue ?? 0
+  );
+
   if (!props) {
     return (
       <div className="flex flex-col items-center justify-center text-center text-gray-500 p-8">
@@ -51,6 +56,7 @@ export const CertificateDetailsCard: React.FC<
     location,
     date,
     workload,
+    workloadValue,
     onApprove,
     onReject,
     onViewPdf,
@@ -121,7 +127,27 @@ export const CertificateDetailsCard: React.FC<
 
           <div>
             <p className={labelCls}>Carga Horária</p>
-            <p className="text-sm text-gray-900 mt-1">{workload}</p>
+            {onApprove ? (
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  value={editedWorkload}
+                  onChange={(e) =>
+                    setEditedWorkload(Math.max(1, Number(e.target.value)))
+                  }
+                  className="w-24 border border-gray-300 rounded px-2 py-1 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-500">horas</span>
+                {editedWorkload !== workloadValue && (
+                  <span className="text-xs text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full">
+                    informado: {workloadValue}h
+                  </span>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-900 mt-1">{workload}</p>
+            )}
           </div>
         </div>
 
@@ -152,7 +178,13 @@ export const CertificateDetailsCard: React.FC<
 
               {onApprove && (
                 <button
-                  onClick={onApprove}
+                  onClick={() =>
+                    onApprove(
+                      editedWorkload !== workloadValue
+                        ? editedWorkload
+                        : undefined
+                    )
+                  }
                   className="bg-green-600 text-white px-4 py-2 rounded
                              flex items-center justify-center gap-2 hover:bg-green-700 transition w-full cursor-pointer"
                 >
