@@ -109,4 +109,173 @@ public class AtualizarStatusCertificadoUseCaseTests
 
         _certRepo.Verify(r => r.UpdateAsync(It.IsAny<Certificado>()), Times.Once);
     }
+
+    [Fact]
+    public async Task Deve_Aprovar_Certificado_Com_Correcao_De_CargaHoraria()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var cursoId = Guid.NewGuid();
+        var alunoId = Guid.NewGuid();
+
+        var turma = new TurmaBuilder()
+            .WithId(Guid.NewGuid())
+            .WithPeriodo("2024.1")
+            .WithTurno("Noite")
+            .WithCursoId(cursoId)
+            .Build();
+
+        var aluno = new AlunoBuilder()
+            .WithId(alunoId)
+            .WithNome("Aluno Teste")
+            .WithEmail("aluno@ifpe.edu.br")
+            .WithMatricula("2023002")
+            .WithTurmaId(turma.Id)
+            .WithIdentityUserId("uid")
+            .Build();
+
+        SetPrivateProp(aluno, nameof(aluno.Turma), turma);
+
+        var atividade = new Back.Domain.Entities.Atividade.Atividade
+        {
+            Id = Guid.NewGuid(),
+            CargaMaximaCurso = 100,
+            CargaMaximaSemestral = 100,
+            Tipo = TipoAtividade.COMPLEMENTAR
+        };
+
+        var alunoAtv = new AlunoAtividade
+        {
+            Id = Guid.NewGuid(),
+            AlunoId = alunoId,
+            Aluno = aluno,
+            AtividadeId = atividade.Id,
+            Atividade = atividade,
+            HorasConcluidas = 0
+        };
+
+        var cert = new Certificado
+        {
+            Id = id,
+            AlunoAtividadeId = alunoAtv.Id,
+            AlunoAtividade = alunoAtv,
+            Grupo = "G1",
+            PeriodoLetivo = "2024.1",
+            CargaHoraria = 20,
+            TotalPeriodos = 1,
+            Status = StatusCertificado.PENDENTE
+        };
+
+        _certRepo.Setup(r => r.GetByIdWithAlunoAtividadeAsync(id))
+            .ReturnsAsync(cert);
+
+        _certRepo.Setup(r => r.GetByAlunoAtividadeAsync(cert.AlunoAtividadeId))
+            .ReturnsAsync(new List<Certificado>());
+
+        _limiteRepo.Setup(r => r.GetByCursoIdAsync(cursoId))
+            .ReturnsAsync(new Back.Domain.Entities.LimiteHorasAluno.LimiteHorasAluno
+            {
+                CursoId = cursoId,
+                MaximoHorasComplementar = 100
+            });
+
+        _alunoAtvRepo.Setup(r => r.GetTotalHorasConcluidasPorTipoAsync(alunoAtv.AlunoId, TipoAtividade.COMPLEMENTAR))
+            .ReturnsAsync(0);
+
+        var useCase = CreateUseCase();
+
+        // Act
+        var result = await useCase.ExecuteAsync(id, StatusCertificado.APROVADO, novaCargaHoraria: 5);
+
+        // Assert
+        result.Should().BeTrue();
+        cert.CargaHorariaOriginal.Should().Be(20);
+        cert.CargaHoraria.Should().Be(5);
+        cert.CargaHorariaCorrigida.Should().BeTrue();
+
+        _alunoAtvRepo.Verify(r => r.UpdateAsync(It.IsAny<AlunoAtividade>()), Times.Once);
+        _certRepo.Verify(r => r.UpdateAsync(It.IsAny<Certificado>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Nao_Deve_Corrigir_CargaHoraria_Quando_Certificado_Ja_Esta_Aprovado()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var cursoId = Guid.NewGuid();
+        var alunoId = Guid.NewGuid();
+
+        var turma = new TurmaBuilder()
+            .WithId(Guid.NewGuid())
+            .WithPeriodo("2024.1")
+            .WithTurno("Noite")
+            .WithCursoId(cursoId)
+            .Build();
+
+        var aluno = new AlunoBuilder()
+            .WithId(alunoId)
+            .WithNome("Aluno Teste")
+            .WithEmail("aluno@ifpe.edu.br")
+            .WithMatricula("2023003")
+            .WithTurmaId(turma.Id)
+            .WithIdentityUserId("uid")
+            .Build();
+
+        SetPrivateProp(aluno, nameof(aluno.Turma), turma);
+
+        var atividade = new Back.Domain.Entities.Atividade.Atividade
+        {
+            Id = Guid.NewGuid(),
+            CargaMaximaCurso = 100,
+            CargaMaximaSemestral = 100,
+            Tipo = TipoAtividade.COMPLEMENTAR
+        };
+
+        var alunoAtv = new AlunoAtividade
+        {
+            Id = Guid.NewGuid(),
+            AlunoId = alunoId,
+            Aluno = aluno,
+            AtividadeId = atividade.Id,
+            Atividade = atividade,
+            HorasConcluidas = 0
+        };
+
+        var cert = new Certificado
+        {
+            Id = id,
+            AlunoAtividadeId = alunoAtv.Id,
+            AlunoAtividade = alunoAtv,
+            Grupo = "G1",
+            PeriodoLetivo = "2024.1",
+            CargaHoraria = 10,
+            TotalPeriodos = 1,
+            Status = StatusCertificado.APROVADO,
+            CargaHorariaCorrigida = false
+        };
+
+        _certRepo.Setup(r => r.GetByIdWithAlunoAtividadeAsync(id))
+            .ReturnsAsync(cert);
+
+        _limiteRepo.Setup(r => r.GetByCursoIdAsync(cursoId))
+            .ReturnsAsync(new Back.Domain.Entities.LimiteHorasAluno.LimiteHorasAluno
+            {
+                CursoId = cursoId,
+                MaximoHorasComplementar = 100
+            });
+
+        var useCase = CreateUseCase();
+
+        // Act
+        var result = await useCase.ExecuteAsync(id, StatusCertificado.APROVADO, novaCargaHoraria: 5);
+
+        // Assert
+        result.Should().BeTrue();
+        cert.CargaHoraria.Should().Be(10);
+        cert.CargaHorariaOriginal.Should().BeNull();
+        cert.CargaHorariaCorrigida.Should().BeFalse();
+
+        _alunoAtvRepo.Verify(r => r.UpdateAsync(It.IsAny<AlunoAtividade>()), Times.Never);
+        _certRepo.Verify(r => r.UpdateAsync(It.IsAny<Certificado>()), Times.Once);
+    }
 }

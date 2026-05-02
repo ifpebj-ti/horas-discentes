@@ -4,6 +4,7 @@ using Back.Application.UseCases.Certificado;
 using Back.Domain.Entities.Certificado;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Back.API.Controllers
@@ -175,7 +176,10 @@ namespace Back.API.Controllers
         [SwaggerOperation(Summary = "Aprova um certificado enviado pelo aluno.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Aprovar(Guid id, [FromBody] AprovarCertificadoRequest? request = null)
+        public async Task<IActionResult> Aprovar(
+            Guid id,
+            [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]
+            AprovarCertificadoRequest? request = null)
         {
             var ok = await _atualizar.ExecuteAsync(id, StatusCertificado.APROVADO, novaCargaHoraria: request?.NovaCargaHoraria);
             if (!ok)

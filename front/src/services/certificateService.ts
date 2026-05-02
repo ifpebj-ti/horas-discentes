@@ -112,7 +112,7 @@ export const aprovarCertificado = async (
 ): Promise<void> => {
   await api.patch(
     `/Certificado/${id}/aprovar`,
-    novaCargaHoraria !== undefined ? { novaCargaHoraria } : undefined
+    novaCargaHoraria !== undefined ? { novaCargaHoraria } : {}
   );
 };
 

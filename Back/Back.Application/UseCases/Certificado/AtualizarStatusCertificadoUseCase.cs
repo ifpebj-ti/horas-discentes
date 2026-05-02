@@ -37,6 +37,7 @@ public class AtualizarStatusCertificadoUseCase
         var limite = await _limiteRepo.GetByCursoIdAsync(cursoId);
 
         if (novoStatus == StatusCertificado.APROVADO
+            && certificado.Status != StatusCertificado.APROVADO
             && novaCargaHoraria.HasValue
             && novaCargaHoraria.Value > 0
             && novaCargaHoraria.Value != certificado.CargaHoraria)
