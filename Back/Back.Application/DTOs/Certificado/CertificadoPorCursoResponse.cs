@@ -21,5 +21,7 @@ public record CertificadoPorCursoResponse(
     string AlunoEmail,
     string AlunoMatricula,
     string PeriodoTurma,
-    string? JustificativaRejeicao
+    string? JustificativaRejeicao,
+    int? CargaHorariaOriginal,
+    bool CargaHorariaCorrigida
 );

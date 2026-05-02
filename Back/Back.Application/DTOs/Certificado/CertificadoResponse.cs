@@ -21,5 +21,7 @@ public record CertificadoResponse(
     Guid AlunoId,
     Guid AtividadeId,
     string CategoriaKey,
-    string? JustificativaRejeicao
+    string? JustificativaRejeicao,
+    int? CargaHorariaOriginal,
+    bool CargaHorariaCorrigida
 );

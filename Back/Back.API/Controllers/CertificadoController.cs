@@ -175,9 +175,9 @@ namespace Back.API.Controllers
         [SwaggerOperation(Summary = "Aprova um certificado enviado pelo aluno.", Tags = new[] { "Certificados" })]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Aprovar(Guid id)
+        public async Task<IActionResult> Aprovar(Guid id, [FromBody] AprovarCertificadoRequest? request = null)
         {
-            var ok = await _atualizar.ExecuteAsync(id, StatusCertificado.APROVADO);
+            var ok = await _atualizar.ExecuteAsync(id, StatusCertificado.APROVADO, novaCargaHoraria: request?.NovaCargaHoraria);
             if (!ok)
                 return NotFound(new { erro = "Certificado não encontrado." });
 
