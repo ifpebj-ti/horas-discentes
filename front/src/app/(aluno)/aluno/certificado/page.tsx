@@ -186,8 +186,8 @@ function CertificadosPageContent() {
                       ...(cert.justificativaRejeicao
                         ? { justificativaRejeicao: cert.justificativaRejeicao }
                         : {}),
-                      cargaHorariaOriginal: cert.cargaHorariaOriginal,
-                      cargaHorariaCorrigida: cert.cargaHorariaCorrigida
+                      cargaHorariaOriginal: cert.cargaHorariaOriginal ?? null,
+                      cargaHorariaCorrigida: cert.cargaHorariaCorrigida ?? false
                     }}
                     onClick={handleVerCertificado}
                   />
