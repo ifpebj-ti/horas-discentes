@@ -34,7 +34,7 @@ public class CreateAlunoUseCase
 
     public async Task<CreateAlunoResponse> ExecuteAsync(CreateAlunoRequest request)
     {
-        if (!request.Email.EndsWith("@discente.ifpe.edu.br", StringComparison.OrdinalIgnoreCase))
+        if (!request.Email.EndsWith("@ifpe.edu.br", StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("Email institucional inválido.");
 
         // Busca a turma por ID ou Código

@@ -91,7 +91,7 @@ export const ResetPassword = () => {
                     E-mail
                   </label>
                   <Input
-                    placeholder="seuemail@discente.ifpe.edu.br"
+                    placeholder="seuemail@ifpe.edu.br"
                     icon={faEnvelope}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}

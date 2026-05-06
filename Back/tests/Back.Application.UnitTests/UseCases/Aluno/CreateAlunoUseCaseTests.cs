@@ -41,7 +41,7 @@ public class CreateAlunoUseCaseTests
         _turmaRepo.Setup(r => r.GetByIdAsync(turma.Id))
             .ReturnsAsync(turma);
 
-        _identityService.Setup(r => r.CreateUserAsync("a@b.com", "123", "ALUNO"))
+        _identityService.Setup(r => r.CreateUserAsync("aluno@ifpe.edu.br", "123", "ALUNO"))
             .ReturnsAsync((true, "identity-1", Array.Empty<string>()));
 
         _atividadeRepo.Setup(r => r.GetAllAsync())
@@ -49,7 +49,7 @@ public class CreateAlunoUseCaseTests
 
         var request = new CreateAlunoRequest(
             Nome: "Aluno",
-            Email: "a@b.com",
+            Email: "aluno@ifpe.edu.br",
             Matricula: "0001",
             Senha: "123",
             TurmaId: turma.Id
@@ -62,8 +62,28 @@ public class CreateAlunoUseCaseTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Email.Should().Be("a@b.com");
+        result.Email.Should().Be("aluno@ifpe.edu.br");
 
         _alunoRepo.Verify(r => r.AddAsync(It.IsAny<Back.Domain.Entities.Aluno.Aluno>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Deve_Rejeitar_Email_Nao_Institucional()
+    {
+        var request = new CreateAlunoRequest(
+            Nome: "Aluno",
+            Email: "aluno@gmail.com",
+            Matricula: "0001",
+            Senha: "123",
+            TurmaId: Guid.NewGuid()
+        );
+
+        var useCase = CreateUseCase();
+
+        Func<Task> act = () => useCase.ExecuteAsync(request);
+
+        await act.Should()
+            .ThrowAsync<ArgumentException>()
+            .WithMessage("Email institucional inválido.");
     }
 }

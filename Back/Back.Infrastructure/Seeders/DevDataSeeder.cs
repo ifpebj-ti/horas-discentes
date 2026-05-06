@@ -112,7 +112,7 @@ public static class DevDataSeeder
         await context.SaveChangesAsync();
 
         // Coordenador
-        var coordEmail = "coordenador.ads@docente.ifpe.edu.br";
+        var coordEmail = "coordenador.ads@ifpe.edu.br";
         var coordIdentity = new IdentityUser { UserName = coordEmail, Email = coordEmail, EmailConfirmed = true };
         var coordResult = await userManager.CreateAsync(coordIdentity, "Senha@123");
         if (coordResult.Succeeded)
@@ -137,16 +137,16 @@ public static class DevDataSeeder
         // Alunos (turma 1)
         var alunosTurma1 = new[]
         {
-            ("Ana Souza",    "20230001.ads@discente.ifpe.edu.br", "20230001"),
-            ("Bruno Lima",   "20230002.ads@discente.ifpe.edu.br", "20230002"),
-            ("Carlos Melo",  "20230003.ads@discente.ifpe.edu.br", "20230003"),
+            ("Ana Souza",    "20230001.ads@ifpe.edu.br", "20230001"),
+            ("Bruno Lima",   "20230002.ads@ifpe.edu.br", "20230002"),
+            ("Carlos Melo",  "20230003.ads@ifpe.edu.br", "20230003"),
         };
 
         // Alunos (turma 2)
         var alunosTurma2 = new[]
         {
-            ("Diana Rocha",  "20240001.ads@discente.ifpe.edu.br", "20240001"),
-            ("Eduardo Paz",  "20240002.ads@discente.ifpe.edu.br", "20240002"),
+            ("Diana Rocha",  "20240001.ads@ifpe.edu.br", "20240001"),
+            ("Eduardo Paz",  "20240002.ads@ifpe.edu.br", "20240002"),
         };
 
         foreach (var (turmaId, alunos) in new[] { (turma1Id, alunosTurma1), (turma2Id, alunosTurma2) })
@@ -189,7 +189,7 @@ public static class DevDataSeeder
 
     private static async Task SeedCoordenadorAsync(ApplicationDbContext context, UserManager<IdentityUser> userManager)
     {
-        const string coordEmail = "coordenador.ads@docente.ifpe.edu.br";
+        const string coordEmail = "coordenador.ads@ifpe.edu.br";
         const string coordSenha = "Senha@123";
 
         // Já existe → nada a fazer
