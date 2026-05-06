@@ -70,7 +70,7 @@ public class CriarCoordenadorUseCaseTests
             "Nome",
             "123/2025",
             "2025-01-01",
-            "coordenador@docente.ifpe.edu.br",
+            "coordenador@gmail.com",
             "Senha@123",
             "token");
 

@@ -21,9 +21,7 @@ export const LoginCard = () => {
   const { errors } = formState;
   const emailValue = watch('email');
   const isInstitutionalEmail =
-    !!emailValue &&
-    (emailValue.endsWith('@discente.ifpe.edu.br') ||
-      emailValue.endsWith('@ifpe.edu.br'));
+    !!emailValue && emailValue.endsWith('@ifpe.edu.br');
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">
@@ -61,8 +59,7 @@ export const LoginCard = () => {
             )}
             {emailValue && !isInstitutionalEmail && (
                 <p className="text-xs text-red-500 mt-1 font-medium">
-                  Use seu email institucional (@discente.ifpe.edu.br ou
-                  @ifpe.edu.br).
+                  Use seu email institucional (@ifpe.edu.br).
                 </p>
               )}
           </div>

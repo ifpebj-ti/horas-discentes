@@ -68,7 +68,7 @@ public class EnviarConviteUseCaseTests
             config);
 
         var request = new ConviteCoordenadorRequest(
-            "coordenador@docente.ifpe.edu.br",
+            "coordenador@gmail.com",
             Guid.NewGuid());
 
         Func<Task> act = () => useCase.ExecuteAsync(request);

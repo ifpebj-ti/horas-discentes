@@ -6,8 +6,8 @@ export const firstAccessSchema = z
     email: z
       .string()
       .email('Email inválido')
-      .refine((email) => email.endsWith('@discente.ifpe.edu.br'), {
-        message: 'Use seu email institucional (@discente.ifpe.edu.br)'
+      .refine((email) => email.endsWith('@ifpe.edu.br'), {
+        message: 'Use seu email institucional (@ifpe.edu.br)'
       }),
     matricula: z
       .string()

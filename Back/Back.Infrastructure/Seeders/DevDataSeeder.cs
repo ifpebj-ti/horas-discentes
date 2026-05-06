@@ -137,16 +137,16 @@ public static class DevDataSeeder
         // Alunos (turma 1)
         var alunosTurma1 = new[]
         {
-            ("Ana Souza",    "20230001.ads@discente.ifpe.edu.br", "20230001"),
-            ("Bruno Lima",   "20230002.ads@discente.ifpe.edu.br", "20230002"),
-            ("Carlos Melo",  "20230003.ads@discente.ifpe.edu.br", "20230003"),
+            ("Ana Souza",    "20230001.ads@ifpe.edu.br", "20230001"),
+            ("Bruno Lima",   "20230002.ads@ifpe.edu.br", "20230002"),
+            ("Carlos Melo",  "20230003.ads@ifpe.edu.br", "20230003"),
         };
 
         // Alunos (turma 2)
         var alunosTurma2 = new[]
         {
-            ("Diana Rocha",  "20240001.ads@discente.ifpe.edu.br", "20240001"),
-            ("Eduardo Paz",  "20240002.ads@discente.ifpe.edu.br", "20240002"),
+            ("Diana Rocha",  "20240001.ads@ifpe.edu.br", "20240001"),
+            ("Eduardo Paz",  "20240002.ads@ifpe.edu.br", "20240002"),
         };
 
         foreach (var (turmaId, alunos) in new[] { (turma1Id, alunosTurma1), (turma2Id, alunosTurma2) })
