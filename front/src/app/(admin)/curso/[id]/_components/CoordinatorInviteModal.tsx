@@ -43,9 +43,9 @@ export const CoordinatorInviteModal = ({
   const handleCoordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!coordEmail.endsWith('@docente.ifpe.edu.br')) {
+    if (!coordEmail.endsWith('@ifpe.edu.br')) {
       toast.error(
-        'O email do coordenador deve ser institucional (@docente.ifpe.edu.br).'
+        'O email do coordenador deve ser institucional (@ifpe.edu.br).'
       );
       return;
     }
@@ -118,16 +118,15 @@ export const CoordinatorInviteModal = ({
                     <Input
                       id="coord-email"
                       type="email"
-                      placeholder="coordenador@docente.ifpe.edu.br"
+                      placeholder="coordenador@ifpe.edu.br"
                       value={coordEmail}
                       onChange={(e) => setCoordEmail(e.target.value)}
                       required
                       className="text-lg"
                     />
-                    {coordEmail &&
-                      !coordEmail.endsWith('@docente.ifpe.edu.br') && (
+                    {coordEmail && !coordEmail.endsWith('@ifpe.edu.br') && (
                         <p className="text-sm text-red-500 font-medium">
-                          O email deve ser institucional (@docente.ifpe.edu.br)
+                          O email deve ser institucional (@ifpe.edu.br)
                         </p>
                       )}
                   </div>
@@ -137,8 +136,7 @@ export const CoordinatorInviteModal = ({
                     className="w-full"
                     disabled={
                       isCoordLoading ||
-                      !coordEmail ||
-                      !coordEmail.endsWith('@docente.ifpe.edu.br')
+                      !coordEmail || !coordEmail.endsWith('@ifpe.edu.br')
                     }
                   >
                     {isCoordLoading ? (

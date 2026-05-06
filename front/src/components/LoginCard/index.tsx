@@ -57,9 +57,10 @@ export const LoginCard = () => {
             )}
             {emailValue &&
               !emailValue.endsWith('@discente.ifpe.edu.br') &&
-              !emailValue.endsWith('@docente.ifpe.edu.br') && (
+              !emailValue.endsWith('@ifpe.edu.br') && (
                 <p className="text-xs text-red-500 mt-1 font-medium">
-                  Use seu email institucional (@discente ou @docente).
+                  Use seu email institucional (@discente.ifpe.edu.br ou
+                  @ifpe.edu.br).
                 </p>
               )}
           </div>
