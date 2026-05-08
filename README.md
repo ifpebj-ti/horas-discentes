@@ -8,8 +8,8 @@
 ![Forks](https://img.shields.io/github/forks/ifpebj-ti/horas-discentes)
 ![Stars](https://img.shields.io/github/stars/ifpebj-ti/horas-discentes)
 [![Vulnerabilidades](./badges/vulnerabilidades.svg)](https://github.com/ifpebj-ti/horas-discentes/security/dependabot)
-[![CI/CD Back-End](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/production-back.yml/badge.svg)](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/production-back.yml)
-[![CI/CD Front-End](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/production-front.yml/badge.svg)](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/production-front.yml)
+[![CI/CD Back-End](https://img.shields.io/github/actions/workflow/status/ifpebj-ti/horas-discentes/production-back.yml?branch=main&label=CI%2FCD%20Back-End)](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/production-back.yml)
+[![CI/CD Front-End](https://img.shields.io/github/actions/workflow/status/ifpebj-ti/horas-discentes/production-front.yml?branch=main&label=CI%2FCD%20Front-End)](https://github.com/ifpebj-ti/horas-discentes/actions/workflows/production-front.yml)
 
 
 # 📘 Horas Discentes
