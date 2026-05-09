@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/card';
 import SelectBox from '@/components/ui/SelectBox';
 
+import { extractApiError } from '@/lib/apiError';
 import {
   CampusResponse,
   CreateCursoRequest,
@@ -94,7 +95,7 @@ export const CreateCourseModal = ({
       setComplementaryHours('');
       setSelectedCampusId('');
     } catch (error) {
-      toast.error('Não foi possível criar o curso.');
+      toast.error(extractApiError(error, 'Não foi possível criar o curso.'));
     } finally {
       setLoading(false);
     }
