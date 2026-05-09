@@ -151,8 +151,11 @@ export function useHoursRegistrationForm({
       toast.success('Certificado enviado com sucesso!');
       form.reset();
       router.push('/aluno/certificado');
-    } catch {
-      toast.error('Não foi possível enviar o certificado.');
+    } catch (error: unknown) {
+      const mensagem =
+        (error as { response?: { data?: { erro?: string } } })?.response?.data
+          ?.erro ?? 'Não foi possível enviar o certificado.';
+      toast.error(mensagem);
     } finally {
       setIsUploading(false);
     }
