@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/dialog';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import { extractApiError } from '@/lib/apiError';
 import {
   listarCertificadosPorCurso,
   baixarAnexoCertificado,
@@ -169,7 +170,12 @@ export default function ValidacaoCertificadosPage() {
 
       toast.success('Certificado aprovado com sucesso!');
     } catch (error) {
-      toast.error('Erro ao aprovar certificado! Tente novamente mais tarde.');
+      toast.error(
+        extractApiError(
+          error,
+          'Erro ao aprovar certificado! Tente novamente mais tarde.'
+        )
+      );
     } finally {
       hide();
     }
@@ -209,7 +215,12 @@ export default function ValidacaoCertificadosPage() {
       setRejectModalOpen(false);
       toast.success('Certificado reprovado com sucesso!');
     } catch (error) {
-      toast.error('Erro ao reprovar certificado! Tente novamente mais tarde.');
+      toast.error(
+        extractApiError(
+          error,
+          'Erro ao reprovar certificado! Tente novamente mais tarde.'
+        )
+      );
     } finally {
       hide();
     }

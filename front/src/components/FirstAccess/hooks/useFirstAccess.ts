@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
+import { extractApiError } from '@/lib/apiError';
 import { verificarTurmaExiste } from '@/services/classService';
 import { criarAluno } from '@/services/studentService';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,7 +41,12 @@ export const useFirstAccess = () => {
       setTurma({ codigo: codigo.trim(), nome: nomeTurma });
       setStep(2);
     } catch (error) {
-      toast.error('Erro ao validar código. Tente novamente mais tarde.');
+      toast.error(
+        extractApiError(
+          error,
+          'Erro ao validar código. Tente novamente mais tarde.'
+        )
+      );
     } finally {
       setLoading(false);
     }
@@ -57,7 +63,7 @@ export const useFirstAccess = () => {
       );
       router.push('/');
     } catch (err) {
-      toast.error('Erro ao cadastrar. Tente novamente.');
+      toast.error(extractApiError(err, 'Erro ao cadastrar. Tente novamente.'));
     } finally {
       setLoading(false);
     }

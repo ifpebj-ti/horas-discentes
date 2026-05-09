@@ -57,6 +57,7 @@ function gerarPeriodosLetivos(): string[] {
 }
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import { extractApiError } from '@/lib/apiError';
 import {
   obterTurmasPorCurso,
   TurmaResponse,
@@ -182,7 +183,12 @@ export default function CourseDetailPage() {
         maximoHorasExtensao: ''
       });
     } catch (error) {
-      toast.error('Não foi possível criar a turma. Tente novamente.');
+      toast.error(
+        extractApiError(
+          error,
+          'Não foi possível criar a turma. Tente novamente.'
+        )
+      );
     } finally {
       setIsTurmaLoading(false);
     }

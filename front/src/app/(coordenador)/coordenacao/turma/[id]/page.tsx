@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/card';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import { extractApiError } from '@/lib/apiError';
 import {
   listarAlunosPorTurma,
   obterTurmaPorId,
@@ -99,8 +100,8 @@ const VisualizarTurma = () => {
       toast.info(
         `${student.nome} foi ${student.isAtivo ? 'desativado' : 'ativado'}.`
       );
-    } catch {
-      toast.error('Não foi possível alterar o status.');
+    } catch (error) {
+      toast.error(extractApiError(error, 'Não foi possível alterar o status.'));
     } finally {
       hide();
     }
@@ -191,7 +192,9 @@ const VisualizarTurma = () => {
 
       toast.success(`Relatório de ${aluno.nome} gerado com sucesso.`);
     } catch (error) {
-      toast.error('Não foi possível gerar o relatório.');
+      toast.error(
+        extractApiError(error, 'Não foi possível gerar o relatório.')
+      );
     } finally {
       setIsDownloading(false);
     }

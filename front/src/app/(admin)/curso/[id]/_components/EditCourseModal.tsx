@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/card';
 import SelectBox from '@/components/ui/SelectBox';
 
+import { extractApiError } from '@/lib/apiError';
 import {
   CampusResponse,
   CursoDetalhadoResponse,
@@ -96,8 +97,10 @@ export const EditCourseModal = ({
       toast.success('Curso atualizado com sucesso.');
       onSuccess();
       onClose();
-    } catch {
-      toast.error('Não foi possível atualizar o curso.');
+    } catch (error) {
+      toast.error(
+        extractApiError(error, 'Não foi possível atualizar o curso.')
+      );
     } finally {
       setLoading(false);
       setConfirmEdit(false);
