@@ -18,9 +18,14 @@ export function useActivityForm({ onSubmit }: Props) {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    watch,
+    setValue
   } = useForm<ActivityFormSchema>({
-    resolver: zodResolver(activitySchema)
+    resolver: zodResolver(activitySchema),
+    defaultValues: {
+      possuiCurricularizacaoExtensao: false
+    }
   });
 
   const handleFormSubmit = async (data: ActivityFormSchema) => {
@@ -38,6 +43,8 @@ export function useActivityForm({ onSubmit }: Props) {
     register,
     handleSubmit,
     errors,
+    watch,
+    setValue,
     handleFormSubmit
   };
 }

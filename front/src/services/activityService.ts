@@ -9,6 +9,8 @@ export interface AtividadeResponse {
   categoriaKey: string;
   cargaMaximaSemestral: number;
   cargaMaximaCurso: number;
+  possuiCurricularizacaoExtensao: boolean;
+  horasCurricularizacaoExtensao?: number;
 }
 
 export interface CreateAtividadeRequest {
@@ -19,6 +21,8 @@ export interface CreateAtividadeRequest {
   cargaMaximaSemestral: number;
   cargaMaximaCurso: number;
   tipo: number; // 0 for EXTENSAO, 1 for COMPLEMENTAR
+  possuiCurricularizacaoExtensao?: boolean | undefined;
+  horasCurricularizacaoExtensao?: number | undefined;
 }
 
 export const listarAtividades = async (): Promise<AtividadeResponse[]> => {
