@@ -21,6 +21,7 @@ import { BreadcrumbAuto } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import { extractApiError } from '@/lib/apiError';
 import {
   obterCoordenadorPorCurso,
   deletarCoordenador
@@ -77,8 +78,10 @@ export default function CourseDetailPage() {
       await deletarCoordenador(coordinator.id);
       setCoordinator(null);
       toast.success('Coordenador excluído com sucesso.');
-    } catch {
-      toast.error('Não foi possível excluir o coordenador.');
+    } catch (error) {
+      toast.error(
+        extractApiError(error, 'Não foi possível excluir o coordenador.')
+      );
     } finally {
       hide();
       setConfirmDeleteOpen(false);

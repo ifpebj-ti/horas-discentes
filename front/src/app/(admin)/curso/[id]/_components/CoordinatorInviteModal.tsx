@@ -23,6 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+import { extractApiError } from '@/lib/apiError';
 import { enviarConviteCoordenador } from '@/services/coordinatorService';
 
 interface CoordinatorInviteModalProps {
@@ -66,7 +67,7 @@ export const CoordinatorInviteModal = ({
       onClose();
       setCoordEmail('');
     } catch (error) {
-      toast.error('Não foi possível enviar o convite.');
+      toast.error(extractApiError(error, 'Não foi possível enviar o convite.'));
     } finally {
       setIsCoordLoading(false);
     }
