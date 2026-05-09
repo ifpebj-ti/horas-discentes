@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useLoadingOverlay } from '@/hooks/useLoadingOverlay';
+import { extractApiError } from '@/lib/apiError';
 import {
   listarAtividades,
   criarAtividade,
@@ -98,9 +99,12 @@ export function ActivityRegistration() {
       await deletarAtividade(deleteTarget.id);
       await fetchAtividades();
       toast.success('A atividade foi removida com sucesso.');
-    } catch {
+    } catch (error) {
       toast.error(
-        'Não foi possível excluir a atividade. Tente novamente mais tarde.'
+        extractApiError(
+          error,
+          'Não foi possível excluir a atividade. Tente novamente mais tarde.'
+        )
       );
     } finally {
       hide();
