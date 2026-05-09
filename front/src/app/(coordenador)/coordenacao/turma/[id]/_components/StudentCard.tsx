@@ -1,7 +1,8 @@
 import {
+  FaBookOpen,
   FaCheckCircle,
-  FaClock,
   FaDownload,
+  FaHandsHelping,
   FaTimesCircle,
   FaUser
 } from 'react-icons/fa';
@@ -42,6 +43,23 @@ export const StudentCard = ({
     student.maximoHorasExtensao > 0 &&
     student.totalHorasExtensao >= student.maximoHorasExtensao;
 
+  const porcentagemComplementar =
+    student.maximoHorasComplementar > 0
+      ? Math.min(
+          (student.totalHorasComplementar / student.maximoHorasComplementar) *
+            100,
+          100
+        )
+      : 0;
+
+  const porcentagemExtensao =
+    student.maximoHorasExtensao > 0
+      ? Math.min(
+          (student.totalHorasExtensao / student.maximoHorasExtensao) * 100,
+          100
+        )
+      : 0;
+
   return (
     <div className="border rounded-lg p-4 space-y-3">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
@@ -51,22 +69,22 @@ export const StudentCard = ({
           </div>
           <div>
             <p className="font-semibold text-gray-900">{student.nome}</p>
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <FaBookOpen className="w-4 h-4 text-blue-600" />
+              <span>
+                {student.totalHorasComplementar} /{' '}
+                {student.maximoHorasComplementar} horas complementares
+              </span>
+            </div>
             {turma.possuiExtensao && (
               <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <FaClock className="w-4 h-4" />
+                <FaHandsHelping className="w-4 h-4 text-green-600" />
                 <span>
                   {student.totalHorasExtensao} / {student.maximoHorasExtensao}{' '}
                   horas extensão
                 </span>
               </div>
             )}
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <FaClock className="w-4 h-4" />
-              <span>
-                {student.totalHorasComplementar} /{' '}
-                {student.maximoHorasComplementar} horas comp.
-              </span>
-            </div>
           </div>
         </div>
 
@@ -77,7 +95,7 @@ export const StudentCard = ({
               size="sm"
               onClick={() => onDownload(student.id, 'complementar')}
               disabled={isDownloading}
-              className="text-green-700 border-green-300 hover:bg-green-50 cursor-pointer"
+              className="text-blue-700 border-blue-300 hover:bg-blue-50 cursor-pointer"
             >
               <FaDownload className="w-3 h-3 mr-1" />
               Complementar
@@ -89,7 +107,7 @@ export const StudentCard = ({
               size="sm"
               onClick={() => onDownload(student.id, 'extensao')}
               disabled={isDownloading}
-              className="text-blue-700 border-blue-300 hover:bg-blue-50 cursor-pointer"
+              className="text-green-700 border-green-300 hover:bg-green-50 cursor-pointer"
             >
               <FaDownload className="w-3 h-3 mr-1" />
               Extensão
@@ -118,11 +136,33 @@ export const StudentCard = ({
       </div>
 
       <div className="space-y-2">
-        <div className="flex justify-between text-sm">
-          <span>Progresso da carga horária</span>
-          <span>{student.porcentagemConclusao.toFixed(0)}%</span>
+        <div className="flex items-center justify-between text-sm">
+          <span className="flex items-center gap-1.5">
+            <FaBookOpen className="w-3.5 h-3.5 text-blue-600" />
+            Horas complementares
+          </span>
+          <span>{porcentagemComplementar.toFixed(0)}%</span>
         </div>
-        <Progress value={student.porcentagemConclusao} className="h-2" />
+        <Progress
+          value={porcentagemComplementar}
+          className="h-2 [&>[data-slot=progress-indicator]]:bg-blue-600"
+        />
+
+        {turma.possuiExtensao && (
+          <>
+            <div className="flex items-center justify-between text-sm">
+              <span className="flex items-center gap-1.5">
+                <FaHandsHelping className="w-3.5 h-3.5 text-green-600" />
+                Horas de extensão
+              </span>
+              <span>{porcentagemExtensao.toFixed(0)}%</span>
+            </div>
+            <Progress
+              value={porcentagemExtensao}
+              className="h-2 [&>[data-slot=progress-indicator]]:bg-green-600"
+            />
+          </>
+        )}
       </div>
     </div>
   );
