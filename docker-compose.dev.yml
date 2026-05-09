@@ -15,6 +15,12 @@ services:
       - JWT__Audience=${JWT__Audience}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - COORD_EMAIL=${COORD_EMAIL}
+      - COORD_PASSWORD=${COORD_PASSWORD}
+      - COORD_NOME=${COORD_NOME}
+      - COORD_PORTARIA=${COORD_PORTARIA}
+      - COORD_DOU=${COORD_DOU}
+      - CURSO_NOME=${CURSO_NOME}
       - EMAIL__Remetente=${EMAIL__Remetente}
       - EMAIL__Senha=${EMAIL__Senha}
       - EMAIL__Smtp=${EMAIL__Smtp}
@@ -58,7 +64,7 @@ services:
     image: minio/minio:latest
     container_name: horas-discentes-minio-dev
     ports:
-      - "9000:9000"
+      - "9002:9000"
       - "9001:9001"
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}

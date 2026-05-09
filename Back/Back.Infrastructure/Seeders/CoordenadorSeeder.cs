@@ -1,3 +1,4 @@
+using Back.Domain.Entities.Campus;
 using Back.Domain.Entities.Coordenador;
 using Back.Domain.Entities.Curso;
 using Back.Infrastructure.Persistence.Context;
@@ -26,6 +27,21 @@ public class CoordenadorSeeder
         var existingUser = await userManager.FindByEmailAsync(email);
         if (existingUser != null) return;
 
+        // Garante que exista um campus para vincular ao curso
+        var campus = await context.Campi.FirstOrDefaultAsync();
+        if (campus == null)
+        {
+            var campusNome = Environment.GetEnvironmentVariable("CAMPUS_NOME") ?? "Campus Padrão";
+            var campusCidade = Environment.GetEnvironmentVariable("CAMPUS_CIDADE") ?? "Cidade";
+            campus = new CampusBuilder()
+                .WithId(Guid.NewGuid())
+                .WithNome(campusNome)
+                .WithCidade(campusCidade)
+                .Build();
+            context.Campi.Add(campus);
+            await context.SaveChangesAsync();
+        }
+
         // Garante que exista um curso para vincular
         var curso = await context.Cursos.FirstOrDefaultAsync(c => c.Nome == cursoNome);
         if (curso == null)
@@ -33,6 +49,7 @@ public class CoordenadorSeeder
             curso = new CursoBuilder()
                 .WithId(Guid.NewGuid())
                 .WithNome(cursoNome)
+                .WithCampusId(campus.Id)
                 .Build();
             context.Cursos.Add(curso);
             await context.SaveChangesAsync();
