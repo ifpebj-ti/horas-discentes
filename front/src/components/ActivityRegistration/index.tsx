@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { FaGraduationCap, FaUsers, FaPlus } from 'react-icons/fa';
+import { FaBookOpen, FaHandsHelping, FaPlus } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 import { ActivityCard } from '@/components/ActivityCard';
@@ -164,33 +164,36 @@ export function ActivityRegistration() {
             value="COMPLEMENTAR"
             className="flex items-center gap-2 cursor-pointer"
           >
-            <FaGraduationCap className="h-4 w-4" />
+            <FaBookOpen className="h-4 w-4 text-blue-600" />
             Complementares
           </TabsTrigger>
           <TabsTrigger
             value="EXTENSAO"
             className="flex items-center gap-2 cursor-pointer"
           >
-            <FaUsers className="h-4 w-4" />
+            <FaHandsHelping className="h-4 w-4 text-green-600" />
             Extensão
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="COMPLEMENTAR" className="space-y-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold">
-                Atividades Complementares
-              </h2>
-              <p className="text-muted-foreground">
-                {atividadesFiltradas.length} atividade
-                {atividadesFiltradas.length !== 1 ? 's' : ''} cadastrada
-                {atividadesFiltradas.length !== 1 ? 's' : ''}
-              </p>
+            <div className="flex items-center gap-3">
+              <FaBookOpen className="h-6 w-6 text-blue-600 shrink-0" />
+              <div>
+                <h2 className="text-2xl font-semibold">
+                  Atividades Complementares
+                </h2>
+                <p className="text-muted-foreground">
+                  {atividadesFiltradas.length} atividade
+                  {atividadesFiltradas.length !== 1 ? 's' : ''} cadastrada
+                  {atividadesFiltradas.length !== 1 ? 's' : ''}
+                </p>
+              </div>
             </div>
             <Button
               onClick={() => setShowForm(!showForm)}
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-2 cursor-pointer bg-blue-600 hover:bg-blue-700"
             >
               <FaPlus className="h-4 w-4" />
               Adicionar Atividade
@@ -219,17 +222,22 @@ export function ActivityRegistration() {
 
         <TabsContent value="EXTENSAO" className="space-y-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold">Atividades de Extensão</h2>
-              <p className="text-muted-foreground">
-                {atividadesFiltradas.length} atividade
-                {atividadesFiltradas.length !== 1 ? 's' : ''} cadastrada
-                {atividadesFiltradas.length !== 1 ? 's' : ''}
-              </p>
+            <div className="flex items-center gap-3">
+              <FaHandsHelping className="h-6 w-6 text-green-600 shrink-0" />
+              <div>
+                <h2 className="text-2xl font-semibold">
+                  Atividades de Extensão
+                </h2>
+                <p className="text-muted-foreground">
+                  {atividadesFiltradas.length} atividade
+                  {atividadesFiltradas.length !== 1 ? 's' : ''} cadastrada
+                  {atividadesFiltradas.length !== 1 ? 's' : ''}
+                </p>
+              </div>
             </div>
             <Button
               onClick={() => setShowForm(!showForm)}
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-2 cursor-pointer bg-green-600 hover:bg-green-700"
             >
               <FaPlus className="h-4 w-4" />
               Adicionar Atividade
