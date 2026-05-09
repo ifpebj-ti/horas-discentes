@@ -95,6 +95,7 @@ function AlunoPageContent({
                   categorias={categoriasExtensao}
                   totalHoras={user.totalHorasExtensao ?? 0}
                   totalNecessarias={user.maximoHorasExtensao ?? 0}
+                  variant="extensao"
                   onCategoriaClick={setCategoriaKeySelecionada}
                   {...(categoriaKeySelecionada
                     ? { categoriaKey: categoriaKeySelecionada }

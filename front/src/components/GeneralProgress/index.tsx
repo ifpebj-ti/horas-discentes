@@ -11,6 +11,37 @@ interface Categoria {
   readonly grupo: string;
 }
 
+type ProgressVariant = 'complementar' | 'extensao';
+
+const variantStyles: Record<
+  ProgressVariant,
+  {
+    bar: string;
+    barSub: string;
+    selectedBg: string;
+    linkActive: string;
+    linkHover: string;
+    badge: string;
+  }
+> = {
+  complementar: {
+    bar: 'bg-blue-600',
+    barSub: 'bg-blue-500',
+    selectedBg: 'bg-blue-50',
+    linkActive: 'text-blue-600 font-semibold hover:text-blue-700',
+    linkHover: 'text-gray-500 hover:text-blue-600',
+    badge: 'bg-blue-100 text-blue-700'
+  },
+  extensao: {
+    bar: 'bg-green-600',
+    barSub: 'bg-green-500',
+    selectedBg: 'bg-green-50',
+    linkActive: 'text-green-600 font-semibold hover:text-green-700',
+    linkHover: 'text-gray-500 hover:text-green-600',
+    badge: 'bg-green-100 text-green-700'
+  }
+};
+
 interface GeneralProgressProps {
   readonly categorias: readonly Categoria[];
   readonly totalHoras: number;
@@ -19,6 +50,7 @@ interface GeneralProgressProps {
   readonly subTitle?: string;
   readonly categoriaKey?: string;
   readonly onCategoriaClick?: (categoriaKey: string) => void;
+  readonly variant?: ProgressVariant;
 }
 
 export default function GeneralProgress({
@@ -27,13 +59,22 @@ export default function GeneralProgress({
   totalNecessarias,
   title,
   subTitle,
-  categoriaKey
+  categoriaKey,
+  variant = 'complementar'
 }: GeneralProgressProps) {
   const [expanded, setExpanded] = useState(false);
+  const styles = variantStyles[variant];
 
   return (
     <div className="bg-white rounded-xl shadow p-6">
-      <h2 className="text-lg font-semibold mb-4">{title}</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-lg font-semibold">{title}</h2>
+        <span
+          className={`text-xs font-medium px-2 py-0.5 rounded-full ${styles.badge}`}
+        >
+          {variant === 'extensao' ? 'Extensão' : 'Complementar'}
+        </span>
+      </div>
 
       {/* Cabeçalho com botão de expandir */}
       <button
@@ -56,7 +97,7 @@ export default function GeneralProgress({
       {/* Barra de progresso total */}
       <div className="w-full h-3 bg-gray-200 rounded-full mb-2">
         <div
-          className="h-3 bg-blue-600 rounded-full"
+          className={`h-3 ${styles.bar} rounded-full`}
           style={{
             width:
               totalNecessarias > 0
@@ -79,20 +120,12 @@ export default function GeneralProgress({
             return (
               <div
                 key={`${cat.categoriaKey}-${cat.nome}`}
-                className={`pl-4 space-y-1 ${isSelected ? 'bg-blue-50 rounded' : ''}`}
+                className={`pl-4 space-y-1 ${isSelected ? `${styles.selectedBg} rounded` : ''}`}
               >
                 <div className="flex items-center justify-between">
                   <Link
                     href={`/aluno/certificado?category=${encodeURIComponent(cat.categoriaKey)}`}
-                    className={`
-                      text-sm
-                      ${
-                        cat.horas > 0
-                          ? 'text-blue-600 font-semibold hover:text-blue-700'
-                          : 'text-gray-500 hover:text-blue-600'
-                      }
-                      ${isSelected ? 'underline' : ''}
-                    `}
+                    className={`text-sm ${cat.horas > 0 ? styles.linkActive : styles.linkHover} ${isSelected ? 'underline' : ''}`}
                   >
                     {cat.nome}
                   </Link>
@@ -107,7 +140,7 @@ export default function GeneralProgress({
                 </div>
                 <div className="w-full h-2 bg-gray-200 rounded-full">
                   <div
-                    className="h-2 bg-blue-500 rounded-full"
+                    className={`h-2 ${styles.barSub} rounded-full`}
                     style={{ width: `${Math.min(percentagem, 100)}%` }}
                   />
                 </div>
