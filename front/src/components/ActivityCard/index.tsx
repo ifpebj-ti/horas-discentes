@@ -18,9 +18,18 @@ export function ActivityCard({ atividade, onDelete }: ActivityCardProps) {
           <CardTitle className="text-lg leading-tight pr-8">
             {atividade.nome}
           </CardTitle>
-          <Badge variant="secondary" className="shrink-0">
-            {atividade.grupo}
-          </Badge>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <Badge
+              className={
+                atividade.tipo === 'COMPLEMENTAR'
+                  ? 'border-transparent bg-blue-600 text-white'
+                  : 'border-transparent bg-green-600 text-white'
+              }
+            >
+              {atividade.tipo === 'COMPLEMENTAR' ? 'Complementar' : 'Extensão'}
+            </Badge>
+            <Badge variant="secondary">{atividade.grupo}</Badge>
+          </div>
         </div>
         {onDelete && (
           <button
