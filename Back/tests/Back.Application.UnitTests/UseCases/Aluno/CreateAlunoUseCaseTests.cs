@@ -67,6 +67,41 @@ public class CreateAlunoUseCaseTests
         _alunoRepo.Verify(r => r.AddAsync(It.IsAny<Back.Domain.Entities.Aluno.Aluno>()), Times.Once);
     }
 
+    [Theory]
+    [InlineData("aluno@discente.ifpe.edu.br")]
+    [InlineData("aluno@docente.ifpe.edu.br")]
+    public async Task Deve_Aceitar_Email_Com_Subdominio_Ifpe(string email)
+    {
+        var turma = new TurmaBuilder()
+            .WithId(Guid.NewGuid())
+            .WithPeriodo("2024.1")
+            .WithTurno("Noite")
+            .WithCursoId(Guid.NewGuid())
+            .Build();
+
+        _turmaRepo.Setup(r => r.GetByIdAsync(turma.Id))
+            .ReturnsAsync(turma);
+
+        _identityService.Setup(r => r.CreateUserAsync(email, "123", "ALUNO"))
+            .ReturnsAsync((true, "identity-1", Array.Empty<string>()));
+
+        _atividadeRepo.Setup(r => r.GetAllAsync())
+            .ReturnsAsync(new List<DomainAtividade>());
+
+        var request = new CreateAlunoRequest(
+            Nome: "Aluno",
+            Email: email,
+            Matricula: "0001",
+            Senha: "123",
+            TurmaId: turma.Id
+        );
+
+        var useCase = CreateUseCase();
+        var result = await useCase.ExecuteAsync(request);
+
+        result.Email.Should().Be(email);
+    }
+
     [Fact]
     public async Task Deve_Rejeitar_Email_Nao_Institucional()
     {
