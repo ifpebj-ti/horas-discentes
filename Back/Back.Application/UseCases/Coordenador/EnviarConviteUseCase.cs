@@ -29,8 +29,9 @@ public class EnviarConviteUseCase
 
     public async Task ExecuteAsync(ConviteCoordenadorRequest request)
     {
-        if (!request.Email.EndsWith("@ifpe.edu.br", StringComparison.OrdinalIgnoreCase))
-            throw new ArgumentException("Email institucional inválido. Use um endereço @ifpe.edu.br.");
+        if (!request.Email.EndsWith("@ifpe.edu.br", StringComparison.OrdinalIgnoreCase) &&
+            !request.Email.EndsWith(".ifpe.edu.br", StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("Email institucional inválido. Use um endereço institucional (ifpe.edu.br).");
 
         var baseUrl = _config["COORDENADOR_CONVITE_LINK"]
             ?? throw new InvalidOperationException("Variável de ambiente COORDENADOR_CONVITE_LINK não configurada.");
