@@ -55,6 +55,44 @@ public class CriarCoordenadorUseCaseTests
         conviteRepo.Verify(r => r.MarcarComoUsadoAsync(convite), Times.Once);
     }
 
+    [Theory]
+    [InlineData("coordenador@discente.ifpe.edu.br")]
+    [InlineData("coordenador@docente.ifpe.edu.br")]
+    public async Task Deve_Aceitar_Email_Com_Subdominio_Ifpe(string email)
+    {
+        var conviteRepo = new Mock<IConviteCoordenadorRepository>();
+        var coordenadorRepo = new Mock<ICoordenadorRepository>();
+        var identity = new Mock<IIdentityService>();
+
+        var token = "token";
+        var cursoId = Guid.NewGuid();
+        var convite = new ConviteCoordenadorBuilder()
+            .WithId(Guid.NewGuid())
+            .WithEmail(email)
+            .WithCursoId(cursoId)
+            .WithToken(token)
+            .WithExpiracao(DateTime.UtcNow.AddHours(1))
+            .Build();
+
+        conviteRepo.Setup(r => r.GetValidByTokenAsync(token))
+            .ReturnsAsync(convite);
+        identity.Setup(i => i.CreateUserAsync(email, "Senha@123", "COORDENADOR"))
+            .ReturnsAsync((true, "user-id", Array.Empty<string>()));
+
+        var useCase = new CriarCoordenadorUseCase(
+            conviteRepo.Object,
+            coordenadorRepo.Object,
+            identity.Object);
+
+        var request = new CadastroCoordenadorRequest(
+            "Nome", "123/2025", "2025-01-01", email, "Senha@123", token);
+
+        var result = await useCase.ExecuteAsync(request);
+
+        result.Email.Should().Be(email);
+        coordenadorRepo.Verify(r => r.AddAsync(It.IsAny<CoordenadorEntity>()), Times.Once);
+    }
+
     [Fact]
     public async Task Deve_Rejeitar_Email_Docente_Legado()
     {
