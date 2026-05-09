@@ -33,7 +33,9 @@ export const CreateCoordinatorAccount = ({
   const senha = watch('senha') || '';
 
   const isEmailValid =
-    !prefilledEmail || prefilledEmail.endsWith('@ifpe.edu.br');
+    !prefilledEmail ||
+    prefilledEmail.endsWith('@ifpe.edu.br') ||
+    prefilledEmail.endsWith('.ifpe.edu.br');
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 w-full">
@@ -112,7 +114,7 @@ export const CreateCoordinatorAccount = ({
             />
             {!isEmailValid && (
               <p className="text-xs text-red-500 mt-1">
-                O email deve ser institucional (@ifpe.edu.br)
+                O email deve ser institucional (ifpe.edu.br)
               </p>
             )}
           </div>

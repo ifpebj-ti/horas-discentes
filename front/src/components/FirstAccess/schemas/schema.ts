@@ -6,9 +6,11 @@ export const firstAccessSchema = z
     email: z
       .string()
       .email('Email inválido')
-      .refine((email) => email.endsWith('@ifpe.edu.br'), {
-        message: 'Use seu email institucional (@ifpe.edu.br)'
-      }),
+      .refine(
+        (email) =>
+          email.endsWith('@ifpe.edu.br') || email.endsWith('.ifpe.edu.br'),
+        { message: 'Use seu email institucional IFPE (ifpe.edu.br)' }
+      ),
     matricula: z
       .string()
       .length(13, 'A matrícula deve ter exatamente 13 caracteres')
