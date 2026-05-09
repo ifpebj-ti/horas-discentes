@@ -52,5 +52,17 @@ public class AtividadeBuilder
         return this;
     }
 
+    public AtividadeBuilder WithPossuiCurricularizacaoExtensao(bool possui)
+    {
+        _atividade.PossuiCurricularizacaoExtensao = possui;
+        return this;
+    }
+
+    public AtividadeBuilder WithHorasCurricularizacaoExtensao(int? horas)
+    {
+        _atividade.HorasCurricularizacaoExtensao = horas;
+        return this;
+    }
+
     public Atividade Build() => _atividade;
 }
