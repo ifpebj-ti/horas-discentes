@@ -28,6 +28,10 @@ public class Atividade
 
     public string? CategoriaKey { get; set; }
 
+    public bool PossuiCurricularizacaoExtensao { get; set; }
+
+    public int? HorasCurricularizacaoExtensao { get; set; }
+
     public ICollection<AlunoAtividade.AlunoAtividade> Alunos { get; set; } = new List<AlunoAtividade.AlunoAtividade>();
 }
 

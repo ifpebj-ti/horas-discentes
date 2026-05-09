@@ -17,9 +17,18 @@ interface Props {
   isVisible: boolean;
 }
 
-export function ActivityForm({ onSubmit, onCancel, isVisible }: Props) {
-  const { isSubmitting, register, handleSubmit, errors, handleFormSubmit } =
-    useActivityForm({ onSubmit });
+export function ActivityForm({ tipo, onSubmit, onCancel, isVisible }: Props) {
+  const {
+    isSubmitting,
+    register,
+    handleSubmit,
+    errors,
+    watch,
+    setValue,
+    handleFormSubmit
+  } = useActivityForm({ onSubmit });
+
+  const possuiCurricularizacao = watch('possuiCurricularizacaoExtensao');
 
   if (!isVisible) return null;
 
@@ -133,6 +142,71 @@ export function ActivityForm({ onSubmit, onCancel, isVisible }: Props) {
               )}
             </div>
           </div>
+
+          {tipo === 'EXTENSAO' && (
+            <div className="border-t pt-4 space-y-4">
+              <div>
+                <Label>
+                  Esta atividade possui curricularização de extensão? *
+                </Label>
+                <div className="flex gap-4 mt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="curricularizacao"
+                      value="sim"
+                      checked={possuiCurricularizacao === true}
+                      onChange={() =>
+                        setValue('possuiCurricularizacaoExtensao', true, {
+                          shouldValidate: true
+                        })
+                      }
+                      className="accent-primary"
+                    />
+                    Sim
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="curricularizacao"
+                      value="nao"
+                      checked={possuiCurricularizacao === false}
+                      onChange={() => {
+                        setValue('possuiCurricularizacaoExtensao', false, {
+                          shouldValidate: true
+                        });
+                        setValue('horasCurricularizacaoExtensao', undefined);
+                      }}
+                      className="accent-primary"
+                    />
+                    Não
+                  </label>
+                </div>
+              </div>
+
+              {possuiCurricularizacao === true && (
+                <div>
+                  <Label htmlFor="horasCurricularizacaoExtensao">
+                    Horas de curricularização *
+                  </Label>
+                  <Input
+                    id="horasCurricularizacaoExtensao"
+                    type="number"
+                    min={1}
+                    {...register('horasCurricularizacaoExtensao', {
+                      valueAsNumber: true
+                    })}
+                    placeholder="Ex: 40"
+                  />
+                  {errors.horasCurricularizacaoExtensao && (
+                    <p className="text-sm text-destructive">
+                      {errors.horasCurricularizacaoExtensao.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4 border-t">
             <Button

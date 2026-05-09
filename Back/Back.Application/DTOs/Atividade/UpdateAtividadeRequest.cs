@@ -33,5 +33,8 @@ namespace Back.Application.DTOs.Atividade
         [Required]
         public TipoAtividade Tipo { get; set; }
 
+        public bool PossuiCurricularizacaoExtensao { get; set; }
+
+        public int? HorasCurricularizacaoExtensao { get; set; }
     }
 }

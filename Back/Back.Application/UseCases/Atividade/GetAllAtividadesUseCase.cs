@@ -20,7 +20,7 @@ public class GetAllAtividadesUseCase
         var atividades = await _repo.GetAllAsync();
 
         return atividades.Select(a =>
-            new AtividadeResponse(a.Id, a.Nome!, a.Tipo.ToString(), a.Grupo!, a.Categoria!, a.CategoriaKey!, a.CargaMaximaSemestral, a.CargaMaximaCurso)
+            new AtividadeResponse(a.Id, a.Nome!, a.Tipo.ToString(), a.Grupo!, a.Categoria!, a.CategoriaKey!, a.CargaMaximaSemestral, a.CargaMaximaCurso, a.PossuiCurricularizacaoExtensao, a.HorasCurricularizacaoExtensao)
         );
     }
 }

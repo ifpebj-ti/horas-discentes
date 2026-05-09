@@ -16,6 +16,115 @@ namespace Back.Application.UnitTests.UseCases.Atividade;
 public class CreateAtividadeUseCaseTests
 {
     [Fact]
+    public async Task Deve_Rejeitar_Curricularizacao_Extensao_Sem_Horas()
+    {
+        var atividadeRepo = new Mock<IAtividadeRepository>();
+        var alunoRepo = new Mock<IAlunoRepository>();
+        var alunoAtividadeRepo = new Mock<IAlunoAtividadeRepository>();
+
+        alunoRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<DomainAluno>());
+
+        var request = new CreateAtividadeRequest
+        {
+            Nome = "Atividade Extensão",
+            Grupo = "G1",
+            Categoria = "CAT",
+            CategoriaKey = "CK",
+            CargaMaximaCurso = 40,
+            CargaMaximaSemestral = 10,
+            Tipo = TipoAtividade.EXTENSAO,
+            PossuiCurricularizacaoExtensao = true,
+            HorasCurricularizacaoExtensao = null
+        };
+
+        var useCase = new CreateAtividadeUseCase(
+            atividadeRepo.Object,
+            alunoRepo.Object,
+            alunoAtividadeRepo.Object
+        );
+
+        Func<Task> act = () => useCase.ExecuteAsync(request);
+
+        await act.Should()
+            .ThrowAsync<ArgumentException>()
+            .WithMessage("Informe as horas de curricularização de extensão.");
+    }
+
+    [Fact]
+    public async Task Deve_Criar_Atividade_Extensao_Com_Curricularizacao()
+    {
+        var atividadeRepo = new Mock<IAtividadeRepository>();
+        var alunoRepo = new Mock<IAlunoRepository>();
+        var alunoAtividadeRepo = new Mock<IAlunoAtividadeRepository>();
+
+        alunoRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<DomainAluno>());
+
+        var request = new CreateAtividadeRequest
+        {
+            Nome = "Atividade Extensão",
+            Grupo = "G1",
+            Categoria = "CAT",
+            CategoriaKey = "CK",
+            CargaMaximaCurso = 40,
+            CargaMaximaSemestral = 10,
+            Tipo = TipoAtividade.EXTENSAO,
+            PossuiCurricularizacaoExtensao = true,
+            HorasCurricularizacaoExtensao = 20
+        };
+
+        var useCase = new CreateAtividadeUseCase(
+            atividadeRepo.Object,
+            alunoRepo.Object,
+            alunoAtividadeRepo.Object
+        );
+
+        var result = await useCase.ExecuteAsync(request);
+
+        result.Should().NotBe(Guid.Empty);
+        atividadeRepo.Verify(r => r.AddAsync(It.Is<DomainAtividade>(a =>
+            a.PossuiCurricularizacaoExtensao == true &&
+            a.HorasCurricularizacaoExtensao == 20
+        )), Times.Once);
+    }
+
+    [Fact]
+    public async Task Nao_Deve_Aplicar_Curricularizacao_Em_Atividade_Complementar()
+    {
+        var atividadeRepo = new Mock<IAtividadeRepository>();
+        var alunoRepo = new Mock<IAlunoRepository>();
+        var alunoAtividadeRepo = new Mock<IAlunoAtividadeRepository>();
+
+        alunoRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<DomainAluno>());
+
+        var request = new CreateAtividadeRequest
+        {
+            Nome = "Atividade Complementar",
+            Grupo = "G1",
+            Categoria = "CAT",
+            CategoriaKey = "CK",
+            CargaMaximaCurso = 40,
+            CargaMaximaSemestral = 10,
+            Tipo = TipoAtividade.COMPLEMENTAR,
+            PossuiCurricularizacaoExtensao = true,
+            HorasCurricularizacaoExtensao = 20
+        };
+
+        var useCase = new CreateAtividadeUseCase(
+            atividadeRepo.Object,
+            alunoRepo.Object,
+            alunoAtividadeRepo.Object
+        );
+
+        var result = await useCase.ExecuteAsync(request);
+
+        result.Should().NotBe(Guid.Empty);
+        atividadeRepo.Verify(r => r.AddAsync(It.Is<DomainAtividade>(a =>
+            a.PossuiCurricularizacaoExtensao == false &&
+            a.HorasCurricularizacaoExtensao == null
+        )), Times.Once);
+    }
+
+    [Fact]
     public async Task Deve_Criar_Atividade_E_Gerar_AlunoAtividade()
     {
         var atividadeRepo = new Mock<IAtividadeRepository>();

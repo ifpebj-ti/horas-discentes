@@ -26,6 +26,12 @@ public class CreateAtividadeUseCase
 
     public async Task<Guid> ExecuteAsync(CreateAtividadeRequest request)
     {
+        var possuiCurricularizacao = request.Tipo == Back.Domain.Entities.Atividade.TipoAtividade.EXTENSAO
+            && request.PossuiCurricularizacaoExtensao;
+
+        if (possuiCurricularizacao && (request.HorasCurricularizacaoExtensao is null || request.HorasCurricularizacaoExtensao <= 0))
+            throw new ArgumentException("Informe as horas de curricularização de extensão.");
+
         var atividade = new EntidadeAtividade
         {
             Id = Guid.NewGuid(),
@@ -35,7 +41,9 @@ public class CreateAtividadeUseCase
             CategoriaKey = request.CategoriaKey,
             CargaMaximaSemestral = request.CargaMaximaSemestral,
             CargaMaximaCurso = request.CargaMaximaCurso,
-            Tipo = request.Tipo
+            Tipo = request.Tipo,
+            PossuiCurricularizacaoExtensao = possuiCurricularizacao,
+            HorasCurricularizacaoExtensao = possuiCurricularizacao ? request.HorasCurricularizacaoExtensao : null
         };
 
         await _atividadeRepo.AddAsync(atividade);

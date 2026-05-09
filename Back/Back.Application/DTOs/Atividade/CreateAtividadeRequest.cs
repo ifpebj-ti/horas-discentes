@@ -11,4 +11,6 @@ public class CreateAtividadeRequest
     public int CargaMaximaSemestral { get; set; }
     public int CargaMaximaCurso { get; set; }
     public TipoAtividade Tipo { get; set; }
+    public bool PossuiCurricularizacaoExtensao { get; set; }
+    public int? HorasCurricularizacaoExtensao { get; set; }
 }
