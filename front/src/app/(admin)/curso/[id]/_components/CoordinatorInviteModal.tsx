@@ -125,10 +125,10 @@ export const CoordinatorInviteModal = ({
                       className="text-lg"
                     />
                     {coordEmail && !coordEmail.endsWith('@ifpe.edu.br') && (
-                        <p className="text-sm text-red-500 font-medium">
-                          O email deve ser institucional (@ifpe.edu.br)
-                        </p>
-                      )}
+                      <p className="text-sm text-red-500 font-medium">
+                        O email deve ser institucional (@ifpe.edu.br)
+                      </p>
+                    )}
                   </div>
 
                   <Button
@@ -136,7 +136,8 @@ export const CoordinatorInviteModal = ({
                     className="w-full"
                     disabled={
                       isCoordLoading ||
-                      !coordEmail || !coordEmail.endsWith('@ifpe.edu.br')
+                      !coordEmail ||
+                      !coordEmail.endsWith('@ifpe.edu.br')
                     }
                   >
                     {isCoordLoading ? (

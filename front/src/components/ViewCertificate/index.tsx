@@ -110,10 +110,10 @@ export default function ViewCertificate({
                 Horas validadas: <strong>{certificate.hours}h</strong>
                 {certificate.cargaHorariaOriginal !== null &&
                   certificate.cargaHorariaOriginal !== undefined && (
-                  <span className="text-xs text-yellow-700 ml-1">
-                    (você informou {certificate.cargaHorariaOriginal}h)
-                  </span>
-                )}
+                    <span className="text-xs text-yellow-700 ml-1">
+                      (você informou {certificate.cargaHorariaOriginal}h)
+                    </span>
+                  )}
               </p>
             </div>
           )}

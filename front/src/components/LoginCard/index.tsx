@@ -58,10 +58,10 @@ export const LoginCard = () => {
               </p>
             )}
             {emailValue && !isInstitutionalEmail && (
-                <p className="text-xs text-red-500 mt-1 font-medium">
-                  Use seu email institucional (@ifpe.edu.br).
-                </p>
-              )}
+              <p className="text-xs text-red-500 mt-1 font-medium">
+                Use seu email institucional (@ifpe.edu.br).
+              </p>
+            )}
           </div>
 
           <div className="mb-1">

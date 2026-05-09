@@ -68,7 +68,7 @@ public class ContarPendenciasDownloadUseCaseTests
         };
 
         // Injetando Curso via reflection
-        SetPrivateProperty(coordenador, nameof(Coordenador.Curso), curso);
+        SetPrivateProperty(coordenador, "Curso", curso);
 
         var turma = new TurmaBuilder()
             .WithId(Guid.NewGuid())

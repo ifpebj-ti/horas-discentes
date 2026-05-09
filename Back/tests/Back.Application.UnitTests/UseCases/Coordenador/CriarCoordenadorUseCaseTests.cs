@@ -3,7 +3,7 @@ using Back.Application.Interfaces.Identity;
 using Back.Application.Interfaces.Repositories;
 using Back.Application.UseCases.Coordenador;
 using Back.Domain.Entities.Convite;
-using Back.Domain.Entities.Coordenador;
+using CoordenadorEntity = Back.Domain.Entities.Coordenador.Coordenador;
 using FluentAssertions;
 using Moq;
 using System;
@@ -51,7 +51,7 @@ public class CriarCoordenadorUseCaseTests
         var result = await useCase.ExecuteAsync(request);
 
         result.Email.Should().Be("coordenador@ifpe.edu.br");
-        coordenadorRepo.Verify(r => r.AddAsync(It.IsAny<Coordenador>()), Times.Once);
+        coordenadorRepo.Verify(r => r.AddAsync(It.IsAny<CoordenadorEntity>()), Times.Once);
         conviteRepo.Verify(r => r.MarcarComoUsadoAsync(convite), Times.Once);
     }
 
