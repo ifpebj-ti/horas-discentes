@@ -301,7 +301,13 @@ export default function ValidacaoCertificadosPage() {
                         {c.periodoTurma}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="px-2 inline-flex text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                        <span
+                          className={`px-2 inline-flex text-xs font-semibold rounded-full ${
+                            c.tipo === 'EXTENSAO'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}
+                        >
                           {c.categoria}
                         </span>
                       </td>
